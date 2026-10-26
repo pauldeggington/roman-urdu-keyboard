@@ -1,22 +1,15 @@
 package com.paul.urdukb
 
-import android.app.DownloadManager
-import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageInstaller
-import android.net.Uri
-import android.provider.Settings
 import org.json.JSONObject
-import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 
 /**
- * Updates from GitHub Releases: asks the GitHub API for the latest release, downloads its APK with the
- * system download manager, then hands it to Android's package installer, which shows the usual
- * "Update this app?" prompt. Releases are signed with the same key, so they install over this one.
+ * Updates from GitHub Releases. The app only asks the GitHub API which version is newest; the download
+ * itself happens in the browser, and the person taps the downloaded file to install it. The app never
+ * installs anything itself, so it needs no install permission. Releases are signed with the same key,
+ * so they install over this one and keep settings and the translator.
  */
 object Updater {
     const val REPO = "pauldeggington/roman-urdu-keyboard"
@@ -57,97 +50,4 @@ object Updater {
     }
 
     fun isNewer(ctx: Context, r: Release) = r.versionCode > installedCode(ctx)
-
-    // ---------------------------------------------------------------- download
-
-    private fun sp(ctx: Context) = Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE)
-    private fun dm(ctx: Context) = ctx.getSystemService(DownloadManager::class.java)
-    fun apkFile(ctx: Context) = File(Prefs.store(ctx).getExternalFilesDir(null) ?: Prefs.store(ctx).filesDir, "update.apk")
-
-    fun startDownload(ctx: Context, r: Release) {
-        cancelDownload(ctx)
-        val f = apkFile(ctx)
-        f.delete()
-        val req = DownloadManager.Request(Uri.parse(r.apkUrl))
-            .setTitle("Roman Urdu Keyboard ${r.tag}")
-            .setDescription("Downloading the update")
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-            .setDestinationUri(Uri.fromFile(f))
-        sp(ctx).edit().putLong(PREF_DL, dm(ctx).enqueue(req)).apply()
-    }
-
-    fun cancelDownload(ctx: Context) {
-        val id = sp(ctx).getLong(PREF_DL, -1)
-        if (id >= 0) runCatching { dm(ctx).remove(id) }
-        sp(ctx).edit().remove(PREF_DL).apply()
-    }
-
-    /** (status, done, total) of the update download, status -1 when none. */
-    fun downloadState(ctx: Context): Triple<Int, Long, Long> {
-        val id = sp(ctx).getLong(PREF_DL, -1)
-        if (id < 0) return Triple(-1, 0, 0)
-        dm(ctx).query(DownloadManager.Query().setFilterById(id))?.use { c ->
-            if (c.moveToFirst()) return Triple(
-                c.getInt(c.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS)),
-                c.getLong(c.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)),
-                c.getLong(c.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)),
-            )
-        }
-        sp(ctx).edit().remove(PREF_DL).apply()
-        return Triple(-1, 0, 0)
-    }
-
-    fun clearDownload(ctx: Context) = sp(ctx).edit().remove(PREF_DL).apply()
-
-    // ---------------------------------------------------------------- install
-
-    /** Android asks once per app before it may install updates. */
-    fun canInstall(ctx: Context) = ctx.packageManager.canRequestPackageInstalls()
-
-    fun allowInstallsIntent(ctx: Context) =
-        Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:${ctx.packageName}"))
-
-    /** Hands the downloaded APK to the package installer. Blocking; call off the main thread. */
-    fun install(ctx: Context) {
-        val f = apkFile(ctx)
-        val installer = ctx.packageManager.packageInstaller
-        val params = PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL).apply {
-            setAppPackageName(ctx.packageName)
-            setSize(f.length())
-            setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_NOT_REQUIRED)
-        }
-        val id = installer.createSession(params)
-        installer.openSession(id).use { session ->
-            f.inputStream().use { input ->
-                session.openWrite("base.apk", 0, f.length()).use { out ->
-                    input.copyTo(out, 1 shl 20)
-                    session.fsync(out)
-                }
-            }
-            val pi = PendingIntent.getBroadcast(
-                ctx, id, Intent(ctx, InstallResult::class.java),
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
-            )
-            session.commit(pi.intentSender)
-        }
-    }
-
-    /** Receives the installer's answer; shows Android's confirmation screen when it asks for one. */
-    class InstallResult : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.getIntExtra(PackageInstaller.EXTRA_STATUS, PackageInstaller.STATUS_FAILURE)) {
-                PackageInstaller.STATUS_PENDING_USER_ACTION -> {
-                    @Suppress("DEPRECATION")
-                    val confirm = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT) ?: return
-                    context.startActivity(confirm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                }
-                PackageInstaller.STATUS_SUCCESS -> Unit // the app restarts on the new version
-                else -> {
-                    val msg = intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE) ?: "unknown error"
-                    Prefs.setLastError(context, "Update failed: $msg")
-                    android.widget.Toast.makeText(context, "Update failed: $msg", android.widget.Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-    }
 }
