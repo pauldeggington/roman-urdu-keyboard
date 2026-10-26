@@ -70,5 +70,6 @@ hook emoji; sleep 1; shot 12_emoji_light
 hook letters
 adb shell am start -n $PKG/.PreviewActivity --es type number
 sleep 3; shot 13_number_field
+adb logcat -d -s PREVIEW:I > $OUT/preview_log.txt
 adb logcat -d -t 400 *:E > $OUT/errors.txt
 echo done

@@ -242,6 +242,7 @@ class KeyboardView(context: Context) : View(context) {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(ev: MotionEvent): Boolean {
+        if (com.paul.urdukb.BuildConfig.PREVIEW) android.util.Log.i("PREVIEW", "KVTOUCH ${ev.actionMasked} ${ev.x.toInt()} ${ev.y.toInt()}")
         when (ev.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
                 val i = ev.actionIndex

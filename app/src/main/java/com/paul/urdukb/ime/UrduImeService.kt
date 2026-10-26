@@ -143,7 +143,8 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             // draw the keyboard colour behind the navigation bar too, like Gboard
             setOnApplyWindowInsetsListener { _, insets ->
                 val nav = insets.getInsets(WindowInsets.Type.navigationBars()).bottom
-                container.setPadding(0, 0, 0, nav)
+                // Gboard leaves 36 dp under the bottom row, above the navigation bar
+                container.setPadding(0, 0, 0, nav + (36f * resources.displayMetrics.density).toInt())
                 insets
             }
         }
@@ -186,6 +187,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         outInsets.visibleTopInsets = top
         outInsets.touchableInsets = Insets.TOUCHABLE_INSETS_REGION
         outInsets.touchableRegion.set(0, top, frame.width, frame.height)
+        if (BuildConfig.PREVIEW) Log.i("PREVIEW", "INSETS top=$top w=${frame.width} h=${frame.height}")
     }
 
     // ------------------------------------------------------------------ input session
@@ -249,6 +251,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     // ------------------------------------------------------------------ keys
 
     override fun onKey(key: KeyDef, text: String?) {
+        if (BuildConfig.PREVIEW) Log.i("PREVIEW", "ONKEY ${key.type} $text ic=${currentInputConnection != null}")
         RomanUrdu.onOtherKey(this)
         when (key.type) {
             KeyType.CHAR -> typeText(text ?: key.label)
