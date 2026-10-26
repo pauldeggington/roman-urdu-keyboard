@@ -1,0 +1,47 @@
+package com.paul.urdukb
+
+/**
+ * The spelling glossary: "word -> preferred spelling".
+ * It is used twice: the model is told the preferred spellings, and the answer is then checked word by word,
+ * so a wrong spelling that slips through (bada instead of barha) is fixed for sure.
+ */
+object Glossary {
+
+    private val SEP = Regex("\\s*(?:->|\u2192|=>|=|\\|)\\s*")
+
+    fun parse(text: String): List<Pair<String, String>> =
+        text.lines().mapNotNull { raw ->
+            val line = raw.trim()
+            if (line.isEmpty() || line.startsWith("#")) return@mapNotNull null
+            val parts = line.split(SEP, limit = 2)
+            if (parts.size < 2) return@mapNotNull null
+            val from = parts[0].trim()
+            val to = parts[1].trim()
+            if (from.isEmpty() || to.isEmpty() || from.equals(to, ignoreCase = true)) null else from to to
+        }
+
+    /** One more bullet for the model's rules. Empty if there is nothing to say. */
+    fun promptBlock(pairs: List<Pair<String, String>>): String {
+        if (pairs.isEmpty()) return ""
+        val list = pairs.take(60).joinToString(", ") { "${it.first} \u2192 ${it.second}" }
+        return "\n- Preferred spellings: write the word on the right instead of the one on the left: $list."
+    }
+
+    fun apply(pairs: List<Pair<String, String>>, text: String): String {
+        if (pairs.isEmpty() || text.isEmpty()) return text
+        val map = HashMap<String, String>()
+        for ((from, to) in pairs) map[from.lowercase()] = to
+        val keys = map.keys.sortedByDescending { it.length }.joinToString("|") { Regex.escape(it) }
+        val re = Regex("(?<![\\p{L}'])(?:$keys)(?![\\p{L}'])", RegexOption.IGNORE_CASE)
+        return re.replace(text) { m ->
+            val replacement = map[m.value.lowercase()] ?: m.value
+            matchCase(m.value, replacement)
+        }
+    }
+
+    private fun matchCase(source: String, replacement: String): String = when {
+        source.length > 1 && source.all { it.isUpperCase() } -> replacement.uppercase()
+        source.first().isUpperCase() -> replacement.replaceFirstChar { it.uppercase() }
+        else -> replacement
+    }
+}

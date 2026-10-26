@@ -87,31 +87,26 @@ object LlmEngine {
         return created
     }
 
-    private fun examples(ctx: Context, style: Style): List<Pair<String, String>> =
-        Prefs.examples(ctx, style).lines().mapNotNull { line ->
-            val i = line.indexOf('|')
-            if (i <= 0) null
-            else {
-                val en = line.substring(0, i).trim()
-                val ur = line.substring(i + 1).trim()
-                if (en.isEmpty() || ur.isEmpty()) null else en to ur
-            }
-        }
+    /** The few examples from the bank that are closest to this text. */
+    private fun examples(ctx: Context, style: Style, text: String): List<Pair<String, String>> =
+        Bank.pick(Bank.parse(Prefs.examples(ctx, style)), text, k = 6)
 
     /** Blocking. Call from a background thread. */
     @Synchronized
     fun translate(ctx: Context, text: String, style: Style): String {
         val eng = getEngine(ctx)
         val t0 = System.nanoTime()
+        // Spellings only matter for Roman Urdu output
+        val glossary = if (style == Style.TO_ENGLISH) emptyList() else Glossary.parse(Prefs.glossary(ctx))
         val config = ConversationConfig(
-            systemInstruction = Contents.of(Prefs.rules(ctx, style)),
-            initialMessages = examples(ctx, style).flatMap { (en, ur) -> listOf(Message.user(en), Message.model(ur)) },
+            systemInstruction = Contents.of(Prefs.rules(ctx, style) + Glossary.promptBlock(glossary)),
+            initialMessages = examples(ctx, style, text).flatMap { (en, ur) -> listOf(Message.user(en), Message.model(ur)) },
             samplerConfig = SamplerConfig(topK = 40, topP = 0.95, temperature = 0.3),
         )
         // A fresh conversation per translation, so earlier messages never leak into the next one.
         return eng.createConversation(config).use { conversation ->
             val reply = runBlocking { conversation.sendMessage(text) }
-            val out = clean(reply.toString())
+            val out = Glossary.apply(glossary, clean(reply.toString()))
             Prefs.addTranslation(ctx, (System.nanoTime() - t0) / 1_000_000)
             out
         }

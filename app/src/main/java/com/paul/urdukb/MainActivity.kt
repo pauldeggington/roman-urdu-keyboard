@@ -55,7 +55,7 @@ class MainActivity : Activity() {
     private val thinkRunnable = object : Runnable {
         override fun run() {
             if (thinkingNow) {
-                tryOutput.text = Words.thinking()
+                tryOutput.setText(Words.thinking())
                 ui.postDelayed(this, 1600)
             }
         }
@@ -85,7 +85,11 @@ class MainActivity : Activity() {
     private lateinit var dirToEn: Button
     private lateinit var tryNote: TextView
     private lateinit var tryInput: EditText
-    private lateinit var tryOutput: TextView
+    private lateinit var tryOutput: EditText
+    private lateinit var saveExampleBtn: Button
+    private var lastStyle: Style? = null
+    private var lastInput = ""
+    private lateinit var glossaryEdit: EditText
     private lateinit var copyBtn: Button
 
     private lateinit var styleCasual: Button
@@ -353,19 +357,35 @@ class MainActivity : Activity() {
         val r = row()
         r.addView(button("Translate", true) { tryTranslate() }, rowLp())
         copyBtn = button("Copy", false, lock = false) {
-            val t = tryOutput.tag as? String ?: return@button
-            getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("Roman Urdu", t))
+            val t = tryOutput.text.toString()
+            if (t.isBlank()) return@button
+            getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("Translation", t))
             toast(Words.copied())
         }
         r.addView(copyBtn, rowLp())
         card.addView(r)
-        tryOutput = TextView(this).apply {
+        tryOutput = EditText(this).apply {
             textSize = 18f
             setTextColor(pal.text)
-            setTextIsSelectable(true)
+            setHintTextColor(pal.textMuted)
+            hint = "The translation shows up here. You can edit it."
+            background = null
+            minLines = 2
+            gravity = Gravity.TOP
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
             setPadding(0, dpi(14f), 0, 0)
         }
         card.addView(tryOutput)
+        saveExampleBtn = button("Save as example", false, lock = false) {
+            val style = lastStyle
+            val out = tryOutput.text.toString().trim()
+            if (style == null || lastInput.isBlank() || out.isBlank()) return@button
+            Prefs.addExample(this, style, lastInput, out)
+            toast("Saved. The keyboard will learn from it.")
+            if (styleSel == style) showStyle(style)
+        }
+        saveExampleBtn.visibility = View.GONE
+        card.addView(saveExampleBtn, lp().apply { topMargin = dpi(6f) })
         tryNote = muted("").apply { setPadding(0, dpi(4f), 0, 0); textSize = 12.5f }
         card.addView(tryNote)
         return card
@@ -382,7 +402,7 @@ class MainActivity : Activity() {
             toggle.text = if (styleBody.visibility == View.VISIBLE) "Hide" else "Edit"
         }
         card.addView(header)
-        card.addView(muted("The rules and examples the model follows, separately for Casual, Formal and To English."))
+        card.addView(muted("The rules, example bank and spellings the model follows. Rules and examples are separate for Casual, Formal and To English; the glossary is shared."))
 
         styleBody = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -400,19 +420,30 @@ class MainActivity : Activity() {
         examplesEdit = edit("Input | Output, one per line", multi = true)
         styleBody.addView(label("Rules"))
         styleBody.addView(rulesEdit)
-        styleBody.addView(label("Examples (input | output, one per line)"))
+        styleBody.addView(label("Example bank (input | output, one per line). For each message the keyboard picks the 6 closest."))
         styleBody.addView(examplesEdit)
+        styleBody.addView(label("Spelling glossary (word -> preferred spelling, one per line). Used for Roman Urdu output."))
+        glossaryEdit = edit("bada -> barha", multi = true).apply { setText(Prefs.glossary(this@MainActivity)) }
+        styleBody.addView(glossaryEdit)
         val r = row()
         r.addView(button("Save", true) {
             Prefs.setStyle(this, styleSel, rulesEdit.text.toString(), examplesEdit.text.toString())
+            Prefs.setGlossary(this, glossaryEdit.text.toString())
             toast("Saved")
         }, rowLp())
-        r.addView(button("Reset", false) {
+        r.addView(button("Reset this tab", false) {
             Prefs.resetStyle(this, styleSel)
             showStyle(styleSel)
             toast("Back to the default")
         }, rowLp())
         styleBody.addView(r)
+        val r2 = row()
+        r2.addView(button("Reset glossary", false) {
+            Prefs.resetGlossary(this)
+            glossaryEdit.setText(Prefs.glossary(this))
+            toast("Glossary reset")
+        }, rowLp())
+        styleBody.addView(r2)
         card.addView(styleBody)
         showStyle(Style.CASUAL)
         return card
@@ -772,6 +803,7 @@ class MainActivity : Activity() {
         paintSegment(tryFormal, formal)
         paintDirection()
         copyBtn.visibility = if (tryOutput.tag is String) View.VISIBLE else View.GONE
+        saveExampleBtn.visibility = if (tryOutput.tag is String && lastStyle != null) View.VISIBLE else View.GONE
 
         // stats
         val n = Prefs.count(this)
@@ -985,7 +1017,7 @@ class MainActivity : Activity() {
             Style.FORMAL -> "English → Roman Urdu, formal (aap)"
             Style.CASUAL -> "English → Roman Urdu, casual (tum)"
         } + if (LlmEngine.isLoaded()) "" else ". The first one loads the model, so it takes a bit longer."
-        tryOutput.text = Words.thinking()
+        tryOutput.setText(Words.thinking())
         thinkingNow = true
         ui.postDelayed(thinkRunnable, 1600)
         setBusy(true)
@@ -1003,10 +1035,12 @@ class MainActivity : Activity() {
                 thinkingNow = false
                 ui.removeCallbacks(thinkRunnable)
                 if (err != null) {
-                    tryOutput.text = "Yeh nahi hua. The details are in Last error at the bottom."
+                    tryOutput.setText("Yeh nahi hua. The details are in Last error at the bottom.")
                 } else {
-                    tryOutput.text = result
+                    tryOutput.setText(result)
                     tryOutput.tag = result
+                    lastStyle = style
+                    lastInput = text
                     tryNote.text = tryNote.text.toString().substringBefore(". The first") + "  ·  " + Words.done()
                 }
                 setBusy(false)
