@@ -55,8 +55,11 @@ I'll call you later, I'm in a meeting. | Main aapko thodi der mein call karta ho
 Is this your phone? | Kya yeh aapka phone hai?
 Please let me know when you are free. | Jab aap free hon to mujhe bata dijiye."""
 
-    /** Credential-protected storage, same place earlier versions used. */
-    fun store(ctx: Context): Context = ctx.applicationContext.createCredentialProtectedStorageContext()
+    /**
+     * Normal (credential-protected) storage, same place earlier versions used.
+     * HeliBoard reaches its own device-protected storage explicitly, so the app default stays normal.
+     */
+    fun store(ctx: Context): Context = ctx.applicationContext
 
     private fun sp(ctx: Context): SharedPreferences =
         store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE)
