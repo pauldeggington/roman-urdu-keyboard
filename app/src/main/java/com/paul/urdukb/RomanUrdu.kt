@@ -1,11 +1,20 @@
 package com.paul.urdukb
 
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.inputmethodservice.InputMethodService
 import android.os.Handler
 import android.os.Looper
 import android.os.UserManager
+import android.view.View
+import android.view.animation.LinearInterpolator
+import android.widget.ImageButton
+import helium314.keyboard.keyboard.internal.KeyboardIconsSet
+import helium314.keyboard.latin.common.ColorType
+import helium314.keyboard.latin.settings.Settings
+import helium314.keyboard.latin.utils.ToolbarKey
 import android.view.inputmethod.InputConnection
 import android.widget.Toast
 import androidx.core.content.edit
@@ -70,6 +79,35 @@ object RomanUrdu {
         }
     }
 
+    private val spinners = java.util.WeakHashMap<View, ObjectAnimator>()
+
+    /** Turns the Translate key into a spinning arc while the model works, and back afterwards. Main thread only. */
+    fun applyBusyIndicator(button: ImageButton) {
+        val running = spinners[button]
+        if (busy) {
+            if (running != null) return
+            val arc = button.context.getDrawable(helium314.keyboard.latin.R.drawable.ic_rurdu_progress)!!.mutate()
+            Settings.getValues().mColors.setColor(arc, ColorType.TOOL_BAR_KEY)
+            button.setImageDrawable(arc)
+            val anim = ObjectAnimator.ofFloat(button, View.ROTATION, 0f, 360f).apply {
+                duration = 900
+                repeatCount = ValueAnimator.INFINITE
+                interpolator = LinearInterpolator()
+            }
+            anim.start()
+            spinners[button] = anim
+        } else if (running != null) {
+            running.cancel()
+            spinners.remove(button)
+            button.rotation = 0f
+            val icon = KeyboardIconsSet.instance.getNewDrawable(ToolbarKey.TRANSLATE.name, button.context)
+            if (icon != null) {
+                Settings.getValues().mColors.setColor(icon, ColorType.TOOL_BAR_KEY)
+                button.setImageDrawable(icon)
+            }
+        }
+    }
+
     /** Nudges HeliBoard's toolbar to redraw our two keys. */
     private fun refreshToolbar(ctx: Context) {
         ctx.prefs().edit { putLong(PREF_STATE, System.nanoTime()) }
@@ -95,10 +133,13 @@ object RomanUrdu {
         toast(ime, directionLabel(next))
     }
 
-    fun openApp(ime: InputMethodService) {
-        ime.startActivity(
-            Intent(ime, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        )
+    fun openApp(ime: InputMethodService) = openApp(ime, null)
+
+    /** Opens the app, optionally scrolled to a section ("colour"). */
+    fun openApp(ctx: Context, section: String?) {
+        val intent = Intent(ctx, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        if (section != null) intent.putExtra(MainActivity.EXTRA_SECTION, section)
+        ctx.startActivity(intent)
     }
 
     /** Any other key press ends the "tap again to undo" window. Cheap when nothing is pending. */

@@ -19,6 +19,7 @@ import android.text.InputType
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -64,6 +65,7 @@ class MainActivity : Activity() {
     private lateinit var checklist: LinearLayout
     private lateinit var modelCard: View
     private lateinit var tryCard: View
+    private lateinit var colourCard: View
 
     private lateinit var modelStatus: TextView
     private lateinit var modelDetail: TextView
@@ -112,11 +114,25 @@ class MainActivity : Activity() {
         window.insetsController?.setSystemBarsAppearance(if (pal.dark) 0 else light, light)
         setContentView(buildUi())
         refresh()
+        scrollToRequestedSection()
     }
 
     override fun onResume() {
         super.onResume()
         refresh()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        scrollToRequestedSection()
+    }
+
+    private fun scrollToRequestedSection() {
+        when (intent?.getStringExtra(EXTRA_SECTION)) {
+            "colour" -> scroll.post { scrollTo(colourCard) }
+        }
+        intent?.removeExtra(EXTRA_SECTION)
     }
 
     // ================================================================ building the screen
@@ -132,7 +148,8 @@ class MainActivity : Activity() {
         modelCard = buildModelCard().also { root.addView(it) }
         tryCard = buildTryCard().also { root.addView(it) }
         root.addView(buildStyleCard())
-        root.addView(buildColourCard())
+        colourCard = buildColourCard()
+        root.addView(colourCard)
         root.addView(buildSpeedCard())
         root.addView(buildKeyboardCard())
         root.addView(buildErrorCard())
@@ -140,7 +157,21 @@ class MainActivity : Activity() {
         scroll = ScrollView(this).apply {
             setBackgroundColor(pal.appBg)
             isFillViewport = true
+            clipToPadding = false
             addView(root)
+        }
+        // Android 15+ draws apps edge to edge, so keep the content clear of the status bar,
+        // the gesture/navigation bar, the camera cutout and the on-screen keyboard.
+        val baseL = root.paddingLeft
+        val baseT = root.paddingTop
+        val baseR = root.paddingRight
+        val baseB = root.paddingBottom
+        scroll.setOnApplyWindowInsetsListener { _, insets ->
+            val bars = insets.getInsets(
+                WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout() or WindowInsets.Type.ime()
+            )
+            root.setPadding(baseL + bars.left, baseT + bars.top, baseR + bars.right, baseB + bars.bottom)
+            insets
         }
         return scroll
     }
@@ -986,5 +1017,6 @@ class MainActivity : Activity() {
 
     companion object {
         private const val REQ_MODEL = 1
+        const val EXTRA_SECTION = "section"
     }
 }

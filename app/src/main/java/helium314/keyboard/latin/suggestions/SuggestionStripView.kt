@@ -221,7 +221,7 @@ class SuggestionStripView(context: Context, attrs: AttributeSet?, defStyle: Int)
         else {
             newLayoutDirection = if (isRtlLanguage) LAYOUT_DIRECTION_RTL else LAYOUT_DIRECTION_LTR
             direction = if (isRtlLanguage) -1 else 1
-            toolbarExpandKey.scaleX = (if (toolbarContainer.visibility != VISIBLE) 1f else -1f) * direction
+            toolbarExpandKey.scaleX = 1f
         }
         layoutDirection = newLayoutDirection
         suggestionsStrip.layoutDirection = newLayoutDirection
@@ -238,7 +238,14 @@ class SuggestionStripView(context: Context, attrs: AttributeSet?, defStyle: Int)
             }
         }
 
-        toolbarExpandKey.scaleX = (if (toolbarVisible) -1f else 1f) * direction
+        applyExpandIcon(toolbarVisible)
+    }
+
+    /** Gboard-style: a grid when the toolbar is closed, a close "X" when it is open. */
+    private fun applyExpandIcon(open: Boolean) {
+        if (Settings.getValues().mIncognitoModeEnabled) return
+        toolbarExpandKey.setImageResource(if (open) R.drawable.ic_rurdu_close else R.drawable.ic_rurdu_grid)
+        toolbarExpandKey.scaleX = 1f
     }
 
     fun setSuggestions(suggestions: SuggestedWords, isRtlLanguage: Boolean) {
@@ -336,7 +343,10 @@ class SuggestionStripView(context: Context, attrs: AttributeSet?, defStyle: Int)
         }
         AudioAndHapticFeedbackManager.getInstance().performHapticAndAudioFeedback(KeyCode.NOT_SPECIFIED, this, HapticEvent.KEY_PRESS)
         if (view === toolbarExpandKey) {
-            setToolbarVisibility(toolbarContainer.visibility != VISIBLE)
+            val show = toolbarContainer.visibility != VISIBLE
+            // opens or closes the tools panel too; it also toggles the toolbar row
+            KeyboardSwitcher.getInstance().setRomanUrduPanelVisible(show)
+            setToolbarVisibility(show)
         }
 
         // tag for word views is set in SuggestionStripLayoutHelper (setupWordViewsTextAndColor, layoutPunctuationSuggestions)
@@ -515,7 +525,7 @@ class SuggestionStripView(context: Context, attrs: AttributeSet?, defStyle: Int)
             toolbarExpandKey.setImageDrawable(incognitoIcon)
             toolbarExpandKey.isVisible = true
         } else {
-            toolbarExpandKey.setImageDrawable(toolbarArrowIcon)
+            applyExpandIcon(toolbarContainer.isVisible)
             toolbarExpandKey.isVisible = toolbarIsExpandable
         }
 

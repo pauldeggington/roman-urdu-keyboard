@@ -67,6 +67,7 @@ private fun setToolbarButtonActivatedState(button: ImageButton) {
         BACKGROUND_GATHERING -> useBackgroundGathering
         TRANSLATE -> {
             button.isSelected = RomanUrdu.canRevert
+            RomanUrdu.applyBusyIndicator(button)
             !RomanUrdu.busy
         }
         TONE -> {
@@ -88,7 +89,7 @@ fun getCodeForToolbarKey(key: ToolbarKey) = Settings.getInstance().getCustomTool
     DPAD -> KeyCode.DPAD
     UNDO -> KeyCode.UNDO
     REDO -> KeyCode.REDO
-    SETTINGS -> KeyCode.SETTINGS
+    SETTINGS -> KeyCode.ROMAN_URDU_PANEL
     SELECT_ALL -> KeyCode.CLIPBOARD_SELECT_ALL
     SELECT_WORD -> KeyCode.CLIPBOARD_SELECT_WORD
     COPY -> KeyCode.CLIPBOARD_COPY
@@ -121,6 +122,7 @@ fun getCodeForToolbarKey(key: ToolbarKey) = Settings.getInstance().getCustomTool
 }
 
 fun getCodeForToolbarKeyLongClick(key: ToolbarKey) = Settings.getInstance().getCustomToolbarLongpressCode(key) ?: when (key) {
+    SETTINGS -> KeyCode.SETTINGS
     CLIPBOARD -> KeyCode.CLIPBOARD_PASTE
     UNDO -> KeyCode.REDO
     REDO -> KeyCode.UNDO
@@ -158,7 +160,7 @@ enum class ToolbarMode {
 val toolbarKeyStrings = entries.associateWithTo(EnumMap(ToolbarKey::class.java)) { it.toString().lowercase(Locale.US) }
 
 val defaultToolbarPref by lazy {
-    val default = listOf(SETTINGS, CLIPBOARD, UNDO, REDO, SELECT_WORD, COPY, PASTE, LEFT, RIGHT, EMOJI)
+    val default = listOf(EMOJI, CLIPBOARD, UNDO, REDO, COPY, PASTE, SETTINGS, VOICE)
     val others = entries.filterNot { it in default || it == CLOSE_HISTORY }
     default.joinToString(Separators.ENTRY) { it.name + Separators.KV + true } + Separators.ENTRY +
             others.joinToString(Separators.ENTRY) { it.name + Separators.KV + false }

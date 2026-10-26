@@ -76,6 +76,7 @@ public final class KeyboardSwitcher {
     private SuggestionStripView mSuggestionStripView;
     private FrameLayout mStripContainer;
     private ClipboardHistoryView mClipboardHistoryView;
+    private com.paul.urdukb.RomanUrduPanel mRomanUrduPanel;
     private TextView mFakeToastView;
     private ImageView mBackgroundGatheringIndicator;
     private LatinIME mLatinIME;
@@ -251,6 +252,46 @@ public final class KeyboardSwitcher {
         mSuggestionStripView.setVisibility(stripVisibility);
         mClipboardHistoryView.setVisibility(View.GONE);
         mClipboardHistoryView.stopClipboardHistory();
+        if (mRomanUrduPanel != null) mRomanUrduPanel.setVisibility(View.GONE);
+    }
+
+    // ---- Roman Urdu tools panel (Gboard-style), shown in place of the keys ----
+
+    public void setRomanUrduPanelVisible(final boolean visible) {
+        if (mRomanUrduPanel == null || mKeyboardView == null) return;
+        if (visible) {
+            if (isShowingEmojiPalettes() || isShowingClipboardHistory()) return;
+            mRomanUrduPanel.refresh();
+            mRomanUrduPanel.setVisibility(View.VISIBLE);
+            // INVISIBLE (not GONE) keeps the keyboard's height, so the panel fills exactly the same space
+            mKeyboardView.setVisibility(View.INVISIBLE);
+            if (mSuggestionStripView != null) mSuggestionStripView.setToolbarVisibility(true);
+        } else {
+            mRomanUrduPanel.setVisibility(View.GONE);
+            mKeyboardView.setVisibility(View.VISIBLE);
+            if (mSuggestionStripView != null) mSuggestionStripView.setToolbarVisibility(false);
+        }
+    }
+
+    public boolean isShowingRomanUrduPanel() {
+        return mRomanUrduPanel != null && mRomanUrduPanel.getVisibility() == View.VISIBLE;
+    }
+
+    /** Rebuilds the keyboard right now, e.g. after the height was changed in the panel. */
+    public void reloadThemeNow() {
+        mThemeNeedsReload = true;
+        updateKeyboardTheme(KtxKt.getDisplayContext(mLatinIME));
+    }
+
+    private final class RomanUrduPanelHost implements com.paul.urdukb.RomanUrduPanel.Host {
+        @Override public void send(final int code) {
+            mLatinIME.mKeyboardActionListener.onCodeInput(code, helium314.keyboard.latin.common.Constants.NOT_A_COORDINATE,
+                    helium314.keyboard.latin.common.Constants.NOT_A_COORDINATE, false);
+        }
+        @Override public void close() { setRomanUrduPanelVisible(false); }
+        @Override public void openTheme() { com.paul.urdukb.RomanUrdu.INSTANCE.openApp(mLatinIME, "colour"); }
+        @Override public void openApp() { com.paul.urdukb.RomanUrdu.INSTANCE.openApp(mLatinIME, null); }
+        @Override public void applyResize() { reloadThemeNow(); }
     }
 
     public void toggleLayout(@NonNull LayoutDirective.Utility layout, int autoCapsFlags, @Nullable RecapitalizeMode recapitalizeMode) {
@@ -555,6 +596,10 @@ public final class KeyboardSwitcher {
 
         mKeyboardViewWrapper = mCurrentInputView.findViewById(R.id.keyboard_view_wrapper);
         mKeyboardViewWrapper.setKeyboardActionListener(mLatinIME.mKeyboardActionListener);
+        mRomanUrduPanel = new com.paul.urdukb.RomanUrduPanel(mThemeContext, new RomanUrduPanelHost());
+        mRomanUrduPanel.setVisibility(View.GONE);
+        mKeyboardViewWrapper.addView(mRomanUrduPanel, new android.widget.FrameLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT));
         mKeyboardView = mCurrentInputView.findViewById(R.id.keyboard_view);
         mKeyboardView.setHardwareAcceleratedDrawingEnabled(isHardwareAcceleratedDrawingEnabled);
         mKeyboardView.setKeyboardActionListener(mLatinIME.mKeyboardActionListener);
@@ -652,6 +697,7 @@ public final class KeyboardSwitcher {
             // @see #getVisibleKeyboardView() and
             // @see LatinIME#onComputeInset(android.inputmethodservice.InputMethodService.Insets)
             mKeyboardView.setVisibility(View.GONE);
+            if (mRomanUrduPanel != null) mRomanUrduPanel.setVisibility(View.GONE);
             mSuggestionStripView.setVisibility(View.GONE);
             mStripContainer.setVisibility(getSecondaryStripVisibility());
             mClipboardStripScrollView.setVisibility(View.GONE);
@@ -672,6 +718,7 @@ public final class KeyboardSwitcher {
             // @see #getVisibleKeyboardView() and
             // @see LatinIME#onComputeInset(android.inputmethodservice.InputMethodService.Insets)
             mKeyboardView.setVisibility(View.GONE);
+            if (mRomanUrduPanel != null) mRomanUrduPanel.setVisibility(View.GONE);
             mEmojiTabStripView.setVisibility(View.GONE);
             mSuggestionStripView.setVisibility(View.GONE);
             mStripContainer.setVisibility(getSecondaryStripVisibility());

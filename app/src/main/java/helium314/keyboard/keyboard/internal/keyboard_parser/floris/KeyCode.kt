@@ -198,6 +198,7 @@ object KeyCode {
     const val ROMAN_URDU_TONE =            -30001
     const val ROMAN_URDU_OPEN_APP =        -30002
     const val ROMAN_URDU_DIRECTION =       -30003
+    const val ROMAN_URDU_PANEL =           -30004
 
     /** to make sure a FlorisBoard code works when reading a JSON layout */
     fun Int.checkAndConvertCode(longPress: Boolean = false): Int = if (this > 0) this else when (this) {
@@ -218,7 +219,7 @@ object KeyCode {
         TIMESTAMP, CTRL_LEFT, CTRL_RIGHT, ALT_LEFT, ALT_RIGHT, META_LEFT, META_RIGHT, SEND_INTENT_ONE, SEND_INTENT_TWO,
         SEND_INTENT_THREE, EMOJI_SEARCH, INLINE_EMOJI_SEARCH_DONE, META_LOCK,
         BACKGROUND_GATHERING, BACKGROUND_GATHERING_TEMP_OFF, DPAD,
-        ROMAN_URDU_TRANSLATE, ROMAN_URDU_TONE, ROMAN_URDU_OPEN_APP, ROMAN_URDU_DIRECTION,
+        ROMAN_URDU_TRANSLATE, ROMAN_URDU_TONE, ROMAN_URDU_OPEN_APP, ROMAN_URDU_DIRECTION, ROMAN_URDU_PANEL,
         -> this
 
         KEY_REPEAT if (longPress) -> this

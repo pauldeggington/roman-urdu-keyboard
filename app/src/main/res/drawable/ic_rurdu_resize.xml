@@ -1,0 +1,6 @@
+<!-- dashed square: Resize -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <path android:strokeColor="#FFF" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M4,8 V4 H8 M12,4 H12.01 M16,4 H20 V8 M20,12 V12.01 M20,16 V20 H16 M12,20 H12.01 M8,20 H4 V16 M4,12 V12.01" />
+</vector>
