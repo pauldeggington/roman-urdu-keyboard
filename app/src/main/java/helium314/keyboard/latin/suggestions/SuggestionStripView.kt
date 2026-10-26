@@ -344,8 +344,6 @@ class SuggestionStripView(context: Context, attrs: AttributeSet?, defStyle: Int)
         AudioAndHapticFeedbackManager.getInstance().performHapticAndAudioFeedback(KeyCode.NOT_SPECIFIED, this, HapticEvent.KEY_PRESS)
         if (view === toolbarExpandKey) {
             val show = toolbarContainer.visibility != VISIBLE
-            // opens or closes the tools panel too; it also toggles the toolbar row
-            KeyboardSwitcher.getInstance().setRomanUrduPanelVisible(show)
             setToolbarVisibility(show)
         }
 

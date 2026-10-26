@@ -253,9 +253,11 @@ class DynamicColors(context: Context, override val themeStyle: String, override 
                 if (!isNight) pressedStateList(adjustedFunctionalKey, Color.TRANSPARENT)
                 else pressedStateList(functionalKey, Color.TRANSPARENT)
 
+            // Gboard look: functional keys (?123, emoji, shift, delete) are filled pills even without borders
             functionalKeyStateList =
                 if (themeStyle == STYLE_HOLO) pressedStateList(functionalKey, Color.TRANSPARENT)
-                else keyStateList
+                else if (!isNight) pressedStateList(doubleAdjustedFunctionalKey, functionalKey)
+                else pressedStateList(functionalKey, doubleAdjustedKeyBackground)
 
             actionKeyStateList =
                 if (themeStyle == STYLE_HOLO) pressedStateList(accent, Color.TRANSPARENT)
@@ -461,7 +463,8 @@ class DefaultColors (
             // need to set color to background if key borders are disabled, or there will be ugly keys
             backgroundStateList = pressedStateList(brightenOrDarken(background, true), background)
             keyStateList = pressedStateList(keyBackground, Color.TRANSPARENT)
-            functionalKeyStateList = keyStateList
+            functionalKeyStateList = if (themeStyle == STYLE_HOLO) keyStateList
+                else pressedStateList(brightenOrDarken(functionalKey, true), functionalKey)
             actionKeyStateList = if (themeStyle == STYLE_HOLO) functionalKeyStateList
                 else pressedStateList(brightenOrDarken(accent, true), accent)
             spaceBarStateList = pressedStateList(brightenOrDarken(spaceBar, true), spaceBar)
