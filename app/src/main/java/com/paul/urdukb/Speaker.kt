@@ -1,0 +1,63 @@
+package com.paul.urdukb
+
+import android.content.Context
+
+/**
+ * Who "I" is in the translation. Without a clear first person, Urdu plural forms
+ * ("thak gaye hain", "nikal rahay hain") read as if they were about "you", so the
+ * speaker is always written with "main" (or "hum" when neutral).
+ */
+object Speaker {
+    const val MALE = "male"
+    const val FEMALE = "female"
+    const val NEUTRAL = "neutral"
+
+    fun get(ctx: Context): String =
+        Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE).getString("speaker", MALE) ?: MALE
+
+    fun set(ctx: Context, v: String) =
+        Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE).edit().putString("speaker", v).apply()
+
+    private const val COMMON = """- "I", "me" and "my" are always the speaker, never the listener. A sentence about the speaker stays about the speaker: never turn it into a sentence about the listener, and never add "tum" or "aap" that is not in the English.
+- Keep statements as statements and questions as questions. Only write a question mark if the English is a question.
+- "We" is "hum" with plural verbs.
+- For the listener use the plural verb forms, which suit anyone: tum kar rahay ho, aap kar rahay hain."""
+
+    /** Rules block appended to the Roman Urdu system prompt. */
+    fun rules(ctx: Context): String = "\n" + when (get(ctx)) {
+        FEMALE -> """- The speaker is female. When the English is about the speaker, write "main" with feminine first-person forms and "hoon": main theek hoon, main thak gayi hoon, main kaam kar rahi hoon, main aa sakti hoon, main bhool gayi thi, main baad mein call karti hoon."""
+        NEUTRAL -> """- The speaker's gender is not given. When the English is about the speaker, always write "hum" with plural verbs so it is clear who it is: hum theek hain, hum thak gaye hain, hum kaam kar rahay hain, hum baad mein call kartay hain. Never leave out "hum"."""
+        else -> """- The speaker is male. When the English is about the speaker, write "main" with masculine first-person forms and "hoon": main theek hoon, main thak gaya hoon, main kaam kar raha hoon, main aa sakta hoon, main bhool gaya tha, main baad mein call karta hoon."""
+    } + "\n" + COMMON
+
+    /** Old rule lines that made the speaker sound like "you"; removed from saved custom rules. */
+    fun stripOldRules(rules: String): String = rules.lines().filterNot {
+        val t = it.trimStart()
+        t.startsWith("- Gender-neutral:") || t.startsWith("- When the speaker talks about themself")
+    }.joinToString("\n")
+
+    private val toFemale = mapOf(
+        "raha" to "rahi", "gaya" to "gayi", "karta" to "karti", "sakta" to "sakti", "chahta" to "chahti",
+        "tha" to "thi", "wala" to "wali", "deta" to "deti", "leta" to "leti", "jata" to "jati", "aata" to "aati",
+    )
+    private val toNeutral = mapOf(
+        "main" to "hum", "hoon" to "hain", "raha" to "rahay", "gaya" to "gaye", "karta" to "kartay",
+        "sakta" to "saktay", "chahta" to "chahtay", "tha" to "thay", "wala" to "walay", "deta" to "detay",
+        "leta" to "letay", "jata" to "jatay", "aata" to "aatay",
+    )
+    private val word = Regex("[A-Za-z]+")
+    private val clause = Regex("[^,.?!;]+[,.?!;]*")
+
+    /** Rewrites the male first-person forms of the default bank for the chosen speaker. */
+    fun adapt(ctx: Context, roman: String): String {
+        val map = when (get(ctx)) { FEMALE -> toFemale; NEUTRAL -> toNeutral; else -> return roman }
+        return clause.replace(roman) { c ->
+            val text = c.value
+            if (word.findAll(text).none { it.value.equals("main", true) || it.value.equals("hoon", true) }) text
+            else word.replace(text) { w ->
+                val repl = map[w.value.lowercase()] ?: return@replace w.value
+                if (w.value[0].isUpperCase()) repl.replaceFirstChar { it.uppercase() } else repl
+            }
+        }
+    }
+}
