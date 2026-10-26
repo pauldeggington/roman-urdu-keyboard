@@ -1,149 +1,101 @@
-# Roman Urdu Keyboard
+<p align="center">
+  <img src="docs/logo.png" width="128" alt="Roman Urdu Keyboard logo">
+</p>
 
-An offline Android keyboard that translates English to Roman Urdu and back, using Gemma 4 on the phone.
-It is a fork of [HeliBoard](https://github.com/HeliBorg/HeliBoard) (GPL-3.0). See [CREDITS.md](CREDITS.md) for the people
-and data this project builds on, and `LICENSE` for the licence. The original HeliBoard README follows.
+<h1 align="center">Roman Urdu Keyboard</h1>
+
+<p align="center">
+  An Android keyboard that translates <b>English ⇄ Roman Urdu</b> as you type.<br>
+  It runs Google's Gemma 4 on your phone, so your messages never leave the device.
+</p>
 
 ---
 
-# HeliBoard
-HeliBoard is a privacy-conscious and customizable open-source keyboard, based on AOSP / OpenBoard.
-Does not use internet permission, and thus is 100% offline.
+Type English in any app, tap **Translate** in the keyboard's toolbar, and the text turns into natural Roman Urdu.
+Type Roman Urdu and it goes the other way. Choose a casual (*tum*) or formal (*aap*) tone, with gender-neutral wording
+and the spellings you prefer (*kaisay*, *chahtay*, *barha*).
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/helium314.keyboard/)
-[<img src="https://user-images.githubusercontent.com/663460/26973090-f8fdc986-4d14-11e7-995a-e7c5e79ed925.png" alt="Get APK from GitHub" height="80">](https://github.com/HeliBorg/HeliBoard/releases/latest)
-[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80">](https://apt.izzysoft.de/fdroid/index/apk/helium314.keyboard)
+It is a fork of [HeliBoard](https://github.com/HeliBorg/HeliBoard), so you get a full keyboard that looks and feels like
+Gboard: suggestions, emoji, clipboard history, one-handed mode and Material You colours.
 
-## Table of Contents
+## Features
 
-- [Features](#features)
-- [Contributing](#contributing-)
-   * [Reporting Issues](#reporting-issues)
-   * [Translations](#translations)
-   * [To Community](#to-community)
-   * [Code Contribution](CONTRIBUTING.md)
-- [Links](#links)
-- [License](#license)
-- [Credits](#credits)
-  * [Funding](#funding)
+**Translation**
+- **English → Roman Urdu** and **Roman Urdu → English**, on the phone, with no internet needed after setup.
+- **Auto-detect** which way to translate, or force a direction with the direction key.
+- **Casual or Formal** tone: *tum* or *aap*. The tone key shows the current choice as a word, so you always know.
+- **Gender-neutral** wording by default (*kartay*, *rahay*, *thay*) and *ay* spellings.
+- **Tap Translate again to undo** and get your original text back. The key spins while the model is working.
+- **Spelling glossary:** tell it your preferred spellings (*bada → barha*) and they are used every time.
+- **Example bank:** a bank of sentence pairs. For each message the keyboard picks the closest ones to guide the model.
+  Edit a translation in the app and save it as an example, and the keyboard learns your style.
+- Understands texting shorthand and spelling variants (*kr, nhi, tm, bht*).
 
-# Features
-<ul>
-  <li>Add dictionaries for suggestions and spell check</li>
-  <ul>
-    <li>build your own, or get them  <a href="https://codeberg.org/Helium314/aosp-dictionaries#dictionaries">here</a> (quality may vary)</li>
-    <li>additional dictionaries for emojis or scientific symbols can be used to provide suggestions (similar to "emoji search")</li>
-    <li>note that for Korean layouts, suggestions only work using <a href="https://github.com/openboard-team/openboard/commit/83fca9533c03b9fecc009fc632577226bbd6301f">this dictionary</a>, the tools in the dictionary repository are not able to create working dictionaries</li>
-  </ul>
-  <li>Customize keyboard themes (style, colors and background image)</li>
-  <li>Emoji search (inline and separate, requires <a href="https://codeberg.org/Helium314/aosp-dictionaries">emoji dictionary</a>)</li>
-  <ul>
-    <li>can follow the system's day/night setting on Android 10+ (and on some versions of Android 9)</li>
-    <li>can follow dynamic colors for Android 12+</li>
-  </ul>
-  <li>Customize keyboard <a href="https://github.com/HeliBorg/HeliBoard/blob/main/layouts.md">layouts</a> (only available when disabling <i>use system languages</i>)</li>
-  <li>Customize special layouts, like symbols, number,  or functional key layout</li>
-  <li>Multilingual typing</li>
-  <li>Glide typing (<i>only with closed source library</i> ☹️)</li>
-  <ul>
-    <li>library not included in the app, as there is no compatible open source library available</li>
-    <li>can be extracted from GApps packages ("<i>swypelibs</i>"), or downloaded <a href="https://github.com/erkserkserks/openboard/tree/46fdf2b550035ca69299ce312fa158e7ade36967/app/src/main/jniLibs">here</a> (click on the file and then "raw" or the tiny download button)</li>
-  </ul>
-  <li>Clipboard history</li>
-  <li>One-handed mode</li>
-  <li>Split keyboard</li>
-  <li>Number pad</li>
-  <li>Backup and restore your settings and learned word / history data</li>
-</ul>
+**Keyboard**
+- Gboard-style layout and height, borderless keys, number hints, long-press symbols, swipe the space bar to move the cursor.
+- A **tools panel** (grid button or gear): Translate, Emoji, Theme, Text editing, Resize, One-handed, and the Roman Urdu controls.
+- **20 colour swatches** or wallpaper colours, light, dark or follow the phone. Pick them in the app.
+- Word suggestions, emoji, clipboard history and glide typing (glide needs Google's swipe library file, see HeliBoard's docs).
 
-For [FAQ](https://github.com/HeliBorg/HeliBoard/wiki/FAQ), [hidden features](https://github.com/HeliBorg/HeliBoard/wiki/9.-Hidden-features) and more information about the app and features, please visit the [wiki](https://github.com/HeliBorg/HeliBoard/wiki)
+**The app**
+- Setup checklist, model download with progress and resume, checksum verification.
+- A *Try it* box with direction and tone, editable style rules, the example bank and glossary, and speed numbers
+  (load time and seconds per translation, CPU or GPU).
 
-# Contributing ❤
+## Install
 
-## Reporting Issues
+There are no store releases yet. Every push to `main` builds an APK.
 
-Whether you encountered a bug, or want to see a new feature in HeliBoard, you can contribute to the project by opening a new issue [here](https://github.com/HeliBorg/HeliBoard/issues). Your help is always welcome!
+1. Open the **Actions** tab, pick the latest successful **Build APK** run, and download the `roman-urdu-keyboard-debug` artifact.
+   Unzip it on your phone and install `roman-urdu-keyboard.apk` (allow installs from your browser or Files app).
+2. Open **Roman Urdu Keyboard** and follow the **Setup** checklist:
+   - Make a free read token at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens) and accept the licence on the
+     [Gemma 4 E2B model page](https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm).
+   - Paste the token and tap **Download model**. It is about 2.6 GB, so use Wi-Fi. It resumes if interrupted and is checked against Hugging Face's checksum.
+   - Tap **Turn on** and enable *Roman Urdu Keyboard*, then **Switch to it**.
+3. In any text field, type something and tap **Translate** in the toolbar above the keys.
 
-Before opening a new issue, be sure to check the following:
- - **Does the issue already exist?** Make sure a similar issue has not been reported by browsing [existing issues](https://github.com/HeliBorg/HeliBoard/issues?q=). Please search open and closed issues. In case of feature requests you could also check the [FAQ](https://github.com/HeliBorg/HeliBoard/wiki/FAQ) and [hidden features](https://github.com/HeliBorg/HeliBoard/wiki/9.-Hidden-features).
- - **Is the issue still relevant?** Make sure your issue is not already fixed in the latest version of HeliBoard.
- - **Is it a single topic?** If you want to suggest multiple things, open multiple issues.
- - **Did you use the issue template?** It is important to make life of our kind contributors easier by avoiding issues that miss key information to their resolution.
- - **Is it written by a human?** Do not use LLMs or similar to generate issues. Having LLMs help with translation or similar is acceptable, but must be disclosed. See also [AI_USAGE.md](AI_USAGE.md)
-Note that issues that that ignore part of the issue template will likely get treated with very low priority, as often they are needlessly hard to read or understand (e.g. huge screenshots, not providing a proper description, or addressing multiple topics). Blatant violation of the guidelines may result in the issue getting closed.
+**Requirements:** Android 12 or newer, an arm64 phone, about 3 GB of free storage, and 6 GB of RAM or more recommended.
+The first translation after a restart is slower while the model loads. If it is slow, try *Use the GPU* in the app.
 
-If you're interested, you can read the following useful text about effective bug reporting (a bit longer read): https://www.chiark.greenend.org.uk/~sgtatham/bugs.html
+## Privacy
 
-## Translations
-Translations can be added using [Weblate](https://translate.codeberg.org/projects/heliboard/). You will need an account to update translations and add languages. Add the language you want to translate to in Languages -> Manage translated languages in the top menu bar.
-Updating translations in a PR will not be accepted, as it may cause conflicts with Weblate translations.
+- Translations run **entirely on the device**. No text you type is sent anywhere.
+- The `INTERNET` permission is used only to download the model file and to read its checksum from Hugging Face.
+- Your token, settings, glossary and examples stay on the phone.
 
-Some notes on translations
-* when translating metadata, translating the changelogs is rather useless. It's available as it was requested by translators.
-* the `hidden_features_message` is horrible to translate with Weblate, and serves little benefit as it's just a copy of what's already in the wiki: https://github.com/HeliBorg/HeliBoard/wiki/9.-Hidden-features. It's been made available in the app on user request/contribution.
+## Build it yourself
 
-## To Community
-There is the [discussions on GitHub](https://github.com/HeliBorg/HeliBoard/discussions), or if you prefer a more open network there is [Lemmy](https://lemmy.world/c/Heliboard).
-You can share your themes, layouts and dictionaries with other people:
-* Themes can be saved and loaded using the menu on top-right in the _adjust colors_ screen
-  * you can share custom colors in a separate [discussion section](https://github.com/HeliBorg/HeliBoard/discussions/categories/custom-colors)
-  * there are theme collections available at [Star-Trowa/heliboard-themes](https://github.com/Star-Trowa/heliboard-themes) and [PickleHik3/droid-tings](https://github.com/PickleHik3/droid-tings)
-* Custom keyboard layouts are text files whose content you can edit, copy and share
-  * this applies to main keyboard layouts and to special layouts adjustable in advanced settings
-  * see [layouts.md](layouts.md) for details
-  * you can share custom layouts in a separate [discussion section](https://github.com/HeliBorg/HeliBoard/discussions/categories/custom-layout)
-  * [Roccobot's Layout Maker](https://roccobot.github.io/HeliBoard-RLM/) is a browser-based editor for json layout files
-* Creating dictionaries is a little more work
-  * first you will need a wordlist in the format from [here](https://codeberg.org/Helium314/aosp-dictionaries/src/branch/main/wordlists/sample.combined) and in the repository readme
-    * you can load the wordlist dictionary directly in HeliBoard like you would load a dictionary, but other AOSP keyboard forks will likely need the .dict file
-  * then you need to compile the dictionary using [external tools](https://github.com/remi0s/aosp-dictionary-tools)
-    * when you want to add the dictionary to the [repository](https://codeberg.org/Helium314/aosp-dictionaries/), no need to compile to a .dict file
-  * the resulting file (and ideally the wordlist too) can be shared with other users
-  * note that there will not be any further dictionaries added to this app, but you can add dictionaries to the [dictionaries repository](https://codeberg.org/Helium314/aosp-dictionaries)
+The easiest way is GitHub Actions (see `.github/workflows/build.yml`). Fork the repo and push.
 
-## Code Contribution
-See [Contribution Guidelines](CONTRIBUTING.md)
+To build locally you need JDK 21, the Android SDK and NDK 28:
 
-# Links
-* Info
-  * [Wiki](https://github.com/HeliBorg/HeliBoard/wiki), including FAQ, help on customizing layouts, and gesture data gathering
-  * [Layout documentation](layouts.md) (more technical info regarding layout customization)
-  * [For creating custom dictionaries](https://codeberg.org/Helium314/aosp-dictionaries#wordlist-information) (see also top of the linked readme)
-* Community
-  * [Lemmy](https://lemmy.world/c/Heliboard)
-  * [Reddit](https://www.reddit.com/r/HeliBoard)
-  * GitHub [discussions](https://github.com/HeliBorg/HeliBoard/discussions)
-* Other
-  * [Translations](https://translate.codeberg.org/projects/heliboard/)
-  * [Dictionaries](https://codeberg.org/Helium314/aosp-dictionaries)
-  * [k3lp](https://codeberg.org/k3lp/k3lp) is a WIP library for keyboard layout parsing that will be implemented in HeliBoard when ready (created by [FlorisBoard](https://github.com/florisboard/florisboard/) maintainers)
-  * [swipe-o-scope](https://codeberg.org/eclexic/swipe-o-scope) for visualizing gesture data as created when using gesture data gathering
+```bash
+./gradlew :app:assembleDebug
+```
 
-# License
+To get updates that install over the old app, sign every build with the same key. Add two repository secrets,
+`KEYSTORE_BASE64` (a base64-encoded keystore with the alias `urdukb`) and `KEYSTORE_PASSWORD`. Without them the build uses a random
+debug key.
 
-HeliBoard (as a fork of OpenBoard) is licensed under GNU General Public License v3.0.
+## Project layout
 
- > Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights.
+| Path | What it is |
+|---|---|
+| `app/src/main/java/com/paul/urdukb/` | The Roman Urdu parts: setup app, model engine, translate and tone logic, tools panel, glossary, example bank |
+| `app/src/main/java/helium314/keyboard/` | HeliBoard, with small changes (toolbar keys, defaults, tools panel hooks) |
+| `app/src/main/assets/roman_urdu/` | Spelling variant data (see [CREDITS.md](CREDITS.md)) |
+| `tools/convert_ruwv.py` | Converts the spelling data into the file the app reads |
+| `docs/HeliBoard-README.md` | The original HeliBoard README |
 
-See repo's [LICENSE](/LICENSE) file.
+## Status
 
-Since the app is based on Apache 2.0 licensed AOSP Keyboard, an [Apache 2.0](LICENSE-Apache-2.0) license file is provided.
-The icon is licensed under [Creative Commons BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). A [license file](LICENSE-CC-BY-SA-4.0) is also included.
+A personal project, young and changing quickly. Roman Urdu has no standard spelling and a small on-device model makes mistakes,
+so check anything important. Bug reports and ideas are welcome as issues.
 
-# Credits
-- Icon by [Fabian OvrWrt](https://github.com/FabianOvrWrt) with contributions from [The Eclectic Dyslexic](https://github.com/the-eclectic-dyslexic)
-- [OpenBoard](https://github.com/openboard-team/openboard)
-- [AOSP Keyboard](https://android.googlesource.com/platform/packages/inputmethods/LatinIME/)
-- [LineageOS](https://review.lineageos.org/admin/repos/LineageOS/android_packages_inputmethods_LatinIME)
-- [Simple Keyboard](https://github.com/rkkr/simple-keyboard)
-- [Indic Keyboard](https://gitlab.com/indicproject/indic-keyboard)
-- [FlorisBoard](https://github.com/florisboard/florisboard/)
-- Our [contributors](https://github.com/HeliBorg/HeliBoard/graphs/contributors)
+## Credits and licence
 
-## Funding
+Built on HeliBoard (Helium314 and contributors), Google's Gemma 4 and LiteRT-LM, and the RUWV-NSR spelling dataset by
+Mudasar Ahmed. Full credits are in [CREDITS.md](CREDITS.md).
 
-This project is funded through [NGI Mobifree Fund](https://nlnet.nl/mobifree), a fund established by [NLnet](https://nlnet.nl) with financial support from the European Commission's [Next Generation Internet](https://ngi.eu) program. Learn more at the [NLnet project page](https://nlnet.nl/project/GestureTyping).
-
-[<img src="https://nlnet.nl/logo/banner.png" alt="NLnet foundation logo" width="20%" />](https://nlnet.nl)
-
-Further the project benefits from donations provided by many users (thank you all!).
+This project is open source under the **GNU General Public License v3.0**. See [LICENSE](LICENSE).
