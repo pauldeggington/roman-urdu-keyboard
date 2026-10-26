@@ -117,7 +117,7 @@ class MainActivity : Activity() {
         window.statusBarColor = pal.appBg
         window.navigationBarColor = pal.appBg
         val light = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-        window.insetsController?.setSystemBarsAppearance(if (pal.dark) 0 else light, light)
+        window.decorView.windowInsetsController?.setSystemBarsAppearance(if (pal.dark) 0 else light, light)
         val kbEnabled = getSystemService(InputMethodManager::class.java)?.enabledInputMethodList?.any { it.packageName == packageName } == true
         // an update from the old keyboard replaces it with a new one that has to be turned on again
         if (SetupActivity.isDone(this) && !kbEnabled) SetupActivity.resumeAtEnable(this)
