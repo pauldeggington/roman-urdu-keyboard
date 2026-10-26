@@ -78,6 +78,8 @@ adb shell cmd uimode night yes; sleep 2
 for S in WELCOME MODEL ENABLE PERSONAL PRACTICE DONE; do
   adb shell am start -S -n $PKG/.SetupActivity --es step $S > /dev/null 2>&1
   sleep 4; shot app_setup_$S
+  adb logcat -d -t 300 AndroidRuntime:E '*:S' >> $OUT/crash_app.txt 2>&1
+  adb logcat -c
 done
 adb shell am start -n $PKG/.PreviewActivity --ez markdone true > /dev/null 2>&1; sleep 3
 adb shell am start -S -n $PKG/.MainActivity > /dev/null 2>&1; sleep 5
