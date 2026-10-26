@@ -45,6 +45,13 @@ class PopupLayer(context: Context) : View(context) {
 
     override fun onTouchEvent(event: MotionEvent?) = false
 
+    // Must not make the keyboard window taller: take the parent's height only when it is fixed.
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val w = MeasureSpec.getSize(widthMeasureSpec)
+        val h = if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY) MeasureSpec.getSize(heightMeasureSpec) else 0
+        setMeasuredDimension(w, h)
+    }
+
     private fun origin(kb: View): FloatArray {
         val a = IntArray(2); val b = IntArray(2)
         kb.getLocationInWindow(a); getLocationInWindow(b)
