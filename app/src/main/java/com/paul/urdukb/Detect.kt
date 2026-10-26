@@ -41,7 +41,7 @@ object Detect {
 
     enum class Language { ROMAN_URDU, ENGLISH }
 
-    fun guess(text: String): Language {
+    fun guess(text: String, isKnownVariant: (String) -> Boolean = { false }): Language {
         // Any Urdu/Arabic script at all: treat as Urdu script, handled by the caller as RU to EN.
         if (text.any { it in '؀'..'ۿ' }) return Language.ROMAN_URDU
 
@@ -55,7 +55,11 @@ object Detect {
             if (w in URDU && !shared) urdu++
             if (w in ENGLISH && !shared) english++
         }
+        // Roman Urdu spellings the variant data knows, beyond the built-in list. Needs two of them and no English words.
+        var extra = 0
+        for (w in words) if (w.length >= 4 && w !in URDU && w !in ENGLISH && isKnownVariant(w)) extra++
         // Urdu words are weighted a little higher: a single "hai" or "kya" is a strong signal.
-        return if (urdu >= 1 && urdu * 1.5 >= english) Language.ROMAN_URDU else Language.ENGLISH
+        return if ((urdu >= 1 && urdu * 1.5 >= english) || (urdu == 0 && extra >= 2 && english == 0)) Language.ROMAN_URDU
+        else Language.ENGLISH
     }
 }

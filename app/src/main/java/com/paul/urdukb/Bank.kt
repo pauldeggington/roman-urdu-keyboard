@@ -20,7 +20,8 @@ object Bank {
             if (a.isEmpty() || b.isEmpty()) null else a to b
         }
 
-    private fun tokens(s: String): Set<String> = TOKEN.findAll(s.lowercase()).map { it.value }.toSet()
+    private fun tokens(s: String, canon: (String) -> String): Set<String> =
+        TOKEN.findAll(s.lowercase()).map { canon(it.value) }.toSet()
 
     private fun trigrams(s: String): Set<String> {
         val t = " " + s.lowercase().filter { it.isLetter() || it == ' ' } + " "
@@ -29,16 +30,25 @@ object Bank {
     }
 
     /** The [k] closest examples, closest last (models pay most attention to what comes last). */
-    fun pick(bank: List<Pair<String, String>>, input: String, k: Int = 6): List<Pair<String, String>> {
+    /**
+     * [canon] maps every spelling of a word to one key, so "theek", "thik" and "thk" count as the same word
+     * when comparing the message with the examples.
+     */
+    fun pick(
+        bank: List<Pair<String, String>>,
+        input: String,
+        k: Int = 6,
+        canon: (String) -> String = { it },
+    ): List<Pair<String, String>> {
         if (bank.size <= k) return bank
 
-        val docTokens = bank.map { tokens(it.first) }
+        val docTokens = bank.map { tokens(it.first, canon) }
         val df = HashMap<String, Int>()
         for (set in docTokens) for (t in set) df[t] = (df[t] ?: 0) + 1
         val n = bank.size.toDouble()
         fun idf(t: String) = ln((n + 1.0) / ((df[t] ?: 0) + 1.0)) + 1.0
 
-        val q = tokens(input)
+        val q = tokens(input, canon)
         val qGrams = trigrams(input)
         var qWeight = 0.0
         for (t in q) qWeight += idf(t)

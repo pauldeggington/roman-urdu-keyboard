@@ -596,7 +596,7 @@ class MainActivity : Activity() {
         val card = card()
         card.addView(title("Credits"))
         val dataLine = if (VariantMap.available(this))
-            "\n\nSpelling data: RUWV-NSR, Roman Urdu Word Variations and Normalized Sentiment Review Dataset, by Mudasar Ahmed (Quaid-e-Awam University of Engineering, Science and Technology). Mendeley Data, V5, doi:10.17632/v5jfhsvtmd.5. Licence CC BY 4.0. Changes: flattened into a list of spelling variant \u2192 most common spelling. It is used to understand messy spellings in what you type and to spell-check the Roman Urdu output.\nhttps://data.mendeley.com/datasets/v5jfhsvtmd/5"
+            "\n\nSpelling data: RUWV-NSR, Roman Urdu Word Variations and Normalized Sentiment Review Dataset, by Mudasar Ahmed (Quaid-e-Awam University of Engineering, Science and Technology). Mendeley Data, V5, doi:10.17632/v5jfhsvtmd.5. Licence CC BY 4.0. Changes: flattened into a list of spelling variant \u2192 most common spelling. It is used only to recognise different spellings of the same word: when picking examples, when detecting the language, and when applying your spelling glossary.\nhttps://data.mendeley.com/datasets/v5jfhsvtmd/5"
         else ""
         card.addView(TextView(this).apply {
             text = "Keyboard: built on HeliBoard (GPL-3.0) by Helium314 and contributors, which is based on the AOSP Keyboard (Apache 2.0) and OpenBoard.\nhttps://github.com/HeliBorg/HeliBoard" +

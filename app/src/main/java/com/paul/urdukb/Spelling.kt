@@ -4,21 +4,56 @@ import android.content.Context
 import java.io.FileNotFoundException
 
 /**
- * Spelling variants of Roman Urdu words: "variant -> most common spelling".
+ * Spelling variants of Roman Urdu words: "variant -> the dataset's common spelling".
  * Data: RUWV-NSR (Ahmed, M., 2024, Mendeley Data, doi:10.17632/v5jfhsvtmd.5, CC BY 4.0), converted by tools/convert_ruwv.py.
- * The file is optional: without it everything below still works with the built-in shorthand list only.
+ *
+ * The "common" spelling is NOT used as a spelling to write (it is often odd, e.g. shukariya, waqat). It is only used to
+ * recognise that two spellings are the same word. The file is optional: without it everything still works.
  */
 object VariantMap {
 
     @Volatile
     private var cache: Map<String, String>? = null
 
+    @Volatile
+    private var reverseCache: Map<String, List<String>>? = null
+
     fun get(ctx: Context): Map<String, String> = cache ?: load(ctx).also { cache = it }
 
     fun available(ctx: Context): Boolean = get(ctx).isNotEmpty()
 
+    private fun reverse(ctx: Context): Map<String, List<String>> =
+        reverseCache ?: HashMap<String, MutableList<String>>().also { rev ->
+            for ((variant, common) in get(ctx)) rev.getOrPut(common) { mutableListOf() }.add(variant)
+        }.also { reverseCache = it }
+
+    /** A key that is the same for every spelling of a word. Only for matching, never shown or written. */
+    fun canon(ctx: Context, token: String): String {
+        val t = token.lowercase()
+        return get(ctx)[t] ?: t
+    }
+
+    /** True if the dataset knows this as a Roman Urdu spelling variant (and it is not an English word). */
+    fun isKnownVariant(ctx: Context, token: String): Boolean = get(ctx).containsKey(token.lowercase())
+
+    /** Other spellings of the same word. */
+    fun cluster(ctx: Context, word: String): List<String> {
+        val m = get(ctx)
+        if (m.isEmpty()) return emptyList()
+        val rev = reverse(ctx)
+        val w = word.lowercase()
+        val out = LinkedHashSet<String>()
+        rev[w]?.let { out.addAll(it) }
+        m[w]?.let { common ->
+            out.add(common)
+            rev[common]?.let { out.addAll(it) }
+        }
+        out.remove(w)
+        return out.toList()
+    }
+
     private fun load(ctx: Context): Map<String, String> {
-        val out = HashMap<String, String>(32_768)
+        val out = HashMap<String, String>(16_384)
         try {
             ctx.applicationContext.assets.open("roman_urdu/variants.tsv").bufferedReader().useLines { lines ->
                 for (line in lines) {
@@ -39,52 +74,6 @@ object VariantMap {
 
 object Spelling {
 
-    private val TOKEN = Regex("[\\p{L}']+")
-
-    private fun matchCase(source: String, replacement: String): String = when {
-        source.length > 1 && source.all { it.isUpperCase() } -> replacement.uppercase()
-        source.first().isUpperCase() -> replacement.replaceFirstChar { it.uppercase() }
-        else -> replacement
-    }
-
-    /** For Roman Urdu input: spell out shorthand, then map spelling variants to the common spelling. */
-    fun normalizeInput(ctx: Context, text: String): String {
-        val expanded = Shorthand.expand(text)
-        val variants = VariantMap.get(ctx)
-        if (variants.isEmpty()) return expanded
-        return TOKEN.replace(expanded) { m ->
-            val w = m.value
-            val key = w.lowercase()
-            val common = variants[key]
-            if (common == null || common == key || w.length < 3 || Detect.isEnglishWord(key)) w else matchCase(w, common)
-        }
-    }
-
-    /**
-     * For Roman Urdu output: fix odd spellings to the common one, but never touch your own style.
-     * Left alone: anything you wrote in the glossary (either side), words ending in "ay", English words,
-     * and any change that would land on a word your glossary rewrites.
-     */
-    fun checkOutput(ctx: Context, text: String, glossary: List<Pair<String, String>>): String {
-        val variants = VariantMap.get(ctx)
-        if (variants.isEmpty() || text.isEmpty()) return text
-        val mine = HashSet<String>()
-        for ((from, to) in glossary) {
-            mine += from.lowercase()
-            mine += to.lowercase()
-        }
-        return TOKEN.replace(text) { m ->
-            val w = m.value
-            val key = w.lowercase()
-            val common = variants[key]
-            when {
-                common == null || common == key -> w
-                w.length < 3 -> w
-                key.endsWith("ay") -> w
-                key in mine || common.lowercase() in mine -> w
-                Detect.isEnglishWord(key) -> w
-                else -> matchCase(w, common)
-            }
-        }
-    }
+    /** For Roman Urdu input: spell out texting shorthand (kr, nhi, tm ...). The user's spellings are otherwise left as typed. */
+    fun normalizeInput(@Suppress("UNUSED_PARAMETER") ctx: Context, text: String): String = Shorthand.expand(text)
 }

@@ -89,14 +89,13 @@ object LlmEngine {
 
     /** The few examples from the bank that are closest to this text. */
     private fun examples(ctx: Context, style: Style, text: String): List<Pair<String, String>> =
-        Bank.pick(Bank.parse(Prefs.examples(ctx, style)), text, k = 6)
+        Bank.pick(Bank.parse(Prefs.examples(ctx, style)), text, k = 6) { VariantMap.canon(ctx, it) }
 
     /** Blocking. Call from a background thread. */
     @Synchronized
     fun translate(ctx: Context, rawText: String, style: Style): String {
         val eng = getEngine(ctx)
-        // Roman Urdu shorthand and spelling variants (kr, nhi, boht ...) are normalized first, so the model and the
-        // example lookup see real words
+        // Roman Urdu shorthand (kr, nhi, tm ...) is spelled out first, so the model and the example lookup see real words
         val text = if (style == Style.TO_ENGLISH) Spelling.normalizeInput(ctx, rawText) else rawText
         val t0 = System.nanoTime()
         // Spellings only matter for Roman Urdu output
@@ -110,9 +109,9 @@ object LlmEngine {
         return eng.createConversation(config).use { conversation ->
             val reply = runBlocking { conversation.sendMessage(text) }
             val cleaned = clean(reply.toString())
-            // Roman Urdu output: your glossary first, then a safe spell-check against the common spellings
+            // Roman Urdu output: your glossary, which also fixes other spellings of the same word
             val out = if (style == Style.TO_ENGLISH) cleaned
-                else Spelling.checkOutput(ctx, Glossary.apply(glossary, cleaned), glossary)
+                else Glossary.apply(glossary, cleaned) { VariantMap.cluster(ctx, it) }
             Prefs.addTranslation(ctx, (System.nanoTime() - t0) / 1_000_000)
             out
         }

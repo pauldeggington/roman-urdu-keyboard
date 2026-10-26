@@ -20,12 +20,12 @@ The model file is downloaded by the user from Hugging Face and is not part of th
 **RUWV-NSR**: Roman Urdu Word Variations and Normalized Sentiment Review Dataset.
 Mudasar Ahmed, Quaid-e-Awam University of Engineering, Science and Technology (2024).
 Mendeley Data, V5, doi:10.17632/v5jfhsvtmd.5. Licensed under **CC BY 4.0**. https://data.mendeley.com/datasets/v5jfhsvtmd/5
-Changes: the sheet of word variations is flattened into one "variant -> most common spelling" line per variant
-(lower-cased, duplicates and ambiguous variants removed) by `tools/convert_ruwv.py`, and stored as
-`app/src/main/assets/roman_urdu/variants.tsv`. The app uses it to understand messy spellings in the text you type and to
-spell-check Roman Urdu output (never touching your own glossary spellings).
-
-Until `variants.tsv` is added to the repository, those two features use only the app's small built-in shorthand list.
+Changes: the sheet of word variations is flattened into one "variant -> common spelling" line per variant
+(lower-cased; English words, identity lines, ambiguous variants and variants that end differently from the common
+spelling are removed) by `tools/convert_ruwv.py`, and stored as `app/src/main/assets/roman_urdu/variants.tsv`.
+The app uses it only to recognise different spellings of the same word: when picking examples for a message, when
+detecting the language, and when applying the user's spelling glossary. The "common" spelling is never written into
+a translation. The English translation column is not used.
 
 ## Icons
 

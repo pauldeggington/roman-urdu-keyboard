@@ -70,7 +70,7 @@ object RomanUrdu {
         val toEnglish = when (direction(ctx)) {
             DIR_TO_EN -> true
             DIR_TO_RU -> false
-            else -> Detect.guess(text) == Detect.Language.ROMAN_URDU
+            else -> Detect.guess(text) { VariantMap.isKnownVariant(ctx, it) } == Detect.Language.ROMAN_URDU
         }
         return when {
             toEnglish -> Style.TO_ENGLISH

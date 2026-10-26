@@ -27,9 +27,24 @@ object Glossary {
         return "\n- Preferred spellings: write the word on the right instead of the one on the left: $list."
     }
 
-    fun apply(pairs: List<Pair<String, String>>, text: String): String {
+    /**
+     * [cluster] gives other spellings of a word (from the spelling-variant data), so a glossary entry like
+     * "kaise -> kaisay" also fixes kasay, kaysy and kesay. Your own entries always win over those.
+     */
+    fun apply(
+        pairs: List<Pair<String, String>>,
+        text: String,
+        cluster: (String) -> List<String> = { emptyList() },
+    ): String {
         if (pairs.isEmpty() || text.isEmpty()) return text
+        val targets = pairs.map { it.second.lowercase() }.toSet()
         val map = HashMap<String, String>()
+        for ((from, to) in pairs) {
+            for (form in cluster(from)) {
+                val f = form.lowercase()
+                if (f != to.lowercase() && f !in targets) map.putIfAbsent(f, to)
+            }
+        }
         for ((from, to) in pairs) map[from.lowercase()] = to
         val keys = map.keys.sortedByDescending { it.length }.joinToString("|") { Regex.escape(it) }
         val re = Regex("(?<![\\p{L}'])(?:$keys)(?![\\p{L}'])", RegexOption.IGNORE_CASE)
