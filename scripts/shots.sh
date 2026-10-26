@@ -92,12 +92,12 @@ adb shell cmd uimode night yes; sleep 2
 
 adb shell ime enable $IME; adb shell ime set $IME
 # animated demo: one screenshot after every step, stitched into a GIF afterwards
-cp $OUT/keys.txt dump.txt
 mkdir -p $OUT/frames; N=0
 frame() { N=$((N+1)); adb exec-out screencap -p > "$OUT/frames/$(printf %03d $N)${1:+_$1}.png"; }
 tapkey() { read X Y < <(key "$1"); adb shell input tap $X $Y; sleep 0.35; frame; }
 adb shell am start -f 0x10008000 -n $PKG/.PreviewActivity > /dev/null 2>&1; sleep 4
 hook letters; sleep 1; frame; frame
+dump; [ -s dump.txt ] || cp $OUT/keys.txt dump.txt; cp dump.txt $OUT/keys_demo.txt
 for k in k y a space h a a l space h a i; do tapkey $k; done
 frame typed; frame
 hook tools; sleep 1; frame; frame; hook notools; sleep 0.5
