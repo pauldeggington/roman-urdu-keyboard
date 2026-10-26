@@ -51,7 +51,8 @@ class UrduKeyboardService : InputMethodService() {
         top.addView(key("Undo", 1f) { undo() })
         statusView = TextView(this).apply {
             setTextColor(Color.LTGRAY)
-            textSize = 12f
+            textSize = 11f
+            maxLines = 8
             setPadding(dp(8), 0, dp(8), 0)
         }
         top.addView(statusView, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 3f))
@@ -176,7 +177,7 @@ class UrduKeyboardService : InputMethodService() {
             val result: String? = try {
                 LlmEngine.translate(appCtx, text)
             } catch (e: Throwable) {
-                main.post { statusView.text = "Error: ${e.message?.take(80)}" }
+                main.post { statusView.text = "Error: ${e.message?.take(400)}" }
                 null
             }
             main.post {
