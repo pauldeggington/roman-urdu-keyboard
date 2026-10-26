@@ -90,31 +90,27 @@ adb shell cmd uimode night no; sleep 2
 adb shell am start -S -n $PKG/.SetupActivity --es step WELCOME > /dev/null 2>&1; sleep 4; shot app_setup_WELCOME_light
 adb shell cmd uimode night yes; sleep 2
 
-# animated demo: a screen recording of typing, symbols, emoji, tools and the light theme
+# animated demo: one screenshot after every step, stitched into a GIF afterwards
+cp $OUT/keys.txt dump.txt
+mkdir -p $OUT/frames; N=0
+frame() { N=$((N+1)); adb exec-out screencap -p > "$OUT/frames/$(printf %03d $N).png"; }
+tapkey() { read X Y < <(key "$1"); adb shell input tap $X $Y; sleep 0.35; frame; }
 adb shell am start -S -n $PKG/.PreviewActivity > /dev/null 2>&1; sleep 4
-dump
-adb shell screenrecord --size 540x1200 --bit-rate 3000000 --time-limit 40 /sdcard/demo.mp4 &
-REC=$!
-sleep 2
-tapkey() { read X Y < <(key "$1"); adb shell input tap $X $Y; sleep 0.28; }
-hook letters
+hook letters; sleep 1; frame; frame
 for k in k y a space h a a l space h a i; do tapkey $k; done
-sleep 1
-tapkey shift; for k in m a i n space; do tapkey $k; done
-sleep 0.8
-hook tools; sleep 1.6; hook notools; sleep 0.6
-hook symbols1; sleep 1.4; hook symbols2; sleep 1.4; hook letters; sleep 0.8
-hook emoji; sleep 1.6
-adb shell input swipe 540 1900 540 1250 600; sleep 1
-adb shell input swipe 540 1900 540 1250 600; sleep 1
-hook emoticons; sleep 2
+frame; frame
+hook tools; sleep 1; frame; frame; hook notools; sleep 0.5
+read X Y < <(key e); adb shell input swipe $X $Y $X $Y 1800 & sleep 1.1; frame; wait
+hook symbols1; sleep 0.8; frame; hook symbols2; sleep 0.8; frame; hook letters; sleep 0.8; frame
+hook emoji; sleep 1.2; frame; frame
+adb shell input swipe 540 1900 540 1250 400; sleep 0.8; frame
+adb shell input swipe 540 1900 540 1250 400; sleep 0.8; frame
+hook emoticons; sleep 1; frame; frame
 hook letters; sleep 0.8
 adb shell cmd uimode night no; sleep 3
-hook emoji; sleep 1.8
-hook letters; sleep 1.5
-wait $REC 2>/dev/null
-sleep 2
-adb pull /sdcard/demo.mp4 $OUT/demo.mp4
+hook letters; sleep 1; frame; frame
+hook emoji; sleep 1.2; frame; frame
+hook letters; sleep 0.8; frame
 adb logcat -d -s PREVIEW:I > $OUT/preview_log.txt
 adb shell dumpsys window windows > $OUT/windows.txt 2>&1
 adb logcat -d -t 400 *:E > $OUT/errors.txt
