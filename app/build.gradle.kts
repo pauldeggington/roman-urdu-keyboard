@@ -13,8 +13,9 @@ android {
         applicationId = "com.paul.urdukb"
         minSdk = 31
         targetSdk = 37
-        versionCode = 4201
-        versionName = "4.2-urdu"
+        // CI sets these so every release installs over the last one
+        versionCode = System.getenv("VERSION_CODE")?.toIntOrNull() ?: 4201
+        versionName = System.getenv("VERSION_NAME") ?: "4.2-urdu"
         ndk {
             abiFilters.clear()
             abiFilters.addAll(listOf("arm64-v8a"))

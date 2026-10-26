@@ -45,6 +45,14 @@ SPDX-License-Identifier: Apache-2.0 AND GPL-3.0-only
             </intent-filter>
         </activity>
 
+        <!-- First-run setup guide -->
+        <activity android:name="com.paul.urdukb.SetupActivity"
+                android:label="Set up Roman Urdu Keyboard"
+                android:icon="@mipmap/ic_launcher"
+                android:theme="@style/RomanUrduAppTheme"
+                android:windowSoftInputMode="adjustResize"
+                android:exported="false" />
+
         <!-- Services -->
         <service android:name="LatinIME"
                 android:label="@string/english_ime_name"

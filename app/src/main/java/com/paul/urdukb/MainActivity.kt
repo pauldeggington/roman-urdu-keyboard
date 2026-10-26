@@ -117,6 +117,15 @@ class MainActivity : Activity() {
         window.navigationBarColor = pal.appBg
         val light = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
         window.insetsController?.setSystemBarsAppearance(if (pal.dark) 0 else light, light)
+        if (!SetupActivity.isDone(this)) {
+            val enabled = getSystemService(InputMethodManager::class.java)?.enabledInputMethodList?.any { it.packageName == packageName } == true
+            if (LlmEngine.modelExists(this) && enabled) SetupActivity.markDone(this) // set up before the guide existed
+            else {
+                startActivity(Intent(this, SetupActivity::class.java))
+                finish()
+                return
+            }
+        }
         setContentView(buildUi())
         refresh()
         scrollToRequestedSection()
@@ -279,18 +288,21 @@ class MainActivity : Activity() {
         progressText = muted("").apply { visibility = View.GONE }
         card.addView(progressText)
 
-        card.addView(muted("To download: make a free read token at huggingface.co/settings/tokens and accept the Gemma licence on the model page once.").apply {
+        card.addView(muted("Free to download, no account needed. It downloads in the background with a notification, so you can leave the app.").apply {
             setPadding(0, dpi(14f), 0, dpi(6f))
         })
-        tokenEdit = edit("Hugging Face token (hf_…)").apply {
+        tokenEdit = edit("Hugging Face token (optional)").apply {
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             setText(Prefs.token(this@MainActivity))
+            visibility = View.GONE
         }
-        card.addView(tokenEdit)
 
         val row1 = row()
         downloadBtn = button("Download model", true) { startDownload() }
-        cancelBtn = button("Cancel", false, lock = false) { cancelFlag = true }.apply { visibility = View.GONE }
+        cancelBtn = button("Cancel", false, lock = false) {
+            cancelFlag = true
+            if (BackgroundDownload.state(this).active) { BackgroundDownload.cancel(this); refresh() }
+        }.apply { visibility = View.GONE }
         row1.addView(downloadBtn, rowLp())
         row1.addView(cancelBtn, rowLp())
         card.addView(row1)
@@ -320,9 +332,14 @@ class MainActivity : Activity() {
         card.addView(muted("Advanced: model URL").apply {
             setTextColor(pal.primary)
             setPadding(0, dpi(14f), 0, dpi(4f))
-            setOnClickListener { urlEdit.visibility = if (urlEdit.visibility == View.VISIBLE) View.GONE else View.VISIBLE }
+            setOnClickListener {
+                val v = if (urlEdit.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                urlEdit.visibility = v
+                tokenEdit.visibility = v
+            }
         })
         card.addView(urlEdit)
+        card.addView(tokenEdit)
         return card
     }
 
@@ -604,6 +621,10 @@ class MainActivity : Activity() {
         r.addView(button("Turn on", true) { startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS)) }, rowLp())
         r.addView(button("Switch to it", false) { showPicker() }, rowLp())
         card.addView(r)
+        card.addView(button("Run the setup guide again", false, lock = false) {
+            SetupActivity.reset(this)
+            startActivity(Intent(this, SetupActivity::class.java))
+        }, lp().apply { topMargin = dpi(10f) })
         card.addView(button("Keyboard settings: look, layout, glide typing", false) {
             startActivity(Intent(this, helium314.keyboard.settings.SettingsActivity::class.java))
         }, lp().apply { topMargin = dpi(10f) })
@@ -778,7 +799,11 @@ class MainActivity : Activity() {
         paintSegment(dirToEn, d == RomanUrdu.DIR_TO_EN)
     }
 
+    private var pollingDownload = false
+
     private fun refresh() {
+        if (!busy) BackgroundDownload.finishIfDone(this)?.let { runVerify() }
+        val bg = BackgroundDownload.state(this)
         val f = LlmEngine.modelFile(this)
         val part = ModelDownloader.partFile(f)
         val ok = LlmEngine.modelExists(this)
@@ -814,6 +839,22 @@ class MainActivity : Activity() {
                 modelStatus.setTextColor(pal.text)
                 modelDetail.text = "About 2.6 GB. Download it once over Wi-Fi."
             }
+        }
+        if (bg.active) {
+            val pct = if (bg.total > 0) bg.done * 100 / bg.total else 0
+            modelStatus.text = (if (bg.paused) BackgroundDownload.reasonText(bg) else "Downloading in the background") + "  •  $pct%"
+            modelStatus.setTextColor(pal.text)
+            modelDetail.text = gb(bg.done) + (if (bg.total > 0) " of ${gb(bg.total)}" else "") + ". You can leave the app; it keeps going."
+            progressBar.visibility = View.VISIBLE
+            if (bg.total > 0) progressBar.progress = (bg.done * 1000 / bg.total).toInt()
+            if (!pollingDownload) {
+                pollingDownload = true
+                ui.postDelayed({ pollingDownload = false; if (!isFinishing) refresh() }, 1500)
+            }
+        } else if (!busy) progressBar.visibility = View.GONE
+        if (bg.status == android.app.DownloadManager.STATUS_FAILED) {
+            modelStatus.text = BackgroundDownload.reasonText(bg)
+            modelStatus.setTextColor(pal.error)
         }
         downloadBtn.text = when {
             !ok && part.exists() && part.length() > 0 -> "Resume download"
@@ -875,6 +916,8 @@ class MainActivity : Activity() {
         errorText.text = err
 
         setBusy(busy)
+        downloadBtn.visibility = if (bg.active) View.GONE else View.VISIBLE
+        if (bg.active) cancelBtn.visibility = View.VISIBLE
     }
 
     private fun setBusy(b: Boolean) {
@@ -962,18 +1005,25 @@ class MainActivity : Activity() {
 
     private fun startDownload() {
         val token = tokenEdit.text.toString().trim()
-        if (token.isEmpty()) {
-            toast("Paste your Hugging Face token first")
-            tokenEdit.requestFocus()
-            return
-        }
         val dest = LlmEngine.modelFile(this)
-        if (dest.parentFile!!.usableSpace < 3L * 1024 * 1024 * 1024 && !ModelDownloader.partFile(dest).exists()) {
+        dest.parentFile?.mkdirs()
+        if (dest.parentFile!!.usableSpace < 3L * 1024 * 1024 * 1024) {
             toast("You need about 3 GB of free space")
             return
         }
         Prefs.setToken(this, token)
         Prefs.setUrl(this, urlEdit.text.toString())
+        if (dest.exists()) removeModel()
+        BackgroundDownload.start(this, allowMobileData = true)
+        toast("Downloading in the background. You can leave the app.")
+        refresh()
+    }
+
+    /** The old in-app downloader, kept for reference; the system download manager is used now. */
+    @Suppress("unused")
+    private fun startInAppDownload() {
+        val token = tokenEdit.text.toString().trim()
+        val dest = LlmEngine.modelFile(this)
         val url = Prefs.url(this)
         Prefs.setLastError(this, "")
         beginTransfer("Starting…")

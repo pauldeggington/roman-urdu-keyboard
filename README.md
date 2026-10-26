@@ -9,11 +9,17 @@
   It runs Google's Gemma 4 on your phone, so your messages never leave the device.
 </p>
 
+<p align="center">
+  <a href="https://github.com/pauldeggington/roman-urdu-keyboard/releases/latest/download/roman-urdu-keyboard.apk"><b>⬇ Download the APK</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/pauldeggington/roman-urdu-keyboard/releases">All releases</a>
+</p>
+
 ---
 
 Type English in any app, tap **Translate** in the keyboard's toolbar, and the text turns into natural Roman Urdu.
-Type Roman Urdu and it goes the other way. Choose a casual (*tum*) or formal (*aap*) tone, with gender-neutral wording
-and the spellings you prefer (*kaisay*, *chahtay*, *barha*).
+Type Roman Urdu and it goes the other way. Choose a casual (*tum*) or formal (*aap*) tone, say whether you're male, female or prefer neutral wording,
+and use the spellings you prefer (*kaisay*, *chahtay*, *barha*).
 
 It is a fork of [HeliBoard](https://github.com/HeliBorg/HeliBoard), so you get a full keyboard that looks and feels like
 Gboard: suggestions, emoji, clipboard history, one-handed mode and Material You colours.
@@ -24,7 +30,7 @@ Gboard: suggestions, emoji, clipboard history, one-handed mode and Material You 
 - **English → Roman Urdu** and **Roman Urdu → English**, on the phone, with no internet needed after setup.
 - **Auto-detect** which way to translate, or force a direction with the direction key.
 - **Casual or Formal** tone: *tum* or *aap*. The tone key shows the current choice as a word, so you always know.
-- **Gender-neutral** wording by default (*kartay*, *rahay*, *thay*) and *ay* spellings.
+- **Sounds like you:** pick Male, Female or Neutral, so "I'm tired" becomes *Main thak gaya hoon*, *Main thak gayi hoon* or *Hum thak gaye hain*. *ay* spellings throughout.
 - **Tap Translate again to undo** and get your original text back. The key spins while the model is working.
 - **Spelling glossary:** tell it your preferred spellings (*bada → barha*) and they are used every time.
 - **Example bank:** a bank of sentence pairs. For each message the keyboard picks the closest ones to guide the model.
@@ -33,27 +39,29 @@ Gboard: suggestions, emoji, clipboard history, one-handed mode and Material You 
 
 **Keyboard**
 - Gboard-style layout and height, borderless keys, number hints, long-press symbols, swipe the space bar to move the cursor.
-- A **tools panel** (grid button or gear): Translate, Emoji, Theme, Text editing, Resize, One-handed, and the Roman Urdu controls.
+- Gboard-style pill keys, circular key popups, Material Symbols icons and the Google Sans key font. Vibration on key press.
 - **20 colour swatches** or wallpaper colours, light, dark or follow the phone. Pick them in the app.
 - Word suggestions, emoji, clipboard history and glide typing (glide needs Google's swipe library file, see HeliBoard's docs).
 
 **The app**
-- Setup checklist, model download with progress and resume, checksum verification.
+- A **setup guide** on first launch: one step per screen, buttons that jump to the right Android setting, steps that tick themselves off,
+  and a practice box. The model downloads in the background with a notification while you set up the keyboard.
+- Checksum verification of the model, and import from a file if you already have it.
 - A *Try it* box with direction and tone, editable style rules, the example bank and glossary, and speed numbers
   (load time and seconds per translation, CPU or GPU).
 
 ## Install
 
-There are no store releases yet. Every push to `main` builds an APK.
+1. On your Android phone, tap **[Download the APK](https://github.com/pauldeggington/roman-urdu-keyboard/releases/latest/download/roman-urdu-keyboard.apk)**
+   (or open the [Releases](https://github.com/pauldeggington/roman-urdu-keyboard/releases) page and get `roman-urdu-keyboard.apk`).
+2. Open the downloaded file. If Android asks, allow installs from your browser or Files app, then tap **Install**.
+3. Open **Roman Urdu Keyboard**. The setup guide walks you through everything:
+   - **Download the translator** (about 2.6 GB, once, best on Wi-Fi). No account or token needed. It keeps going in the background.
+   - **Turn on the keyboard** and **switch to it**. The buttons open the exact Android screens, and each step ticks itself off.
+   - Choose **Male / Female / Neutral**, your usual tone and a colour, then try a translation.
+4. In any app, type something and tap **Translate** in the toolbar above the keys.
 
-1. Open the **Actions** tab, pick the latest successful **Build APK** run, and download the `roman-urdu-keyboard-debug` artifact.
-   Unzip it on your phone and install `roman-urdu-keyboard.apk` (allow installs from your browser or Files app).
-2. Open **Roman Urdu Keyboard** and follow the **Setup** checklist:
-   - Make a free read token at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens) and accept the licence on the
-     [Gemma 4 E2B model page](https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm).
-   - Paste the token and tap **Download model**. It is about 2.6 GB, so use Wi-Fi. It resumes if interrupted and is checked against Hugging Face's checksum.
-   - Tap **Turn on** and enable *Roman Urdu Keyboard*, then **Switch to it**.
-3. In any text field, type something and tap **Translate** in the toolbar above the keys.
+New versions appear on the Releases page automatically and install over the old one, keeping your settings and the translator.
 
 **Requirements:** Android 12 or newer, an arm64 phone, about 3 GB of free storage, and 6 GB of RAM or more recommended.
 The first translation after a restart is slower while the model loads. If it is slow, try *Use the GPU* in the app.
@@ -62,7 +70,7 @@ The first translation after a restart is slower while the model loads. If it is 
 
 - Translations run **entirely on the device**. No text you type is sent anywhere.
 - The `INTERNET` permission is used only to download the model file and to read its checksum from Hugging Face.
-- Your token, settings, glossary and examples stay on the phone.
+- Your settings, glossary and examples stay on the phone.
 
 ## Build it yourself
 
