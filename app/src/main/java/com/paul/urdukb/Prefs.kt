@@ -52,6 +52,12 @@ I was going to tell you. | Main tumhe batane wala tha."""
 
     fun resetStyle(ctx: Context) = sp(ctx).edit().remove("rules").remove("examples").apply()
 
+    fun stamp(f: java.io.File) = "${f.length()}:${f.lastModified()}"
+    fun verifiedStamp(ctx: Context) = sp(ctx).getString("verified_stamp", "").orEmpty()
+    fun setVerifiedStamp(ctx: Context, v: String) = sp(ctx).edit().putString("verified_stamp", v).apply()
+    fun damagedStamp(ctx: Context) = sp(ctx).getString("damaged_stamp", "").orEmpty()
+    fun setDamagedStamp(ctx: Context, v: String) = sp(ctx).edit().putString("damaged_stamp", v).apply()
+
     fun lastError(ctx: Context) = sp(ctx).getString("last_error", "").orEmpty()
     fun setLastError(ctx: Context, v: String) = sp(ctx).edit().putString("last_error", v).apply()
 }

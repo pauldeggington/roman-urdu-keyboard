@@ -7,6 +7,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.security.MessageDigest
+import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -149,5 +151,78 @@ object ModelDownloader {
                 onProgress(done, total)
             }
         }
+    }
+
+    sealed class Verdict {
+        object Ok : Verdict()
+        class Damaged(val detail: String) : Verdict()
+        class Unknown(val reason: String) : Verdict()
+    }
+
+    /** Asks Hugging Face for the file's real size and SHA-256. Returns (sha256, size) or throws. */
+    private fun expectedFromHub(url: String, token: String): Pair<String, Long> {
+        val u = URL(url)
+        val parts = u.path.trim('/').split('/')
+        if (parts.size < 5 || parts[2] != "resolve") throw IOException("Unrecognised model URL.")
+        val owner = parts[0]
+        val repo = parts[1]
+        val path = parts.drop(4).joinToString("/")
+        val api = URL("https://${u.host}/api/models/$owner/$repo?blobs=true")
+        val c = api.openConnection() as HttpURLConnection
+        try {
+            c.connectTimeout = 20_000
+            c.readTimeout = 30_000
+            c.setRequestProperty("User-Agent", "RomanUrduKeyboard/0.2")
+            if (token.isNotBlank()) c.setRequestProperty("Authorization", "Bearer $token")
+            if (c.responseCode != 200) throw IOException("Hugging Face answered HTTP ${c.responseCode}.")
+            val body = c.inputStream.bufferedReader().use { it.readText() }
+            val siblings = JSONObject(body).getJSONArray("siblings")
+            for (i in 0 until siblings.length()) {
+                val o = siblings.getJSONObject(i)
+                if (o.optString("rfilename") == path) {
+                    val lfs = o.optJSONObject("lfs") ?: throw IOException("No checksum listed for that file.")
+                    return lfs.getString("sha256") to o.optLong("size", lfs.optLong("size", -1L))
+                }
+            }
+            throw IOException("File not listed in the repo.")
+        } finally {
+            c.disconnect()
+        }
+    }
+
+    fun verify(
+        file: File,
+        url: String,
+        token: String,
+        onProgress: (done: Long, total: Long) -> Unit,
+        cancelled: () -> Boolean,
+    ): Verdict {
+        val (sha, size) = try {
+            expectedFromHub(url, token)
+        } catch (t: Throwable) {
+            return Verdict.Unknown("Could not get the checksum from Hugging Face (${t.message}).")
+        }
+        if (size > 0 && file.length() != size) {
+            return Verdict.Damaged("Size is ${file.length()} bytes, Hugging Face says $size.")
+        }
+        val md = MessageDigest.getInstance("SHA-256")
+        file.inputStream().use { ins ->
+            val buf = ByteArray(1 shl 20)
+            var done = 0L
+            var last = 0L
+            while (true) {
+                if (cancelled()) throw CancelledException()
+                val n = ins.read(buf)
+                if (n < 0) break
+                md.update(buf, 0, n)
+                done += n
+                val now = System.nanoTime()
+                if (now - last > 250_000_000L) { onProgress(done, file.length()); last = now }
+            }
+            onProgress(done, file.length())
+        }
+        val actual = md.digest().joinToString("") { "%02x".format(it) }
+        return if (actual.equals(sha, ignoreCase = true)) Verdict.Ok
+        else Verdict.Damaged("Checksum ${actual.take(10)}\u2026 does not match Hugging Face's ${sha.take(10)}\u2026.")
     }
 }

@@ -21,7 +21,8 @@ object LlmEngine {
         val f = modelFile(ctx)
         if (!f.exists() || f.length() == 0L) return false
         val expected = Prefs.modelSize(ctx)
-        return expected == 0L || f.length() == expected
+        if (expected != 0L && f.length() != expected) return false
+        return Prefs.damagedStamp(ctx) != Prefs.stamp(f)
     }
 
     fun setUseGpu(ctx: Context, value: Boolean) {

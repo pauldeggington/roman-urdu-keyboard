@@ -50,6 +50,8 @@ class MainActivity : Activity() {
     private lateinit var cancelBtn: Button
     private lateinit var importBtn: Button
     private lateinit var removeBtn: Button
+    private lateinit var verifyBtn: Button
+    private var phase = ""
     private lateinit var kbStatus: TextView
     private lateinit var tryInput: EditText
     private lateinit var tryOutput: TextView
@@ -166,6 +168,8 @@ class MainActivity : Activity() {
         row2.addView(importBtn, rowLp())
         row2.addView(removeBtn, rowLp())
         card.addView(row2)
+        verifyBtn = button("Check the file is intact", false) { runVerify() }
+        card.addView(verifyBtn, lp().apply { topMargin = dpi(10f) })
 
         urlEdit = edit("Model URL").apply {
             setText(Prefs.url(this@MainActivity))
@@ -384,11 +388,19 @@ class MainActivity : Activity() {
         val ok = LlmEngine.modelExists(this)
         val expected = Prefs.modelSize(this)
 
+        val verified = f.exists() && Prefs.verifiedStamp(this) == Prefs.stamp(f)
+        val damaged = f.exists() && Prefs.damagedStamp(this) == Prefs.stamp(f)
         when {
+            damaged -> {
+                modelStatus.text = "Damaged file  \u2022  ${gb(f.length())}"
+                modelStatus.setTextColor(pal.error)
+                modelDetail.text = "It is the right size but its contents do not match Hugging Face's copy. Remove it and download again."
+            }
             ok -> {
-                modelStatus.text = "Ready  •  ${gb(f.length())}"
+                modelStatus.text = if (verified) "Ready and verified  \u2022  ${gb(f.length())}" else "Ready  \u2022  ${gb(f.length())}"
                 modelStatus.setTextColor(pal.ok)
-                modelDetail.text = "Gemma 4 E2B. Runs on this phone, no internet needed."
+                modelDetail.text = if (verified) "Checksum matches Hugging Face. Runs on this phone, no internet needed."
+                    else "Not checked yet. Tap \u201cCheck the file is intact\u201d if loading fails."
             }
             f.exists() -> {
                 modelStatus.text = "Model file looks incomplete"
@@ -410,6 +422,7 @@ class MainActivity : Activity() {
         }
         downloadBtn.text = if (!ok && part.exists() && part.length() > 0) "Resume download" else if (ok) "Download again" else "Download model"
         removeBtn.visibility = if (f.exists() || part.exists()) View.VISIBLE else View.GONE
+        verifyBtn.visibility = if (f.exists()) View.VISIBLE else View.GONE
 
         val imm = getSystemService(InputMethodManager::class.java)
         val enabled = imm?.enabledInputMethodList?.any { it.packageName == packageName } == true
@@ -458,7 +471,7 @@ class MainActivity : Activity() {
             if (total > 0) progressBar.progress = (done * 1000 / total).toInt()
             val ofTotal = if (total > 0) " of ${gb(total)}" else ""
             val sp = if (speed > 0) "  •  %.1f MB/s".format(speed / 1048576.0) else ""
-            progressText.text = "${gb(done)}$ofTotal$sp"
+            progressText.text = "$phase${gb(done)}$ofTotal$sp"
         }
     }
 
@@ -506,7 +519,9 @@ class MainActivity : Activity() {
                 LlmEngine.reset()
                 val size = ModelDownloader.download(url, token, dest, { d, t -> onProgress(d, t) }) { cancelFlag }
                 Prefs.setModelSize(this, size)
+                verifyInline(dest, token)
             } catch (t: Throwable) {
+                phase = ""
                 err = t
             }
             ui.post { endTransfer(err) }
@@ -527,9 +542,55 @@ class MainActivity : Activity() {
             var err: Throwable? = null
             try {
                 LlmEngine.reset()
-                val size = ModelDownloader.importFrom(this, uri, LlmEngine.modelFile(this), { d, t -> onProgress(d, t) }) { cancelFlag }
+                val dest = LlmEngine.modelFile(this)
+                val size = ModelDownloader.importFrom(this, uri, dest, { d, t -> onProgress(d, t) }) { cancelFlag }
                 Prefs.setModelSize(this, size)
+                verifyInline(dest, tokenEdit.text.toString().trim().ifEmpty { Prefs.token(this) })
             } catch (t: Throwable) {
+                phase = ""
+                err = t
+            }
+            ui.post { endTransfer(err) }
+        }
+    }
+
+    /** Runs on the io thread. Records Verified / Damaged for the current file. */
+    private fun verifyInline(file: File, token: String) {
+        phase = "Checking: "
+        ui.post { progressBar.progress = 0; progressText.text = "Checking the file is intact\u2026" }
+        val verdict = ModelDownloader.verify(file, Prefs.url(this), token, { d, t -> onProgress(d, t) }) { cancelFlag }
+        phase = ""
+        val stamp = Prefs.stamp(file)
+        when (verdict) {
+            is ModelDownloader.Verdict.Ok -> {
+                Prefs.setVerifiedStamp(this, stamp)
+                Prefs.setDamagedStamp(this, "")
+            }
+            is ModelDownloader.Verdict.Damaged -> {
+                Prefs.setVerifiedStamp(this, "")
+                Prefs.setDamagedStamp(this, stamp)
+                Prefs.setLastError(this, "The model file is damaged. ${verdict.detail}")
+            }
+            is ModelDownloader.Verdict.Unknown -> {
+                Prefs.setVerifiedStamp(this, "")
+                Prefs.setDamagedStamp(this, "")
+                ui.post { toast("Could not check the file: ${verdict.reason}") }
+            }
+        }
+    }
+
+    private fun runVerify() {
+        val f = LlmEngine.modelFile(this)
+        if (!f.exists()) return
+        val token = tokenEdit.text.toString().trim().ifEmpty { Prefs.token(this) }
+        Prefs.setLastError(this, "")
+        beginTransfer("Checking the file is intact\u2026")
+        io.execute {
+            var err: Throwable? = null
+            try {
+                verifyInline(f, token)
+            } catch (t: Throwable) {
+                phase = ""
                 err = t
             }
             ui.post { endTransfer(err) }
