@@ -16,6 +16,7 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.text.InputType
+import android.text.util.Linkify
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -156,6 +157,7 @@ class MainActivity : Activity() {
         root.addView(colourCard)
         root.addView(buildSpeedCard())
         root.addView(buildKeyboardCard())
+        root.addView(buildCreditsCard())
         root.addView(buildErrorCard())
 
         scroll = ScrollView(this).apply {
@@ -586,6 +588,29 @@ class MainActivity : Activity() {
         card.addView(muted("Glide typing needs Google's swipe library file, which HeliBoard cannot ship. You can load it under Keyboard settings → Advanced.").apply {
             setPadding(0, dpi(10f), 0, 0)
             textSize = 12.5f
+        })
+        return card
+    }
+
+    private fun buildCreditsCard(): View {
+        val card = card()
+        card.addView(title("Credits"))
+        val dataLine = if (VariantMap.available(this))
+            "\n\nSpelling data: RUWV-NSR, Roman Urdu Word Variations and Normalized Sentiment Review Dataset, by Mudasar Ahmed (Quaid-e-Awam University of Engineering, Science and Technology). Mendeley Data, V5, doi:10.17632/v5jfhsvtmd.5. Licence CC BY 4.0. Changes: flattened into a list of spelling variant \u2192 most common spelling. It is used to understand messy spellings in what you type and to spell-check the Roman Urdu output.\nhttps://data.mendeley.com/datasets/v5jfhsvtmd/5"
+        else ""
+        card.addView(TextView(this).apply {
+            text = "Keyboard: built on HeliBoard (GPL-3.0) by Helium314 and contributors, which is based on the AOSP Keyboard (Apache 2.0) and OpenBoard.\nhttps://github.com/HeliBorg/HeliBoard" +
+                "\n\nTranslation: Google's Gemma 4 running on your phone through LiteRT-LM (Apache 2.0)." +
+                "\n\nIcons: Material Design icons by Google (Apache 2.0)." +
+                dataLine +
+                "\n\nThis app is open source under GPL-3.0.\nhttps://github.com/pauldeggington/roman-urdu-keyboard"
+            textSize = 13f
+            setTextColor(pal.textMuted)
+            setLineSpacing(0f, 1.2f)
+            setPadding(0, dpi(8f), 0, 0)
+            setTextIsSelectable(true)
+            Linkify.addLinks(this, Linkify.WEB_URLS)
+            setLinkTextColor(pal.primary)
         })
         return card
     }

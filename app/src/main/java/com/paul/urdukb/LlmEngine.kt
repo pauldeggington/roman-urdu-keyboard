@@ -95,8 +95,9 @@ object LlmEngine {
     @Synchronized
     fun translate(ctx: Context, rawText: String, style: Style): String {
         val eng = getEngine(ctx)
-        // Roman Urdu shorthand (kr, nhi, tm ...) is spelled out first, so the model and the example lookup see real words
-        val text = if (style == Style.TO_ENGLISH) Shorthand.expand(rawText) else rawText
+        // Roman Urdu shorthand and spelling variants (kr, nhi, boht ...) are normalized first, so the model and the
+        // example lookup see real words
+        val text = if (style == Style.TO_ENGLISH) Spelling.normalizeInput(ctx, rawText) else rawText
         val t0 = System.nanoTime()
         // Spellings only matter for Roman Urdu output
         val glossary = if (style == Style.TO_ENGLISH) emptyList() else Glossary.parse(Prefs.glossary(ctx))
@@ -108,7 +109,10 @@ object LlmEngine {
         // A fresh conversation per translation, so earlier messages never leak into the next one.
         return eng.createConversation(config).use { conversation ->
             val reply = runBlocking { conversation.sendMessage(text) }
-            val out = Glossary.apply(glossary, clean(reply.toString()))
+            val cleaned = clean(reply.toString())
+            // Roman Urdu output: your glossary first, then a safe spell-check against the common spellings
+            val out = if (style == Style.TO_ENGLISH) cleaned
+                else Spelling.checkOutput(ctx, Glossary.apply(glossary, cleaned), glossary)
             Prefs.addTranslation(ctx, (System.nanoTime() - t0) / 1_000_000)
             out
         }

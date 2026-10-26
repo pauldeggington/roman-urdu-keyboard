@@ -1,3 +1,11 @@
+# Roman Urdu Keyboard
+
+An offline Android keyboard that translates English to Roman Urdu and back, using Gemma 4 on the phone.
+It is a fork of [HeliBoard](https://github.com/HeliBorg/HeliBoard) (GPL-3.0). See [CREDITS.md](CREDITS.md) for the people
+and data this project builds on, and `LICENSE` for the licence. The original HeliBoard README follows.
+
+---
+
 # HeliBoard
 HeliBoard is a privacy-conscious and customizable open-source keyboard, based on AOSP / OpenBoard.
 Does not use internet permission, and thus is 100% offline.

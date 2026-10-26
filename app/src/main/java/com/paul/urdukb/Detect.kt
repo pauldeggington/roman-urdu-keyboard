@@ -37,6 +37,8 @@ object Detect {
     // Words that are valid in both languages. They count for neither side.
     private val SHARED = setOf("to", "do", "me", "he", "the", "a", "an", "in", "on", "at", "or", "so", "no", "na", "ho", "hi", "ha", "ye", "ya", "tu", "pe", "be", "us", "it", "is", "as", "ok", "i")
 
+    fun isEnglishWord(word: String): Boolean = word in ENGLISH
+
     enum class Language { ROMAN_URDU, ENGLISH }
 
     fun guess(text: String): Language {
