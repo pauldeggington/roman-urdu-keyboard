@@ -52,6 +52,16 @@ jobs:
           FP=$("$APKSIGNER" verify --print-certs out/roman-urdu-keyboard.apk | grep -i "SHA-256 digest" | head -n 1 || true)
           echo "::notice title=Signing fingerprint::$FP"
 
+      - name: Inspect APK
+        run: |
+          AAPT2=$(ls "$ANDROID_HOME"/build-tools/*/aapt2 | sort -V | tail -n 1)
+          APK=out/roman-urdu-keyboard.apk
+          SIZE=$(du -h "$APK" | cut -f1)
+          PKG=$("$AAPT2" dump badging "$APK" | grep -E "^package:|^launchable-activity:|^sdkVersion" | tr '\n' ' ' | cut -c1-300)
+          LIBS=$(unzip -l "$APK" | grep -o 'lib/[^ ]*\.so' | sed 's#.*/##' | sort | tr '\n' ' ' | cut -c1-400)
+          echo "::notice title=APK::size $SIZE | $PKG"
+          echo "::notice title=Native libs::$LIBS"
+
       - uses: actions/upload-artifact@v4
         with:
           name: roman-urdu-keyboard-debug
