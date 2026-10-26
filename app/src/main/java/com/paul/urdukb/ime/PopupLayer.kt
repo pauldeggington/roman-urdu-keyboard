@@ -73,7 +73,7 @@ class PopupLayer(context: Context) : View(context) {
         items = list
         dir = direction
         sel = selected
-        cols = if (list.size <= 7) list.size else (list.size + 1) / 2
+        cols = if (list.size <= 9) list.size else (list.size + 1) / 2
         val rows = ceil(list.size / cols.toFloat()).toInt()
         anchorCx = o[0] + key.centerX()
         val w = cols * cell

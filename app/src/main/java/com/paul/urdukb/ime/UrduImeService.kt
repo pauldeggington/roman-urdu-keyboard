@@ -422,6 +422,6 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     override fun onFeedback() = feedback()
 
     companion object {
-        const val EXTRA_TOP_DP = 26f
+        const val EXTRA_TOP_DP = 64f
     }
 }
