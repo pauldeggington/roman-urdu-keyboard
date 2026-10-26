@@ -1,5 +1,0 @@
-<!-- Smiley = Casual (tum), briefcase = Formal (aap) -->
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_selected="true" android:drawable="@drawable/ic_rurdu_formal" />
-    <item android:drawable="@drawable/ic_rurdu_casual" />
-</selector>
