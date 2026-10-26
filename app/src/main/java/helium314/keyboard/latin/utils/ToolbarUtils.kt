@@ -90,7 +90,7 @@ fun getCodeForToolbarKey(key: ToolbarKey) = Settings.getInstance().getCustomTool
     DPAD -> KeyCode.DPAD
     UNDO -> KeyCode.UNDO
     REDO -> KeyCode.REDO
-    SETTINGS -> KeyCode.ROMAN_URDU_PANEL
+    SETTINGS -> KeyCode.SETTINGS
     SELECT_ALL -> KeyCode.CLIPBOARD_SELECT_ALL
     SELECT_WORD -> KeyCode.CLIPBOARD_SELECT_WORD
     COPY -> KeyCode.CLIPBOARD_COPY
@@ -168,8 +168,8 @@ val defaultToolbarPref by lazy {
 }
 
 // Roman Urdu: Translate and the Formal/Casual toggle are pinned, so they always show next to the suggestions
-val defaultPinnedToolbarPref = (listOf(TRANSLATE, TONE, DIRECTION) + entries.filterNot { it == CLOSE_HISTORY || it == TRANSLATE || it == TONE || it == DIRECTION })
-    .joinToString(Separators.ENTRY) { it.name + Separators.KV + (it == TRANSLATE || it == TONE || it == DIRECTION) }
+val defaultPinnedToolbarPref = (listOf(TRANSLATE, TONE, DIRECTION, VOICE) + entries.filterNot { it == CLOSE_HISTORY || it == TRANSLATE || it == TONE || it == DIRECTION || it == VOICE })
+    .joinToString(Separators.ENTRY) { it.name + Separators.KV + (it == TRANSLATE || it == TONE || it == DIRECTION || it == VOICE) }
 
 val defaultClipboardToolbarPref by lazy {
     val default = listOf(CLEAR_CLIPBOARD, UP, DOWN, LEFT, RIGHT, UNDO, CUT, COPY, PASTE, SELECT_WORD, CLOSE_HISTORY)
@@ -183,6 +183,11 @@ fun upgradeToolbarPrefs(prefs: SharedPreferences) {
     upgradeToolbarPref(prefs, Settings.PREF_TOOLBAR_KEYS, defaultToolbarPref)
     upgradeToolbarPref(prefs, Settings.PREF_PINNED_TOOLBAR_KEYS, defaultPinnedToolbarPref)
     upgradeToolbarPref(prefs, Settings.PREF_CLIPBOARD_TOOLBAR_KEYS, defaultClipboardToolbarPref)
+    // Gboard look: pin the mic once for installs that predate it
+    if (!prefs.getBoolean("ru_mic_pinned_v1", false)) {
+        if (prefs.contains(Settings.PREF_PINNED_TOOLBAR_KEYS)) addPinnedKey(prefs, VOICE)
+        prefs.edit { putBoolean("ru_mic_pinned_v1", true) }
+    }
 }
 
 private fun upgradeToolbarPref(prefs: SharedPreferences, pref: String, default: String) {

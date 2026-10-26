@@ -933,7 +933,8 @@ public class Key implements Comparable<Key> {
         if (hasActionKeyBackground()) {
             background = actionKeyBackground;
         } else if (hasFunctionalBackground()) {
-            background = functionalKeyBackground;
+            background = (com.paul.urdukb.GboardShapes.active() && !com.paul.urdukb.GboardShapes.isPillKey(mCode))
+                    ? keyBackground : functionalKeyBackground;
         } else if (mBackgroundType == BACKGROUND_TYPE_SPACEBAR) {
             background = spacebarBackground;
         } else {
@@ -1143,10 +1144,11 @@ public class Key implements Comparable<Key> {
             } else {
                 // maybe also always null for comma and period keys
                 final String hintLabel = PopupKeysUtilsKt.getHintLabel(popupSet, params, keySpec);
+                final String shownHint = (hintLabel != null && !hintLabel.matches("\\p{Nd}+")) ? null : hintLabel;
                 mHintLabel = needsToUpcase
-                        ? StringUtils.toTitleCaseOfKeyLabel(hintLabel, localeForUpcasing)
-                        : hintLabel;
-                mHintIconName = mHintLabel != null ? null : PopupKeysUtilsKt.getHintIcon(popupSet, params, keySpec);
+                        ? StringUtils.toTitleCaseOfKeyLabel(shownHint, localeForUpcasing)
+                        : shownHint;
+                mHintIconName = null;
             }
 
             String outputText = KeySpecParser.getOutputText(keySpec, code);

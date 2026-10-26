@@ -29,4 +29,6 @@ a translation. The English translation column is not used.
 
 ## Icons
 
-Material Design icons by Google (Apache 2.0), plus a few simple icons drawn for this app.
+Material Design icons and Material Symbols Rounded by Google (Apache 2.0), plus a few simple icons drawn for this app.
+
+Key labels use Google Sans (text optical size, regular), Copyright 2017 Google Inc., licensed under the SIL Open Font License 1.1. Taken from the Fontsource package of Google Fonts and cut to a static Latin font; license text in docs/licenses/GoogleSans-OFL.txt.

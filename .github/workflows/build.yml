@@ -2,7 +2,7 @@ name: Build APK
 
 on:
   push:
-    branches: [main, heliboard, design-v2]
+    branches: [main, heliboard, design-v2, gboard-match]
   workflow_dispatch:
 
 jobs:

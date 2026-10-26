@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    SPDX-FileCopyrightText: Material Design Authors / Google LLC
-    modified
-    SPDX-License-Identifier: Apache-2.0
--->
+<!-- Material Symbols Rounded "settings-fill" (Google, Apache-2.0), sized to match Gboard -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="960"
     android:viewportHeight="960">
-    <path
-        android:fillColor="#FFF"
-        android:pathData="M405 880q-15 0-26-10t-13-25l-12-93q-13-5-24-12t-23-15l-87 36q-14 6-28 2t-22-18L96 616q-8-13-5-28t15-24l75-57-1-13v-27l1-14-75-57q-12-9-15-24t5-28l74-129q8-13 22-17t28 1l87 36 23-15 24-12 12-93q2-15 13-25t26-10h150q15 0 26 10t13 25l12 93q13 5 25 12t22 15l87-36q14-6 28-1t22 17l74 129q8 13 5 28t-15 24l-75 57 1 14v27l-2 13 75 57q12 9 15 24t-5 28l-74 128q-8 13-22 18t-29-1l-85-36-23 15-24 12-12 93q-2 15-13 25t-26 10H405Zm35-80h79l14-106q31-8 58-23t48-38l99 41 39-68-86-65q5-14 7-29t2-32q0-16-2-31t-7-30l86-65-39-68-99 42q-22-23-48-38t-58-24l-13-106h-79l-14 106q-31 8-57 24t-49 37l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 49 39t57 23l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99 41t-41 99q0 58 41 99t99 41Zm-2-140Z"/>
+    <group android:translateY="960">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M421-80q-14 0-25-9t-13-23l-15-94q-19-7-40-19t-37-25l-86 40q-14 6-28 1.5T155-226L97-330q-8-13-4.5-27t15.5-23l80-59q-2-9-2.5-20.5T185-480q0-9 .5-20.5T188-521l-80-59q-12-9-15.5-23t4.5-27l58-104q8-13 22-17.5t28 1.5l86 40q16-13 37-25t40-18l15-95q2-14 13-23t25-9h118q14 0 25 9t13 23l15 94q19 7 40.5 18.5T669-710l86-40q14-6 27.5-1.5T804-734l59 104q8 13 4.5 27.5T852-580l-80 57q2 10 2.5 21.5t.5 21.5q0 10-.5 21t-2.5 21l80 58q12 8 15.5 22.5T863-330l-58 104q-8 13-22 17.5t-28-1.5l-86-40q-16 13-36.5 25.5T592-206l-15 94q-2 14-13 23t-25 9H421Zm59-270q54 0 92-38t38-92q0-54-38-92t-92-38q-54 0-92 38t-38 92q0 54 38 92t92 38Z"/>
+    </group>
 </vector>

@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    SPDX-FileCopyrightText: Material Design Authors / Google LLC
-    SPDX-License-Identifier: Apache-2.0
--->
+<!-- Material Symbols Rounded "shift-fill" (Google, Apache-2.0), sized to match Gboard -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
+    android:width="28dp"
+    android:height="28dp"
     android:viewportWidth="960"
     android:viewportHeight="960">
-    <path android:fillColor="#FFF"
-        android:pathData="M320,800L320,520L204,520Q178,520 167.5,497.5Q157,475 173,455L449,118Q461,103 480,103Q499,103 511,118L787,455Q803,475 792.5,497.5Q782,520 756,520L640,520L640,800Q640,817 628.5,828.5Q617,840 600,840L360,840Q343,840 331.5,828.5Q320,817 320,800Z"/>
+    <group android:translateY="960">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M320-150v-280H182q-19.36 0-27.18-17t4.18-32l298-371q8.88-11 22.94-11T503-850l298 371q12 15 4.18 32T778-430H640v280q0 12.75-8.62 21.37Q622.75-120 610-120H350q-12.75 0-21.37-8.63Q320-137.25 320-150Z"/>
+    </group>
 </vector>

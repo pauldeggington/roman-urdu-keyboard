@@ -82,11 +82,12 @@ object KeyboardLook {
         val text = hsl(h, 0.30f * k, 0.93f)
         val hint = hsl(h, 0.16f * k, 0.62f)
         return listOf(
-            setting(KeyboardTheme.COLOR_BACKGROUND, hsl(h, 0.22f * k, 0.10f)),
-            setting(KeyboardTheme.COLOR_KEYS, hsl(h, 0.18f * k, 0.15f)),
-            setting(KeyboardTheme.COLOR_FUNCTIONAL_KEYS, hsl(h, 0.26f * k, 0.22f)),
-            setting(KeyboardTheme.COLOR_SPACEBAR, hsl(h, 0.24f * k, 0.20f)),
-            setting(KeyboardTheme.COLOR_ACCENT, hsl(h, 0.34f * k.coerceAtLeast(0.4f), 0.31f)),
+            // tones measured from Gboard dark on a Pixel 8a: background 11%, ?123/enter pill 25%, space/mic 19%
+            setting(KeyboardTheme.COLOR_BACKGROUND, hsl(h, 0.18f * k, 0.11f)),
+            setting(KeyboardTheme.COLOR_KEYS, hsl(h, 0.16f * k, 0.16f)),
+            setting(KeyboardTheme.COLOR_FUNCTIONAL_KEYS, hsl(h, 0.20f * k, 0.255f)),
+            setting(KeyboardTheme.COLOR_SPACEBAR, hsl(h, 0.14f * k, 0.19f)),
+            setting(KeyboardTheme.COLOR_ACCENT, hsl(h, 0.20f * k, 0.255f)),
             setting(KeyboardTheme.COLOR_TEXT, text),
             setting(KeyboardTheme.COLOR_SUGGESTION_TEXT, text),
             setting(KeyboardTheme.COLOR_HINT_TEXT, hint),
@@ -104,9 +105,9 @@ object KeyboardLook {
         return listOf(
             setting(KeyboardTheme.COLOR_BACKGROUND, hsl(h, 0.30f * k, 0.95f)),
             setting(KeyboardTheme.COLOR_KEYS, hsl(h, 0.30f * k, 0.98f)),
-            setting(KeyboardTheme.COLOR_FUNCTIONAL_KEYS, hsl(h, 0.30f * k, 0.87f)),
-            setting(KeyboardTheme.COLOR_SPACEBAR, hsl(h, 0.28f * k, 0.90f)),
-            setting(KeyboardTheme.COLOR_ACCENT, hsl(h, 0.50f * k.coerceAtLeast(0.4f), 0.80f)),
+            setting(KeyboardTheme.COLOR_FUNCTIONAL_KEYS, hsl(h, 0.32f * k, 0.86f)),
+            setting(KeyboardTheme.COLOR_SPACEBAR, hsl(h, 0.24f * k, 0.89f)),
+            setting(KeyboardTheme.COLOR_ACCENT, hsl(h, 0.32f * k, 0.86f)),
             setting(KeyboardTheme.COLOR_TEXT, text),
             setting(KeyboardTheme.COLOR_SUGGESTION_TEXT, text),
             setting(KeyboardTheme.COLOR_HINT_TEXT, hint),

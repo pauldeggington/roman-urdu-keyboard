@@ -22,9 +22,10 @@ object KeyboardTypeface {
     private var emojiTypefaceLoaded = false
 
     private fun loadCustomTypeface(context: Context): Typeface? {
-        return runCatching {
-            Typeface.createFromFile(Settings.getCustomFontFile(context))
-        }.getOrNull()
+        val file = Settings.getCustomFontFile(context)
+        if (file.exists()) runCatching { return Typeface.createFromFile(file) }
+        // Roman Urdu Keyboard: Gboard's key font, Google Sans Text (OFL), bundled so it looks the same on any phone
+        return runCatching { androidx.core.content.res.ResourcesCompat.getFont(context, helium314.keyboard.latin.R.font.google_sans_text) }.getOrNull()
     }
 
     private fun loadCustomEmojiTypeface(context: Context): Typeface? {
