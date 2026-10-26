@@ -179,20 +179,16 @@ class MainActivity : Activity() {
         scroll = ScrollView(this).apply {
             setBackgroundColor(pal.appBg)
             isFillViewport = true
-            clipToPadding = false
+            clipToPadding = true   // content stops at the status bar instead of scrolling under the clock
             addView(root)
         }
         // Android 15+ draws apps edge to edge, so keep the content clear of the status bar,
         // the gesture/navigation bar, the camera cutout and the on-screen keyboard.
-        val baseL = root.paddingLeft
-        val baseT = root.paddingTop
-        val baseR = root.paddingRight
-        val baseB = root.paddingBottom
         scroll.setOnApplyWindowInsetsListener { _, insets ->
             val bars = insets.getInsets(
                 WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout() or WindowInsets.Type.ime()
             )
-            root.setPadding(baseL + bars.left, baseT + bars.top, baseR + bars.right, baseB + bars.bottom)
+            scroll.setPadding(bars.left, bars.top, bars.right, bars.bottom)
             insets
         }
         return scroll
