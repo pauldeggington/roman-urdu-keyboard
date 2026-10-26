@@ -72,7 +72,9 @@ class MainActivity : Activity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var progressText: TextView
     private lateinit var tokenEdit: EditText
-    private lateinit var urlEdit: EditText
+    private lateinit var tokenHelp: TextView
+    private lateinit var modelGemma4: Button
+    private lateinit var modelGemma3: Button
     private lateinit var downloadBtn: Button
     private lateinit var cancelBtn: Button
     private lateinit var removeBtn: Button
@@ -332,6 +334,16 @@ class MainActivity : Activity() {
     private fun buildModelCard(): View {
         val card = card()
         card.addView(title("Model"))
+        val choiceRow = row()
+        modelGemma4 = button("Gemma 4 · 2.6 GB", false, lock = false) { chooseModel(ModelChoice.GEMMA4) }
+        modelGemma3 = button("Gemma 3 · 0.6 GB", false, lock = false) { chooseModel(ModelChoice.GEMMA3) }
+        choiceRow.addView(modelGemma4, rowLp())
+        choiceRow.addView(modelGemma3, rowLp())
+        card.addView(choiceRow)
+        card.addView(muted("Gemma 4 translates Roman Urdu best. Gemma 3 downloads in minutes and answers faster, but is less accurate.").apply {
+            textSize = 12.5f
+            setPadding(0, dpi(6f), 0, 0)
+        })
         modelStatus = TextView(this).apply {
             textSize = 15f
             setPadding(0, dpi(8f), 0, 0)
@@ -351,14 +363,20 @@ class MainActivity : Activity() {
         progressText = muted("").apply { visibility = View.GONE }
         card.addView(progressText)
 
-        card.addView(muted("Free to download, no account needed. It downloads in the background with a notification, so you can leave the app.").apply {
+        card.addView(muted("It downloads in the background with a notification, so you can leave the app.").apply {
             setPadding(0, dpi(14f), 0, dpi(6f))
         })
-        tokenEdit = edit("Hugging Face token (optional)").apply {
+        tokenHelp = muted("Gemma 3 is behind Google's licence. Open the model page and tap Agree (free Hugging Face account), then make a free read token at huggingface.co/settings/tokens and paste it here.").apply {
+            textSize = 12.5f
+            visibility = View.GONE
+        }
+        card.addView(tokenHelp)
+        tokenEdit = edit("Hugging Face token (hf_…)").apply {
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             setText(Prefs.token(this@MainActivity))
             visibility = View.GONE
         }
+        card.addView(tokenEdit)
 
         val row1 = row()
         downloadBtn = button("Download model", true) { startDownload() }
@@ -387,22 +405,6 @@ class MainActivity : Activity() {
         verifyBtn = button("Check the file is intact", false) { runVerify() }
         card.addView(verifyBtn, lp().apply { topMargin = dpi(10f) })
 
-        urlEdit = edit("Model URL").apply {
-            setText(Prefs.url(this@MainActivity))
-            visibility = View.GONE
-            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
-        }
-        card.addView(muted("Advanced: model URL").apply {
-            setTextColor(pal.primary)
-            setPadding(0, dpi(14f), 0, dpi(4f))
-            setOnClickListener {
-                val v = if (urlEdit.visibility == View.VISIBLE) View.GONE else View.VISIBLE
-                urlEdit.visibility = v
-                tokenEdit.visibility = v
-            }
-        })
-        card.addView(urlEdit)
-        card.addView(tokenEdit)
         return card
     }
 
@@ -896,7 +898,7 @@ class MainActivity : Activity() {
             ok -> {
                 modelStatus.text = (if (verified) "Ready and verified" else "Ready") + "  •  ${gb(f.length())}"
                 modelStatus.setTextColor(pal.ok)
-                modelDetail.text = if (verified) "Gemma 4 E2B. Checksum matches Hugging Face."
+                modelDetail.text = if (verified) "${Prefs.modelChoice(this).label}. Checksum matches Hugging Face."
                     else "Not checked yet. Tap “Check the file is intact” if loading fails."
             }
             f.exists() -> {
@@ -913,9 +915,14 @@ class MainActivity : Activity() {
             else -> {
                 modelStatus.text = "No model yet"
                 modelStatus.setTextColor(pal.text)
-                modelDetail.text = "About 2.6 GB. Download it once over Wi-Fi."
+                modelDetail.text = "${Prefs.modelChoice(this).label}, about ${Prefs.modelChoice(this).sizeText}. Download it once over Wi-Fi."
             }
         }
+        val choice = Prefs.modelChoice(this)
+        paintSegment(modelGemma4, choice == ModelChoice.GEMMA4)
+        paintSegment(modelGemma3, choice == ModelChoice.GEMMA3)
+        tokenEdit.visibility = if (choice.needsToken) View.VISIBLE else View.GONE
+        tokenHelp.visibility = tokenEdit.visibility
         if (bg.active) {
             val pct = if (bg.total > 0) bg.done * 100 / bg.total else 0
             modelStatus.text = (if (bg.paused) BackgroundDownload.reasonText(bg) else "Downloading in the background") + "  •  $pct%"
@@ -949,7 +956,7 @@ class MainActivity : Activity() {
 
         // checklist
         checklist.removeAllViews()
-        checklist.addView(checkRow(1, ok && verified, "Get the model", if (ok && !verified) "Installed, not checked yet" else "Gemma 4 E2B, about 2.6 GB", "Get") {
+        checklist.addView(checkRow(1, ok && verified, "Get the model", if (ok && !verified) "Installed, not checked yet" else "${Prefs.modelChoice(this).label}, about ${Prefs.modelChoice(this).sizeText}", "Get") {
             scrollTo(modelCard)
         })
         checklist.addView(checkRow(2, enabled, "Turn on the keyboard", "Settings → On-screen keyboards → Roman Urdu Keyboard", "Turn on") {
@@ -1079,16 +1086,29 @@ class MainActivity : Activity() {
 
     private fun currentToken() = tokenEdit.text.toString().trim().ifEmpty { Prefs.token(this) }
 
+    private fun chooseModel(m: ModelChoice) {
+        if (m == Prefs.modelChoice(this)) return
+        if (BackgroundDownload.state(this).active) BackgroundDownload.cancel(this)
+        Prefs.setModelChoice(this, m)
+        LlmEngine.reset()
+        refresh()
+    }
+
     private fun startDownload() {
         val token = tokenEdit.text.toString().trim()
+        val m = Prefs.modelChoice(this)
         val dest = LlmEngine.modelFile(this)
         dest.parentFile?.mkdirs()
-        if (dest.parentFile!!.usableSpace < 3L * 1024 * 1024 * 1024) {
-            toast("You need about 3 GB of free space")
+        if (m.needsToken && token.length < 8) {
+            toast("Paste your Hugging Face token first")
+            tokenEdit.requestFocus()
+            return
+        }
+        if (dest.parentFile!!.usableSpace < m.approxBytes + 400_000_000L) {
+            toast("You need about ${String.format("%.1f", (m.approxBytes + 400_000_000L) / 1e9)} GB of free space")
             return
         }
         Prefs.setToken(this, token)
-        Prefs.setUrl(this, urlEdit.text.toString())
         if (dest.exists()) removeModel()
         BackgroundDownload.start(this, allowMobileData = true)
         toast("Downloading in the background. You can leave the app.")
