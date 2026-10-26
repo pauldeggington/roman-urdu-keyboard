@@ -76,33 +76,34 @@ sleep 3; shot 13_number_field
 # app screens: setup guide steps, then the main app
 adb shell cmd uimode night yes; sleep 2
 for S in WELCOME MODEL ENABLE PERSONAL PRACTICE DONE; do
-  adb shell am start -S -n $PKG/.SetupActivity --es step $S > /dev/null 2>&1
+  adb shell am start -f 0x10008000 -n $PKG/.SetupActivity --es step $S > /dev/null 2>&1
   sleep 4; shot app_setup_$S
   adb logcat -d -t 300 AndroidRuntime:E '*:S' >> $OUT/crash_app.txt 2>&1
   adb logcat -c
 done
 adb shell am start -n $PKG/.PreviewActivity --ez markdone true > /dev/null 2>&1; sleep 3
-adb shell am start -S -n $PKG/.MainActivity > /dev/null 2>&1; sleep 5
+adb shell am start -f 0x10008000 -n $PKG/.MainActivity > /dev/null 2>&1; sleep 5
 shot app_main_1
 adb shell input swipe 540 1900 540 700 500; sleep 1; shot app_main_2
 adb shell input swipe 540 1900 540 700 500; sleep 1; shot app_main_3
 adb shell cmd uimode night no; sleep 2
-adb shell am start -S -n $PKG/.SetupActivity --es step WELCOME > /dev/null 2>&1; sleep 4; shot app_setup_WELCOME_light
+adb shell am start -f 0x10008000 -n $PKG/.SetupActivity --es step WELCOME > /dev/null 2>&1; sleep 4; shot app_setup_WELCOME_light
 adb shell cmd uimode night yes; sleep 2
 
+adb shell ime enable $IME; adb shell ime set $IME
 # animated demo: one screenshot after every step, stitched into a GIF afterwards
 cp $OUT/keys.txt dump.txt
 mkdir -p $OUT/frames; N=0
-frame() { N=$((N+1)); adb exec-out screencap -p > "$OUT/frames/$(printf %03d $N).png"; }
+frame() { N=$((N+1)); adb exec-out screencap -p > "$OUT/frames/$(printf %03d $N)${1:+_$1}.png"; }
 tapkey() { read X Y < <(key "$1"); adb shell input tap $X $Y; sleep 0.35; frame; }
-adb shell am start -S -n $PKG/.PreviewActivity > /dev/null 2>&1; sleep 4
+adb shell am start -f 0x10008000 -n $PKG/.PreviewActivity > /dev/null 2>&1; sleep 4
 hook letters; sleep 1; frame; frame
 for k in k y a space h a a l space h a i; do tapkey $k; done
-frame; frame
+frame typed; frame
 hook tools; sleep 1; frame; frame; hook notools; sleep 0.5
 read X Y < <(key e); adb shell input swipe $X $Y $X $Y 1800 & sleep 1.1; frame; wait
 hook symbols1; sleep 0.8; frame; hook symbols2; sleep 0.8; frame; hook letters; sleep 0.8; frame
-hook emoji; sleep 1.2; frame; frame
+hook emoji; sleep 1.2; frame emoji; frame
 adb shell input swipe 540 1900 540 1250 400; sleep 0.8; frame
 adb shell input swipe 540 1900 540 1250 400; sleep 0.8; frame
 hook emoticons; sleep 1; frame; frame
