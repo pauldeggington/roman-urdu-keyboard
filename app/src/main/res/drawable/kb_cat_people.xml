@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Material Symbols Rounded "emoji_people" (Google, Apache-2.0) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="960" android:viewportHeight="960">
+    <group android:translateY="960">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M368-110v-508q-88-18-144.5-77T159-832q-1-11 8-17.5t21-6.5q11 0 20.5 6.5T220-832q10 69 68 114.5T426-672h100q38 0 56 6.5t46 30.5l161 151q10 9 10 21.5t-9 21.5q-9 9-21 9t-21-8L584-594v484q0 13-8.5 21.5T554-80q-13 0-21.5-8.5T524-110v-225h-96v225q0 13-8.5 21.5T398-80q-13 0-21.5-8.5T368-110Zm56.5-645.5Q403-777 403-807t21.5-51.5Q446-880 476-880t51.5 21.5Q549-837 549-807t-21.5 51.5Q506-734 476-734t-51.5-21.5Z"/>
+    </group>
+</vector>

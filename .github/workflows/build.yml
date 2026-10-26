@@ -2,7 +2,7 @@ name: Build APK
 
 on:
   push:
-    branches: [main, heliboard, design-v2, gboard-match, speaker-fix, setup-guide, fix-setup, browser-update]
+    branches: [main, heliboard, design-v2, gboard-match, speaker-fix, setup-guide, fix-setup, browser-update, rewrite]
   workflow_dispatch:
 
 permissions:

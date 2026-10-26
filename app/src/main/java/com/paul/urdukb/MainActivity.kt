@@ -33,8 +33,7 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.edit
-import helium314.keyboard.latin.R
-import helium314.keyboard.latin.utils.prefs
+import com.paul.urdukb.ime.Kb
 import java.io.File
 import java.util.concurrent.Executors
 
@@ -492,21 +491,17 @@ class MainActivity : Activity() {
         val who = row()
         lateinit var male: Button
         lateinit var female: Button
-        lateinit var neutral: Button
         fun paintWho() {
             val v = Speaker.get(this)
             paintSegment(male, v == Speaker.MALE)
             paintSegment(female, v == Speaker.FEMALE)
-            paintSegment(neutral, v == Speaker.NEUTRAL)
         }
         male = button("Male", false, lock = false) { Speaker.set(this, Speaker.MALE); paintWho(); toast("Main kar raha hoon") }
         female = button("Female", false, lock = false) { Speaker.set(this, Speaker.FEMALE); paintWho(); toast("Main kar rahi hoon") }
-        neutral = button("Neutral", false, lock = false) { Speaker.set(this, Speaker.NEUTRAL); paintWho(); toast("Hum kar rahay hain") }
         who.addView(male, rowLp())
         who.addView(female, rowLp())
-        who.addView(neutral, rowLp())
         card.addView(who)
-        card.addView(muted("How the translation talks about you: \"I'm tired\" becomes \"Main thak gaya hoon\", \"Main thak gayi hoon\" or \"Hum thak gaye hain\"."))
+        card.addView(muted("How the translation talks about you: \"I'm tired\" becomes \"Main thak gaya hoon\" or \"Main thak gayi hoon\"."))
         paintWho()
 
         styleBody = LinearLayout(this).apply {
@@ -675,27 +670,44 @@ class MainActivity : Activity() {
         return card
     }
 
+    private fun switchRow(card: LinearLayout, label: String, sub: String, key: String, default: Boolean) {
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(0, dpi(12f), 0, 0)
+        }
+        val texts = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        texts.addView(TextView(this).apply { text = label; textSize = 15f; setTextColor(pal.text) })
+        if (sub.isNotEmpty()) texts.addView(muted(sub).apply { textSize = 12.5f })
+        row.addView(texts, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+        row.addView(Switch(this).apply {
+            isChecked = Kb.bool(this@MainActivity, key, default)
+            contentDescription = label
+            setOnCheckedChangeListener { _, v -> Kb.prefs(this@MainActivity).edit { putBoolean(key, v) } }
+        })
+        card.addView(row)
+    }
+
     private fun buildKeyboardCard(): View {
         val card = card()
         card.addView(title("Keyboard"))
-        card.addView(muted("Built on HeliBoard. Translate and the tone switch are pinned in the toolbar above the keys. Long-press either one to open this app.").apply {
+        card.addView(muted("Translate, Casual/Formal and Auto are in the bar above the keys. The mic uses your phone's voice typing.").apply {
             setPadding(0, dpi(6f), 0, 0)
         })
         val r = row()
         r.addView(button("Turn on", true) { startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS)) }, rowLp())
         r.addView(button("Switch to it", false) { showPicker() }, rowLp())
         card.addView(r)
+        switchRow(card, "Vibrate on key press", "", Kb.PREF_VIBRATE, true)
+        switchRow(card, "Sound on key press", "", Kb.PREF_SOUND, false)
+        switchRow(card, "Popup on key press", "The bubble above the key you touch", Kb.PREF_PREVIEW, true)
+        switchRow(card, "Capital letter after . ? !", "Starts sentences with a capital", Kb.PREF_AUTOCAP, true)
+        switchRow(card, "Double space types a full stop", "", Kb.PREF_DOUBLE_SPACE, true)
+        switchRow(card, "Number hints on the top row", "The small 1 to 0; long-press a key to type it", Kb.PREF_HINTS, true)
         card.addView(button("Run the setup guide again", false, lock = false) {
             SetupActivity.reset(this)
             startActivity(Intent(this, SetupActivity::class.java))
-        }, lp().apply { topMargin = dpi(10f) })
-        card.addView(button("Keyboard settings: look, layout, glide typing", false) {
-            startActivity(Intent(this, helium314.keyboard.settings.SettingsActivity::class.java))
-        }, lp().apply { topMargin = dpi(10f) })
-        card.addView(muted("Glide typing needs Google's swipe library file, which HeliBoard cannot ship. You can load it under Keyboard settings → Advanced.").apply {
-            setPadding(0, dpi(10f), 0, 0)
-            textSize = 12.5f
-        })
+        }, lp().apply { topMargin = dpi(16f) })
         return card
     }
 
@@ -706,9 +718,9 @@ class MainActivity : Activity() {
             "\n\nSpelling data: RUWV-NSR, Roman Urdu Word Variations and Normalized Sentiment Review Dataset, by Mudasar Ahmed (Quaid-e-Awam University of Engineering, Science and Technology). Mendeley Data, V5, doi:10.17632/v5jfhsvtmd.5. Licence CC BY 4.0. Changes: flattened into a list of spelling variant \u2192 most common spelling. It is used only to recognise different spellings of the same word: when picking examples, when detecting the language, and when applying your spelling glossary.\nhttps://data.mendeley.com/datasets/v5jfhsvtmd/5"
         else ""
         card.addView(TextView(this).apply {
-            text = "Keyboard: built on HeliBoard (GPL-3.0) by Helium314 and contributors, which is based on the AOSP Keyboard (Apache 2.0) and OpenBoard.\nhttps://github.com/HeliBorg/HeliBoard" +
+            text = "Keyboard: written for this app, styled after Gboard. It started as a fork of HeliBoard (GPL-3.0) by Helium314 and contributors.\nhttps://github.com/HeliBorg/HeliBoard" +
                 "\n\nTranslation: Google's Gemma 4 running on your phone through LiteRT-LM (Apache 2.0)." +
-                "\n\nIcons: Material Design icons by Google (Apache 2.0)." +
+                "\n\nIcons: Material Symbols by Google (Apache 2.0). Key font: Google Sans (SIL Open Font License). Emoji list: unicode-emoji-json (MIT) from Unicode data." +
                 dataLine +
                 "\n\nThis app is open source under GPL-3.0.\nhttps://github.com/pauldeggington/roman-urdu-keyboard"
             textSize = 13f
@@ -846,13 +858,13 @@ class MainActivity : Activity() {
     // ================================================================ state
 
     private fun setTone(formal: Boolean) {
-        prefs().edit { putBoolean(RomanUrdu.PREF_TONE, formal) }
+        Kb.prefs(this).edit { putBoolean(RomanUrdu.PREF_TONE, formal) }
         paintSegment(tryCasual, !formal)
         paintSegment(tryFormal, formal)
     }
 
     private fun setDirection(dir: String) {
-        prefs().edit { putString(RomanUrdu.PREF_DIRECTION, dir) }
+        Kb.prefs(this).edit { putString(RomanUrdu.PREF_DIRECTION, dir) }
         paintDirection()
     }
 

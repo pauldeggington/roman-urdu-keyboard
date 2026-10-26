@@ -58,7 +58,7 @@ Rules:
 
     /**
      * Normal (credential-protected) storage, same place earlier versions used.
-     * HeliBoard reaches its own device-protected storage explicitly, so the app default stays normal.
+     * The keyboard and the app share this normal storage.
      */
     fun store(ctx: Context): Context = ctx.applicationContext
 

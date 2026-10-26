@@ -32,8 +32,7 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.edit
-import helium314.keyboard.latin.R
-import helium314.keyboard.latin.utils.prefs
+import com.paul.urdukb.ime.Kb
 import java.util.concurrent.Executors
 
 /**
@@ -450,16 +449,16 @@ class SetupActivity : Activity() {
 
         content.addView(label("I am"))
         val who = segments(
-            listOf(Speaker.MALE to "Male", Speaker.FEMALE to "Female", Speaker.NEUTRAL to "Neutral"),
+            listOf(Speaker.MALE to "Male", Speaker.FEMALE to "Female"),
             Speaker.get(this),
         ) { Speaker.set(this, it) }
         content.addView(who)
-        content.addView(small("\"I'm tired\" becomes \"Main thak gaya hoon\", \"Main thak gayi hoon\" or \"Hum thak gaye hain\".").apply { setPadding(0, dpi(6f), 0, 0) })
+        content.addView(small("\"I'm tired\" becomes \"Main thak gaya hoon\" or \"Main thak gayi hoon\".").apply { setPadding(0, dpi(6f), 0, 0) })
 
         content.addView(label("How you usually talk"))
         val tone = segments(listOf("casual" to "Casual · tum", "formal" to "Formal · aap"),
             if (RomanUrdu.isFormal(this)) "formal" else "casual") { v ->
-            prefs().edit { putBoolean(RomanUrdu.PREF_TONE, v == "formal") }
+            Kb.prefs(this).edit { putBoolean(RomanUrdu.PREF_TONE, v == "formal") }
         }
         content.addView(tone)
         content.addView(small("You can switch any time with the Casual / Formal key on the keyboard.").apply { setPadding(0, dpi(6f), 0, 0) })
@@ -503,7 +502,7 @@ class SetupActivity : Activity() {
         content.addView(heading("Try it"))
         content.addView(body("Type a sentence in English, then tap the Translate key above the letters."))
         val keys = card().apply { (layoutParams as LinearLayout.LayoutParams).topMargin = dpi(12f) }
-        keys.addView(keyTip(R.drawable.ic_rurdu_translate, "Translate", "Turns your text into Roman Urdu. Tap again to undo."))
+        keys.addView(keyTip(R.drawable.kb_translate, "Translate", "Turns your text into Roman Urdu. Tap again to undo."))
         keys.addView(keyTip(R.drawable.ic_setup_mood, "Casual / Formal", "tum for friends and family, aap for elders and work."))
         keys.addView(keyTip(R.drawable.ic_setup_swap, "Auto", "Works out the direction. Tap to force English → Roman Urdu or back."))
         content.addView(keys)
