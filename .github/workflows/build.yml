@@ -21,7 +21,13 @@ jobs:
           gradle-version: 8.9
 
       - name: Build debug APK
-        run: gradle assembleDebug --no-daemon --stacktrace
+        run: |
+          set -o pipefail
+          if ! gradle assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log; then
+            msg=$(grep -E -A6 "^e: |What went wrong|error:" build.log | head -60 | sed 's/%/%25/g' | awk '{printf "%s%%0A", substr($0,1,300)}')
+            echo "::error title=Build failed::$msg"
+            exit 1
+          fi
 
       - uses: actions/upload-artifact@v4
         with:
