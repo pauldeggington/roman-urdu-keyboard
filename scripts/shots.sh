@@ -73,19 +73,19 @@ adb shell am start -n $PKG/.PreviewActivity --es type number
 sleep 3; shot 13_number_field
 
 # ---------------------------------------------------------------- README material
-# app screens: setup guide steps, then the main app
+# app screens: the main app first (setup marked done), then every setup step
 adb shell cmd uimode night yes; sleep 2
+adb shell am start -f 0x10008000 -n $PKG/.PreviewActivity --ez markdone true > /dev/null 2>&1; sleep 3
+adb shell am start -f 0x10008000 -n $PKG/.MainActivity > /dev/null 2>&1; sleep 5
+shot app_main_1
+adb shell input swipe 540 1900 540 700 500; sleep 1; shot app_main_2
+adb shell input swipe 540 1900 540 700 500; sleep 1; shot app_main_3
 for S in WELCOME MODEL ENABLE PERSONAL PRACTICE DONE; do
   adb shell am start -f 0x10008000 -n $PKG/.SetupActivity --es step $S > /dev/null 2>&1
   sleep 4; shot app_setup_$S
   adb logcat -d -t 300 AndroidRuntime:E '*:S' >> $OUT/crash_app.txt 2>&1
   adb logcat -c
 done
-adb shell am start -n $PKG/.PreviewActivity --ez markdone true > /dev/null 2>&1; sleep 3
-adb shell am start -f 0x10008000 -n $PKG/.MainActivity > /dev/null 2>&1; sleep 5
-shot app_main_1
-adb shell input swipe 540 1900 540 700 500; sleep 1; shot app_main_2
-adb shell input swipe 540 1900 540 700 500; sleep 1; shot app_main_3
 adb shell cmd uimode night no; sleep 2
 adb shell am start -f 0x10008000 -n $PKG/.SetupActivity --es step WELCOME > /dev/null 2>&1; sleep 4; shot app_setup_WELCOME_light
 adb shell cmd uimode night yes; sleep 2
