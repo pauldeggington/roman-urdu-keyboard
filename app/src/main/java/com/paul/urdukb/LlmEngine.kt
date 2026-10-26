@@ -88,8 +88,15 @@ object LlmEngine {
     }
 
     /** The few examples from the bank that are closest to this text. */
-    private fun examples(ctx: Context, style: Style, text: String): List<Pair<String, String>> =
-        Bank.pick(Bank.parse(Prefs.examples(ctx, style)), text, k = 6) { VariantMap.canon(ctx, it) }
+    private fun examples(ctx: Context, style: Style, text: String): List<Pair<String, String>> {
+        val picked = Bank.pick(Bank.parse(Prefs.examples(ctx, style)), text, k = 6) { VariantMap.canon(ctx, it) }
+        // the bank is written for a male speaker; match the chosen speaker so the examples agree with the rules
+        return if (style == Style.TO_ENGLISH) picked else picked.map { (en, ur) -> en to Speaker.adapt(ctx, ur) }
+    }
+
+    private fun systemPrompt(ctx: Context, style: Style, glossary: List<Pair<String, String>>): String =
+        if (style == Style.TO_ENGLISH) Prefs.rules(ctx, style)
+        else Speaker.stripOldRules(Prefs.rules(ctx, style)) + Speaker.rules(ctx) + Glossary.promptBlock(glossary)
 
     /** Blocking. Call from a background thread. */
     @Synchronized
@@ -101,7 +108,7 @@ object LlmEngine {
         // Spellings only matter for Roman Urdu output
         val glossary = if (style == Style.TO_ENGLISH) emptyList() else Glossary.parse(Prefs.glossary(ctx))
         val config = ConversationConfig(
-            systemInstruction = Contents.of(Prefs.rules(ctx, style) + Glossary.promptBlock(glossary)),
+            systemInstruction = Contents.of(systemPrompt(ctx, style, glossary)),
             initialMessages = examples(ctx, style, text).flatMap { (en, ur) -> listOf(Message.user(en), Message.model(ur)) },
             samplerConfig = SamplerConfig(topK = 40, topP = 0.95, temperature = 0.3),
         )

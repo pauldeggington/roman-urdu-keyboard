@@ -406,6 +406,28 @@ class MainActivity : Activity() {
         card.addView(header)
         card.addView(muted("The rules, example bank and spellings the model follows. Rules and examples are separate for Casual, Formal and To English; the glossary is shared."))
 
+        // who "I" is, so "I'm tired" becomes "Main thak gaya hoon" and never reads as "you"
+        card.addView(label("I am"))
+        val who = row()
+        lateinit var male: Button
+        lateinit var female: Button
+        lateinit var neutral: Button
+        fun paintWho() {
+            val v = Speaker.get(this)
+            paintSegment(male, v == Speaker.MALE)
+            paintSegment(female, v == Speaker.FEMALE)
+            paintSegment(neutral, v == Speaker.NEUTRAL)
+        }
+        male = button("Male", false, lock = false) { Speaker.set(this, Speaker.MALE); paintWho(); toast("Main kar raha hoon") }
+        female = button("Female", false, lock = false) { Speaker.set(this, Speaker.FEMALE); paintWho(); toast("Main kar rahi hoon") }
+        neutral = button("Neutral", false, lock = false) { Speaker.set(this, Speaker.NEUTRAL); paintWho(); toast("Hum kar rahay hain") }
+        who.addView(male, rowLp())
+        who.addView(female, rowLp())
+        who.addView(neutral, rowLp())
+        card.addView(who)
+        card.addView(muted("How the translation talks about you: \"I'm tired\" becomes \"Main thak gaya hoon\", \"Main thak gayi hoon\" or \"Hum thak gaye hain\"."))
+        paintWho()
+
         styleBody = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             visibility = View.GONE
