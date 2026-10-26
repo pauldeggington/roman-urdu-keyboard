@@ -1030,6 +1030,11 @@ class SetupActivity : Activity() {
         fun markDone(ctx: Context) =
             Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE).edit().putBoolean(PREF_DONE, true).apply()
 
+        /** The keyboard changed (an update replaced it), so ask the person to turn the new one on. */
+        fun resumeAtEnable(ctx: Context) =
+            Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE).edit()
+                .putBoolean(PREF_DONE, false).putString(PREF_STEP, Step.ENABLE.name).apply()
+
         fun reset(ctx: Context) =
             Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE).edit().putBoolean(PREF_DONE, false).remove(PREF_STEP).apply()
     }
