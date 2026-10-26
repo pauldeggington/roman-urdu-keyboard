@@ -4,11 +4,8 @@ Roman Urdu Keyboard is open source under the GNU General Public License v3.0 (se
 
 ## Keyboard
 
-Built on **HeliBoard** by Helium314 and contributors (GPL-3.0), which is based on the **AOSP Keyboard**
-(Apache 2.0) and **OpenBoard**. https://github.com/HeliBorg/HeliBoard
-The original licence files (`LICENSE`, `LICENSE-Apache-2.0`, `LICENSE-CC-BY-SA-4.0`) are kept in this repository.
-Changes in this fork: the Roman Urdu translate, tone and direction toolbar keys, the tools panel, a Gboard-like default
-look and height, and the setup app (`app/src/main/java/com/paul/urdukb`).
+Written from scratch for this app (`app/src/main/java/com/paul/urdukb`). The look follows Gboard's proportions
+(key sizes, pill keys, popups) using the fonts and icons credited below.
 
 ## Translation
 
@@ -29,6 +26,6 @@ a translation. The English translation column is not used.
 
 ## Icons
 
-Material Design icons and Material Symbols Rounded by Google (Apache 2.0), plus a few simple icons drawn for this app.
+Material Symbols Rounded by Google (Apache 2.0; licence text in `LICENSE-Apache-2.0`), plus a few simple icons drawn for this app.
 
 Key labels use Google Sans (text optical size, regular), Copyright 2017 Google Inc., licensed under the SIL Open Font License 1.1. Taken from the Fontsource package of Google Fonts and cut to a static Latin font; license text in docs/licenses/GoogleSans-OFL.txt.

@@ -723,7 +723,7 @@ class MainActivity : Activity() {
             "\n\nSpelling data: RUWV-NSR, Roman Urdu Word Variations and Normalized Sentiment Review Dataset, by Mudasar Ahmed (Quaid-e-Awam University of Engineering, Science and Technology). Mendeley Data, V5, doi:10.17632/v5jfhsvtmd.5. Licence CC BY 4.0. Changes: flattened into a list of spelling variant \u2192 most common spelling. It is used only to recognise different spellings of the same word: when picking examples, when detecting the language, and when applying your spelling glossary.\nhttps://data.mendeley.com/datasets/v5jfhsvtmd/5"
         else ""
         card.addView(TextView(this).apply {
-            text = "Keyboard: written for this app, styled after Gboard. It started as a fork of HeliBoard (GPL-3.0) by Helium314 and contributors.\nhttps://github.com/HeliBorg/HeliBoard" +
+            text = "Keyboard: written for this app and styled after Gboard." +
                 "\n\nTranslation: Google's Gemma 4 running on your phone through LiteRT-LM (Apache 2.0)." +
                 "\n\nIcons: Material Symbols by Google (Apache 2.0). Key font: Google Sans (SIL Open Font License). Emoji list: unicode-emoji-json (MIT) from Unicode data." +
                 dataLine +
@@ -765,7 +765,8 @@ class MainActivity : Activity() {
 
     private fun lp() = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
-    private fun rowLp() = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { marginEnd = dpi(8f) }
+    // MATCH_PARENT height: every button in a row is as tall as the tallest one, so a label that wraps never squashes its neighbour
+    private fun rowLp() = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f).apply { marginEnd = dpi(8f) }
 
     private fun row() = LinearLayout(this).apply {
         orientation = LinearLayout.HORIZONTAL
@@ -825,7 +826,11 @@ class MainActivity : Activity() {
             elevation = 0f
             minHeight = dpi(44f)
             minimumHeight = dpi(44f)
-            setPadding(dpi(14f), 0, dpi(14f), 0)
+            gravity = Gravity.CENTER
+            setPadding(dpi(10f), 0, dpi(10f), 0)
+            maxLines = 2
+            // long labels shrink a little instead of breaking onto a second line
+            setAutoSizeTextTypeUniformWithConfiguration(11, 14, 1, android.util.TypedValue.COMPLEX_UNIT_SP)
             setOnClickListener { onClick() }
         }
         styleButton(b, filled)

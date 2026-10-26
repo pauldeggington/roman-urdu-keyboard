@@ -36,7 +36,7 @@
             android:label="Set up Roman Urdu Keyboard"
             android:theme="@style/RomanUrduAppTheme"
             android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
+            android:exported="${previewExported}" />
 
         <!-- a plain text box, used to look at the keyboard (screenshots in CI) -->
         <activity android:name=".PreviewActivity"

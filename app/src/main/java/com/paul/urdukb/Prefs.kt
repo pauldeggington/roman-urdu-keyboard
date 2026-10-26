@@ -7,7 +7,7 @@ import java.io.File
 /**
  * Settings for the Roman Urdu parts.
  * Stored in normal (credential-protected) storage, where the earlier versions of this app kept them,
- * so the downloaded model, token and style survive the switch to the HeliBoard base.
+ * so the downloaded model, token and style survive updates.
  */
 /** The translation models the app can use. */
 enum class ModelChoice(
@@ -106,7 +106,7 @@ Rules:
     fun modelSize(ctx: Context) = sp(ctx).getLong(sizeKey(ctx), 0L)
     fun setModelSize(ctx: Context, v: Long) = sp(ctx).edit().putLong(sizeKey(ctx), v).apply()
 
-    // ---- style, one set per style (styles saved by versions before the HeliBoard switch are ignored) ----
+    // ---- style, one set per style (styles saved by old 1.x versions are ignored) ----
     fun rules(ctx: Context, style: Style): String {
         val p = sp(ctx)
         val v = p.getString("rules_${style.key}", null)

@@ -71,6 +71,48 @@ hook emoji; sleep 1; shot 12_emoji_light
 hook letters
 adb shell am start -n $PKG/.PreviewActivity --es type number
 sleep 3; shot 13_number_field
+
+# ---------------------------------------------------------------- README material
+# app screens: setup guide steps, then the main app
+adb shell cmd uimode night yes; sleep 2
+for S in WELCOME MODEL ENABLE PERSONAL PRACTICE DONE; do
+  adb shell am start -S -n $PKG/.SetupActivity --es step $S > /dev/null 2>&1
+  sleep 4; shot app_setup_$S
+done
+adb shell am start -n $PKG/.PreviewActivity --ez markdone true > /dev/null 2>&1; sleep 3
+adb shell am start -S -n $PKG/.MainActivity > /dev/null 2>&1; sleep 5
+shot app_main_1
+adb shell input swipe 540 1900 540 700 500; sleep 1; shot app_main_2
+adb shell input swipe 540 1900 540 700 500; sleep 1; shot app_main_3
+adb shell cmd uimode night no; sleep 2
+adb shell am start -S -n $PKG/.SetupActivity --es step WELCOME > /dev/null 2>&1; sleep 4; shot app_setup_WELCOME_light
+adb shell cmd uimode night yes; sleep 2
+
+# animated demo: a screen recording of typing, symbols, emoji, tools and the light theme
+adb shell am start -S -n $PKG/.PreviewActivity > /dev/null 2>&1; sleep 4
+dump
+adb shell screenrecord --size 540x1200 --bit-rate 3000000 --time-limit 40 /sdcard/demo.mp4 &
+REC=$!
+sleep 2
+tapkey() { read X Y < <(key "$1"); adb shell input tap $X $Y; sleep 0.28; }
+hook letters
+for k in k y a space h a a l space h a i; do tapkey $k; done
+sleep 1
+tapkey shift; for k in m a i n space; do tapkey $k; done
+sleep 0.8
+hook tools; sleep 1.6; hook notools; sleep 0.6
+hook symbols1; sleep 1.4; hook symbols2; sleep 1.4; hook letters; sleep 0.8
+hook emoji; sleep 1.6
+adb shell input swipe 540 1900 540 1250 600; sleep 1
+adb shell input swipe 540 1900 540 1250 600; sleep 1
+hook emoticons; sleep 2
+hook letters; sleep 0.8
+adb shell cmd uimode night no; sleep 3
+hook emoji; sleep 1.8
+hook letters; sleep 1.5
+wait $REC 2>/dev/null
+sleep 2
+adb pull /sdcard/demo.mp4 $OUT/demo.mp4
 adb logcat -d -s PREVIEW:I > $OUT/preview_log.txt
 adb shell dumpsys window windows > $OUT/windows.txt 2>&1
 adb logcat -d -t 400 *:E > $OUT/errors.txt

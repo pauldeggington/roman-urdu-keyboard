@@ -94,6 +94,10 @@ class SetupActivity : Activity() {
         val light = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
         window.insetsController?.setSystemBarsAppearance(if (pal.dark) 0 else light, light)
         step = runCatching { Step.valueOf(sp().getString(PREF_STEP, Step.WELCOME.name)!!) }.getOrDefault(Step.WELCOME)
+        // emulator preview builds can open any step, to take screenshots
+        if (com.paul.urdukb.BuildConfig.PREVIEW) {
+            intent.getStringExtra("step")?.let { n -> runCatching { Step.valueOf(n) }.getOrNull()?.let { step = it } }
+        }
         setContentView(buildShell())
         show(step, animate = false)
     }
