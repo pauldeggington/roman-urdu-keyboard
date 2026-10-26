@@ -22,11 +22,13 @@ jobs:
 
       - name: Build debug APK
         run: |
-          set -o pipefail
-          if ! gradle assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log; then
-            msg=$(grep -E -A6 "^e: |What went wrong|error:" build.log | head -60 | sed 's/%/%25/g' | awk '{printf "%s%%0A", substr($0,1,300)}')
-            echo "::error title=Build failed::$msg"
-            exit 1
+          gradle assembleDebug --no-daemon --stacktrace > build.log 2>&1 && rc=0 || rc=$?
+          tail -n 30 build.log
+          if [ "$rc" -ne 0 ]; then
+            { grep -E -A8 '^e: |What went wrong|Could not|error:' build.log | head -80 || true; } > errs.txt
+            msg=$(sed 's/%/%25/g' errs.txt | cut -c1-300 | awk '{printf "%s%%0A", $0}')
+            echo "::error title=Build failed::${msg}"
+            exit "$rc"
           fi
 
       - uses: actions/upload-artifact@v4
