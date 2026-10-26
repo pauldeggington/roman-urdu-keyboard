@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -5,14 +7,14 @@ plugins {
 
 android {
     namespace = "com.paul.urdukb"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.paul.urdukb"
-        minSdk = 26
+        minSdk = 31
         targetSdk = 34
-        versionCode = 1
-        versionName = "0.1"
+        versionCode = 2
+        versionName = "0.2"
     }
 
     buildTypes {
@@ -25,11 +27,15 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 
 dependencies {
-    implementation("com.google.mediapipe:tasks-genai:0.10.24")
+    implementation("com.google.ai.edge.litertlm:litertlm-android:latest.release")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
 }

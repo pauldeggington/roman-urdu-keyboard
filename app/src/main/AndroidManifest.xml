@@ -7,12 +7,12 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme">
 
-        <!-- MediaPipe GenAI may use the GPU delegate on devices that expose OpenCL -->
+        <!-- Needed by LiteRT-LM's GPU backend -->
         <uses-native-library
-            android:name="libOpenCL.so"
+            android:name="libvndksupport.so"
             android:required="false" />
         <uses-native-library
-            android:name="libOpenCL-pixel.so"
+            android:name="libOpenCL.so"
             android:required="false" />
 
         <activity

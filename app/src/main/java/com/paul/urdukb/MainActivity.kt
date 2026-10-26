@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -36,7 +37,7 @@ class MainActivity : Activity() {
         status = TextView(this).apply { setPadding(0, pad, 0, pad) }
         root.addView(status)
 
-        root.addView(button("1. Choose model file (.task)") {
+        root.addView(button("1. Choose model file (.litertlm)") {
             startActivityForResult(
                 Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
@@ -50,6 +51,11 @@ class MainActivity : Activity() {
         })
         root.addView(button("3. Switch to this keyboard") {
             (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
+        })
+        root.addView(CheckBox(this).apply {
+            text = "Try GPU (faster if it works; falls back to CPU)"
+            isChecked = LlmEngine.useGpu(this@MainActivity)
+            setOnCheckedChangeListener { _, checked -> LlmEngine.setUseGpu(this@MainActivity, checked) }
         })
         root.addView(EditText(this).apply {
             hint = "Test here"
@@ -71,7 +77,7 @@ class MainActivity : Activity() {
         val base = if (LlmEngine.modelExists(this))
             "Model loaded: ${f.length() / (1024 * 1024)} MB"
         else
-            "No model yet. Pick the Gemma .task file you downloaded."
+            "No model yet. Pick the Gemma 4 E2B .litertlm file you downloaded."
         status.text = if (extra != null) "$base\n$extra" else base
     }
 
@@ -83,10 +89,10 @@ class MainActivity : Activity() {
     }
 
     private fun importModel(uri: Uri) {
-        status.text = "Copying model… this takes a minute for a ~1 GB file."
+        status.text = "Copying model… this takes a minute or two for a ~2.6 GB file."
         io.execute {
             val result = try {
-                val tmp = File(filesDir, "model.task.tmp")
+                val tmp = File(filesDir, "model.litertlm.tmp")
                 contentResolver.openInputStream(uri)!!.use { input ->
                     tmp.outputStream().use { out -> input.copyTo(out, 1 shl 20) }
                 }
