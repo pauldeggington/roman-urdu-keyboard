@@ -79,6 +79,27 @@ object RomanUrdu {
         }
     }
 
+    /** Short word shown on the key itself: Casual / Formal, and Auto / EN→RU / RU→EN. */
+    fun keyLabel(ctx: Context, key: ToolbarKey): String = when (key) {
+        ToolbarKey.TONE -> if (isFormal(ctx)) "Formal" else "Casual"
+        else -> when (direction(ctx)) {
+            DIR_TO_RU -> "EN\u2192RU"
+            DIR_TO_EN -> "RU\u2192EN"
+            else -> "Auto"
+        }
+    }
+
+    /** Draws the key's word instead of an icon, so it says what it does. Main thread only. */
+    fun applyLabel(button: ImageButton, key: ToolbarKey) {
+        val d = TextDrawable(button.context, keyLabel(button.context, key), 11f)
+        Settings.getValues().mColors.setColor(d, ColorType.TOOL_BAR_KEY)
+        button.setImageDrawable(d)
+        button.contentDescription = when (key) {
+            ToolbarKey.TONE -> if (isFormal(button.context)) "Formal tone: aap" else "Casual tone: tum"
+            else -> directionLabel(direction(button.context))
+        }
+    }
+
     private val spinners = java.util.WeakHashMap<View, ObjectAnimator>()
 
     /** Turns the Translate key into a spinning arc while the model works, and back afterwards. Main thread only. */
@@ -120,7 +141,11 @@ object RomanUrdu {
     fun toggleTone(ime: InputMethodService) {
         val formal = !isFormal(ime)
         ime.prefs().edit { putBoolean(PREF_TONE, formal) }
-        toast(ime, if (formal) "Formal: aap" else "Casual: tum")
+        toast(
+            ime,
+            if (formal) "Formal tone (aap): translations to Roman Urdu will be respectful"
+            else "Casual tone (tum): translations to Roman Urdu will be friendly"
+        )
     }
 
     fun cycleDirection(ime: InputMethodService) {
@@ -130,7 +155,14 @@ object RomanUrdu {
             else -> DIR_AUTO
         }
         ime.prefs().edit { putString(PREF_DIRECTION, next) }
-        toast(ime, directionLabel(next))
+        toast(
+            ime,
+            when (next) {
+                DIR_TO_RU -> "Always English \u2192 Roman Urdu"
+                DIR_TO_EN -> "Always Roman Urdu \u2192 English"
+                else -> "Auto: the language is detected for you"
+            }
+        )
     }
 
     fun openApp(ime: InputMethodService) = openApp(ime, null)

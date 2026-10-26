@@ -35,6 +35,7 @@ fun createToolbarKey(context: Context, key: ToolbarKey): ImageButton {
     button.contentDescription = key.name.lowercase().getStringResourceOrName("", context)
     setToolbarButtonActivatedState(button)
     button.setImageDrawable(KeyboardIconsSet.instance.getNewDrawable(key.name, context))
+    if (key == TONE || key == DIRECTION) RomanUrdu.applyLabel(button, key)
     return button
 }
 
@@ -71,11 +72,11 @@ private fun setToolbarButtonActivatedState(button: ImageButton) {
             !RomanUrdu.busy
         }
         TONE -> {
-            button.isSelected = RomanUrdu.isFormal(button.context)
+            RomanUrdu.applyLabel(button, TONE)
             true
         }
         DIRECTION -> {
-            button.setImageLevel(RomanUrdu.directionLevel(button.context))
+            RomanUrdu.applyLabel(button, DIRECTION)
             true
         }
         else -> true
