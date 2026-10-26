@@ -357,7 +357,8 @@ public class KeyboardView extends View {
         final int bgWidth, bgHeight, bgX, bgY;
         if (key.needsToKeepBackgroundAspectRatio(mDefaultKeyLabelFlags)
                 // HACK: To disable expanding normal/functional key background.
-                && !key.hasCustomActionLabel()) {
+                && !key.hasCustomActionLabel()
+                && !(background instanceof com.paul.urdukb.GboardShapes.Centered)) {
             bgWidth = (int) (background.getIntrinsicWidth() * mIconScaleFactor);
             bgHeight = (int) (background.getIntrinsicHeight() * mIconScaleFactor);
             bgX = (keyWidth - bgWidth) / 2;

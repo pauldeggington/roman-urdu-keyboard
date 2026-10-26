@@ -85,6 +85,8 @@ public final class KeyPreviewChoreographer {
     private void placeKeyPreview(Key key, KeyPreviewView keyPreviewView, KeyboardIconsSet iconsSet,
             KeyDrawParams drawParams, int fullKeyboardViewWidth, int[] originCoords) {
         keyPreviewView.setPreviewVisual(key, iconsSet, drawParams);
+        if (com.paul.urdukb.GboardShapes.active())
+            com.paul.urdukb.GboardShapes.styleKeyPreview(keyPreviewView, key.getDrawWidth(), key.getHeight());
         keyPreviewView.measure(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         mParams.setGeometry(keyPreviewView);
         int previewWidth = keyPreviewView.getMeasuredWidth();

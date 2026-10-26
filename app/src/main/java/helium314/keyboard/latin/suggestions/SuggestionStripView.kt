@@ -554,6 +554,8 @@ class SuggestionStripView(context: Context, attrs: AttributeSet?, defStyle: Int)
         (view.layoutParams as LinearLayout.LayoutParams).weight = 1f
         colors.setColor(view, ColorType.TOOL_BAR_KEY)
         colors.setBackground(view, ColorType.STRIP_BACKGROUND)
+        if (view.tag == ToolbarKey.VOICE && com.paul.urdukb.GboardShapes.active())
+            view.background = com.paul.urdukb.GboardShapes.micCircle(colors.get(ColorType.SPACE_BAR_BACKGROUND))
     }
 
     companion object {

@@ -24,6 +24,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.drawable.toBitmap
 import helium314.keyboard.keyboard.KeyboardTheme.Companion.STYLE_HOLO
 import helium314.keyboard.keyboard.KeyboardTheme.Companion.STYLE_MATERIAL
+import helium314.keyboard.keyboard.KeyboardTheme.Companion.STYLE_ROUNDED
 import helium314.keyboard.latin.common.ColorType.*
 import helium314.keyboard.latin.R
 import helium314.keyboard.latin.utils.adjustLuminosityAndKeepAlpha
@@ -82,8 +83,14 @@ interface Colors {
             else -> null // keyBackground
         }?.mutate() ?: attr.getDrawable(R.styleable.KeyboardView_keyBackground)?.mutate()!! // keyBackground always exists
 
-        setColor(drawable, color)
-        return drawable
+        // Gboard look: 36 dp pills for ?123 / enter / space, circles for long-press keys
+        val shaped = if (themeStyle != STYLE_ROUNDED || hasKeyBorders) drawable else when (color) {
+            FUNCTIONAL_KEY_BACKGROUND, ACTION_KEY_BACKGROUND, SPACE_BAR_BACKGROUND -> com.paul.urdukb.GboardShapes.pill(drawable)
+            POPUP_KEYS_BACKGROUND, ACTION_KEY_POPUP_KEYS_BACKGROUND -> com.paul.urdukb.GboardShapes.popupCircle(drawable)
+            else -> drawable
+        }
+        setColor(shaped, color)
+        return shaped
     }
 }
 
@@ -101,6 +108,11 @@ class DynamicColors(context: Context, override val themeStyle: String, override 
     private val keyText = getKeyText(context)
     private val keyHintText = getKeyHintText(context)
     private val spaceBarText = getSpaceBarText(context)
+    private val gboard = themeStyle == STYLE_ROUNDED && !hasKeyBorders
+    private val gboardPill = if (isNight) ContextCompat.getColor(context, android.R.color.system_accent2_700)
+        else ContextCompat.getColor(context, android.R.color.system_accent2_100)
+    private val gboardSpace = if (isNight) ContextCompat.getColor(context, android.R.color.system_neutral2_800)
+        else ContextCompat.getColor(context, android.R.color.system_neutral2_100)
 
     private fun getAccent(context: Context) = if (isNight) ContextCompat.getColor(context, android.R.color.system_accent1_100)
         else ContextCompat.getColor(context, android.R.color.system_accent1_200)
@@ -147,9 +159,9 @@ class DynamicColors(context: Context, override val themeStyle: String, override 
 
     private val backgroundStateList: ColorStateList
     private val keyStateList: ColorStateList
-    private val functionalKeyStateList: ColorStateList
-    private val actionKeyStateList: ColorStateList
-    private val spaceBarStateList: ColorStateList
+    private var functionalKeyStateList: ColorStateList
+    private var actionKeyStateList: ColorStateList
+    private var spaceBarStateList: ColorStateList
     private val adjustedBackgroundStateList: ColorStateList
     private val stripBackgroundList: ColorStateList
     private val toolbarKeyStateList = activatedStateList(
@@ -209,7 +221,7 @@ class DynamicColors(context: Context, override val themeStyle: String, override 
                 pressedStateList(accent, Color.WHITE)
             }
 
-        val stripBackground = if (keyboardBackground == null && !hasKeyBorders) {
+        val stripBackground = if (keyboardBackground == null && !hasKeyBorders && !gboard) {
             if (isDarkColor(background)) 0x16ffffff else 0x11000000
         } else {
             Color.TRANSPARENT
@@ -267,11 +279,18 @@ class DynamicColors(context: Context, override val themeStyle: String, override 
             spaceBarStateList =
                 if (!isNight) pressedStateList(gesture, adjustedFunctionalKey)
                 else pressedStateList(adjustedKeyBackground, spaceBar)
+            if (gboard) {
+                // enter uses the same tonal pill as ?123, like Gboard
+                functionalKeyStateList = pressedStateList(brightenOrDarken(gboardPill, true), gboardPill)
+                actionKeyStateList = functionalKeyStateList
+                spaceBarStateList = pressedStateList(brightenOrDarken(gboardSpace, true), gboardSpace)
+            }
         }
         keyTextFilter = colorFilter(keyText)
 
         actionKeyIconColorFilter = when {
             themeStyle == STYLE_HOLO -> keyTextFilter
+            themeStyle == STYLE_ROUNDED && !hasKeyBorders -> keyTextFilter // Gboard: enter icon in text colour on the tonal pill
             // the white icon may not have enough contrast, and can't be adjusted by the user
             isBrightColor(accent) -> colorFilter(Color.DKGRAY)
             else -> null
@@ -282,7 +301,7 @@ class DynamicColors(context: Context, override val themeStyle: String, override 
         TOOL_BAR_KEY_ENABLED_BACKGROUND, EMOJI_CATEGORY_SELECTED, ACTION_KEY_BACKGROUND, CLIPBOARD_PIN -> accent
         SHIFT_KEY_ICON -> if (accentShiftedIcon) accent else keyText
         AUTOFILL_BACKGROUND_CHIP, GESTURE_PREVIEW, POPUP_KEYS_BACKGROUND, MORE_SUGGESTIONS_BACKGROUND, KEY_PREVIEW_BACKGROUND -> adjustedBackground
-        TOOL_BAR_EXPAND_KEY_BACKGROUND -> if (!isNight) accent else doubleAdjustedBackground
+        TOOL_BAR_EXPAND_KEY_BACKGROUND -> if (gboard) Color.TRANSPARENT else if (!isNight) accent else doubleAdjustedBackground
         GESTURE_TRAIL -> gesture
         KEY_TEXT, SUGGESTION_AUTO_CORRECT, REMOVE_SUGGESTION_ICON, EMOJI_KEY_TEXT, KEY_PREVIEW_TEXT, POPUP_KEY_TEXT,
             KEY_ICON, POPUP_KEY_ICON, ONE_HANDED_MODE_BUTTON, EMOJI_CATEGORY, TOOL_BAR_KEY, FUNCTIONAL_KEY_TEXT,
@@ -434,6 +453,10 @@ class DefaultColors (
         } else if (hasKeyBorders) {
             stripBackground = background
             pressedStripElementBackground = adjustedBackground
+        } else if (themeStyle == STYLE_ROUNDED) {
+            // Gboard: the toolbar sits on the keyboard background with no strip of its own
+            stripBackground = Color.TRANSPARENT
+            pressedStripElementBackground = adjustedBackground
         } else {
             stripBackground = adjustedBackground
             pressedStripElementBackground = doubleAdjustedBackground
@@ -472,6 +495,7 @@ class DefaultColors (
         keyTextFilter = colorFilter(keyText)
         actionKeyIconColorFilter = when {
             themeStyle == STYLE_HOLO -> keyTextFilter
+            themeStyle == STYLE_ROUNDED && !hasKeyBorders -> keyTextFilter // Gboard: enter icon in text colour on the tonal pill
             // the white icon may not have enough contrast, and can't be adjusted by the user
             isBrightColor(accent) -> colorFilter(Color.DKGRAY)
             else -> null
@@ -483,7 +507,8 @@ class DefaultColors (
         SHIFT_KEY_ICON -> if (accentShiftedIcon) accent else keyText
         AUTOFILL_BACKGROUND_CHIP -> if (themeStyle == STYLE_MATERIAL && !hasKeyBorders) background else adjustedBackground
         GESTURE_PREVIEW, POPUP_KEYS_BACKGROUND, MORE_SUGGESTIONS_BACKGROUND, KEY_PREVIEW_BACKGROUND -> adjustedBackground
-        TOOL_BAR_EXPAND_KEY_BACKGROUND, CLIPBOARD_SUGGESTION_BACKGROUND -> doubleAdjustedBackground
+        TOOL_BAR_EXPAND_KEY_BACKGROUND -> if (themeStyle == STYLE_ROUNDED && !hasKeyBorders) Color.TRANSPARENT else doubleAdjustedBackground
+        CLIPBOARD_SUGGESTION_BACKGROUND -> doubleAdjustedBackground
         GESTURE_TRAIL -> gesture
         KEY_TEXT, REMOVE_SUGGESTION_ICON, FUNCTIONAL_KEY_TEXT, KEY_ICON, EMOJI_KEY_TEXT,
             POPUP_KEY_TEXT, POPUP_KEY_ICON, KEY_PREVIEW_TEXT, EMOJI_SEARCH_TEXT, CLIPBOARD_SUGGESTION_ICON -> keyText

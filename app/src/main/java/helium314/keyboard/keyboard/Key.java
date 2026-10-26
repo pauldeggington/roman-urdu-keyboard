@@ -933,7 +933,8 @@ public class Key implements Comparable<Key> {
         if (hasActionKeyBackground()) {
             background = actionKeyBackground;
         } else if (hasFunctionalBackground()) {
-            background = functionalKeyBackground;
+            background = (com.paul.urdukb.GboardShapes.active() && !com.paul.urdukb.GboardShapes.isPillKey(mCode))
+                    ? keyBackground : functionalKeyBackground;
         } else if (mBackgroundType == BACKGROUND_TYPE_SPACEBAR) {
             background = spacebarBackground;
         } else {
