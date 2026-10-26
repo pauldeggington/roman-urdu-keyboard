@@ -93,8 +93,10 @@ object LlmEngine {
 
     /** Blocking. Call from a background thread. */
     @Synchronized
-    fun translate(ctx: Context, text: String, style: Style): String {
+    fun translate(ctx: Context, rawText: String, style: Style): String {
         val eng = getEngine(ctx)
+        // Roman Urdu shorthand (kr, nhi, tm ...) is spelled out first, so the model and the example lookup see real words
+        val text = if (style == Style.TO_ENGLISH) Shorthand.expand(rawText) else rawText
         val t0 = System.nanoTime()
         // Spellings only matter for Roman Urdu output
         val glossary = if (style == Style.TO_ENGLISH) emptyList() else Glossary.parse(Prefs.glossary(ctx))

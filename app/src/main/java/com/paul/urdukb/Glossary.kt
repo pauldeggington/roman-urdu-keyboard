@@ -45,3 +45,38 @@ object Glossary {
         else -> replacement
     }
 }
+
+/**
+ * Expands texting shorthand in Roman Urdu input (kr, nhi, tm, bht ...) to full spellings before the model reads it.
+ * Only unambiguous forms are listed; the example bank covers the rest.
+ */
+object Shorthand {
+
+    private val MAP: Map<String, String> = mapOf(
+        "kr" to "kar", "krna" to "karna", "krta" to "karta", "krti" to "karti", "krte" to "karte", "kro" to "karo",
+        "krde" to "karde", "krdo" to "kardo", "krwa" to "karwa", "krun" to "karun", "krunga" to "karunga",
+        "rha" to "raha", "rhi" to "rahi", "rhe" to "rahe", "rhy" to "rahay", "rhay" to "rahay",
+        "nhi" to "nahi", "nhin" to "nahin", "nahe" to "nahi",
+        "hy" to "hai", "hyn" to "hain",
+        "ap" to "aap", "apko" to "aapko", "apka" to "aapka", "apki" to "aapki", "apke" to "aapke",
+        "tm" to "tum", "tmhe" to "tumhe", "tmhein" to "tumhein", "tmhara" to "tumhara", "tmhari" to "tumhari", "tmhare" to "tumhare",
+        "mjy" to "mujhe", "mje" to "mujhe", "mjhe" to "mujhe", "mujy" to "mujhe", "mjhy" to "mujhe",
+        "kb" to "kab", "ky" to "kya",
+        "pta" to "pata", "thk" to "theek", "thik" to "theek",
+        "bht" to "bohat", "bhot" to "bohat", "boht" to "bohat", "bohot" to "bohat", "bhut" to "bohat",
+        "yar" to "yaar", "yr" to "yaar", "bs" to "bas",
+        "gya" to "gaya", "gye" to "gaye", "gyi" to "gayi", "gae" to "gaye",
+        "plz" to "please", "pls" to "please", "thnx" to "thanks", "thx" to "thanks",
+    )
+
+    private val REGEX: Regex = Regex(
+        "(?<![\\p{L}'])(?:" + MAP.keys.sortedByDescending { it.length }.joinToString("|") { Regex.escape(it) } + ")(?![\\p{L}'])",
+        RegexOption.IGNORE_CASE,
+    )
+
+    fun expand(text: String): String =
+        REGEX.replace(text) { m ->
+            val full = MAP[m.value.lowercase()] ?: return@replace m.value
+            if (m.value.first().isUpperCase()) full.replaceFirstChar { it.uppercase() } else full
+        }
+}
