@@ -15,6 +15,8 @@ SPDX-License-Identifier: Apache-2.0 AND GPL-3.0-only
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- Roman Urdu: only used by the setup screen to download the model -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- in-app updates from GitHub Releases -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application android:label="@string/english_ime_name"
             android:name="helium314.keyboard.latin.App"
@@ -44,6 +46,16 @@ SPDX-License-Identifier: Apache-2.0 AND GPL-3.0-only
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver android:name="com.paul.urdukb.Updater$InstallResult" android:exported="false" />
+
+        <!-- First-run setup guide -->
+        <activity android:name="com.paul.urdukb.SetupActivity"
+                android:label="Set up Roman Urdu Keyboard"
+                android:icon="@mipmap/ic_launcher"
+                android:theme="@style/RomanUrduAppTheme"
+                android:windowSoftInputMode="adjustResize"
+                android:exported="false" />
 
         <!-- Services -->
         <service android:name="LatinIME"

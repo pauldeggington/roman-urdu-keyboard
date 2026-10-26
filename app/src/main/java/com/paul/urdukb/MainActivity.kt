@@ -117,6 +117,15 @@ class MainActivity : Activity() {
         window.navigationBarColor = pal.appBg
         val light = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
         window.insetsController?.setSystemBarsAppearance(if (pal.dark) 0 else light, light)
+        if (!SetupActivity.isDone(this)) {
+            val enabled = getSystemService(InputMethodManager::class.java)?.enabledInputMethodList?.any { it.packageName == packageName } == true
+            if (LlmEngine.modelExists(this) && enabled) SetupActivity.markDone(this) // set up before the guide existed
+            else {
+                startActivity(Intent(this, SetupActivity::class.java))
+                finish()
+                return
+            }
+        }
         setContentView(buildUi())
         refresh()
         scrollToRequestedSection()
@@ -124,7 +133,9 @@ class MainActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
+        if (!::updateCard.isInitialized) return
         refresh()
+        paintUpdate()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -148,6 +159,7 @@ class MainActivity : Activity() {
             setPadding(dpi(16f), dpi(24f), dpi(16f), dpi(40f))
         }
         root.addView(buildHeader())
+        root.addView(buildUpdateCard())
 
         root.addView(buildChecklistCard())
         modelCard = buildModelCard().also { root.addView(it) }
@@ -216,6 +228,110 @@ class MainActivity : Activity() {
         return row
     }
 
+    // ================================================================ updates
+
+    private lateinit var updateCard: LinearLayout
+    private lateinit var updateText: TextView
+    private lateinit var updateBtn: Button
+    private var latestRelease: Updater.Release? = null
+    private var checking = false
+    private var installing = false
+    private val updatePoll = Runnable { if (!isFinishing) paintUpdate() }
+
+    private fun buildUpdateCard(): View {
+        updateCard = card()
+        updateCard.addView(title("Updates"))
+        updateText = muted("Version ${Updater.installedName(this)}").apply { setPadding(0, dpi(6f), 0, 0) }
+        updateCard.addView(updateText)
+        updateBtn = button("Check for updates", false, lock = false) { onUpdateClick() }
+        updateCard.addView(updateBtn, lp().apply { topMargin = dpi(10f) })
+        checkForUpdate(quiet = true)
+        return updateCard
+    }
+
+    private fun checkForUpdate(quiet: Boolean) {
+        if (checking) return
+        checking = true
+        if (!quiet) updateText.text = "Checking GitHub for a new version…"
+        io.execute {
+            val r = runCatching { Updater.latest() }
+            ui.post {
+                checking = false
+                r.onSuccess { rel ->
+                    latestRelease = rel
+                    paintUpdate()
+                    if (!quiet && !Updater.isNewer(this, rel)) toast("You have the latest version")
+                }.onFailure { e ->
+                    if (!quiet) updateText.text = "Version ${Updater.installedName(this)}. Couldn't check: ${e.message}"
+                }
+            }
+        }
+    }
+
+    private fun paintUpdate() {
+        val rel = latestRelease
+        val (st, done, total) = Updater.downloadState(this)
+        when {
+            installing -> {
+                updateText.text = "Installing… Android will ask you to confirm."
+                styleButton(updateBtn, true)
+            }
+            st == android.app.DownloadManager.STATUS_RUNNING || st == android.app.DownloadManager.STATUS_PENDING || st == android.app.DownloadManager.STATUS_PAUSED -> {
+                val pct = if (total > 0) done * 100 / total else 0
+                updateText.text = "Downloading ${rel?.tag ?: "the update"}… $pct%"
+                updateBtn.text = "Cancel"
+                styleButton(updateBtn, false)
+                ui.removeCallbacks(updatePoll)
+                ui.postDelayed(updatePoll, 800)
+            }
+            st == android.app.DownloadManager.STATUS_SUCCESSFUL -> {
+                Updater.clearDownload(this)
+                runInstall()
+            }
+            rel != null && Updater.isNewer(this, rel) -> {
+                updateText.text = "${rel.name} is ready (you have ${Updater.installedName(this)}).\n" +
+                    rel.notes.substringAfter("## Changes", "").trim().lines().firstOrNull { it.isNotBlank() }.orEmpty()
+                updateBtn.text = "Update now"
+                styleButton(updateBtn, true)
+            }
+            else -> {
+                updateText.text = "Version ${Updater.installedName(this)}" + if (rel != null) ". You're up to date." else ""
+                updateBtn.text = "Check for updates"
+                styleButton(updateBtn, false)
+            }
+        }
+    }
+
+    private fun onUpdateClick() {
+        val (st, _, _) = Updater.downloadState(this)
+        if (st == android.app.DownloadManager.STATUS_RUNNING || st == android.app.DownloadManager.STATUS_PENDING || st == android.app.DownloadManager.STATUS_PAUSED) {
+            Updater.cancelDownload(this); paintUpdate(); return
+        }
+        val rel = latestRelease
+        if (rel == null || !Updater.isNewer(this, rel)) { checkForUpdate(quiet = false); return }
+        if (!Updater.canInstall(this)) {
+            toast("Allow Roman Urdu Keyboard to install updates, then come back and tap Update now")
+            startActivity(Updater.allowInstallsIntent(this))
+            return
+        }
+        Updater.startDownload(this, rel)
+        paintUpdate()
+    }
+
+    private fun runInstall() {
+        if (installing) return
+        installing = true
+        paintUpdate()
+        io.execute {
+            val r = runCatching { Updater.install(this) }
+            ui.post {
+                installing = false
+                r.onFailure { e -> toast("Update failed: ${e.message}"); Prefs.setLastError(this, "Update failed: ${e.message}") }
+                paintUpdate()
+            }
+        }
+    }
+
     private fun buildChecklistCard(): View {
         val card = card()
         card.addView(title("Setup"))
@@ -279,18 +395,21 @@ class MainActivity : Activity() {
         progressText = muted("").apply { visibility = View.GONE }
         card.addView(progressText)
 
-        card.addView(muted("To download: make a free read token at huggingface.co/settings/tokens and accept the Gemma licence on the model page once.").apply {
+        card.addView(muted("Free to download, no account needed. It downloads in the background with a notification, so you can leave the app.").apply {
             setPadding(0, dpi(14f), 0, dpi(6f))
         })
-        tokenEdit = edit("Hugging Face token (hf_…)").apply {
+        tokenEdit = edit("Hugging Face token (optional)").apply {
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             setText(Prefs.token(this@MainActivity))
+            visibility = View.GONE
         }
-        card.addView(tokenEdit)
 
         val row1 = row()
         downloadBtn = button("Download model", true) { startDownload() }
-        cancelBtn = button("Cancel", false, lock = false) { cancelFlag = true }.apply { visibility = View.GONE }
+        cancelBtn = button("Cancel", false, lock = false) {
+            cancelFlag = true
+            if (BackgroundDownload.state(this).active) { BackgroundDownload.cancel(this); refresh() }
+        }.apply { visibility = View.GONE }
         row1.addView(downloadBtn, rowLp())
         row1.addView(cancelBtn, rowLp())
         card.addView(row1)
@@ -320,9 +439,14 @@ class MainActivity : Activity() {
         card.addView(muted("Advanced: model URL").apply {
             setTextColor(pal.primary)
             setPadding(0, dpi(14f), 0, dpi(4f))
-            setOnClickListener { urlEdit.visibility = if (urlEdit.visibility == View.VISIBLE) View.GONE else View.VISIBLE }
+            setOnClickListener {
+                val v = if (urlEdit.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                urlEdit.visibility = v
+                tokenEdit.visibility = v
+            }
         })
         card.addView(urlEdit)
+        card.addView(tokenEdit)
         return card
     }
 
@@ -604,6 +728,10 @@ class MainActivity : Activity() {
         r.addView(button("Turn on", true) { startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS)) }, rowLp())
         r.addView(button("Switch to it", false) { showPicker() }, rowLp())
         card.addView(r)
+        card.addView(button("Run the setup guide again", false, lock = false) {
+            SetupActivity.reset(this)
+            startActivity(Intent(this, SetupActivity::class.java))
+        }, lp().apply { topMargin = dpi(10f) })
         card.addView(button("Keyboard settings: look, layout, glide typing", false) {
             startActivity(Intent(this, helium314.keyboard.settings.SettingsActivity::class.java))
         }, lp().apply { topMargin = dpi(10f) })
@@ -778,7 +906,11 @@ class MainActivity : Activity() {
         paintSegment(dirToEn, d == RomanUrdu.DIR_TO_EN)
     }
 
+    private var pollingDownload = false
+
     private fun refresh() {
+        if (!busy) BackgroundDownload.finishIfDone(this)?.let { runVerify() }
+        val bg = BackgroundDownload.state(this)
         val f = LlmEngine.modelFile(this)
         val part = ModelDownloader.partFile(f)
         val ok = LlmEngine.modelExists(this)
@@ -814,6 +946,22 @@ class MainActivity : Activity() {
                 modelStatus.setTextColor(pal.text)
                 modelDetail.text = "About 2.6 GB. Download it once over Wi-Fi."
             }
+        }
+        if (bg.active) {
+            val pct = if (bg.total > 0) bg.done * 100 / bg.total else 0
+            modelStatus.text = (if (bg.paused) BackgroundDownload.reasonText(bg) else "Downloading in the background") + "  •  $pct%"
+            modelStatus.setTextColor(pal.text)
+            modelDetail.text = gb(bg.done) + (if (bg.total > 0) " of ${gb(bg.total)}" else "") + ". You can leave the app; it keeps going."
+            progressBar.visibility = View.VISIBLE
+            if (bg.total > 0) progressBar.progress = (bg.done * 1000 / bg.total).toInt()
+            if (!pollingDownload) {
+                pollingDownload = true
+                ui.postDelayed({ pollingDownload = false; if (!isFinishing) refresh() }, 1500)
+            }
+        } else if (!busy) progressBar.visibility = View.GONE
+        if (bg.status == android.app.DownloadManager.STATUS_FAILED) {
+            modelStatus.text = BackgroundDownload.reasonText(bg)
+            modelStatus.setTextColor(pal.error)
         }
         downloadBtn.text = when {
             !ok && part.exists() && part.length() > 0 -> "Resume download"
@@ -875,6 +1023,8 @@ class MainActivity : Activity() {
         errorText.text = err
 
         setBusy(busy)
+        downloadBtn.visibility = if (bg.active) View.GONE else View.VISIBLE
+        if (bg.active) cancelBtn.visibility = View.VISIBLE
     }
 
     private fun setBusy(b: Boolean) {
@@ -962,18 +1112,25 @@ class MainActivity : Activity() {
 
     private fun startDownload() {
         val token = tokenEdit.text.toString().trim()
-        if (token.isEmpty()) {
-            toast("Paste your Hugging Face token first")
-            tokenEdit.requestFocus()
-            return
-        }
         val dest = LlmEngine.modelFile(this)
-        if (dest.parentFile!!.usableSpace < 3L * 1024 * 1024 * 1024 && !ModelDownloader.partFile(dest).exists()) {
+        dest.parentFile?.mkdirs()
+        if (dest.parentFile!!.usableSpace < 3L * 1024 * 1024 * 1024) {
             toast("You need about 3 GB of free space")
             return
         }
         Prefs.setToken(this, token)
         Prefs.setUrl(this, urlEdit.text.toString())
+        if (dest.exists()) removeModel()
+        BackgroundDownload.start(this, allowMobileData = true)
+        toast("Downloading in the background. You can leave the app.")
+        refresh()
+    }
+
+    /** The old in-app downloader, kept for reference; the system download manager is used now. */
+    @Suppress("unused")
+    private fun startInAppDownload() {
+        val token = tokenEdit.text.toString().trim()
+        val dest = LlmEngine.modelFile(this)
         val url = Prefs.url(this)
         Prefs.setLastError(this, "")
         beginTransfer("Starting…")

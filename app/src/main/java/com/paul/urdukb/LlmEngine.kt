@@ -14,7 +14,17 @@ object LlmEngine {
     private var engine: Engine? = null
     private var engineIsGpu = false
 
-    fun modelFile(ctx: Context): File = File(Prefs.store(ctx).filesDir, "model.litertlm")
+    /**
+     * Where the model lives. Older installs kept it in internal storage; new downloads go to the app's
+     * own external folder, because Android's download manager can only write there.
+     */
+    fun modelFile(ctx: Context): File {
+        val app = Prefs.store(ctx)
+        val internal = File(app.filesDir, "model.litertlm")
+        if (internal.exists()) return internal
+        val ext = runCatching { app.getExternalFilesDir(null) }.getOrNull() ?: return internal
+        return File(ext, "model.litertlm")
+    }
 
     fun isLoaded(): Boolean = engine != null
 

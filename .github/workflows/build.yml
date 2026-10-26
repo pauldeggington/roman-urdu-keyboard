@@ -2,14 +2,23 @@ name: Build APK
 
 on:
   push:
-    branches: [main, heliboard, design-v2, gboard-match, speaker-fix]
+    branches: [main, heliboard, design-v2, gboard-match, speaker-fix, setup-guide]
   workflow_dispatch:
+
+permissions:
+  contents: write   # lets the main-branch build publish a GitHub Release
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # 1.0.<run> for people; the Version step sets versionCode 4300+<run> so each release installs over the last
+      VERSION_NAME: 1.0.${{ github.run_number }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Version
+        run: echo "VERSION_CODE=$((4300 + ${{ github.run_number }}))" >> "$GITHUB_ENV"
 
       - uses: actions/setup-java@v4
         with:
@@ -66,3 +75,34 @@ jobs:
         with:
           name: roman-urdu-keyboard-debug
           path: out/roman-urdu-keyboard.apk
+
+      - name: Publish release (main only)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v${VERSION_NAME}"
+          cp out/roman-urdu-keyboard.apk "out/RomanUrduKeyboard-${VERSION_NAME}.apk"
+          {
+            echo "## Install"
+            echo ""
+            echo "1. On your Android phone, download **roman-urdu-keyboard.apk** below."
+            echo "2. Open it. If Android asks, allow installs from your browser or Files app, then tap **Install**."
+            echo "3. Open **Roman Urdu Keyboard** and follow the setup guide. It downloads the translator (about 2.6 GB, once) and walks you through turning the keyboard on."
+            echo ""
+            echo "Already installed? This version installs over it and keeps your settings and the translator."
+            echo ""
+            echo "Needs Android 12 or newer on a 64-bit phone with about 3 GB free. Works offline after setup."
+            echo ""
+            echo "## Changes"
+            echo ""
+            git log -1 --pretty=format:'%s%n%n%b' | grep -v -E '^(Co-Authored-By|Claude-Session):' | sed '/^$/N;/^\n$/D'
+          } > notes.md
+          gh release create "$TAG" \
+            "out/roman-urdu-keyboard.apk" \
+            "out/RomanUrduKeyboard-${VERSION_NAME}.apk" \
+            --title "Roman Urdu Keyboard ${VERSION_NAME}" \
+            --notes-file notes.md \
+            --target "$GITHUB_SHA" \
+            --latest
+          echo "::notice title=Released::https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
