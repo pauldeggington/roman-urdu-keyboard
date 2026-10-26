@@ -235,8 +235,6 @@ class MainActivity : Activity() {
     private lateinit var updateBtn: Button
     private var latestRelease: Updater.Release? = null
     private var checking = false
-    private var installing = false
-    private val updatePoll = Runnable { if (!isFinishing) paintUpdate() }
 
     private fun buildUpdateCard(): View {
         updateCard = card()
@@ -270,66 +268,25 @@ class MainActivity : Activity() {
 
     private fun paintUpdate() {
         val rel = latestRelease
-        val (st, done, total) = Updater.downloadState(this)
-        when {
-            installing -> {
-                updateText.text = "Installing… Android will ask you to confirm."
-                styleButton(updateBtn, true)
-            }
-            st == android.app.DownloadManager.STATUS_RUNNING || st == android.app.DownloadManager.STATUS_PENDING || st == android.app.DownloadManager.STATUS_PAUSED -> {
-                val pct = if (total > 0) done * 100 / total else 0
-                updateText.text = "Downloading ${rel?.tag ?: "the update"}… $pct%"
-                updateBtn.text = "Cancel"
-                styleButton(updateBtn, false)
-                ui.removeCallbacks(updatePoll)
-                ui.postDelayed(updatePoll, 800)
-            }
-            st == android.app.DownloadManager.STATUS_SUCCESSFUL -> {
-                Updater.clearDownload(this)
-                runInstall()
-            }
-            rel != null && Updater.isNewer(this, rel) -> {
-                updateText.text = "${rel.name} is ready (you have ${Updater.installedName(this)}).\n" +
-                    rel.notes.substringAfter("## Changes", "").trim().lines().firstOrNull { it.isNotBlank() }.orEmpty()
-                updateBtn.text = "Update now"
-                styleButton(updateBtn, true)
-            }
-            else -> {
-                updateText.text = "Version ${Updater.installedName(this)}" + if (rel != null) ". You're up to date." else ""
-                updateBtn.text = "Check for updates"
-                styleButton(updateBtn, false)
-            }
+        if (rel != null && Updater.isNewer(this, rel)) {
+            updateText.text = "${rel.name} is ready (you have ${Updater.installedName(this)}).\n" +
+                rel.notes.substringAfter("## Changes", "").trim().lines().firstOrNull { it.isNotBlank() }.orEmpty() +
+                "\nIt downloads in your browser. Open the file when it finishes and tap Install."
+            updateBtn.text = "Download update"
+            styleButton(updateBtn, true)
+        } else {
+            updateText.text = "Version ${Updater.installedName(this)}" + if (rel != null) ". You're up to date." else ""
+            updateBtn.text = "Check for updates"
+            styleButton(updateBtn, false)
         }
     }
 
     private fun onUpdateClick() {
-        val (st, _, _) = Updater.downloadState(this)
-        if (st == android.app.DownloadManager.STATUS_RUNNING || st == android.app.DownloadManager.STATUS_PENDING || st == android.app.DownloadManager.STATUS_PAUSED) {
-            Updater.cancelDownload(this); paintUpdate(); return
-        }
         val rel = latestRelease
         if (rel == null || !Updater.isNewer(this, rel)) { checkForUpdate(quiet = false); return }
-        if (!Updater.canInstall(this)) {
-            toast("Allow Roman Urdu Keyboard to install updates, then come back and tap Update now")
-            startActivity(Updater.allowInstallsIntent(this))
-            return
-        }
-        Updater.startDownload(this, rel)
-        paintUpdate()
-    }
-
-    private fun runInstall() {
-        if (installing) return
-        installing = true
-        paintUpdate()
-        io.execute {
-            val r = runCatching { Updater.install(this) }
-            ui.post {
-                installing = false
-                r.onFailure { e -> toast("Update failed: ${e.message}"); Prefs.setLastError(this, "Update failed: ${e.message}") }
-                paintUpdate()
-            }
-        }
+        // the browser downloads the APK; Android then asks to install it, like any downloaded app
+        runCatching { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(rel.apkUrl))) }
+            .onFailure { toast("Couldn't open the browser. Get it from github.com/${Updater.REPO}/releases") }
     }
 
     private fun buildChecklistCard(): View {

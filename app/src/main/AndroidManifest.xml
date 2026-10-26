@@ -16,8 +16,6 @@ SPDX-License-Identifier: Apache-2.0 AND GPL-3.0-only
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Wi-Fi or mobile data, so the setup guide can offer to wait for Wi-Fi -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- in-app updates from GitHub Releases -->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application android:label="@string/english_ime_name"
             android:name="helium314.keyboard.latin.App"
@@ -47,8 +45,6 @@ SPDX-License-Identifier: Apache-2.0 AND GPL-3.0-only
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <receiver android:name="com.paul.urdukb.Updater$InstallResult" android:exported="false" />
 
         <!-- First-run setup guide -->
         <activity android:name="com.paul.urdukb.SetupActivity"
