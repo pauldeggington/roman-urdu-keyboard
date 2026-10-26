@@ -133,7 +133,9 @@ class MainActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
+        if (!::updateCard.isInitialized) return
         refresh()
+        paintUpdate()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -157,6 +159,7 @@ class MainActivity : Activity() {
             setPadding(dpi(16f), dpi(24f), dpi(16f), dpi(40f))
         }
         root.addView(buildHeader())
+        root.addView(buildUpdateCard())
 
         root.addView(buildChecklistCard())
         modelCard = buildModelCard().also { root.addView(it) }
@@ -223,6 +226,110 @@ class MainActivity : Activity() {
         })
         row.addView(texts, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
         return row
+    }
+
+    // ================================================================ updates
+
+    private lateinit var updateCard: LinearLayout
+    private lateinit var updateText: TextView
+    private lateinit var updateBtn: Button
+    private var latestRelease: Updater.Release? = null
+    private var checking = false
+    private var installing = false
+    private val updatePoll = Runnable { if (!isFinishing) paintUpdate() }
+
+    private fun buildUpdateCard(): View {
+        updateCard = card()
+        updateCard.addView(title("Updates"))
+        updateText = muted("Version ${Updater.installedName(this)}").apply { setPadding(0, dpi(6f), 0, 0) }
+        updateCard.addView(updateText)
+        updateBtn = button("Check for updates", false, lock = false) { onUpdateClick() }
+        updateCard.addView(updateBtn, lp().apply { topMargin = dpi(10f) })
+        checkForUpdate(quiet = true)
+        return updateCard
+    }
+
+    private fun checkForUpdate(quiet: Boolean) {
+        if (checking) return
+        checking = true
+        if (!quiet) updateText.text = "Checking GitHub for a new version…"
+        io.execute {
+            val r = runCatching { Updater.latest() }
+            ui.post {
+                checking = false
+                r.onSuccess { rel ->
+                    latestRelease = rel
+                    paintUpdate()
+                    if (!quiet && !Updater.isNewer(this, rel)) toast("You have the latest version")
+                }.onFailure { e ->
+                    if (!quiet) updateText.text = "Version ${Updater.installedName(this)}. Couldn't check: ${e.message}"
+                }
+            }
+        }
+    }
+
+    private fun paintUpdate() {
+        val rel = latestRelease
+        val (st, done, total) = Updater.downloadState(this)
+        when {
+            installing -> {
+                updateText.text = "Installing… Android will ask you to confirm."
+                styleButton(updateBtn, true)
+            }
+            st == android.app.DownloadManager.STATUS_RUNNING || st == android.app.DownloadManager.STATUS_PENDING || st == android.app.DownloadManager.STATUS_PAUSED -> {
+                val pct = if (total > 0) done * 100 / total else 0
+                updateText.text = "Downloading ${rel?.tag ?: "the update"}… $pct%"
+                updateBtn.text = "Cancel"
+                styleButton(updateBtn, false)
+                ui.removeCallbacks(updatePoll)
+                ui.postDelayed(updatePoll, 800)
+            }
+            st == android.app.DownloadManager.STATUS_SUCCESSFUL -> {
+                Updater.clearDownload(this)
+                runInstall()
+            }
+            rel != null && Updater.isNewer(this, rel) -> {
+                updateText.text = "${rel.name} is ready (you have ${Updater.installedName(this)}).\n" +
+                    rel.notes.substringAfter("## Changes", "").trim().lines().firstOrNull { it.isNotBlank() }.orEmpty()
+                updateBtn.text = "Update now"
+                styleButton(updateBtn, true)
+            }
+            else -> {
+                updateText.text = "Version ${Updater.installedName(this)}" + if (rel != null) ". You're up to date." else ""
+                updateBtn.text = "Check for updates"
+                styleButton(updateBtn, false)
+            }
+        }
+    }
+
+    private fun onUpdateClick() {
+        val (st, _, _) = Updater.downloadState(this)
+        if (st == android.app.DownloadManager.STATUS_RUNNING || st == android.app.DownloadManager.STATUS_PENDING || st == android.app.DownloadManager.STATUS_PAUSED) {
+            Updater.cancelDownload(this); paintUpdate(); return
+        }
+        val rel = latestRelease
+        if (rel == null || !Updater.isNewer(this, rel)) { checkForUpdate(quiet = false); return }
+        if (!Updater.canInstall(this)) {
+            toast("Allow Roman Urdu Keyboard to install updates, then come back and tap Update now")
+            startActivity(Updater.allowInstallsIntent(this))
+            return
+        }
+        Updater.startDownload(this, rel)
+        paintUpdate()
+    }
+
+    private fun runInstall() {
+        if (installing) return
+        installing = true
+        paintUpdate()
+        io.execute {
+            val r = runCatching { Updater.install(this) }
+            ui.post {
+                installing = false
+                r.onFailure { e -> toast("Update failed: ${e.message}"); Prefs.setLastError(this, "Update failed: ${e.message}") }
+                paintUpdate()
+            }
+        }
     }
 
     private fun buildChecklistCard(): View {
