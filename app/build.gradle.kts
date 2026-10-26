@@ -55,6 +55,8 @@ android {
             // and the pinned signing key when CI provides it.
             isMinifyEnabled = false
             isJniDebuggable = false
+            // published to people: not debuggable (Play Protect is stricter with debuggable apps)
+            isDebuggable = false
             signingConfigs.findByName("pinned")?.let { signingConfig = it }
         }
         create("runTests") { // build variant for running tests on CI that skips tests known to fail
@@ -81,7 +83,7 @@ android {
             }
             variant.outputs.forEach { output ->
                 if (output is com.android.build.api.variant.impl.VariantOutputImpl) {
-                    output.outputFileName = "HeliBoard_${defaultConfig.versionName}-${variant.buildType}.apk"
+                    output.outputFileName = "RomanUrduKeyboard_${defaultConfig.versionName}-${variant.buildType}.apk"
                 }
             }
         }

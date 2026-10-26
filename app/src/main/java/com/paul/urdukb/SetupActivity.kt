@@ -239,14 +239,18 @@ class SetupActivity : Activity() {
             secondary.visibility = View.GONE
             primary.isEnabled = true
             primary.alpha = 1f
-            when (s) {
-                Step.WELCOME -> buildWelcome()
-                Step.MODEL -> buildModel()
-                Step.ENABLE -> buildEnable()
-                Step.SWITCH -> buildSwitch()
-                Step.PERSONAL -> buildPersonal()
-                Step.PRACTICE -> buildPractice()
-                Step.DONE -> buildDone()
+            try {
+                when (s) {
+                    Step.WELCOME -> buildWelcome()
+                    Step.MODEL -> buildModel()
+                    Step.ENABLE -> buildEnable()
+                    Step.SWITCH -> buildSwitch()
+                    Step.PERSONAL -> buildPersonal()
+                    Step.PRACTICE -> buildPractice()
+                    Step.DONE -> buildDone()
+                }
+            } catch (t: Throwable) {
+                showProblem(t)
             }
             scroll.scrollTo(0, 0)
             tick()
@@ -556,7 +560,37 @@ class SetupActivity : Activity() {
     private fun keyboardCurrent() = Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
         ?.startsWith("$packageName/") == true
 
+    /** Instead of crashing: say what happened, let them copy it, and let them carry on. */
+    private fun showProblem(t: Throwable) {
+        val detail = "${t.javaClass.simpleName}: ${t.message}\n" + t.stackTrace.take(6).joinToString("\n") { "  at $it" }
+        Prefs.setLastError(this, "Setup, step ${step.name}: $detail")
+        content.removeAllViews()
+        content.addView(heading("Something went wrong"))
+        content.addView(body("This step hit a problem. You can skip it and carry on; the details are saved under Last error in the app."))
+        content.addView(small(detail).apply {
+            typeface = Typeface.MONOSPACE
+            setTextIsSelectable(true)
+            setPadding(0, dpi(14f), 0, 0)
+        })
+        primary.text = "Skip this step"
+        primary.setOnClickListener { next() }
+        secondary.text = "Copy details"
+        secondary.visibility = View.VISIBLE
+        secondary.setOnClickListener {
+            getSystemService(android.content.ClipboardManager::class.java)
+                ?.setPrimaryClip(android.content.ClipData.newPlainText("error", detail))
+            toast("Copied")
+        }
+    }
+
     private fun tick() {
+        try { tickInner() } catch (t: Throwable) {
+            ui.removeCallbacks(poller)
+            showProblem(t)
+        }
+    }
+
+    private fun tickInner() {
         // finish a download that completed while we were away, then check it
         if (!verifying) {
             val installed = runCatching { BackgroundDownload.finishIfDone(this) }.getOrNull()
@@ -845,7 +879,7 @@ class SetupActivity : Activity() {
         track.addView(thumb, FrameLayout.LayoutParams(dpi(22f), dpi(22f), Gravity.CENTER_VERTICAL or Gravity.START).apply { marginStart = dpi(5f) })
         row.addView(track, LinearLayout.LayoutParams(dpi(52f), dpi(32f)))
         val travel = dpf(20f)
-        ValueAnimator.ofFloat(0f, 1f).apply {
+        val anim = ValueAnimator.ofFloat(0f, 1f).apply {
             duration = 2400
             repeatCount = ValueAnimator.INFINITE
             addUpdateListener {
@@ -863,6 +897,11 @@ class SetupActivity : Activity() {
             }
             start()
         }
+        // stop when the step changes, so it doesn't keep running off screen
+        row.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+            override fun onViewAttachedToWindow(v: View) = Unit
+            override fun onViewDetachedFromWindow(v: View) = anim.cancel()
+        })
         return row
     }
 

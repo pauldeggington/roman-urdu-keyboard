@@ -32,8 +32,9 @@ object BackgroundDownload {
 
     fun tempFile(ctx: Context) = File(LlmEngine.modelFile(ctx).path + ".download")
 
-    fun isMetered(ctx: Context): Boolean =
+    fun isMetered(ctx: Context): Boolean = runCatching {
         ctx.getSystemService(ConnectivityManager::class.java)?.isActiveNetworkMetered ?: false
+    }.getOrDefault(false)
 
     fun start(ctx: Context, allowMobileData: Boolean) {
         cancel(ctx)

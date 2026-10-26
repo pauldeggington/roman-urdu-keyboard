@@ -12,9 +12,10 @@ SPDX-License-Identifier: Apache-2.0 AND GPL-3.0-only
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_USER_DICTIONARY" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- Roman Urdu: only used by the setup screen to download the model -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Wi-Fi or mobile data, so the setup guide can offer to wait for Wi-Fi -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- in-app updates from GitHub Releases -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
