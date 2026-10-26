@@ -135,7 +135,12 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             addView(spacer, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (EXTRA_TOP_DP * d).toInt()))
             addView(container, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
         }
-        frame = FrameLayout(this).apply {
+        frame = object : FrameLayout(this) {
+            override fun dispatchTouchEvent(ev: android.view.MotionEvent): Boolean {
+                if (BuildConfig.PREVIEW) Log.i("PREVIEW", "FRAMETOUCH ${ev.actionMasked} ${ev.x.toInt()} ${ev.y.toInt()}")
+                return super.dispatchTouchEvent(ev)
+            }
+        }.apply {
             clipChildren = false
             clipToPadding = false
             addView(column, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))

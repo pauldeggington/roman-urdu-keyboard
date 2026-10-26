@@ -54,6 +54,7 @@ adb shell input swipe $X $Y $X $Y 1800 &
 sleep 1.1; adb exec-out screencap -p > $OUT/04_popup_period.png; wait
 
 # type something
+read X Y < <(key h); echo "tap h at $X $Y" > $OUT/tapinfo.txt; adb shell input tap $X $Y >> $OUT/tapinfo.txt 2>&1; sleep 1
 for k in h e l l o; do read X Y < <(key $k); adb shell input tap $X $Y; sleep 0.25; done
 shot 05_typed_hello
 
@@ -71,5 +72,6 @@ hook letters
 adb shell am start -n $PKG/.PreviewActivity --es type number
 sleep 3; shot 13_number_field
 adb logcat -d -s PREVIEW:I > $OUT/preview_log.txt
+adb shell dumpsys window windows > $OUT/windows.txt 2>&1
 adb logcat -d -t 400 *:E > $OUT/errors.txt
 echo done
