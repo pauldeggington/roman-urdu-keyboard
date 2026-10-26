@@ -22,6 +22,11 @@ object RomanUrdu {
     /** Stored in HeliBoard's own preferences so its toolbar refreshes when these change. */
     const val PREF_TONE = "roman_urdu_formal"
     const val PREF_STATE = "roman_urdu_state"
+    const val PREF_DIRECTION = "roman_urdu_direction"
+
+    const val DIR_AUTO = "auto"
+    const val DIR_TO_RU = "to_ru"
+    const val DIR_TO_EN = "to_en"
 
     @Volatile var busy = false
         private set
@@ -36,6 +41,35 @@ object RomanUrdu {
 
     fun isFormal(ctx: Context): Boolean = ctx.prefs().getBoolean(PREF_TONE, false)
 
+    fun direction(ctx: Context): String = ctx.prefs().getString(PREF_DIRECTION, DIR_AUTO) ?: DIR_AUTO
+
+    /** Level for the toolbar icon: 0 = auto, 1 = English to Roman Urdu, 2 = Roman Urdu to English. */
+    fun directionLevel(ctx: Context): Int = when (direction(ctx)) {
+        DIR_TO_RU -> 1
+        DIR_TO_EN -> 2
+        else -> 0
+    }
+
+    fun directionLabel(dir: String): String = when (dir) {
+        DIR_TO_RU -> "English \u2192 Roman Urdu"
+        DIR_TO_EN -> "Roman Urdu \u2192 English"
+        else -> "Auto-detect"
+    }
+
+    /** Which style to use for this text, given the direction setting and the tone. */
+    fun styleFor(ctx: Context, text: String): Style {
+        val toEnglish = when (direction(ctx)) {
+            DIR_TO_EN -> true
+            DIR_TO_RU -> false
+            else -> Detect.guess(text) == Detect.Language.ROMAN_URDU
+        }
+        return when {
+            toEnglish -> Style.TO_ENGLISH
+            isFormal(ctx) -> Style.FORMAL
+            else -> Style.CASUAL
+        }
+    }
+
     /** Nudges HeliBoard's toolbar to redraw our two keys. */
     private fun refreshToolbar(ctx: Context) {
         ctx.prefs().edit { putLong(PREF_STATE, System.nanoTime()) }
@@ -49,6 +83,16 @@ object RomanUrdu {
         val formal = !isFormal(ime)
         ime.prefs().edit { putBoolean(PREF_TONE, formal) }
         toast(ime, if (formal) "Formal: aap" else "Casual: tum")
+    }
+
+    fun cycleDirection(ime: InputMethodService) {
+        val next = when (direction(ime)) {
+            DIR_AUTO -> DIR_TO_RU
+            DIR_TO_RU -> DIR_TO_EN
+            else -> DIR_AUTO
+        }
+        ime.prefs().edit { putString(PREF_DIRECTION, next) }
+        toast(ime, directionLabel(next))
     }
 
     fun openApp(ime: InputMethodService) {
@@ -113,8 +157,13 @@ object RomanUrdu {
             return
         }
 
-        val formal = isFormal(ctx)
-        if (!LlmEngine.isLoaded()) toast(ctx, "Loading the model… the first translation takes a few seconds")
+        val style = styleFor(ctx, text)
+        val label = when (style) {
+            Style.TO_ENGLISH -> "Roman Urdu \u2192 English"
+            Style.FORMAL -> "English \u2192 Roman Urdu (formal)"
+            Style.CASUAL -> "English \u2192 Roman Urdu (casual)"
+        }
+        toast(ctx, if (LlmEngine.isLoaded()) label else "$label. Loading the model, the first one takes a few seconds")
         busy = true
         refreshToolbar(ctx)
 
@@ -122,7 +171,7 @@ object RomanUrdu {
             var out: String? = null
             var failure: Throwable? = null
             try {
-                out = LlmEngine.translate(ctx, text, formal)
+                out = LlmEngine.translate(ctx, text, style)
             } catch (t: Throwable) {
                 failure = t
                 LlmEngine.saveError(ctx, t)

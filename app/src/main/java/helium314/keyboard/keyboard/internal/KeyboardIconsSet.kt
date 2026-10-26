@@ -159,6 +159,7 @@ class KeyboardIconsSet private constructor() {
                     ToolbarKey.BACKGROUND_GATHERING -> R.drawable.ic_settings_gesture
                     ToolbarKey.TRANSLATE -> R.drawable.ic_rurdu_translate
                     ToolbarKey.TONE -> R.drawable.ic_rurdu_tone
+                    ToolbarKey.DIRECTION -> R.drawable.ic_rurdu_direction
                 })
             }
         } }
@@ -225,6 +226,7 @@ class KeyboardIconsSet private constructor() {
                     ToolbarKey.BACKGROUND_GATHERING -> R.drawable.ic_settings_gesture
                     ToolbarKey.TRANSLATE -> R.drawable.ic_rurdu_translate
                     ToolbarKey.TONE -> R.drawable.ic_rurdu_tone
+                    ToolbarKey.DIRECTION -> R.drawable.ic_rurdu_direction
                 })
             }
         } }
@@ -291,6 +293,7 @@ class KeyboardIconsSet private constructor() {
                     ToolbarKey.BACKGROUND_GATHERING -> R.drawable.ic_settings_gesture
                     ToolbarKey.TRANSLATE -> R.drawable.ic_rurdu_translate
                     ToolbarKey.TONE -> R.drawable.ic_rurdu_tone
+                    ToolbarKey.DIRECTION -> R.drawable.ic_rurdu_direction
                 })
             }
         } }

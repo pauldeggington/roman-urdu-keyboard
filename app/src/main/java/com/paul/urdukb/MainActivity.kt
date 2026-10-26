@@ -4,7 +4,12 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Outline
 import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
+import android.view.ViewOutlineProvider
+import android.widget.ImageView
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -26,6 +31,7 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.edit
+import helium314.keyboard.latin.R
 import helium314.keyboard.latin.utils.prefs
 import java.io.File
 import java.util.concurrent.Executors
@@ -43,7 +49,16 @@ class MainActivity : Activity() {
     private var lastSpeedT = 0L
     private var lastSpeedBytes = 0L
     private var speed = 0.0
-    private var styleFormal = false
+    private var styleSel = Style.CASUAL
+    private var thinkingNow = false
+    private val thinkRunnable = object : Runnable {
+        override fun run() {
+            if (thinkingNow) {
+                tryOutput.text = Words.thinking()
+                ui.postDelayed(this, 1600)
+            }
+        }
+    }
 
     private lateinit var scroll: ScrollView
     private lateinit var checklist: LinearLayout
@@ -63,12 +78,21 @@ class MainActivity : Activity() {
 
     private lateinit var tryCasual: Button
     private lateinit var tryFormal: Button
+    private lateinit var dirAuto: Button
+    private lateinit var dirToRu: Button
+    private lateinit var dirToEn: Button
+    private lateinit var tryNote: TextView
     private lateinit var tryInput: EditText
     private lateinit var tryOutput: TextView
     private lateinit var copyBtn: Button
 
     private lateinit var styleCasual: Button
     private lateinit var styleFormalBtn: Button
+    private lateinit var styleEnglishBtn: Button
+    private lateinit var modeFollow: Button
+    private lateinit var modeLight: Button
+    private lateinit var modeDark: Button
+    private lateinit var modeRow: View
     private lateinit var rulesEdit: EditText
     private lateinit var examplesEdit: EditText
     private lateinit var styleBody: LinearLayout
@@ -102,20 +126,13 @@ class MainActivity : Activity() {
             orientation = LinearLayout.VERTICAL
             setPadding(dpi(16f), dpi(24f), dpi(16f), dpi(40f))
         }
-        root.addView(TextView(this).apply {
-            text = "Roman Urdu Keyboard"
-            textSize = 28f
-            setTextColor(pal.text)
-            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-        })
-        root.addView(muted("Type English, tap Translate in the keyboard's toolbar, get Roman Urdu. Runs fully on your phone.").apply {
-            setPadding(0, dpi(4f), 0, dpi(18f))
-        })
+        root.addView(buildHeader())
 
         root.addView(buildChecklistCard())
         modelCard = buildModelCard().also { root.addView(it) }
         tryCard = buildTryCard().also { root.addView(it) }
         root.addView(buildStyleCard())
+        root.addView(buildColourCard())
         root.addView(buildSpeedCard())
         root.addView(buildKeyboardCard())
         root.addView(buildErrorCard())
@@ -126,6 +143,40 @@ class MainActivity : Activity() {
             addView(root)
         }
         return scroll
+    }
+
+    private fun buildHeader(): View {
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(0, 0, 0, dpi(18f))
+        }
+        val size = dpi(64f)
+        val logo = ImageView(this).apply {
+            setImageResource(R.mipmap.ic_launcher)
+            outlineProvider = object : ViewOutlineProvider() {
+                override fun getOutline(view: View, outline: Outline) {
+                    outline.setRoundRect(0, 0, view.width, view.height, view.width * 0.30f)
+                }
+            }
+            clipToOutline = true
+        }
+        row.addView(logo, LinearLayout.LayoutParams(size, size))
+        val texts = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dpi(16f), 0, 0, 0)
+        }
+        texts.addView(TextView(this).apply {
+            text = Words.greeting()
+            textSize = 22f
+            setTextColor(pal.text)
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+        })
+        texts.addView(muted("English to Roman Urdu and back. All on your phone, no internet needed.").apply {
+            setPadding(0, dpi(4f), 0, 0)
+        })
+        row.addView(texts, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+        return row
     }
 
     private fun buildChecklistCard(): View {
@@ -241,17 +292,27 @@ class MainActivity : Activity() {
     private fun buildTryCard(): View {
         val card = card()
         card.addView(title("Try it"))
-        val seg = row()
+        card.addView(label("Direction"))
+        val dirRow = row().apply { (layoutParams as LinearLayout.LayoutParams).topMargin = 0 }
+        dirAuto = button("Auto", false, lock = false) { setDirection(RomanUrdu.DIR_AUTO) }
+        dirToRu = button("To Roman Urdu", false, lock = false) { setDirection(RomanUrdu.DIR_TO_RU) }
+        dirToEn = button("To English", false, lock = false) { setDirection(RomanUrdu.DIR_TO_EN) }
+        dirRow.addView(dirAuto, rowLp())
+        dirRow.addView(dirToRu, rowLp())
+        dirRow.addView(dirToEn, rowLp())
+        card.addView(dirRow)
+        card.addView(label("Tone (for Roman Urdu)"))
+        val seg = row().apply { (layoutParams as LinearLayout.LayoutParams).topMargin = 0 }
         tryCasual = button("Casual · tum", false, lock = false) { setTone(false) }
         tryFormal = button("Formal · aap", false, lock = false) { setTone(true) }
         seg.addView(tryCasual, rowLp())
         seg.addView(tryFormal, rowLp())
         card.addView(seg)
-        card.addView(muted("Same switch as the smiley / briefcase key in the keyboard toolbar.").apply {
+        card.addView(muted("These match the keys in the keyboard toolbar: arrows for direction, smiley or briefcase for tone.").apply {
             setPadding(0, dpi(6f), 0, 0)
             textSize = 12.5f
         })
-        tryInput = edit("Type some English").apply {
+        tryInput = edit("Type English or Roman Urdu").apply {
             minLines = 2
             gravity = Gravity.TOP
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
@@ -263,7 +324,7 @@ class MainActivity : Activity() {
         copyBtn = button("Copy", false, lock = false) {
             val t = tryOutput.tag as? String ?: return@button
             getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("Roman Urdu", t))
-            toast("Copied")
+            toast(Words.copied())
         }
         r.addView(copyBtn, rowLp())
         card.addView(r)
@@ -274,6 +335,8 @@ class MainActivity : Activity() {
             setPadding(0, dpi(14f), 0, 0)
         }
         card.addView(tryOutput)
+        tryNote = muted("").apply { setPadding(0, dpi(4f), 0, 0); textSize = 12.5f }
+        card.addView(tryNote)
         return card
     }
 
@@ -288,46 +351,134 @@ class MainActivity : Activity() {
             toggle.text = if (styleBody.visibility == View.VISIBLE) "Hide" else "Edit"
         }
         card.addView(header)
-        card.addView(muted("The rules and examples the model follows, separately for Casual and Formal."))
+        card.addView(muted("The rules and examples the model follows, separately for Casual, Formal and To English."))
 
         styleBody = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             visibility = View.GONE
         }
         val seg = row()
-        styleCasual = button("Casual", false, lock = false) { showStyle(false) }
-        styleFormalBtn = button("Formal", false, lock = false) { showStyle(true) }
+        styleCasual = button("Casual", false, lock = false) { showStyle(Style.CASUAL) }
+        styleFormalBtn = button("Formal", false, lock = false) { showStyle(Style.FORMAL) }
+        styleEnglishBtn = button("To English", false, lock = false) { showStyle(Style.TO_ENGLISH) }
         seg.addView(styleCasual, rowLp())
         seg.addView(styleFormalBtn, rowLp())
+        seg.addView(styleEnglishBtn, rowLp())
         styleBody.addView(seg)
         rulesEdit = edit("Rules", multi = true)
-        examplesEdit = edit("English | Roman Urdu, one per line", multi = true)
+        examplesEdit = edit("Input | Output, one per line", multi = true)
         styleBody.addView(label("Rules"))
         styleBody.addView(rulesEdit)
-        styleBody.addView(label("Examples (English | Roman Urdu, one per line)"))
+        styleBody.addView(label("Examples (input | output, one per line)"))
         styleBody.addView(examplesEdit)
         val r = row()
         r.addView(button("Save", true) {
-            Prefs.setStyle(this, styleFormal, rulesEdit.text.toString(), examplesEdit.text.toString())
-            toast(if (styleFormal) "Formal style saved" else "Casual style saved")
+            Prefs.setStyle(this, styleSel, rulesEdit.text.toString(), examplesEdit.text.toString())
+            toast("Saved")
         }, rowLp())
         r.addView(button("Reset", false) {
-            Prefs.resetStyle(this, styleFormal)
-            showStyle(styleFormal)
+            Prefs.resetStyle(this, styleSel)
+            showStyle(styleSel)
             toast("Back to the default")
         }, rowLp())
         styleBody.addView(r)
         card.addView(styleBody)
-        showStyle(false)
+        showStyle(Style.CASUAL)
         return card
     }
 
-    private fun showStyle(formal: Boolean) {
-        styleFormal = formal
-        rulesEdit.setText(Prefs.rules(this, formal))
-        examplesEdit.setText(Prefs.examples(this, formal))
-        paintSegment(styleCasual, !formal)
-        paintSegment(styleFormalBtn, formal)
+    private fun showStyle(style: Style) {
+        styleSel = style
+        rulesEdit.setText(Prefs.rules(this, style))
+        examplesEdit.setText(Prefs.examples(this, style))
+        paintSegment(styleCasual, style == Style.CASUAL)
+        paintSegment(styleFormalBtn, style == Style.FORMAL)
+        paintSegment(styleEnglishBtn, style == Style.TO_ENGLISH)
+    }
+
+    private fun buildColourCard(): View {
+        val card = card()
+        card.addView(title("Colour"))
+        card.addView(muted("Pick a colour for the keyboard. The app follows it too. Wallpaper matches your phone, like Gboard.").apply {
+            setPadding(0, dpi(6f), 0, dpi(10f))
+        })
+        val current = KeyboardLook.swatchId(this)
+        val size = dpi(46f)
+        KeyboardLook.SWATCHES.chunked(5).forEach { rowSwatches ->
+            val r = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                layoutParams = lp().apply { topMargin = dpi(6f) }
+            }
+            rowSwatches.forEach { sw ->
+                val col = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                    gravity = Gravity.CENTER_HORIZONTAL
+                }
+                val selected = sw.id == current
+                val dot = TextView(this).apply {
+                    gravity = Gravity.CENTER
+                    text = if (selected) "✓" else ""
+                    textSize = 18f
+                    typeface = Typeface.DEFAULT_BOLD
+                    setTextColor(Color.WHITE)
+                    background = swatchDrawable(sw, selected)
+                    contentDescription = sw.name
+                    setOnClickListener { chooseSwatch(sw) }
+                }
+                col.addView(dot, LinearLayout.LayoutParams(size, size))
+                col.addView(muted(sw.name).apply { textSize = 11f; gravity = Gravity.CENTER; setPadding(0, dpi(3f), 0, 0) })
+                r.addView(col, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+            }
+            card.addView(r)
+        }
+
+        val modeLabel = label("Light or dark")
+        val seg = row().apply { (layoutParams as LinearLayout.LayoutParams).topMargin = 0 }
+        modeFollow = button("Follow phone", false, lock = false) { chooseMode(KeyboardLook.MODE_FOLLOW) }
+        modeLight = button("Light", false, lock = false) { chooseMode(KeyboardLook.MODE_LIGHT) }
+        modeDark = button("Dark", false, lock = false) { chooseMode(KeyboardLook.MODE_DARK) }
+        seg.addView(modeFollow, rowLp())
+        seg.addView(modeLight, rowLp())
+        seg.addView(modeDark, rowLp())
+        modeRow = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(modeLabel)
+            addView(seg)
+        }
+        card.addView(modeRow)
+        paintModes()
+        return card
+    }
+
+    private fun swatchDrawable(sw: KeyboardLook.Swatch, selected: Boolean): GradientDrawable {
+        val d = if (sw.id == KeyboardLook.WALLPAPER) {
+            GradientDrawable(GradientDrawable.Orientation.TL_BR, intArrayOf(0xFFC27BA0.toInt(), 0xFF6C7CE8.toInt(), 0xFF2FB5A8.toInt()))
+        } else {
+            GradientDrawable().apply { setColor(sw.color) }
+        }
+        d.shape = GradientDrawable.OVAL
+        if (selected) d.setStroke(dpi(3f), pal.text)
+        return d
+    }
+
+    private fun chooseSwatch(sw: KeyboardLook.Swatch) {
+        KeyboardLook.apply(this, sw.id, KeyboardLook.mode(this))
+        toast(Words.colour())
+        recreate()
+    }
+
+    private fun chooseMode(mode: String) {
+        KeyboardLook.apply(this, KeyboardLook.swatchId(this), mode)
+        paintModes()
+        recreate()
+    }
+
+    private fun paintModes() {
+        val m = KeyboardLook.mode(this)
+        paintSegment(modeFollow, m == KeyboardLook.MODE_FOLLOW)
+        paintSegment(modeLight, m == KeyboardLook.MODE_LIGHT)
+        paintSegment(modeDark, m == KeyboardLook.MODE_DARK)
+        modeRow.visibility = if (KeyboardLook.swatchId(this) == KeyboardLook.WALLPAPER) View.GONE else View.VISIBLE
     }
 
     private fun buildSpeedCard(): View {
@@ -392,7 +543,7 @@ class MainActivity : Activity() {
         val r = row()
         r.addView(button("Copy", true, lock = false) {
             getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("error", Prefs.lastError(this)))
-            toast("Copied")
+            toast(Words.copied())
         }, rowLp())
         r.addView(button("Clear", false, lock = false) { Prefs.setLastError(this, ""); refresh() }, rowLp())
         errorCard.addView(r)
@@ -506,6 +657,18 @@ class MainActivity : Activity() {
         paintSegment(tryFormal, formal)
     }
 
+    private fun setDirection(dir: String) {
+        prefs().edit { putString(RomanUrdu.PREF_DIRECTION, dir) }
+        paintDirection()
+    }
+
+    private fun paintDirection() {
+        val d = RomanUrdu.direction(this)
+        paintSegment(dirAuto, d == RomanUrdu.DIR_AUTO)
+        paintSegment(dirToRu, d == RomanUrdu.DIR_TO_RU)
+        paintSegment(dirToEn, d == RomanUrdu.DIR_TO_EN)
+    }
+
     private fun refresh() {
         val f = LlmEngine.modelFile(this)
         val part = ModelDownloader.partFile(f)
@@ -576,6 +739,7 @@ class MainActivity : Activity() {
         val formal = RomanUrdu.isFormal(this)
         paintSegment(tryCasual, !formal)
         paintSegment(tryFormal, formal)
+        paintDirection()
         copyBtn.visibility = if (tryOutput.tag is String) View.VISIBLE else View.GONE
 
         // stats
@@ -783,26 +947,36 @@ class MainActivity : Activity() {
             scrollTo(modelCard)
             return
         }
-        val formal = RomanUrdu.isFormal(this)
+        val style = RomanUrdu.styleFor(this, text)
         tryOutput.tag = null
-        tryOutput.text = if (LlmEngine.isLoaded()) "Translating…" else "Loading the model, then translating…"
+        tryNote.text = when (style) {
+            Style.TO_ENGLISH -> "Roman Urdu → English"
+            Style.FORMAL -> "English → Roman Urdu, formal (aap)"
+            Style.CASUAL -> "English → Roman Urdu, casual (tum)"
+        } + if (LlmEngine.isLoaded()) "" else ". The first one loads the model, so it takes a bit longer."
+        tryOutput.text = Words.thinking()
+        thinkingNow = true
+        ui.postDelayed(thinkRunnable, 1600)
         setBusy(true)
         io.execute {
             var out: String? = null
             var err: Throwable? = null
             try {
-                out = LlmEngine.translate(this, text, formal)
+                out = LlmEngine.translate(this, text, style)
             } catch (t: Throwable) {
                 err = t
                 LlmEngine.saveError(this, t)
             }
             val result = out.orEmpty()
             ui.post {
+                thinkingNow = false
+                ui.removeCallbacks(thinkRunnable)
                 if (err != null) {
-                    tryOutput.text = "Failed. The details are in Last error at the bottom."
+                    tryOutput.text = "Yeh nahi hua. The details are in Last error at the bottom."
                 } else {
                     tryOutput.text = result
                     tryOutput.tag = result
+                    tryNote.text = tryNote.text.toString().substringBefore(". The first") + "  ·  " + Words.done()
                 }
                 setBusy(false)
                 refresh()

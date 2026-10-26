@@ -87,8 +87,8 @@ object LlmEngine {
         return created
     }
 
-    private fun examples(ctx: Context, formal: Boolean): List<Pair<String, String>> =
-        Prefs.examples(ctx, formal).lines().mapNotNull { line ->
+    private fun examples(ctx: Context, style: Style): List<Pair<String, String>> =
+        Prefs.examples(ctx, style).lines().mapNotNull { line ->
             val i = line.indexOf('|')
             if (i <= 0) null
             else {
@@ -100,12 +100,12 @@ object LlmEngine {
 
     /** Blocking. Call from a background thread. */
     @Synchronized
-    fun translate(ctx: Context, text: String, formal: Boolean): String {
+    fun translate(ctx: Context, text: String, style: Style): String {
         val eng = getEngine(ctx)
         val t0 = System.nanoTime()
         val config = ConversationConfig(
-            systemInstruction = Contents.of(Prefs.rules(ctx, formal)),
-            initialMessages = examples(ctx, formal).flatMap { (en, ur) -> listOf(Message.user(en), Message.model(ur)) },
+            systemInstruction = Contents.of(Prefs.rules(ctx, style)),
+            initialMessages = examples(ctx, style).flatMap { (en, ur) -> listOf(Message.user(en), Message.model(ur)) },
             samplerConfig = SamplerConfig(topK = 40, topP = 0.95, temperature = 0.3),
         )
         // A fresh conversation per translation, so earlier messages never leak into the next one.
@@ -119,9 +119,13 @@ object LlmEngine {
 
     private fun clean(raw: String): String {
         var s = raw.replace("<end_of_turn>", "").trim()
-        if (s.startsWith("Roman Urdu:", ignoreCase = true)) s = s.substring(11).trim()
-        val cut = s.indexOf("\nEnglish:")
-        if (cut >= 0) s = s.substring(0, cut).trim()
+        for (prefix in listOf("Roman Urdu:", "English:")) {
+            if (s.startsWith(prefix, ignoreCase = true)) s = s.substring(prefix.length).trim()
+        }
+        for (marker in listOf("\nEnglish:", "\nRoman Urdu:")) {
+            val cut = s.indexOf(marker)
+            if (cut >= 0) s = s.substring(0, cut).trim()
+        }
         return s.trim('"', ' ', '\n')
     }
 

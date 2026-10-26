@@ -3,6 +3,7 @@
     <!-- toolbar key names: must be the lowercase ToolbarKey name -->
     <string name="translate">Translate to Roman Urdu (tap again to undo)</string>
     <string name="tone">Formal (aap) or casual (tum)</string>
+    <string name="direction">Direction: auto, English to Roman Urdu, or Roman Urdu to English</string>
 
     <style name="RomanUrduAppTheme" parent="android:Theme.DeviceDefault.DayNight">
         <item name="android:windowActionBar">false</item>

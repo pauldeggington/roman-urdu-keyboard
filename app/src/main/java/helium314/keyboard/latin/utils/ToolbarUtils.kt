@@ -45,6 +45,7 @@ fun setToolbarButtonsActivatedStateOnPrefChange(buttonsGroup: ViewGroup, key: St
         && key != GestureDataGatheringSettings.PREF_BACKGROUND_GATHERING_ENABLED
         && key != GestureDataGatheringSettings.PREF_BACKGROUND_DISABLED_BEFORE_TIME_MILLIS
         && key != RomanUrdu.PREF_TONE
+        && key != RomanUrdu.PREF_DIRECTION
         && key != RomanUrdu.PREF_STATE
         && key?.startsWith(Settings.PREF_ONE_HANDED_MODE_PREFIX) == false)
         return
@@ -70,6 +71,10 @@ private fun setToolbarButtonActivatedState(button: ImageButton) {
         }
         TONE -> {
             button.isSelected = RomanUrdu.isFormal(button.context)
+            true
+        }
+        DIRECTION -> {
+            button.setImageLevel(RomanUrdu.directionLevel(button.context))
             true
         }
         else -> true
@@ -112,6 +117,7 @@ fun getCodeForToolbarKey(key: ToolbarKey) = Settings.getInstance().getCustomTool
     BACKGROUND_GATHERING -> KeyCode.BACKGROUND_GATHERING
     TRANSLATE -> KeyCode.ROMAN_URDU_TRANSLATE
     TONE -> KeyCode.ROMAN_URDU_TONE
+    DIRECTION -> KeyCode.ROMAN_URDU_DIRECTION
 }
 
 fun getCodeForToolbarKeyLongClick(key: ToolbarKey) = Settings.getInstance().getCustomToolbarLongpressCode(key) ?: when (key) {
@@ -133,6 +139,7 @@ fun getCodeForToolbarKeyLongClick(key: ToolbarKey) = Settings.getInstance().getC
     BACKGROUND_GATHERING -> KeyCode.BACKGROUND_GATHERING_TEMP_OFF
     TRANSLATE -> KeyCode.ROMAN_URDU_OPEN_APP
     TONE -> KeyCode.ROMAN_URDU_OPEN_APP
+    DIRECTION -> KeyCode.ROMAN_URDU_OPEN_APP
     else -> KeyCode.UNSPECIFIED
 }
 
@@ -141,7 +148,7 @@ enum class ToolbarKey {
     VOICE, CLIPBOARD, NUMPAD, DPAD, UNDO, REDO, SETTINGS, SELECT_ALL, SELECT_WORD, COPY, CUT, PASTE, ONE_HANDED, FLOATING, SPLIT,
     INCOGNITO, AUTOCORRECT, CLEAR_CLIPBOARD, CLOSE_HISTORY, EMOJI, LEFT, RIGHT, UP, DOWN, WORD_LEFT, WORD_RIGHT,
     PAGE_UP, PAGE_DOWN, FULL_LEFT, FULL_RIGHT, PAGE_START, PAGE_END, BACKGROUND_GATHERING,
-    TRANSLATE, TONE
+    TRANSLATE, TONE, DIRECTION
 }
 
 enum class ToolbarMode {
@@ -158,8 +165,8 @@ val defaultToolbarPref by lazy {
 }
 
 // Roman Urdu: Translate and the Formal/Casual toggle are pinned, so they always show next to the suggestions
-val defaultPinnedToolbarPref = (listOf(TRANSLATE, TONE) + entries.filterNot { it == CLOSE_HISTORY || it == TRANSLATE || it == TONE })
-    .joinToString(Separators.ENTRY) { it.name + Separators.KV + (it == TRANSLATE || it == TONE) }
+val defaultPinnedToolbarPref = (listOf(TRANSLATE, TONE, DIRECTION) + entries.filterNot { it == CLOSE_HISTORY || it == TRANSLATE || it == TONE || it == DIRECTION })
+    .joinToString(Separators.ENTRY) { it.name + Separators.KV + (it == TRANSLATE || it == TONE || it == DIRECTION) }
 
 val defaultClipboardToolbarPref by lazy {
     val default = listOf(CLEAR_CLIPBOARD, UP, DOWN, LEFT, RIGHT, UNDO, CUT, COPY, PASTE, SELECT_WORD, CLOSE_HISTORY)

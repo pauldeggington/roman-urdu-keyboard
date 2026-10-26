@@ -106,6 +106,7 @@ class KeyboardActionListenerImpl(private val latinIME: LatinIME, private val inp
         when (primaryCode) {
             KeyCode.ROMAN_URDU_TRANSLATE -> return com.paul.urdukb.RomanUrdu.translateOrRevert(latinIME) { inputLogic.finishInput() }
             KeyCode.ROMAN_URDU_TONE -> return com.paul.urdukb.RomanUrdu.toggleTone(latinIME)
+            KeyCode.ROMAN_URDU_DIRECTION -> return com.paul.urdukb.RomanUrdu.cycleDirection(latinIME)
             KeyCode.ROMAN_URDU_OPEN_APP -> return com.paul.urdukb.RomanUrdu.openApp(latinIME)
             else -> com.paul.urdukb.RomanUrdu.onOtherKey(latinIME)
         }
