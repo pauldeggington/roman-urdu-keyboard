@@ -98,10 +98,14 @@ tapkey() { read X Y < <(key "$1"); adb shell input tap $X $Y; sleep 0.35; frame;
 adb shell am start -f 0x10008000 -n $PKG/.PreviewActivity > /dev/null 2>&1; sleep 4
 hook letters; sleep 1; frame; frame
 dump; [ -s dump.txt ] || cp $OUT/keys.txt dump.txt; cp dump.txt $OUT/keys_demo.txt
-for k in k y a space h a a l space h a i; do tapkey $k; done
+for k in k y a space h a a l space h a i; do
+  # the space bar sits in the gesture-navigation strip on the emulator, so it gets a key event instead of a tap
+  if [ "$k" = space ]; then adb shell input keyevent 62; sleep 0.35; frame; else tapkey $k; fi
+done
 frame typed; frame
 hook tools; sleep 1; frame; frame; hook notools; sleep 0.5
 read X Y < <(key e); adb shell input swipe $X $Y $X $Y 1800 & sleep 1.1; frame; wait
+sleep 0.5; adb shell input keyevent 67; sleep 0.4
 hook symbols1; sleep 0.8; frame; hook symbols2; sleep 0.8; frame; hook letters; sleep 0.8; frame
 hook emoji; sleep 1.2; frame emoji; frame
 adb shell input swipe 540 1900 540 1250 400; sleep 0.8; frame
