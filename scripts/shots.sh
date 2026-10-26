@@ -19,10 +19,14 @@ adb wait-for-device
 adb shell getprop ro.build.version.sdk
 ls -la app/build/outputs/apk/debug/
 adb install -r app/build/outputs/apk/debug/*.apk
+sleep 8
 adb shell pm list packages | grep urdukb
 adb shell settings put secure show_ime_with_hard_keyboard 1
-adb shell ime enable $IME
-adb shell ime set $IME
+for i in 1 2 3 4 5 6 7 8 9 10; do
+  adb shell ime enable $IME && adb shell ime set $IME && break
+  sleep 3
+done
+adb shell settings get secure default_input_method
 adb shell ime list -a | grep -i -A3 urdukb
 adb shell cmd uimode night yes
 adb shell am start -W -n $PKG/.PreviewActivity
