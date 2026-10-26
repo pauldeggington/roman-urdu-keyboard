@@ -11,7 +11,7 @@ hook() { adb shell am broadcast -a com.paul.urdukb.PREVIEW -p $PKG --es do "$1" 
 key() { # x y of a key from the last dump
   grep -E "KEY $1 " dump.txt | tail -1 | awk '{print $3, $4}'
 }
-dump() { adb logcat -c; hook dump; sleep 1.5; adb logcat -d -s PREVIEW:I | sed 's/.*PREVIEW: //' > dump.txt; }
+dump() { adb logcat -c; hook dump; sleep 1.5; adb logcat -d -s PREVIEW:I | sed 's/.*PREVIEW *: //' > dump.txt; }
 
 LOG=$OUT/steps.txt
 {
