@@ -1,0 +1,13 @@
+<!--
+    icon from pictogramners.com
+    SPDX-License-Identifier: Apache-2.0
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="24dp"
+    android:width="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@color/foreground"
+        android:pathData="m17.503,18.838h4.997v2.104h-7.101zM4.354,20.942 L2.118,18.706q-0.605,-0.605 -0.618,-1.499 -0.013,-0.894 0.592,-1.525L13.664,3.69q0.605,-0.631 1.486,-0.631 0.881,0 1.486,0.605l5.233,5.233q0.605,0.605 0.605,1.499 0,0.894 -0.605,1.499l-8.836,9.047zM12.138,18.838 L20.396,10.369 15.189,5.162 3.565,17.155 5.248,18.838zM11.98,12.526z" />
+</vector>

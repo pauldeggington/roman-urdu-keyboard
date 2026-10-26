@@ -2,7 +2,7 @@ name: Build APK
 
 on:
   push:
-    branches: [main]
+    branches: [main, heliboard]
   workflow_dispatch:
 
 jobs:
@@ -14,11 +14,9 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: 8.9
 
       - name: Restore signing key (if the secrets exist)
         env:
@@ -36,22 +34,25 @@ jobs:
 
       - name: Build debug APK
         run: |
-          gradle assembleDebug --no-daemon --stacktrace > build.log 2>&1 && rc=0 || rc=$?
-          tail -n 30 build.log
+          chmod +x gradlew
+          ./gradlew :app:assembleDebug --no-daemon --stacktrace > build.log 2>&1 && rc=0 || rc=$?
+          tail -n 40 build.log
           if [ "$rc" -ne 0 ]; then
-            { grep -E -A8 '^e: |What went wrong|Could not|error:' build.log | head -80 || true; } > errs.txt
+            { grep -E -A8 '^e: |What went wrong|Could not|error:|ERROR:' build.log | head -90 || true; } > errs.txt
             msg=$(sed 's/%/%25/g' errs.txt | cut -c1-300 | awk '{printf "%s%%0A", $0}')
             echo "::error title=Build failed::${msg}"
             exit "$rc"
           fi
+          mkdir -p out
+          cp app/build/outputs/apk/debug/*.apk out/roman-urdu-keyboard.apk
 
       - name: Show signing fingerprint
         run: |
-          APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | tail -n 1)
-          FP=$("$APKSIGNER" verify --print-certs app/build/outputs/apk/debug/app-debug.apk | grep -i "SHA-256 digest" | head -n 1 || true)
+          APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -n 1)
+          FP=$("$APKSIGNER" verify --print-certs out/roman-urdu-keyboard.apk | grep -i "SHA-256 digest" | head -n 1 || true)
           echo "::notice title=Signing fingerprint::$FP"
 
       - uses: actions/upload-artifact@v4
         with:
           name: roman-urdu-keyboard-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: out/roman-urdu-keyboard.apk

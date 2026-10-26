@@ -14,7 +14,9 @@ object LlmEngine {
     private var engine: Engine? = null
     private var engineIsGpu = false
 
-    fun modelFile(ctx: Context): File = File(ctx.filesDir, "model.litertlm")
+    fun modelFile(ctx: Context): File = File(Prefs.store(ctx).filesDir, "model.litertlm")
+
+    fun isLoaded(): Boolean = engine != null
 
     /** True only if the file is there and its size matches what we expected when it was installed. */
     fun modelExists(ctx: Context): Boolean {
@@ -48,17 +50,19 @@ object LlmEngine {
                 try {
                     val backend = if (gpu) Backend.GPU() else Backend.CPU()
                     val config = when (variant) {
-                        0 -> EngineConfig(modelPath = path, backend = backend, cacheDir = ctx.cacheDir.path)
+                        0 -> EngineConfig(modelPath = path, backend = backend, cacheDir = Prefs.store(ctx).cacheDir.path)
                         1 -> EngineConfig(modelPath = path, backend = backend)
                         else -> EngineConfig(
                             modelPath = path,
                             backend = backend,
                             maxNumTokens = 4096,
-                            cacheDir = ctx.cacheDir.path,
+                            cacheDir = Prefs.store(ctx).cacheDir.path,
                         )
                     }
+                    val t0 = System.nanoTime()
                     val e = Engine(config)
                     e.initialize()
+                    Prefs.setLoad(ctx, if (gpu) "GPU" else "CPU", (System.nanoTime() - t0) / 1_000_000)
                     return e to gpu
                 } catch (t: Throwable) {
                     errors += "$label: ${t.message}"
@@ -83,8 +87,8 @@ object LlmEngine {
         return created
     }
 
-    private fun examples(ctx: Context): List<Pair<String, String>> =
-        Prefs.examples(ctx).lines().mapNotNull { line ->
+    private fun examples(ctx: Context, formal: Boolean): List<Pair<String, String>> =
+        Prefs.examples(ctx, formal).lines().mapNotNull { line ->
             val i = line.indexOf('|')
             if (i <= 0) null
             else {
@@ -96,17 +100,20 @@ object LlmEngine {
 
     /** Blocking. Call from a background thread. */
     @Synchronized
-    fun translate(ctx: Context, text: String): String {
+    fun translate(ctx: Context, text: String, formal: Boolean): String {
         val eng = getEngine(ctx)
+        val t0 = System.nanoTime()
         val config = ConversationConfig(
-            systemInstruction = Contents.of(Prefs.rules(ctx)),
-            initialMessages = examples(ctx).flatMap { (en, ur) -> listOf(Message.user(en), Message.model(ur)) },
+            systemInstruction = Contents.of(Prefs.rules(ctx, formal)),
+            initialMessages = examples(ctx, formal).flatMap { (en, ur) -> listOf(Message.user(en), Message.model(ur)) },
             samplerConfig = SamplerConfig(topK = 40, topP = 0.95, temperature = 0.3),
         )
         // A fresh conversation per translation, so earlier messages never leak into the next one.
         return eng.createConversation(config).use { conversation ->
             val reply = runBlocking { conversation.sendMessage(text) }
-            clean(reply.toString())
+            val out = clean(reply.toString())
+            Prefs.addTranslation(ctx, (System.nanoTime() - t0) / 1_000_000)
+            out
         }
     }
 

@@ -1,0 +1,5 @@
+<!-- Translate; after translating it turns into an undo arrow (tap again to get the English back) -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true" android:drawable="@drawable/ic_undo" />
+    <item android:drawable="@drawable/ic_rurdu_translate_base" />
+</selector>
