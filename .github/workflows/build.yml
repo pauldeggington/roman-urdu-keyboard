@@ -20,6 +20,20 @@ jobs:
         with:
           gradle-version: 8.9
 
+      - name: Restore signing key (if the secrets exist)
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$KEYSTORE_PASSWORD" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/pinned.jks"
+            echo "KEYSTORE_FILE=$RUNNER_TEMP/pinned.jks" >> "$GITHUB_ENV"
+            echo "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> "$GITHUB_ENV"
+            echo "Using the pinned signing key."
+          else
+            echo "No signing secrets set; using a random debug key."
+          fi
+
       - name: Build debug APK
         run: |
           gradle assembleDebug --no-daemon --stacktrace > build.log 2>&1 && rc=0 || rc=$?
@@ -30,6 +44,12 @@ jobs:
             echo "::error title=Build failed::${msg}"
             exit "$rc"
           fi
+
+      - name: Show signing fingerprint
+        run: |
+          APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | tail -n 1)
+          FP=$("$APKSIGNER" verify --print-certs app/build/outputs/apk/debug/app-debug.apk | grep -i "SHA-256 digest" | head -n 1 || true)
+          echo "::notice title=Signing fingerprint::$FP"
 
       - uses: actions/upload-artifact@v4
         with:
