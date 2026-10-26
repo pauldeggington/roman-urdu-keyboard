@@ -145,7 +145,7 @@ class UrduKeyboardService : InputMethodService() {
         val action = opts and EditorInfo.IME_MASK_ACTION
         val noEnterAction = opts and EditorInfo.IME_FLAG_NO_ENTER_ACTION != 0
         if (!noEnterAction && action != EditorInfo.IME_ACTION_NONE && action != EditorInfo.IME_ACTION_UNSPECIFIED) {
-            performEditorAction(action)
+            currentInputConnection?.performEditorAction(action)
         } else {
             sendDownUpKeyEvents(KeyEvent.KEYCODE_ENTER)
         }
