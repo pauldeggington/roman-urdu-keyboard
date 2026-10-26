@@ -13,13 +13,22 @@ key() { # x y of a key from the last dump
 }
 dump() { adb logcat -c; hook dump; sleep 1.5; adb logcat -d -s PREVIEW:I | sed 's/.*PREVIEW: //' > dump.txt; }
 
+LOG=$OUT/steps.txt
+{
+adb wait-for-device
+adb shell getprop ro.build.version.sdk
+ls -la app/build/outputs/apk/debug/
 adb install -r app/build/outputs/apk/debug/*.apk
+adb shell pm list packages | grep urdukb
 adb shell settings put secure show_ime_with_hard_keyboard 1
 adb shell ime enable $IME
 adb shell ime set $IME
+adb shell ime list -a | grep -i -A3 urdukb
 adb shell cmd uimode night yes
-adb shell am start -n $PKG/.PreviewActivity
+adb shell am start -W -n $PKG/.PreviewActivity
+} > $LOG 2>&1
 sleep 6
+adb logcat -d -s AndroidRuntime:E ActivityManager:W > $OUT/crash.txt 2>&1
 shot 01_letters_dark
 adb shell wm size > $OUT/wm_size.txt; adb shell wm density >> $OUT/wm_density.txt
 
