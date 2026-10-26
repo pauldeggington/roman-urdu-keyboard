@@ -43,7 +43,7 @@
             android:label="Keyboard preview"
             android:theme="@style/RomanUrduAppTheme"
             android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
+            android:exported="${previewExported}" />
 
         <service android:name=".ime.UrduImeService"
             android:label="@string/app_name"

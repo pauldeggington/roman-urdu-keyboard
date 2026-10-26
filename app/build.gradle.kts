@@ -15,6 +15,7 @@ android {
         versionName = System.getenv("VERSION_NAME") ?: "2.0-dev"
         // emulator preview builds (-PnoNative) carry test hooks so CI can drive the keyboard for screenshots
         buildConfigField("boolean", "PREVIEW", project.hasProperty("noNative").toString())
+        manifestPlaceholders["previewExported"] = project.hasProperty("noNative").toString()
         ndk {
             abiFilters.clear()
             abiFilters.addAll(listOf("arm64-v8a"))
