@@ -32,8 +32,7 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.edit
-import helium314.keyboard.latin.R
-import helium314.keyboard.latin.utils.prefs
+import com.paul.urdukb.ime.Kb
 import java.util.concurrent.Executors
 
 /**
@@ -93,8 +92,12 @@ class SetupActivity : Activity() {
         window.statusBarColor = pal.appBg
         window.navigationBarColor = pal.appBg
         val light = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-        window.insetsController?.setSystemBarsAppearance(if (pal.dark) 0 else light, light)
+        window.decorView.windowInsetsController?.setSystemBarsAppearance(if (pal.dark) 0 else light, light)
         step = runCatching { Step.valueOf(sp().getString(PREF_STEP, Step.WELCOME.name)!!) }.getOrDefault(Step.WELCOME)
+        // emulator preview builds can open any step, to take screenshots
+        if (com.paul.urdukb.BuildConfig.PREVIEW) {
+            intent.getStringExtra("step")?.let { n -> runCatching { Step.valueOf(n) }.getOrNull()?.let { step = it } }
+        }
         setContentView(buildShell())
         show(step, animate = false)
     }
@@ -284,7 +287,7 @@ class SetupActivity : Activity() {
         content.addView(feature(R.drawable.ic_setup_translate, "Translate as you type", "One tap on the Translate key turns your message into Roman Urdu, casual or formal."))
         content.addView(feature(R.drawable.ic_setup_offline, "Private and offline", "The translator runs on your phone. What you type is never sent anywhere."))
         content.addView(feature(R.drawable.ic_setup_keyboard, "Feels like Gboard", "Same look and layout you know, with a Translate key on top."))
-        content.addView(small("Setup takes about 2 minutes. The translator is a one-time 2.6 GB download, best on Wi-Fi.").apply {
+        content.addView(small("Setup takes about 2 minutes. The translator is a one-time download (2.6 GB, or 0.6 GB for the smaller one), best on Wi-Fi.").apply {
             gravity = Gravity.CENTER
             setPadding(0, dpi(20f), 0, 0)
         })
@@ -295,7 +298,8 @@ class SetupActivity : Activity() {
     private fun buildModel() {
         content.addView(hero(R.drawable.ic_setup_download))
         content.addView(heading("Download the translator"))
-        content.addView(body("Gemma 4 is the AI that does the translating. It lives on your phone, so it works with no internet and nothing leaves your phone."))
+        content.addView(body("A small AI model does the translating. It lives on your phone, so it works with no internet and nothing leaves your phone."))
+        content.addView(modelChoiceCards())
         val card = card()
         modelLine = TextView(this).apply {
             textSize = 15f
@@ -334,6 +338,83 @@ class SetupActivity : Activity() {
         primary.setOnClickListener { onModelPrimary() }
     }
 
+    /** Two options: the best-quality model, or a smaller and faster one that needs a free Hugging Face token. */
+    private fun modelChoiceCards(): View {
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(0, dpi(16f), 0, 0) }
+        val current = Prefs.modelChoice(this)
+        val locked = BackgroundDownload.state(this).active || verifying
+        ModelChoice.entries.forEach { m ->
+            val selected = m == current
+            val row = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                background = roundedBg(if (selected) pal.tonal else pal.card, dpf(20f)).apply {
+                    setStroke(dpi(if (selected) 2f else 1f), if (selected) pal.primary else pal.tonal)
+                }
+                setPadding(dpi(16f), dpi(12f), dpi(16f), dpi(12f))
+                isClickable = true
+                setOnClickListener {
+                    if (m == current) return@setOnClickListener
+                    if (locked) { toast("Cancel the download first to change model."); return@setOnClickListener }
+                    Prefs.setModelChoice(this@SetupActivity, m)
+                    LlmEngine.reset()
+                    show(Step.MODEL, animate = false)
+                }
+            }
+            val top = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER_VERTICAL }
+            top.addView(TextView(this).apply {
+                text = (if (selected) "●  " else "○  ") + m.tagline
+                textSize = 15.5f
+                setTextColor(pal.text)
+                typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+            top.addView(small(m.sizeText))
+            row.addView(top)
+            row.addView(small(
+                if (m == ModelChoice.GEMMA4) "Gemma 4 E2B. Understands Roman Urdu best. No account needed."
+                else "Gemma 3 1B. Downloads fast and answers faster, but translates less accurately. Needs a free Hugging Face token."
+            ).apply { setPadding(0, dpi(4f), 0, 0) })
+            box.addView(row, lp().apply { topMargin = dpi(10f) })
+        }
+        if (current.needsToken && !LlmEngine.modelExists(this)) box.addView(tokenHelp(current))
+        return box
+    }
+
+    private fun tokenHelp(m: ModelChoice): View {
+        val card = card()
+        card.addView(small("Google keeps Gemma 3 behind a licence click. It takes about a minute, once:"))
+        card.addView(numbered(1, "Open the model page, sign in (free) and tap Agree"))
+        card.addView(numbered(2, "Make a free read token and paste it below"))
+        val r = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; setPadding(0, dpi(12f), 0, 0) }
+        fun pillButton(text: String, url: String) = TextView(this).apply {
+            this.text = text
+            gravity = Gravity.CENTER
+            textSize = 14f
+            setTextColor(pal.onTonal)
+            background = roundedBg(pal.tonal, dpf(100f))
+            setOnClickListener { runCatching { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) } }
+        }
+        r.addView(pillButton("Model page", m.pageUrl), LinearLayout.LayoutParams(0, dpi(44f), 1f).apply { marginEnd = dpi(8f) })
+        r.addView(pillButton("Make a token", "https://huggingface.co/settings/tokens"), LinearLayout.LayoutParams(0, dpi(44f), 1f))
+        card.addView(r)
+        val field = EditText(this).apply {
+            hint = "Paste token (hf_…)"
+            setTextColor(pal.text)
+            setHintTextColor(pal.textMuted)
+            textSize = 14f
+            background = roundedBg(pal.field, dpf(14f))
+            setPadding(dpi(14f), dpi(12f), dpi(14f), dpi(12f))
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            setText(Prefs.token(this@SetupActivity))
+            addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, st: Int, c: Int, a: Int) = Unit
+                override fun onTextChanged(s: CharSequence?, st: Int, b: Int, c: Int) = Unit
+                override fun afterTextChanged(s: android.text.Editable?) { Prefs.setToken(this@SetupActivity, s?.toString().orEmpty()) }
+            })
+        }
+        card.addView(field, lp().apply { topMargin = dpi(12f) })
+        return card
+    }
+
     private fun onModelPrimary() {
         val s = BackgroundDownload.state(this)
         when {
@@ -345,9 +426,14 @@ class SetupActivity : Activity() {
     private fun startDownload() {
         val dest = LlmEngine.modelFile(this)
         dest.parentFile?.mkdirs()
+        val m = Prefs.modelChoice(this)
+        if (m.needsToken && Prefs.token(this).length < 8) {
+            toast("Paste your Hugging Face token first (step 2 above)")
+            return
+        }
         val free = runCatching { StatFs(dest.parentFile!!.path).availableBytes }.getOrDefault(Long.MAX_VALUE)
-        if (free < 3L * 1024 * 1024 * 1024) {
-            toast("You need about 3 GB of free space. Free some up and try again.")
+        if (free < m.approxBytes + 400_000_000L) {
+            toast("You need about ${String.format("%.1f", (m.approxBytes + 400_000_000L) / 1e9)} GB of free space. Free some up and try again.")
             return
         }
         val wifiOnly = BackgroundDownload.isMetered(this) && sp().getBoolean(PREF_WIFI_ONLY, true)
@@ -450,19 +536,25 @@ class SetupActivity : Activity() {
 
         content.addView(label("I am"))
         val who = segments(
-            listOf(Speaker.MALE to "Male", Speaker.FEMALE to "Female", Speaker.NEUTRAL to "Neutral"),
+            listOf(Speaker.MALE to "Male", Speaker.FEMALE to "Female"),
             Speaker.get(this),
         ) { Speaker.set(this, it) }
         content.addView(who)
-        content.addView(small("\"I'm tired\" becomes \"Main thak gaya hoon\", \"Main thak gayi hoon\" or \"Hum thak gaye hain\".").apply { setPadding(0, dpi(6f), 0, 0) })
+        content.addView(small("\"I'm tired\" becomes \"Main thak gaya hoon\" or \"Main thak gayi hoon\".").apply { setPadding(0, dpi(6f), 0, 0) })
 
         content.addView(label("How you usually talk"))
         val tone = segments(listOf("casual" to "Casual · tum", "formal" to "Formal · aap"),
             if (RomanUrdu.isFormal(this)) "formal" else "casual") { v ->
-            prefs().edit { putBoolean(RomanUrdu.PREF_TONE, v == "formal") }
+            Kb.prefs(this).edit { putBoolean(RomanUrdu.PREF_TONE, v == "formal") }
         }
         content.addView(tone)
         content.addView(small("You can switch any time with the Casual / Formal key on the keyboard.").apply { setPadding(0, dpi(6f), 0, 0) })
+
+        content.addView(label("Keyboard theme"))
+        content.addView(segments(
+            listOf(KeyboardLook.MODE_FOLLOW to "Follow phone", KeyboardLook.MODE_LIGHT to "Light", KeyboardLook.MODE_DARK to "Dark"),
+            KeyboardLook.mode(this),
+        ) { KeyboardLook.apply(this, KeyboardLook.swatchId(this), it); recreate() })
 
         content.addView(label("Keyboard colour"))
         val current = KeyboardLook.swatchId(this)
@@ -503,7 +595,7 @@ class SetupActivity : Activity() {
         content.addView(heading("Try it"))
         content.addView(body("Type a sentence in English, then tap the Translate key above the letters."))
         val keys = card().apply { (layoutParams as LinearLayout.LayoutParams).topMargin = dpi(12f) }
-        keys.addView(keyTip(R.drawable.ic_rurdu_translate, "Translate", "Turns your text into Roman Urdu. Tap again to undo."))
+        keys.addView(keyTip(R.drawable.kb_translate, "Translate", "Turns your text into Roman Urdu. Tap again to undo."))
         keys.addView(keyTip(R.drawable.ic_setup_mood, "Casual / Formal", "tum for friends and family, aap for elders and work."))
         keys.addView(keyTip(R.drawable.ic_setup_swap, "Auto", "Works out the direction. Tap to force English → Roman Urdu or back."))
         content.addView(keys)
@@ -649,7 +741,7 @@ class SetupActivity : Activity() {
                 line.text = "✓  Translator ready"
                 line.setTextColor(pal.ok)
                 bar.visibility = View.GONE
-                note.text = "Gemma 4 E2B · ${gb(LlmEngine.modelFile(this).length())}"
+                note.text = "${Prefs.modelChoice(this).label} · ${gb(LlmEngine.modelFile(this).length())}"
                 primary.text = "Next"
                 secondary.visibility = View.GONE
             }
@@ -671,16 +763,17 @@ class SetupActivity : Activity() {
                 line.text = BackgroundDownload.reasonText(s)
                 line.setTextColor(pal.error)
                 bar.visibility = View.GONE
-                note.text = "It picks up from the start. About 2.6 GB."
+                note.text = "It picks up from the start. About ${Prefs.modelChoice(this).sizeText}."
                 primary.text = "Try again"
                 secondary.text = "I already have the file"
                 secondary.setOnClickListener { importFile() }
             }
             else -> {
                 line.setTextColor(pal.text)
-                line.text = "One-time download · about 2.6 GB"
+                line.text = "One-time download · about ${Prefs.modelChoice(this).sizeText}"
                 bar.visibility = View.GONE
-                note.text = "Takes 5 to 15 minutes on Wi-Fi. Needs about 3 GB free."
+                note.text = if (Prefs.modelChoice(this) == ModelChoice.GEMMA3) "Takes a few minutes on Wi-Fi."
+                    else "Takes 5 to 15 minutes on Wi-Fi. Needs about 3 GB free."
                 primary.text = "Download now"
                 secondary.text = "I already have the file"
                 secondary.setOnClickListener { importFile() }
@@ -940,6 +1033,11 @@ class SetupActivity : Activity() {
 
         fun markDone(ctx: Context) =
             Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE).edit().putBoolean(PREF_DONE, true).apply()
+
+        /** The keyboard changed (an update replaced it), so ask the person to turn the new one on. */
+        fun resumeAtEnable(ctx: Context) =
+            Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE).edit()
+                .putBoolean(PREF_DONE, false).putString(PREF_STEP, Step.ENABLE.name).apply()
 
         fun reset(ctx: Context) =
             Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE).edit().putBoolean(PREF_DONE, false).remove(PREF_STEP).apply()

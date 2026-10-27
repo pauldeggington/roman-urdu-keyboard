@@ -20,10 +20,11 @@ object LlmEngine {
      */
     fun modelFile(ctx: Context): File {
         val app = Prefs.store(ctx)
-        val internal = File(app.filesDir, "model.litertlm")
+        val name = Prefs.modelChoice(ctx).fileName
+        val internal = File(app.filesDir, name)
         if (internal.exists()) return internal
         val ext = runCatching { app.getExternalFilesDir(null) }.getOrNull() ?: return internal
-        return File(ext, "model.litertlm")
+        return File(ext, name)
     }
 
     fun isLoaded(): Boolean = engine != null

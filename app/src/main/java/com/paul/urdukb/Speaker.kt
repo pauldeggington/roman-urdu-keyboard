@@ -10,10 +10,12 @@ import android.content.Context
 object Speaker {
     const val MALE = "male"
     const val FEMALE = "female"
-    const val NEUTRAL = "neutral"
 
-    fun get(ctx: Context): String =
-        Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE).getString("speaker", MALE) ?: MALE
+    /** Male or female. An older "neutral" choice reads as male. */
+    fun get(ctx: Context): String {
+        val v = Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE).getString("speaker", MALE)
+        return if (v == FEMALE) FEMALE else MALE
+    }
 
     fun set(ctx: Context, v: String) =
         Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE).edit().putString("speaker", v).apply()
@@ -26,7 +28,6 @@ object Speaker {
     /** Rules block appended to the Roman Urdu system prompt. */
     fun rules(ctx: Context): String = "\n" + when (get(ctx)) {
         FEMALE -> """- The speaker is female. When the English is about the speaker, write "main" with feminine first-person forms and "hoon": main theek hoon, main thak gayi hoon, main kaam kar rahi hoon, main aa sakti hoon, main bhool gayi thi, main baad mein call karti hoon."""
-        NEUTRAL -> """- The speaker's gender is not given. When the English is about the speaker, always write "hum" with plural verbs so it is clear who it is: hum theek hain, hum thak gaye hain, hum kaam kar rahay hain, hum baad mein call kartay hain. Never leave out "hum"."""
         else -> """- The speaker is male. When the English is about the speaker, write "main" with masculine first-person forms and "hoon": main theek hoon, main thak gaya hoon, main kaam kar raha hoon, main aa sakta hoon, main bhool gaya tha, main baad mein call karta hoon."""
     } + "\n" + COMMON
 
@@ -40,17 +41,12 @@ object Speaker {
         "raha" to "rahi", "gaya" to "gayi", "karta" to "karti", "sakta" to "sakti", "chahta" to "chahti",
         "tha" to "thi", "wala" to "wali", "deta" to "deti", "leta" to "leti", "jata" to "jati", "aata" to "aati",
     )
-    private val toNeutral = mapOf(
-        "main" to "hum", "hoon" to "hain", "raha" to "rahay", "gaya" to "gaye", "karta" to "kartay",
-        "sakta" to "saktay", "chahta" to "chahtay", "tha" to "thay", "wala" to "walay", "deta" to "detay",
-        "leta" to "letay", "jata" to "jatay", "aata" to "aatay",
-    )
     private val word = Regex("[A-Za-z]+")
     private val clause = Regex("[^,.?!;]+[,.?!;]*")
 
     /** Rewrites the male first-person forms of the default bank for the chosen speaker. */
     fun adapt(ctx: Context, roman: String): String {
-        val map = when (get(ctx)) { FEMALE -> toFemale; NEUTRAL -> toNeutral; else -> return roman }
+        val map = if (get(ctx) == FEMALE) toFemale else return roman
         return clause.replace(roman) { c ->
             val text = c.value
             if (word.findAll(text).none { it.value.equals("main", true) || it.value.equals("hoon", true) }) text

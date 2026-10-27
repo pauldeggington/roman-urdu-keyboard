@@ -8,8 +8,11 @@ import androidx.core.graphics.ColorUtils
 
 /** Colours for the setup app. Wallpaper (Material You) by default, or built from the chosen swatch. */
 class Palette(ctx: Context) {
-    val dark: Boolean =
-        (ctx.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    val dark: Boolean = when (KeyboardLook.mode(ctx)) {
+        KeyboardLook.MODE_LIGHT -> false
+        KeyboardLook.MODE_DARK -> true
+        else -> (ctx.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    }
 
     private val seed: Int? = KeyboardLook.seedColor(ctx)
     private val sys = { id: Int -> ctx.getColor(id) }

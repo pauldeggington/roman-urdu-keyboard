@@ -2,7 +2,7 @@ name: Build APK
 
 on:
   push:
-    branches: [main, heliboard, design-v2, gboard-match, speaker-fix, setup-guide, fix-setup, browser-update]
+    branches: [main, rewrite]
   workflow_dispatch:
 
 permissions:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # 1.0.<run> for people; the Version step sets versionCode 4300+<run> so each release installs over the last
-      VERSION_NAME: 1.0.${{ github.run_number }}
+      VERSION_NAME: 2.0.${{ github.run_number }}
     steps:
       - uses: actions/checkout@v4
 
@@ -106,3 +106,22 @@ jobs:
             --target "$GITHUB_SHA" \
             --latest
           echo "::notice title=Released::https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
+
+      - name: Publish test release (rewrite branch, not the main download)
+        if: github.ref == 'refs/heads/rewrite' && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v${VERSION_NAME}-test"
+          cp out/roman-urdu-keyboard.apk "out/RomanUrduKeyboard-${VERSION_NAME}-test.apk"
+          {
+            echo "**Test version of the rewritten keyboard.** It is not the main download and the in-app Update button ignores it."
+            echo ""
+            echo "Install it like any APK. It installs over the current app and keeps your settings. If Android's install screen warns about it, choose More details, then Install anyway."
+            echo ""
+            git log -1 --pretty=format:'%s'
+          } > notes.md
+          gh release create "$TAG" "out/RomanUrduKeyboard-${VERSION_NAME}-test.apk" \
+            --title "Test ${VERSION_NAME} (rewritten keyboard)" --notes-file notes.md \
+            --target "$GITHUB_SHA" --prerelease
+          echo "::notice title=Test release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"

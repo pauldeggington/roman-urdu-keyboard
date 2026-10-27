@@ -33,8 +33,7 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.edit
-import helium314.keyboard.latin.R
-import helium314.keyboard.latin.utils.prefs
+import com.paul.urdukb.ime.Kb
 import java.io.File
 import java.util.concurrent.Executors
 
@@ -73,7 +72,9 @@ class MainActivity : Activity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var progressText: TextView
     private lateinit var tokenEdit: EditText
-    private lateinit var urlEdit: EditText
+    private lateinit var tokenHelp: TextView
+    private lateinit var modelGemma4: Button
+    private lateinit var modelGemma3: Button
     private lateinit var downloadBtn: Button
     private lateinit var cancelBtn: Button
     private lateinit var removeBtn: Button
@@ -116,9 +117,12 @@ class MainActivity : Activity() {
         window.statusBarColor = pal.appBg
         window.navigationBarColor = pal.appBg
         val light = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-        window.insetsController?.setSystemBarsAppearance(if (pal.dark) 0 else light, light)
+        window.decorView.windowInsetsController?.setSystemBarsAppearance(if (pal.dark) 0 else light, light)
+        val kbEnabled = getSystemService(InputMethodManager::class.java)?.enabledInputMethodList?.any { it.packageName == packageName } == true
+        // an update from the old keyboard replaces it with a new one that has to be turned on again
+        if (SetupActivity.isDone(this) && !kbEnabled) SetupActivity.resumeAtEnable(this)
         if (!SetupActivity.isDone(this)) {
-            val enabled = getSystemService(InputMethodManager::class.java)?.enabledInputMethodList?.any { it.packageName == packageName } == true
+            val enabled = kbEnabled
             if (LlmEngine.modelExists(this) && enabled) SetupActivity.markDone(this) // set up before the guide existed
             else {
                 startActivity(Intent(this, SetupActivity::class.java))
@@ -175,20 +179,16 @@ class MainActivity : Activity() {
         scroll = ScrollView(this).apply {
             setBackgroundColor(pal.appBg)
             isFillViewport = true
-            clipToPadding = false
+            clipToPadding = true   // content stops at the status bar instead of scrolling under the clock
             addView(root)
         }
         // Android 15+ draws apps edge to edge, so keep the content clear of the status bar,
         // the gesture/navigation bar, the camera cutout and the on-screen keyboard.
-        val baseL = root.paddingLeft
-        val baseT = root.paddingTop
-        val baseR = root.paddingRight
-        val baseB = root.paddingBottom
         scroll.setOnApplyWindowInsetsListener { _, insets ->
             val bars = insets.getInsets(
                 WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout() or WindowInsets.Type.ime()
             )
-            root.setPadding(baseL + bars.left, baseT + bars.top, baseR + bars.right, baseB + bars.bottom)
+            scroll.setPadding(bars.left, bars.top, bars.right, bars.bottom)
             insets
         }
         return scroll
@@ -333,6 +333,16 @@ class MainActivity : Activity() {
     private fun buildModelCard(): View {
         val card = card()
         card.addView(title("Model"))
+        val choiceRow = row()
+        modelGemma4 = button("Gemma 4 · 2.6 GB", false, lock = false) { chooseModel(ModelChoice.GEMMA4) }
+        modelGemma3 = button("Gemma 3 · 0.6 GB", false, lock = false) { chooseModel(ModelChoice.GEMMA3) }
+        choiceRow.addView(modelGemma4, rowLp())
+        choiceRow.addView(modelGemma3, rowLp())
+        card.addView(choiceRow)
+        card.addView(muted("Gemma 4 translates Roman Urdu best. Gemma 3 downloads in minutes and answers faster, but is less accurate.").apply {
+            textSize = 12.5f
+            setPadding(0, dpi(6f), 0, 0)
+        })
         modelStatus = TextView(this).apply {
             textSize = 15f
             setPadding(0, dpi(8f), 0, 0)
@@ -352,14 +362,20 @@ class MainActivity : Activity() {
         progressText = muted("").apply { visibility = View.GONE }
         card.addView(progressText)
 
-        card.addView(muted("Free to download, no account needed. It downloads in the background with a notification, so you can leave the app.").apply {
+        card.addView(muted("It downloads in the background with a notification, so you can leave the app.").apply {
             setPadding(0, dpi(14f), 0, dpi(6f))
         })
-        tokenEdit = edit("Hugging Face token (optional)").apply {
+        tokenHelp = muted("Gemma 3 is behind Google's licence. Open the model page and tap Agree (free Hugging Face account), then make a free read token at huggingface.co/settings/tokens and paste it here.").apply {
+            textSize = 12.5f
+            visibility = View.GONE
+        }
+        card.addView(tokenHelp)
+        tokenEdit = edit("Hugging Face token (hf_…)").apply {
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             setText(Prefs.token(this@MainActivity))
             visibility = View.GONE
         }
+        card.addView(tokenEdit)
 
         val row1 = row()
         downloadBtn = button("Download model", true) { startDownload() }
@@ -388,22 +404,6 @@ class MainActivity : Activity() {
         verifyBtn = button("Check the file is intact", false) { runVerify() }
         card.addView(verifyBtn, lp().apply { topMargin = dpi(10f) })
 
-        urlEdit = edit("Model URL").apply {
-            setText(Prefs.url(this@MainActivity))
-            visibility = View.GONE
-            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
-        }
-        card.addView(muted("Advanced: model URL").apply {
-            setTextColor(pal.primary)
-            setPadding(0, dpi(14f), 0, dpi(4f))
-            setOnClickListener {
-                val v = if (urlEdit.visibility == View.VISIBLE) View.GONE else View.VISIBLE
-                urlEdit.visibility = v
-                tokenEdit.visibility = v
-            }
-        })
-        card.addView(urlEdit)
-        card.addView(tokenEdit)
         return card
     }
 
@@ -492,21 +492,17 @@ class MainActivity : Activity() {
         val who = row()
         lateinit var male: Button
         lateinit var female: Button
-        lateinit var neutral: Button
         fun paintWho() {
             val v = Speaker.get(this)
             paintSegment(male, v == Speaker.MALE)
             paintSegment(female, v == Speaker.FEMALE)
-            paintSegment(neutral, v == Speaker.NEUTRAL)
         }
         male = button("Male", false, lock = false) { Speaker.set(this, Speaker.MALE); paintWho(); toast("Main kar raha hoon") }
         female = button("Female", false, lock = false) { Speaker.set(this, Speaker.FEMALE); paintWho(); toast("Main kar rahi hoon") }
-        neutral = button("Neutral", false, lock = false) { Speaker.set(this, Speaker.NEUTRAL); paintWho(); toast("Hum kar rahay hain") }
         who.addView(male, rowLp())
         who.addView(female, rowLp())
-        who.addView(neutral, rowLp())
         card.addView(who)
-        card.addView(muted("How the translation talks about you: \"I'm tired\" becomes \"Main thak gaya hoon\", \"Main thak gayi hoon\" or \"Hum thak gaye hain\"."))
+        card.addView(muted("How the translation talks about you: \"I'm tired\" becomes \"Main thak gaya hoon\" or \"Main thak gayi hoon\"."))
         paintWho()
 
         styleBody = LinearLayout(this).apply {
@@ -675,27 +671,44 @@ class MainActivity : Activity() {
         return card
     }
 
+    private fun switchRow(card: LinearLayout, label: String, sub: String, key: String, default: Boolean) {
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(0, dpi(12f), 0, 0)
+        }
+        val texts = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        texts.addView(TextView(this).apply { text = label; textSize = 15f; setTextColor(pal.text) })
+        if (sub.isNotEmpty()) texts.addView(muted(sub).apply { textSize = 12.5f })
+        row.addView(texts, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+        row.addView(Switch(this).apply {
+            isChecked = Kb.bool(this@MainActivity, key, default)
+            contentDescription = label
+            setOnCheckedChangeListener { _, v -> Kb.prefs(this@MainActivity).edit { putBoolean(key, v) } }
+        })
+        card.addView(row)
+    }
+
     private fun buildKeyboardCard(): View {
         val card = card()
         card.addView(title("Keyboard"))
-        card.addView(muted("Built on HeliBoard. Translate and the tone switch are pinned in the toolbar above the keys. Long-press either one to open this app.").apply {
+        card.addView(muted("Translate, Casual/Formal and Auto are in the bar above the keys. The mic uses your phone's voice typing.").apply {
             setPadding(0, dpi(6f), 0, 0)
         })
         val r = row()
         r.addView(button("Turn on", true) { startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS)) }, rowLp())
         r.addView(button("Switch to it", false) { showPicker() }, rowLp())
         card.addView(r)
+        switchRow(card, "Vibrate on key press", "", Kb.PREF_VIBRATE, true)
+        switchRow(card, "Sound on key press", "", Kb.PREF_SOUND, false)
+        switchRow(card, "Popup on key press", "The bubble above the key you touch", Kb.PREF_PREVIEW, true)
+        switchRow(card, "Capital letter after . ? !", "Starts sentences with a capital", Kb.PREF_AUTOCAP, true)
+        switchRow(card, "Double space types a full stop", "", Kb.PREF_DOUBLE_SPACE, true)
+        switchRow(card, "Number hints on the top row", "The small 1 to 0; long-press a key to type it", Kb.PREF_HINTS, true)
         card.addView(button("Run the setup guide again", false, lock = false) {
             SetupActivity.reset(this)
             startActivity(Intent(this, SetupActivity::class.java))
-        }, lp().apply { topMargin = dpi(10f) })
-        card.addView(button("Keyboard settings: look, layout, glide typing", false) {
-            startActivity(Intent(this, helium314.keyboard.settings.SettingsActivity::class.java))
-        }, lp().apply { topMargin = dpi(10f) })
-        card.addView(muted("Glide typing needs Google's swipe library file, which HeliBoard cannot ship. You can load it under Keyboard settings → Advanced.").apply {
-            setPadding(0, dpi(10f), 0, 0)
-            textSize = 12.5f
-        })
+        }, lp().apply { topMargin = dpi(16f) })
         return card
     }
 
@@ -706,9 +719,9 @@ class MainActivity : Activity() {
             "\n\nSpelling data: RUWV-NSR, Roman Urdu Word Variations and Normalized Sentiment Review Dataset, by Mudasar Ahmed (Quaid-e-Awam University of Engineering, Science and Technology). Mendeley Data, V5, doi:10.17632/v5jfhsvtmd.5. Licence CC BY 4.0. Changes: flattened into a list of spelling variant \u2192 most common spelling. It is used only to recognise different spellings of the same word: when picking examples, when detecting the language, and when applying your spelling glossary.\nhttps://data.mendeley.com/datasets/v5jfhsvtmd/5"
         else ""
         card.addView(TextView(this).apply {
-            text = "Keyboard: built on HeliBoard (GPL-3.0) by Helium314 and contributors, which is based on the AOSP Keyboard (Apache 2.0) and OpenBoard.\nhttps://github.com/HeliBorg/HeliBoard" +
+            text = "Keyboard: written for this app and styled after Gboard." +
                 "\n\nTranslation: Google's Gemma 4 running on your phone through LiteRT-LM (Apache 2.0)." +
-                "\n\nIcons: Material Design icons by Google (Apache 2.0)." +
+                "\n\nIcons: Material Symbols by Google (Apache 2.0). Key font: Google Sans (SIL Open Font License). Emoji list: unicode-emoji-json (MIT) from Unicode data." +
                 dataLine +
                 "\n\nThis app is open source under GPL-3.0.\nhttps://github.com/pauldeggington/roman-urdu-keyboard"
             textSize = 13f
@@ -748,7 +761,8 @@ class MainActivity : Activity() {
 
     private fun lp() = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
-    private fun rowLp() = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { marginEnd = dpi(8f) }
+    // MATCH_PARENT height: every button in a row is as tall as the tallest one, so a label that wraps never squashes its neighbour
+    private fun rowLp() = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f).apply { marginEnd = dpi(8f) }
 
     private fun row() = LinearLayout(this).apply {
         orientation = LinearLayout.HORIZONTAL
@@ -808,7 +822,11 @@ class MainActivity : Activity() {
             elevation = 0f
             minHeight = dpi(44f)
             minimumHeight = dpi(44f)
-            setPadding(dpi(14f), 0, dpi(14f), 0)
+            gravity = Gravity.CENTER
+            setPadding(dpi(10f), 0, dpi(10f), 0)
+            maxLines = 2
+            // long labels shrink a little instead of breaking onto a second line
+            setAutoSizeTextTypeUniformWithConfiguration(11, 14, 1, android.util.TypedValue.COMPLEX_UNIT_SP)
             setOnClickListener { onClick() }
         }
         styleButton(b, filled)
@@ -846,13 +864,13 @@ class MainActivity : Activity() {
     // ================================================================ state
 
     private fun setTone(formal: Boolean) {
-        prefs().edit { putBoolean(RomanUrdu.PREF_TONE, formal) }
+        Kb.prefs(this).edit { putBoolean(RomanUrdu.PREF_TONE, formal) }
         paintSegment(tryCasual, !formal)
         paintSegment(tryFormal, formal)
     }
 
     private fun setDirection(dir: String) {
-        prefs().edit { putString(RomanUrdu.PREF_DIRECTION, dir) }
+        Kb.prefs(this).edit { putString(RomanUrdu.PREF_DIRECTION, dir) }
         paintDirection()
     }
 
@@ -884,7 +902,7 @@ class MainActivity : Activity() {
             ok -> {
                 modelStatus.text = (if (verified) "Ready and verified" else "Ready") + "  •  ${gb(f.length())}"
                 modelStatus.setTextColor(pal.ok)
-                modelDetail.text = if (verified) "Gemma 4 E2B. Checksum matches Hugging Face."
+                modelDetail.text = if (verified) "${Prefs.modelChoice(this).label}. Checksum matches Hugging Face."
                     else "Not checked yet. Tap “Check the file is intact” if loading fails."
             }
             f.exists() -> {
@@ -901,9 +919,14 @@ class MainActivity : Activity() {
             else -> {
                 modelStatus.text = "No model yet"
                 modelStatus.setTextColor(pal.text)
-                modelDetail.text = "About 2.6 GB. Download it once over Wi-Fi."
+                modelDetail.text = "${Prefs.modelChoice(this).label}, about ${Prefs.modelChoice(this).sizeText}. Download it once over Wi-Fi."
             }
         }
+        val choice = Prefs.modelChoice(this)
+        paintSegment(modelGemma4, choice == ModelChoice.GEMMA4)
+        paintSegment(modelGemma3, choice == ModelChoice.GEMMA3)
+        tokenEdit.visibility = if (choice.needsToken) View.VISIBLE else View.GONE
+        tokenHelp.visibility = tokenEdit.visibility
         if (bg.active) {
             val pct = if (bg.total > 0) bg.done * 100 / bg.total else 0
             modelStatus.text = (if (bg.paused) BackgroundDownload.reasonText(bg) else "Downloading in the background") + "  •  $pct%"
@@ -937,7 +960,7 @@ class MainActivity : Activity() {
 
         // checklist
         checklist.removeAllViews()
-        checklist.addView(checkRow(1, ok && verified, "Get the model", if (ok && !verified) "Installed, not checked yet" else "Gemma 4 E2B, about 2.6 GB", "Get") {
+        checklist.addView(checkRow(1, ok && verified, "Get the model", if (ok && !verified) "Installed, not checked yet" else "${Prefs.modelChoice(this).label}, about ${Prefs.modelChoice(this).sizeText}", "Get") {
             scrollTo(modelCard)
         })
         checklist.addView(checkRow(2, enabled, "Turn on the keyboard", "Settings → On-screen keyboards → Roman Urdu Keyboard", "Turn on") {
@@ -1067,16 +1090,29 @@ class MainActivity : Activity() {
 
     private fun currentToken() = tokenEdit.text.toString().trim().ifEmpty { Prefs.token(this) }
 
+    private fun chooseModel(m: ModelChoice) {
+        if (m == Prefs.modelChoice(this)) return
+        if (BackgroundDownload.state(this).active) BackgroundDownload.cancel(this)
+        Prefs.setModelChoice(this, m)
+        LlmEngine.reset()
+        refresh()
+    }
+
     private fun startDownload() {
         val token = tokenEdit.text.toString().trim()
+        val m = Prefs.modelChoice(this)
         val dest = LlmEngine.modelFile(this)
         dest.parentFile?.mkdirs()
-        if (dest.parentFile!!.usableSpace < 3L * 1024 * 1024 * 1024) {
-            toast("You need about 3 GB of free space")
+        if (m.needsToken && token.length < 8) {
+            toast("Paste your Hugging Face token first")
+            tokenEdit.requestFocus()
+            return
+        }
+        if (dest.parentFile!!.usableSpace < m.approxBytes + 400_000_000L) {
+            toast("You need about ${String.format("%.1f", (m.approxBytes + 400_000_000L) / 1e9)} GB of free space")
             return
         }
         Prefs.setToken(this, token)
-        Prefs.setUrl(this, urlEdit.text.toString())
         if (dest.exists()) removeModel()
         BackgroundDownload.start(this, allowMobileData = true)
         toast("Downloading in the background. You can leave the app.")

@@ -1,37 +1,28 @@
 package com.paul.urdukb
 
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.inputmethodservice.InputMethodService
 import android.os.Handler
 import android.os.Looper
 import android.os.UserManager
-import android.view.View
-import android.view.animation.LinearInterpolator
-import android.widget.ImageButton
-import helium314.keyboard.keyboard.internal.KeyboardIconsSet
-import helium314.keyboard.latin.common.ColorType
-import helium314.keyboard.latin.settings.Settings
-import helium314.keyboard.latin.utils.ToolbarKey
 import android.view.inputmethod.InputConnection
 import android.widget.Toast
-import androidx.core.content.edit
-import helium314.keyboard.latin.utils.prefs
+import com.paul.urdukb.ime.Kb
 import java.util.concurrent.Executors
 
 /**
- * The two toolbar keys added to HeliBoard.
+ * The Roman Urdu controls on the toolbar.
  * Translate: replaces the whole text field with Roman Urdu. Tapping it again (before typing anything else)
  * puts the English back. Tone: switches between Casual (tum) and Formal (aap).
  */
 object RomanUrdu {
 
-    /** Stored in HeliBoard's own preferences so its toolbar refreshes when these change. */
-    const val PREF_TONE = "roman_urdu_formal"
-    const val PREF_STATE = "roman_urdu_state"
-    const val PREF_DIRECTION = "roman_urdu_direction"
+    const val PREF_TONE = Kb.PREF_TONE
+    const val PREF_DIRECTION = Kb.PREF_DIRECTION
+
+    /** The keyboard sets this so its toolbar redraws when translating starts, ends or can be undone. */
+    @Volatile var onStateChanged: (() -> Unit)? = null
 
     const val DIR_AUTO = "auto"
     const val DIR_TO_RU = "to_ru"
@@ -48,9 +39,9 @@ object RomanUrdu {
     private val worker = Executors.newSingleThreadExecutor()
     private val main = Handler(Looper.getMainLooper())
 
-    fun isFormal(ctx: Context): Boolean = ctx.prefs().getBoolean(PREF_TONE, false)
+    fun isFormal(ctx: Context): Boolean = Kb.prefs(ctx).getBoolean(PREF_TONE, false)
 
-    fun direction(ctx: Context): String = ctx.prefs().getString(PREF_DIRECTION, DIR_AUTO) ?: DIR_AUTO
+    fun direction(ctx: Context): String = Kb.prefs(ctx).getString(PREF_DIRECTION, DIR_AUTO) ?: DIR_AUTO
 
     /** Level for the toolbar icon: 0 = auto, 1 = English to Roman Urdu, 2 = Roman Urdu to English. */
     fun directionLevel(ctx: Context): Int = when (direction(ctx)) {
@@ -79,68 +70,28 @@ object RomanUrdu {
         }
     }
 
-    /** Short word shown on the key itself: Casual / Formal, and Auto / EN→RU / RU→EN. */
-    fun keyLabel(ctx: Context, key: ToolbarKey): String = when (key) {
-        ToolbarKey.TONE -> if (isFormal(ctx)) "Formal" else "Casual"
-        else -> when (direction(ctx)) {
-            DIR_TO_RU -> "EN\u2192RU"
-            DIR_TO_EN -> "RU\u2192EN"
-            else -> "Auto"
-        }
+    /** Short word shown on the toolbar: Casual / Formal. */
+    fun toneLabel(ctx: Context): String = if (isFormal(ctx)) "Formal" else "Casual"
+
+    /** Short word shown on the toolbar: Auto, EN\u2192RU or RU\u2192EN. */
+    fun directionShort(ctx: Context): String = when (direction(ctx)) {
+        DIR_TO_RU -> "EN\u2192RU"
+        DIR_TO_EN -> "RU\u2192EN"
+        else -> "Auto"
     }
 
-    /** Draws the key's word instead of an icon, so it says what it does. Main thread only. */
-    fun applyLabel(button: ImageButton, key: ToolbarKey) {
-        val d = TextDrawable(button.context, keyLabel(button.context, key), 11f)
-        Settings.getValues().mColors.setColor(d, ColorType.TOOL_BAR_KEY)
-        button.setImageDrawable(d)
-        button.contentDescription = when (key) {
-            ToolbarKey.TONE -> if (isFormal(button.context)) "Formal tone: aap" else "Casual tone: tum"
-            else -> directionLabel(direction(button.context))
-        }
-    }
-
-    private val spinners = java.util.WeakHashMap<View, ObjectAnimator>()
-
-    /** Turns the Translate key into a spinning arc while the model works, and back afterwards. Main thread only. */
-    fun applyBusyIndicator(button: ImageButton) {
-        val running = spinners[button]
-        if (busy) {
-            if (running != null) return
-            val arc = button.context.getDrawable(helium314.keyboard.latin.R.drawable.ic_rurdu_progress)!!.mutate()
-            Settings.getValues().mColors.setColor(arc, ColorType.TOOL_BAR_KEY)
-            button.setImageDrawable(arc)
-            val anim = ObjectAnimator.ofFloat(button, View.ROTATION, 0f, 360f).apply {
-                duration = 900
-                repeatCount = ValueAnimator.INFINITE
-                interpolator = LinearInterpolator()
-            }
-            anim.start()
-            spinners[button] = anim
-        } else if (running != null) {
-            running.cancel()
-            spinners.remove(button)
-            button.rotation = 0f
-            val icon = KeyboardIconsSet.instance.getNewDrawable(ToolbarKey.TRANSLATE.name, button.context)
-            if (icon != null) {
-                Settings.getValues().mColors.setColor(icon, ColorType.TOOL_BAR_KEY)
-                button.setImageDrawable(icon)
-            }
-        }
-    }
-
-    /** Nudges HeliBoard's toolbar to redraw our two keys. */
-    private fun refreshToolbar(ctx: Context) {
-        ctx.prefs().edit { putLong(PREF_STATE, System.nanoTime()) }
+    private fun refreshToolbar(@Suppress("UNUSED_PARAMETER") ctx: Context) {
+        main.post { onStateChanged?.invoke() }
     }
 
     private fun toast(ctx: Context, msg: String) {
         main.post { Toast.makeText(ctx.applicationContext, msg, Toast.LENGTH_SHORT).show() }
     }
 
-    fun toggleTone(ime: InputMethodService) {
+    fun toggleTone(ime: Context) {
         val formal = !isFormal(ime)
-        ime.prefs().edit { putBoolean(PREF_TONE, formal) }
+        Kb.prefs(ime).edit().putBoolean(PREF_TONE, formal).apply()
+        refreshToolbar(ime)
         toast(
             ime,
             if (formal) "Formal tone (aap): translations to Roman Urdu will be respectful"
@@ -148,13 +99,14 @@ object RomanUrdu {
         )
     }
 
-    fun cycleDirection(ime: InputMethodService) {
+    fun cycleDirection(ime: Context) {
         val next = when (direction(ime)) {
             DIR_AUTO -> DIR_TO_RU
             DIR_TO_RU -> DIR_TO_EN
             else -> DIR_AUTO
         }
-        ime.prefs().edit { putString(PREF_DIRECTION, next) }
+        Kb.prefs(ime).edit().putString(PREF_DIRECTION, next).apply()
+        refreshToolbar(ime)
         toast(
             ime,
             when (next) {
@@ -164,8 +116,6 @@ object RomanUrdu {
             }
         )
     }
-
-    fun openApp(ime: InputMethodService) = openApp(ime, null)
 
     /** Opens the app, optionally scrolled to a section ("colour"). */
     fun openApp(ctx: Context, section: String?) {

@@ -7,12 +7,35 @@ import java.io.File
 /**
  * Settings for the Roman Urdu parts.
  * Stored in normal (credential-protected) storage, where the earlier versions of this app kept them,
- * so the downloaded model, token and style survive the switch to the HeliBoard base.
+ * so the downloaded model, token and style survive updates.
  */
-object Prefs {
+/** The translation models the app can use. */
+enum class ModelChoice(
+    val key: String,
+    val label: String,
+    val tagline: String,
+    val url: String,
+    val fileName: String,
+    val sizeText: String,
+    val approxBytes: Long,
+    val needsToken: Boolean,
+    val pageUrl: String,
+) {
+    GEMMA4(
+        "gemma4", "Gemma 4 E2B", "Best quality",
+        "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm",
+        "model.litertlm", "2.6 GB", 2_800_000_000L, false,
+        "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm",
+    ),
+    GEMMA3(
+        "gemma3", "Gemma 3 1B", "Fast and small",
+        "https://huggingface.co/litert-community/Gemma3-1B-IT/resolve/main/gemma3-1b-it-int4.litertlm",
+        "model_gemma3.litertlm", "0.6 GB", 640_000_000L, true,
+        "https://huggingface.co/litert-community/Gemma3-1B-IT",
+    ),
+}
 
-    const val DEFAULT_URL =
-        "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm"
+object Prefs {
 
     val DEFAULT_RULES_CASUAL = """You are a translator that turns English into everyday Roman Urdu, the way educated young Pakistanis speak and text in normal, polite conversation. Not slangy, not formal or literary.
 
@@ -58,7 +81,7 @@ Rules:
 
     /**
      * Normal (credential-protected) storage, same place earlier versions used.
-     * HeliBoard reaches its own device-protected storage explicitly, so the app default stays normal.
+     * The keyboard and the app share this normal storage.
      */
     fun store(ctx: Context): Context = ctx.applicationContext
 
@@ -71,14 +94,19 @@ Rules:
     fun token(ctx: Context) = sp(ctx).getString("hf_token", "").orEmpty()
     fun setToken(ctx: Context, v: String) = sp(ctx).edit().putString("hf_token", v.trim()).apply()
 
-    fun url(ctx: Context) = sp(ctx).getString("model_url", null)?.takeIf { it.isNotBlank() } ?: DEFAULT_URL
-    fun setUrl(ctx: Context, v: String) = sp(ctx).edit().putString("model_url", v.trim()).apply()
+    fun modelChoice(ctx: Context): ModelChoice =
+        ModelChoice.entries.firstOrNull { it.key == sp(ctx).getString("model_choice", ModelChoice.GEMMA4.key) } ?: ModelChoice.GEMMA4
+    fun setModelChoice(ctx: Context, c: ModelChoice) = sp(ctx).edit().putString("model_choice", c.key).apply()
+
+    fun url(ctx: Context) = modelChoice(ctx).url
+
+    private fun sizeKey(ctx: Context) = if (modelChoice(ctx) == ModelChoice.GEMMA4) "model_size" else "model_size_${modelChoice(ctx).key}"
 
     /** Expected size in bytes of the installed model file; 0 if unknown. */
-    fun modelSize(ctx: Context) = sp(ctx).getLong("model_size", 0L)
-    fun setModelSize(ctx: Context, v: Long) = sp(ctx).edit().putLong("model_size", v).apply()
+    fun modelSize(ctx: Context) = sp(ctx).getLong(sizeKey(ctx), 0L)
+    fun setModelSize(ctx: Context, v: Long) = sp(ctx).edit().putLong(sizeKey(ctx), v).apply()
 
-    // ---- style, one set per style (styles saved by versions before the HeliBoard switch are ignored) ----
+    // ---- style, one set per style (styles saved by old 1.x versions are ignored) ----
     fun rules(ctx: Context, style: Style): String {
         val p = sp(ctx)
         val v = p.getString("rules_${style.key}", null)

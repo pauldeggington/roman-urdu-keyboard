@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Material Symbols Rounded "keyboard_tab" (Google, Apache-2.0) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="960" android:viewportHeight="960">
+    <group android:translateY="960">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M828.5-248.5Q820-257 820-270v-420q0-13 8.5-21.5T850-720q13 0 21.5 8.5T880-690v420q0 13-8.5 21.5T850-240q-13 0-21.5-8.5ZM606-450H110q-13 0-21.5-8.5T80-480q0-13 8.5-21.5T110-510h496L459-658q-9-9-9-21t9-21q9-9 21-9t21 9l199 199q5 5 7 10t2 11q0 6-2 11t-7 10L501-260q-9 9-21 9t-21-9q-9-9-9-21.5t9-21.5l147-147Z"/>
+    </group>
+</vector>

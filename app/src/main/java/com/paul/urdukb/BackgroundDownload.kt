@@ -43,7 +43,7 @@ object BackgroundDownload {
         tmp.delete()
         val req = DownloadManager.Request(Uri.parse(Prefs.url(ctx)))
             .setTitle("Roman Urdu Keyboard")
-            .setDescription("Downloading the translation model (about 2.6 GB)")
+            .setDescription("Downloading ${Prefs.modelChoice(ctx).label} (${Prefs.modelChoice(ctx).sizeText})")
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             .setAllowedOverMetered(allowMobileData)
             .setAllowedOverRoaming(false)
@@ -92,6 +92,7 @@ object BackgroundDownload {
         DownloadManager.STATUS_FAILED -> when (s.reason) {
             DownloadManager.ERROR_INSUFFICIENT_SPACE -> "Not enough free space (needs about 3 GB)"
             DownloadManager.ERROR_HTTP_DATA_ERROR, DownloadManager.ERROR_CANNOT_RESUME -> "The connection broke. Try again"
+            401, 403 -> "Hugging Face refused the download. Accept the Gemma licence on the model page and check your token"
             in 400..599 -> "The server answered ${s.reason}. Try again later"
             else -> "The download failed. Try again"
         }

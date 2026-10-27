@@ -1,0 +1,69 @@
+name: Keyboard preview
+
+# Boots the keyboard on an Android emulator and takes screenshots, so the look can be checked without a phone.
+on:
+  push:
+    branches: [rewrite]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  shots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build preview APK (no native code, installs on any CPU)
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleDebug -PnoNative --no-daemon --stacktrace > build.log 2>&1 && rc=0 || rc=$?
+          tail -n 30 build.log
+          if [ "$rc" -ne 0 ]; then
+            { grep -E -A8 '^e: |What went wrong|Could not|error:|ERROR:' build.log | head -90 || true; } > errs.txt
+            msg=$(sed 's/%/%25/g' errs.txt | cut -c1-300 | awk '{printf "%s%%0A", $0}')
+            echo "::error title=Preview build failed::${msg}"
+            exit "$rc"
+          fi
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Take screenshots on an emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 36
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-boot-timeout: 900
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: bash scripts/shots.sh
+
+      - name: Publish screenshots to the ci-shots branch
+        if: always()
+        run: |
+          [ -d shots ] || exit 0
+          git config user.name "ci"
+          git config user.email "ci@users.noreply.github.com"
+          rm -rf /tmp/shots && cp -r shots /tmp/shots
+          cp dump.txt /tmp/shots/dump.txt 2>/dev/null || true
+          git checkout --orphan ci-shots
+          git rm -rf . > /dev/null 2>&1 || true
+          cp -r /tmp/shots/* .
+          git add -A
+          git commit -q -m "Screenshots for ${GITHUB_SHA}"
+          git push -f origin ci-shots
