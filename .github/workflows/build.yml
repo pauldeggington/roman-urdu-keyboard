@@ -14,6 +14,8 @@ jobs:
     env:
       # 1.0.<run> for people; the Version step sets versionCode 4300+<run> so each release installs over the last
       VERSION_NAME: 2.0.${{ github.run_number }}
+      # optional: a GIPHY API key built into the release so GIFs and stickers work without pasting one
+      GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
     steps:
       - uses: actions/checkout@v4
 

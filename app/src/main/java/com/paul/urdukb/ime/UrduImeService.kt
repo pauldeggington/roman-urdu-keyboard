@@ -42,12 +42,18 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     private lateinit var keyboard: KeyboardView
     private lateinit var toolbar: ToolbarView
     private lateinit var emoji: EmojiPanel
+    private lateinit var clipboardPanel: ClipboardPanel
     private lateinit var popup: PopupLayer
     private lateinit var spacer: View
 
     private var lastShiftTap = 0L
     private var lastSpace = 0L
     private var viewReady = false
+    private var emojiOpen = false
+    private var clipOpen = false
+    private var clipListener: android.content.ClipboardManager.OnPrimaryClipChangedListener? = null
+    private var searching = false
+    private var baseEnterKind = KeyboardView.ENTER_RETURN
 
     private val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ -> handler.post { refreshAll() } }
     private val deleteRepeat = object : Runnable {
@@ -62,6 +68,20 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         Kb.prefs(this).registerOnSharedPreferenceChangeListener(prefListener)
         applicationContext.getSharedPreferences("look", Context.MODE_PRIVATE).registerOnSharedPreferenceChangeListener(prefListener)
         if (BuildConfig.PREVIEW) registerPreviewHooks()
+        // clipboard history: remember what is copied while the keyboard is running
+        getSystemService(android.content.ClipboardManager::class.java)?.let { cm ->
+            clipListener = android.content.ClipboardManager.OnPrimaryClipChangedListener {
+                try {
+                    val clip = cm.primaryClip ?: return@OnPrimaryClipChangedListener
+                    val sensitive = clip.description.extras?.getBoolean("android.content.extra.IS_SENSITIVE") == true
+                    if (!sensitive && clip.itemCount > 0) {
+                        clip.getItemAt(0).coerceToText(this)?.toString()?.let { ClipStore.add(this, it) }
+                    }
+                } catch (_: Exception) {
+                }
+            }
+            cm.addPrimaryClipChangedListener(clipListener)
+        }
     }
 
     /** Only in emulator preview builds: lets CI switch screens and read key positions to take screenshots. */
@@ -74,8 +94,14 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
                         "letters" -> { showEmoji(false); keyboard.page = Page.LETTERS }
                         "symbols1" -> { showEmoji(false); keyboard.page = Page.SYMBOLS1 }
                         "symbols2" -> { showEmoji(false); keyboard.page = Page.SYMBOLS2 }
-                        "emoji" -> { showEmoji(true); emoji.setEmoticons(false) }
-                        "emoticons" -> { showEmoji(true); emoji.setEmoticons(true) }
+                        "emoji" -> { showEmoji(true); emoji.showMode("emoji") }
+                        "emoticons" -> { showEmoji(true); emoji.showMode("emoticon") }
+                        "clipboard" -> { ClipStore.seedForPreview(this@UrduImeService); showClipboard(true) }
+                        "clipboard_off" -> { ClipStore.setEnabled(this@UrduImeService, false); showClipboard(true) }
+                        "gif" -> { showEmoji(true); emoji.showMode("gif") }
+                        "stickers" -> { showEmoji(true); emoji.showMode("sticker") }
+                        "search_emoji" -> { showEmoji(true); emoji.showMode("emoji"); emoji.openSearchFromHook(); emoji.searchType("heart") }
+                        "search_gif" -> { showEmoji(true); emoji.showMode("gif"); emoji.openSearchFromHook(); emoji.searchType("thanks") }
                         "tools" -> toolbar.toolsOpen = true
                         "notools" -> toolbar.toolsOpen = false
                         "shift" -> keyboard.shift = KeyboardView.SHIFT_ON
@@ -95,6 +121,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     }
 
     override fun onDestroy() {
+        clipListener?.let { getSystemService(android.content.ClipboardManager::class.java)?.removePrimaryClipChangedListener(it) }
         Kb.prefs(this).unregisterOnSharedPreferenceChangeListener(prefListener)
         applicationContext.getSharedPreferences("look", Context.MODE_PRIVATE).unregisterOnSharedPreferenceChangeListener(prefListener)
         RomanUrdu.onStateChanged = null
@@ -117,6 +144,21 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         keyboard = KeyboardView(this).apply { listener = this@UrduImeService; popupLayer = popup }
         toolbar = ToolbarView(this).apply { listener = this@UrduImeService }
         emoji = EmojiPanel(this).apply { listener = this@UrduImeService; visibility = View.GONE }
+        clipboardPanel = ClipboardPanel(this).apply {
+            listener = object : ClipboardPanel.Listener {
+                override fun onClip(text: String) {
+                    RomanUrdu.onOtherKey(this@UrduImeService)
+                    currentInputConnection?.commitText(text, 1)
+                    lastSpace = 0
+                    showClipboard(false)
+                }
+                override fun onBack() = showClipboard(false)
+                override fun onDeleteDown() { deleteOne(); handler.postDelayed(deleteRepeat, 400) }
+                override fun onDeleteUp() { handler.removeCallbacks(deleteRepeat) }
+                override fun onFeedback() = feedback()
+            }
+            visibility = View.GONE
+        }
 
         typing = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -125,8 +167,10 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         }
         container = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            addView(typing, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            // the emoji screen sits above the keys, so while searching its results are right above the letters
             addView(emoji, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            addView(clipboardPanel, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            addView(typing, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
         }
         // transparent room above the keys, where the key preview and the long-press popup are drawn
         spacer = View(this)
@@ -166,6 +210,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         keyboard.colors = colors
         toolbar.colors = colors
         emoji.colors = colors
+        clipboardPanel.colors = colors
         popup.colors = colors
         keyboard.showHints = Kb.hints(this)
         keyboard.showPreview = Kb.preview(this)
@@ -207,7 +252,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         toolbar.toolsOpen = false
         showEmoji(false)
         val noEnterAction = info.imeOptions and EditorInfo.IME_FLAG_NO_ENTER_ACTION != 0
-        keyboard.enterKind = if (noEnterAction) KeyboardView.ENTER_RETURN else when (info.imeOptions and EditorInfo.IME_MASK_ACTION) {
+        baseEnterKind = if (noEnterAction) KeyboardView.ENTER_RETURN else when (info.imeOptions and EditorInfo.IME_MASK_ACTION) {
             EditorInfo.IME_ACTION_GO -> KeyboardView.ENTER_GO
             EditorInfo.IME_ACTION_SEARCH -> KeyboardView.ENTER_SEARCH
             EditorInfo.IME_ACTION_SEND -> KeyboardView.ENTER_SEND
@@ -215,6 +260,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             EditorInfo.IME_ACTION_NEXT, EditorInfo.IME_ACTION_PREVIOUS -> KeyboardView.ENTER_NEXT
             else -> KeyboardView.ENTER_RETURN
         }
+        keyboard.enterKind = baseEnterKind
         refreshAll()
         updateShift()
     }
@@ -232,7 +278,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     // ------------------------------------------------------------------ shift and capitals
 
     private fun updateShift() {
-        if (!viewReady || keyboard.shift == KeyboardView.SHIFT_CAPS) return
+        if (!viewReady || keyboard.shift == KeyboardView.SHIFT_CAPS || searching) return
         val ic = currentInputConnection
         val info = currentInputEditorInfo
         if (ic == null || info == null || !Kb.autoCap(this) || (info.inputType and InputType.TYPE_MASK_CLASS) != InputType.TYPE_CLASS_TEXT) {
@@ -271,6 +317,11 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     }
 
     private fun typeText(s: String) {
+        if (searching) {
+            emoji.searchType(s)
+            if (keyboard.shift == KeyboardView.SHIFT_ON) keyboard.shift = KeyboardView.SHIFT_OFF
+            return
+        }
         val ic = currentInputConnection ?: return
         ic.commitText(s, 1)
         lastSpace = 0
@@ -279,6 +330,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     }
 
     private fun typeSpace() {
+        if (searching) { emoji.searchType(" "); return }
         val ic = currentInputConnection ?: return
         val now = SystemClock.uptimeMillis()
         if (Kb.doubleSpace(this) && now - lastSpace < 500) {
@@ -299,6 +351,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     }
 
     private fun deleteOne() {
+        if (searching) { emoji.searchBackspace(); return }
         val ic = currentInputConnection ?: return
         if (!ic.getSelectedText(0).isNullOrEmpty()) ic.commitText("", 1)
         else sendDownUpKeyEvents(KeyEvent.KEYCODE_DEL)
@@ -307,6 +360,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     }
 
     private fun pressEnter() {
+        if (searching) { emoji.searchSubmit(); return }
         val ic = currentInputConnection ?: return
         val info = currentInputEditorInfo
         val options = info?.imeOptions ?: 0
@@ -323,6 +377,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     }
 
     override fun onCursorMove(delta: Int) {
+        if (searching) return
         sendDownUpKeyEvents(if (delta < 0) KeyEvent.KEYCODE_DPAD_LEFT else KeyEvent.KEYCODE_DPAD_RIGHT)
     }
 
@@ -361,7 +416,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             ToolbarView.Tool.SELECT_ALL -> ic?.performContextMenuAction(android.R.id.selectAll)
             ToolbarView.Tool.COPY -> ic?.performContextMenuAction(android.R.id.copy)
             ToolbarView.Tool.CUT -> ic?.performContextMenuAction(android.R.id.cut)
-            ToolbarView.Tool.PASTE -> ic?.performContextMenuAction(android.R.id.paste)
+            ToolbarView.Tool.CLIPBOARD -> showClipboard(true)
             ToolbarView.Tool.SETTINGS -> RomanUrdu.openApp(this, null)
         }
     }
@@ -395,11 +450,83 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
 
     private fun showEmoji(on: Boolean) {
         if (!viewReady) return
-        typing.visibility = if (on) View.GONE else View.VISIBLE
-        emoji.visibility = if (on) View.VISIBLE else View.GONE
+        if (!on && searching) emoji.closeSearch()
+        clipOpen = false
+        emojiOpen = on
         if (on) emoji.refresh()
+        layoutPanels()
         popup.hide()
+    }
+
+    private fun showClipboard(on: Boolean) {
+        if (!viewReady) return
+        if (on && searching) emoji.closeSearch()
+        emojiOpen = false
+        clipOpen = on
+        if (on) clipboardPanel.refresh()
+        layoutPanels()
+        popup.hide()
+    }
+
+    /** The emoji screen replaces the keys, except while searching: then it sits above the letters. */
+    private fun layoutPanels() {
+        typing.visibility = if ((!emojiOpen && !clipOpen) || searching) View.VISIBLE else View.GONE
+        toolbar.visibility = if (searching) View.GONE else View.VISIBLE
+        emoji.visibility = if (emojiOpen) View.VISIBLE else View.GONE
+        clipboardPanel.visibility = if (clipOpen) View.VISIBLE else View.GONE
+        keyboard.enterKind = if (searching) KeyboardView.ENTER_SEARCH else baseEnterKind
         frame.requestLayout()
+    }
+
+    override fun onSearchState(active: Boolean) {
+        searching = active
+        if (active) {
+            keyboard.page = Page.LETTERS
+            keyboard.shift = KeyboardView.SHIFT_OFF
+        }
+        layoutPanels()
+        if (!active) updateShift()
+    }
+
+    /** A GIF or sticker: sent as an image where the app accepts one, otherwise as a link. */
+    override fun onMedia(item: GifItem) {
+        val info = currentInputEditorInfo
+        val ic = currentInputConnection
+        if (info == null || ic == null) return
+        RomanUrdu.onOtherKey(this)
+        val accepts = androidx.core.view.inputmethod.EditorInfoCompat.getContentMimeTypes(info)
+            .any { android.content.ClipDescription.compareMimeTypes("image/gif", it) }
+        if (!accepts) {
+            ic.commitText(item.pageUrl + " ", 1)
+            Toast.makeText(this, "This app can't take GIFs from a keyboard, so the link was typed instead.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        Thread {
+            val file = MediaCache.download(this, item)
+            handler.post {
+                val ic2 = currentInputConnection
+                val info2 = currentInputEditorInfo
+                var sent = false
+                if (file != null && ic2 != null && info2 != null) {
+                    val uri = androidx.core.content.FileProvider.getUriForFile(this, "$packageName.fileprovider", file)
+                    val content = androidx.core.view.inputmethod.InputContentInfoCompat(
+                        uri, android.content.ClipDescription(item.title.ifEmpty { "GIF" }, arrayOf("image/gif")), android.net.Uri.parse(item.pageUrl),
+                    )
+                    sent = androidx.core.view.inputmethod.InputConnectionCompat.commitContent(
+                        ic2, info2, content, androidx.core.view.inputmethod.InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION, null,
+                    )
+                }
+                if (!sent) {
+                    ic2?.commitText(item.pageUrl + " ", 1)
+                    Toast.makeText(this, "Couldn't send the picture, so the link was typed instead.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }.start()
+    }
+
+    override fun onOpenApp() {
+        showEmoji(false)
+        RomanUrdu.openApp(this, "giphy")
     }
 
     override fun onEmoji(text: String) {

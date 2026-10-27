@@ -63,6 +63,25 @@ hook symbols2; shot 07_symbols2
 hook emoji; sleep 1; shot 08_emoji
 hook emoticons; sleep 1; shot 09_emoticons
 hook letters; hook tools; shot 10_tools_row
+hook notools
+hook gif; sleep 2.5; shot 20_gif
+hook stickers; sleep 2.5; shot 21_stickers
+hook emoticons; sleep 1; shot 22_emoticons
+hook search_emoji; sleep 1.5; shot 23_search_emoji
+hook search_gif; sleep 2.5; shot 24_search_gif
+# typing while the search is open must go into the search box, not into the app
+dump; [ -s dump.txt ] || cp $OUT/keys.txt dump.txt
+read X Y < <(key a); adb shell input tap $X $Y; sleep 0.4
+read X Y < <(key b); adb shell input tap $X $Y; sleep 0.8
+shot 25_search_typed
+hook letters; sleep 1
+hook clipboard_off; sleep 1.5; shot 26_clipboard_off
+hook clipboard; sleep 1.5; shot 27_clipboard
+hook letters; sleep 1
+adb shell am start -n $PKG/.TranslateTextActivity --es android.intent.extra.PROCESS_TEXT "Kal milte hain, aap ka bohat shukriya" > /dev/null 2>&1; sleep 4; shot 28_translate_sheet_nomodel
+adb shell am start -n $PKG/.TranslateTextActivity --es android.intent.extra.PROCESS_TEXT "Kal milte hain, aap ka bohat shukriya" --es preview_result "See you tomorrow, thank you very much" > /dev/null 2>&1; sleep 4; shot 29_translate_sheet_layout
+adb shell am start -f 0x10008000 -n $PKG/.PreviewActivity > /dev/null 2>&1; sleep 3
+hook letters; sleep 1
 
 adb shell cmd uimode night no
 sleep 2

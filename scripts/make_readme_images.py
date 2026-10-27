@@ -137,6 +137,20 @@ kb2 = row(
 )
 kb2.save(os.path.join(OUT, "keyboard-light.png"), optimize=True)
 
+# --- emoji screens
+emo = row(
+    [
+        card(keyboard_crop("08_emoji", 1000), 360),
+        card(keyboard_crop("23_search_emoji", 1000), 360),
+        card(keyboard_crop("22_emoticons", 1000), 360),
+    ],
+    bg_dark,
+    gap=24,
+    pad=40,
+    anchor="center",
+)
+emo.save(os.path.join(OUT, "emoji-screens.png"), optimize=True)
+
 # --- setup guide and app
 setup = row(
     [phone(load(n), 300) for n in ("app_setup_WELCOME", "app_setup_MODEL", "app_setup_ENABLE", "app_setup_PERSONAL", "app_setup_PRACTICE", "app_setup_DONE")],

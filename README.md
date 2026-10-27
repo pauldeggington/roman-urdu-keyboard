@@ -108,17 +108,22 @@ The first translation after a restart is slower while the model loads. If it fee
 - **Example bank:** for each message the closest example sentences guide the model. Fix a translation in the app and save it as
   an example, and the keyboard learns your style.
 - Understands texting shorthand and spelling variants (*kr, nhi, tm, bht*).
+- **Translate messages you receive:** select a Roman Urdu message in any app, tap **Translate to English** in the selection menu (under the three dots in some apps), and a sheet shows the English with a Copy button.
 
 ### Keyboard
 - Gboard's layout and height: borderless letters, pill-shaped ?123, space and Enter, number hints, long-press for accents and symbols.
 - Circular key preview and pill popups, Material Symbols icons, the Google Sans key font, vibration on press.
 - Toolbar with a **mic** (hands over to your phone's voice typing), **Translate**, **Casual/Formal** and **Auto/EN→RU/RU→EN**.
-  The grid button opens emoji, select all, copy, cut, paste and settings.
-- **Emoji screen** with categories, recents, skin tones and text emoticons.
+  The grid button opens emoji, select all, copy, cut, the clipboard and settings.
+- **Clipboard history** like Gboard's: the clipboard button in the tools panel shows what you copied in the last hour as cards. Tap one to paste it, long-press to pin or delete. It is off until you turn it on, and nothing leaves the phone.
+- **Emoji screen** with a search field, categories, recents and skin tones, plus **text emoticons** in named groups (Classic, Smiling, Love, Hugging, Flexing and more).
+- **GIFs and stickers** from GIPHY, with search and category chips. They are sent as pictures in apps that accept them (WhatsApp, Messages, Gmail and most chat apps) and as a link anywhere else.
+  GIPHY needs a free key: paste it once in the app (Settings card *GIFs and stickers*, it has a button that opens GIPHY's sign-up).
 - **Light, dark or follow the phone**, with wallpaper (Material You) colours or 19 colour swatches.
 - Auto-capital, double space for a full stop, swipe the space bar to move the cursor, hold delete to repeat.
 
 <p align="center">
+  <img src="docs/emoji-screens.png" alt="Emoji screen, emoji search, and emoticon groups" width="100%"><br>
   <img src="docs/keyboard-dark.png" alt="Dark theme: letters, accent popup, tools panel, symbols" width="100%"><br>
   <img src="docs/keyboard-light.png" alt="Light theme: letters, emoji and emoticons" width="100%">
 </p>
@@ -137,13 +142,13 @@ The first translation after a restart is slower while the model loads. If it fee
 ## Privacy
 
 - Translations run **on the device**. Nothing you type is sent anywhere.
-- The `INTERNET` permission is used only to download the model, read its checksum from Hugging Face, and check GitHub for a new version.
+- The `INTERNET` permission is used only to download the model, read its checksum from Hugging Face, check GitHub for a new version, and (if you use the GIF and Sticker tabs) search GIPHY. GIPHY only sees the words you search for.
 - There is no microphone permission. Voice typing is handed to your phone's own voice keyboard.
 - Your settings, glossary and examples stay on the phone.
 
 ## Not included (yet)
 
-Word suggestions and autocorrect, glide typing, clipboard history, and layouts for other languages. This keyboard does one thing well.
+Word suggestions and autocorrect, glide typing, clipboard history, and layouts for other languages. GIFs and stickers need your own free GIPHY key (or a release built with one). This keyboard does one thing well.
 
 ## Build it yourself
 
