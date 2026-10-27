@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.RectF
@@ -17,6 +18,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import com.paul.urdukb.R
 import kotlin.math.abs
+import kotlin.math.hypot
 
 /**
  * The four key rows, drawn to Gboard's measurements (Pixel 8a, 420 dpi):
@@ -30,6 +32,8 @@ class KeyboardView(context: Context) : View(context) {
         fun onKey(key: KeyDef, text: String?)
         fun onCursorMove(delta: Int)
         fun onFeedback(key: KeyDef)
+        /** The finger slid across the letters and lifted: [path] is where it went (glide typing). */
+        fun onGlide(path: List<GlidePoint>)
     }
 
     companion object {
@@ -62,6 +66,7 @@ class KeyboardView(context: Context) : View(context) {
     var showHints = true
         set(v) { field = v; invalidate() }
     var showPreview = true
+    var glideEnabled = true
 
     private class KeyRect(val def: KeyDef, val rect: RectF)
 
@@ -73,7 +78,10 @@ class KeyboardView(context: Context) : View(context) {
     private val fill = Paint(Paint.ANTI_ALIAS_FLAG)
     private val icons = HashMap<Int, Drawable>()
 
-    private inner class Ptr(val id: Int, var key: KeyRect, val downX: Float) {
+    private inner class Ptr(val id: Int, var key: KeyRect, val downX: Float, val downY: Float) {
+        /** Every position of the finger, while it may still turn into a glide. */
+        var trail: ArrayList<GlidePoint>? = null
+        var gliding = false
         var items: List<String>? = null
         var dir = 1
         var sel = -1
@@ -89,6 +97,35 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     private val ptrs = HashMap<Int, Ptr>()
+
+    private val trailPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeCap = Paint.Cap.ROUND
+        strokeJoin = Paint.Join.ROUND
+    }
+    private var fadePath: Path? = null
+    private var fadeAlpha = 0f
+    private val fader = android.animation.ValueAnimator.ofFloat(1f, 0f).apply {
+        duration = 260
+        addUpdateListener { fadeAlpha = it.animatedValue as Float; invalidate() }
+        addListener(object : android.animation.AnimatorListenerAdapter() {
+            override fun onAnimationEnd(a: android.animation.Animator) { fadePath = null; invalidate() }
+        })
+    }
+
+    private fun pathOf(points: List<GlidePoint>): Path {
+        val path = Path()
+        points.forEachIndexed { i, p -> if (i == 0) path.moveTo(p.x, p.y) else path.lineTo(p.x, p.y) }
+        return path
+    }
+
+    /** Where the letter keys are, for the glide decoder. Null when the letter page is not showing. */
+    fun glideLayout(): GlideLayout? {
+        if (page != Page.LETTERS || width == 0) return null
+        val centers = HashMap<Char, GlidePoint>()
+        for (k in keys) if (isLetterKey(k.def)) centers[k.def.label[0].lowercaseChar()] = GlidePoint(k.rect.centerX(), k.rect.centerY())
+        return GlideLayout(centers, width / 10f)
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val w = MeasureSpec.getSize(widthMeasureSpec)
@@ -177,7 +214,7 @@ class KeyboardView(context: Context) : View(context) {
 
     override fun onDraw(c: Canvas) {
         val col = colors
-        val down = ptrs.values.map { it.key }
+        val down = ptrs.values.filter { !it.gliding }.map { it.key }
         for (k in keys) {
             val def = k.def
             val r = k.rect
@@ -236,6 +273,19 @@ class KeyboardView(context: Context) : View(context) {
                 }
             }
         }
+        // the glide trail
+        trailPaint.strokeWidth = 9f * d
+        for (p in ptrs.values) {
+            val t = p.trail
+            if (p.gliding && t != null && t.size > 1) {
+                trailPaint.color = ColorUtils.setAlphaComponent(col.selected, 190)
+                c.drawPath(pathOf(t), trailPaint)
+            }
+        }
+        fadePath?.let {
+            trailPaint.color = ColorUtils.setAlphaComponent(col.selected, (190 * fadeAlpha).toInt())
+            c.drawPath(it, trailPaint)
+        }
     }
 
     // ------------------------------------------------------------------ touch
@@ -260,7 +310,8 @@ class KeyboardView(context: Context) : View(context) {
 
     private fun down(id: Int, x: Float, y: Float) {
         val k = keyAt(x, y) ?: return
-        val p = Ptr(id, k, x)
+        val p = Ptr(id, k, x, y)
+        if (glideEnabled && page == Page.LETTERS && isLetterKey(k.def)) p.trail = arrayListOf(GlidePoint(x, y))
         ptrs[id]?.let { release(it) }
         ptrs[id] = p
         listener?.onFeedback(k.def)
@@ -302,6 +353,17 @@ class KeyboardView(context: Context) : View(context) {
             if (i >= 0) { p.sel = i; popupLayer?.setSelected(i) }
             return
         }
+        val trail = p.trail
+        if (trail != null) {
+            trail.add(GlidePoint(x, y))
+            if (!p.gliding && hypot(x - p.downX, y - p.downY) > 0.8f * (width / 10f)) {
+                // moved far enough from the key it started on: this is a glide, not a tap
+                p.gliding = true
+                handler.removeCallbacks(p.longPress)
+                popupLayer?.hide()
+            }
+            if (p.gliding) { invalidate(); return }
+        }
         val def = p.key.def
         if (def.type == KeyType.SPACE) {
             if (!p.cursorMode && abs(x - p.downX) > 14f * d) { p.cursorMode = true; p.lastCursorX = x }
@@ -328,6 +390,23 @@ class KeyboardView(context: Context) : View(context) {
     private fun up(id: Int, x: Float, y: Float) {
         val p = ptrs.remove(id) ?: return
         release(p)
+        val trail = p.trail
+        if (p.gliding && trail != null) {
+            trail.add(GlidePoint(x, y))
+            var len = 0f
+            for (i in 1 until trail.size) len += hypot(trail[i].x - trail[i - 1].x, trail[i].y - trail[i - 1].y)
+            if (len >= 1.4f * (width / 10f)) {
+                fadePath = pathOf(trail)
+                fadeAlpha = 1f
+                fader.cancel(); fader.start()
+                if (ptrs.isEmpty()) popupLayer?.hide()
+                listener?.onGlide(trail)
+                invalidate()
+                return
+            }
+            // a short slide: just type the key the finger ended on
+            keyAt(x, y)?.let { p.key = it }
+        }
         val def = p.key.def
         val items = p.items
         when {

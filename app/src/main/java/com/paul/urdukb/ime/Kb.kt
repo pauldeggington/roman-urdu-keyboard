@@ -11,6 +11,7 @@ object Kb {
     const val PREF_DOUBLE_SPACE = "double_space"
     const val PREF_HINTS = "number_hints"
     const val PREF_PREVIEW = "key_preview"
+    const val PREF_GLIDE = "glide_typing"
 
     // Roman Urdu controls
     const val PREF_TONE = "roman_urdu_formal"
@@ -30,6 +31,7 @@ object Kb {
     fun doubleSpace(ctx: Context) = bool(ctx, PREF_DOUBLE_SPACE, true)
     fun hints(ctx: Context) = bool(ctx, PREF_HINTS, true)
     fun preview(ctx: Context) = bool(ctx, PREF_PREVIEW, true)
+    fun glide(ctx: Context) = bool(ctx, PREF_GLIDE, true)
 
     /** The GIPHY key the person pasted in the app, or the one built into this release. Empty when neither exists. */
     fun giphyKey(ctx: Context): String =
