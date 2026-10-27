@@ -302,7 +302,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
             val item = mediaItems[position]
             val cols = if (mode == Mode.STICKER) 4 else 3
             val m = (2 * d).toInt()
-            val w = ((if (mediaList.width > 0) mediaList.width else resources.displayMetrics.widthPixels) - (8 * d).toInt()) / cols - 2 * m
+            val w = (resources.displayMetrics.widthPixels - (8 * d).toInt()) / cols - 2 * m
             val h = if (item.sticker) w else (w * item.height / item.width.coerceAtLeast(1)).coerceIn((70 * d).toInt(), (230 * d).toInt())
             iv.layoutParams = RecyclerView.LayoutParams(w, h).apply { setMargins(m, m, m, m) }
             iv.background = GradientDrawable().apply { cornerRadius = 10 * d; setColor(this@EmojiPanel.colors.chip) }
@@ -342,7 +342,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
                     setOnClickListener { listener?.onFeedback(); pick(entry.emoji) }
                 }
                 is GifItem -> (holder.itemView as ImageView).apply {
-                    val h = (if (strip.height > 0) strip.height else (112 * d).toInt()) - (8 * d).toInt()
+                    val h = (110 * d).toInt()   // fixed, so tiles never change size after the first layout
                     val w = if (entry.sticker) h else (h * entry.width / entry.height.coerceAtLeast(1)).coerceIn((70 * d).toInt(), (220 * d).toInt())
                     layoutParams = RecyclerView.LayoutParams(w, h).apply { setMargins((2 * d).toInt(), (4 * d).toInt(), (2 * d).toInt(), (4 * d).toInt()) }
                     background = GradientDrawable().apply { cornerRadius = 10 * d; setColor(this@EmojiPanel.colors.chip) }
