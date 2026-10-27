@@ -274,7 +274,7 @@ class KeyboardView(context: Context) : View(context) {
             }
         }
         // the glide trail
-        trailPaint.strokeWidth = 9f * d
+        trailPaint.strokeWidth = 7f * d
         for (p in ptrs.values) {
             val t = p.trail
             if (p.gliding && t != null && t.size > 1) {

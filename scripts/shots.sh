@@ -114,8 +114,9 @@ adb shell am start -f 0x10008000 -n $PKG/.PreviewActivity > /dev/null 2>&1; slee
 hook letters; sleep 1
 dump; [ -s dump.txt ] || cp $OUT/keys.txt dump.txt
 cp dump.txt $OUT/keys_glide.txt
+px=0; py=0
 glide() { # glide <letters...> ; optional env STOP_BEFORE_UP=1 keeps the finger down
-  local first=1 px py
+  local first=1
   for k in "$@"; do
     read X Y < <(key $k)
     if [ $first = 1 ]; then adb shell input motionevent DOWN $X $Y; first=0
