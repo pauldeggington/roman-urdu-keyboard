@@ -8,6 +8,53 @@ package com.paul.urdukb
  */
 object DefaultBank {
 
+    /**
+     * Questions asked TO the listener ("How are you?") were sometimes answered as if they were about the speaker
+     * ("Main theek hoon"). These pairs show the difference. They are added once to banks saved before.
+     */
+    val ADDED_QUESTIONS = mapOf(
+        "casual" to """How have you been? | Tumhara kya haal hai?
+How are you doing today? | Aaj tum kaisay ho?
+Are you okay? | Tum theek ho?
+Are you well? | Kya tum theek ho?
+How is your family? | Tumharay ghar walay kaisay hain?
+How are you feeling? | Tabiyat kaisi hai?
+Hope you are well. | Umeed hai tum theek ho.
+You are well. | Tum theek ho.
+You are tired. | Tum thak gaye ho.
+You are late. | Tum late ho.
+You are at home. | Tum ghar par ho.
+I am late. | Main late hoon.
+I am at the office. | Main office mein hoon.
+You are working too much. | Tum bohat kaam kartay ho.
+I am working too much. | Main bohat kaam karta hoon.
+You look happy. | Tum khush lag rahay ho.
+I am happy. | Main khush hoon.""",
+        "formal" to """How have you been? | Aap ka kya haal hai?
+How are you doing today? | Aaj aap kaisay hain?
+Are you okay? | Kya aap theek hain?
+Are you well? | Kya aap theek hain?
+You are well. | Aap theek hain.
+You are tired. | Aap thak gaye hain.
+You are late. | Aap late hain.
+I am late. | Main late hoon.
+I am at the office. | Main office mein hoon.
+I am happy. | Main khush hoon.
+How is your family? | Aap ke ghar walay kaisay hain?
+How are you feeling? | Aap ki tabiyat kaisi hai?""",
+        "english" to """Main theek hoon. | I'm fine.
+Tum theek ho? | Are you okay?
+Aap kaisay hain? | How are you?
+Tumhara kya haal hai? | How have you been?
+Main thak gaya hoon. | I'm tired.
+Tum thak gaye ho. | You are tired.
+Main late hoon. | I am late.
+Tum late ho. | You are late.
+Aap theek hain. | You are fine.
+Main khush hoon. | I am happy.
+Tum khush ho. | You are happy.""",
+    )
+
     val CASUAL = """How are you? | Tum kaisay ho?
 What are you doing? | Kya kar rahay ho?
 What do you want to eat? | Kya khana chahtay ho?
@@ -52,7 +99,7 @@ I am working right now. | Main abhi kaam kar raha hoon.
 I'm making dinner. | Main raat ka khana bana raha hoon.
 I can't come today. | Main aaj nahi aa sakta.
 I am at home. | Main ghar par hoon.
-I already ate. | Main ne khana kha liya hai."""
+I already ate. | Main ne khana kha liya hai.""" + "\n" + ADDED_QUESTIONS.getValue("casual")
 
     val FORMAL = """How are you? | Aap kaisay hain?
 What would you like to eat? | Aap kya khana chahtay hain?
@@ -85,7 +132,7 @@ Thank you for your help. | Aap ki madad ka shukriya.
 Could we meet on Monday? | Kya hum peer ko mil saktay hain?
 I hope you are well. | Umeed hai aap khairiyat se hon gay.
 I am fine, thank you. | Main theek hoon, shukriya.
-I am working on it. | Main is par kaam kar raha hoon."""
+I am working on it. | Main is par kaam kar raha hoon.""" + "\n" + ADDED_QUESTIONS.getValue("formal")
 
     val TO_ENGLISH = """Tum kaisay ho? | How are you?
 Tum aaj kya karna chahtay ho? | What do you want to do today?
@@ -122,7 +169,7 @@ kal ka kia plan hai | What's the plan for tomorrow?
 acha thk hai | Okay, that's fine.
 yar bht thak gya hn | I'm really tired.
 abhi busy hn baad mein baat krta hn | I'm busy right now, I'll talk later.
-ghar pohanch gye | I reached home."""
+ghar pohanch gye | I reached home.""" + "\n" + ADDED_QUESTIONS.getValue("english")
 
     /** word -> preferred spelling. Fixes Hindi-sounding spellings and applies the "ay" rule. */
     val GLOSSARY = """# one per line: word -> the spelling to use instead
