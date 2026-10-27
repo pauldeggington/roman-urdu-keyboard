@@ -19,11 +19,11 @@ import com.paul.urdukb.R
 /**
  * The strip above the keys. Gboard puts a grid button on the left and a mic circle on the right.
  * Between them: the Translate key, the Casual/Formal word and the Auto/EN→RU word. The grid button swaps
- * those for the tools: emoji, select all, copy, cut, paste and settings.
+ * those for the tools: emoji, select all, copy, cut, clipboard and settings.
  */
 class ToolbarView(context: Context) : View(context) {
 
-    enum class Tool { GRID, TRANSLATE, TONE, DIRECTION, MIC, EMOJI, SELECT_ALL, COPY, CUT, PASTE, SETTINGS }
+    enum class Tool { GRID, TRANSLATE, TONE, DIRECTION, MIC, EMOJI, SELECT_ALL, COPY, CUT, CLIPBOARD, SETTINGS }
 
     interface Listener {
         fun onTool(tool: Tool)
@@ -75,7 +75,7 @@ class ToolbarView(context: Context) : View(context) {
         Tool.SELECT_ALL to R.drawable.kb_select_all,
         Tool.COPY to R.drawable.kb_copy,
         Tool.CUT to R.drawable.kb_cut,
-        Tool.PASTE to R.drawable.kb_paste,
+        Tool.CLIPBOARD to R.drawable.kb_paste,
         Tool.SETTINGS to R.drawable.kb_settings,
     )
 

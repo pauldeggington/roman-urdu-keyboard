@@ -75,6 +75,9 @@ read X Y < <(key a); adb shell input tap $X $Y; sleep 0.4
 read X Y < <(key b); adb shell input tap $X $Y; sleep 0.8
 shot 25_search_typed
 hook letters; sleep 1
+hook clipboard_off; sleep 1.5; shot 26_clipboard_off
+hook clipboard; sleep 1.5; shot 27_clipboard
+hook letters; sleep 1
 
 adb shell cmd uimode night no
 sleep 2

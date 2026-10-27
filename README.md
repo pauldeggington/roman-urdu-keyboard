@@ -113,7 +113,8 @@ The first translation after a restart is slower while the model loads. If it fee
 - Gboard's layout and height: borderless letters, pill-shaped ?123, space and Enter, number hints, long-press for accents and symbols.
 - Circular key preview and pill popups, Material Symbols icons, the Google Sans key font, vibration on press.
 - Toolbar with a **mic** (hands over to your phone's voice typing), **Translate**, **Casual/Formal** and **Auto/EN→RU/RU→EN**.
-  The grid button opens emoji, select all, copy, cut, paste and settings.
+  The grid button opens emoji, select all, copy, cut, the clipboard and settings.
+- **Clipboard history** like Gboard's: the clipboard button in the tools panel shows what you copied in the last hour as cards. Tap one to paste it, long-press to pin or delete. It is off until you turn it on, and nothing leaves the phone.
 - **Emoji screen** with a search field, categories, recents and skin tones, plus **text emoticons** in named groups (Classic, Smiling, Love, Hugging, Flexing and more).
 - **GIFs and stickers** from GIPHY, with search and category chips. They are sent as pictures in apps that accept them (WhatsApp, Messages, Gmail and most chat apps) and as a link anywhere else.
   GIPHY needs a free key: paste it once in the app (Settings card *GIFs and stickers*, it has a button that opens GIPHY's sign-up).

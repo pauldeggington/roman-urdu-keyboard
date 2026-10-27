@@ -42,6 +42,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     private lateinit var keyboard: KeyboardView
     private lateinit var toolbar: ToolbarView
     private lateinit var emoji: EmojiPanel
+    private lateinit var clipboardPanel: ClipboardPanel
     private lateinit var popup: PopupLayer
     private lateinit var spacer: View
 
@@ -49,6 +50,8 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     private var lastSpace = 0L
     private var viewReady = false
     private var emojiOpen = false
+    private var clipOpen = false
+    private var clipListener: android.content.ClipboardManager.OnPrimaryClipChangedListener? = null
     private var searching = false
     private var baseEnterKind = KeyboardView.ENTER_RETURN
 
@@ -65,6 +68,20 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         Kb.prefs(this).registerOnSharedPreferenceChangeListener(prefListener)
         applicationContext.getSharedPreferences("look", Context.MODE_PRIVATE).registerOnSharedPreferenceChangeListener(prefListener)
         if (BuildConfig.PREVIEW) registerPreviewHooks()
+        // clipboard history: remember what is copied while the keyboard is running
+        getSystemService(android.content.ClipboardManager::class.java)?.let { cm ->
+            clipListener = android.content.ClipboardManager.OnPrimaryClipChangedListener {
+                try {
+                    val clip = cm.primaryClip ?: return@OnPrimaryClipChangedListener
+                    val sensitive = clip.description.extras?.getBoolean("android.content.extra.IS_SENSITIVE") == true
+                    if (!sensitive && clip.itemCount > 0) {
+                        clip.getItemAt(0).coerceToText(this)?.toString()?.let { ClipStore.add(this, it) }
+                    }
+                } catch (_: Exception) {
+                }
+            }
+            cm.addPrimaryClipChangedListener(clipListener)
+        }
     }
 
     /** Only in emulator preview builds: lets CI switch screens and read key positions to take screenshots. */
@@ -79,6 +96,8 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
                         "symbols2" -> { showEmoji(false); keyboard.page = Page.SYMBOLS2 }
                         "emoji" -> { showEmoji(true); emoji.showMode("emoji") }
                         "emoticons" -> { showEmoji(true); emoji.showMode("emoticon") }
+                        "clipboard" -> { ClipStore.seedForPreview(this@UrduImeService); showClipboard(true) }
+                        "clipboard_off" -> { ClipStore.setEnabled(this@UrduImeService, false); showClipboard(true) }
                         "gif" -> { showEmoji(true); emoji.showMode("gif") }
                         "stickers" -> { showEmoji(true); emoji.showMode("sticker") }
                         "search_emoji" -> { showEmoji(true); emoji.showMode("emoji"); emoji.openSearchFromHook(); emoji.searchType("heart") }
@@ -102,6 +121,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     }
 
     override fun onDestroy() {
+        clipListener?.let { getSystemService(android.content.ClipboardManager::class.java)?.removePrimaryClipChangedListener(it) }
         Kb.prefs(this).unregisterOnSharedPreferenceChangeListener(prefListener)
         applicationContext.getSharedPreferences("look", Context.MODE_PRIVATE).unregisterOnSharedPreferenceChangeListener(prefListener)
         RomanUrdu.onStateChanged = null
@@ -124,6 +144,21 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         keyboard = KeyboardView(this).apply { listener = this@UrduImeService; popupLayer = popup }
         toolbar = ToolbarView(this).apply { listener = this@UrduImeService }
         emoji = EmojiPanel(this).apply { listener = this@UrduImeService; visibility = View.GONE }
+        clipboardPanel = ClipboardPanel(this).apply {
+            listener = object : ClipboardPanel.Listener {
+                override fun onClip(text: String) {
+                    RomanUrdu.onOtherKey(this@UrduImeService)
+                    currentInputConnection?.commitText(text, 1)
+                    lastSpace = 0
+                    showClipboard(false)
+                }
+                override fun onBack() = showClipboard(false)
+                override fun onDeleteDown() { deleteOne(); handler.postDelayed(deleteRepeat, 400) }
+                override fun onDeleteUp() { handler.removeCallbacks(deleteRepeat) }
+                override fun onFeedback() = feedback()
+            }
+            visibility = View.GONE
+        }
 
         typing = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -134,6 +169,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             orientation = LinearLayout.VERTICAL
             // the emoji screen sits above the keys, so while searching its results are right above the letters
             addView(emoji, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            addView(clipboardPanel, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
             addView(typing, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
         }
         // transparent room above the keys, where the key preview and the long-press popup are drawn
@@ -174,6 +210,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         keyboard.colors = colors
         toolbar.colors = colors
         emoji.colors = colors
+        clipboardPanel.colors = colors
         popup.colors = colors
         keyboard.showHints = Kb.hints(this)
         keyboard.showPreview = Kb.preview(this)
@@ -379,7 +416,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             ToolbarView.Tool.SELECT_ALL -> ic?.performContextMenuAction(android.R.id.selectAll)
             ToolbarView.Tool.COPY -> ic?.performContextMenuAction(android.R.id.copy)
             ToolbarView.Tool.CUT -> ic?.performContextMenuAction(android.R.id.cut)
-            ToolbarView.Tool.PASTE -> ic?.performContextMenuAction(android.R.id.paste)
+            ToolbarView.Tool.CLIPBOARD -> showClipboard(true)
             ToolbarView.Tool.SETTINGS -> RomanUrdu.openApp(this, null)
         }
     }
@@ -414,17 +451,29 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     private fun showEmoji(on: Boolean) {
         if (!viewReady) return
         if (!on && searching) emoji.closeSearch()
+        clipOpen = false
         emojiOpen = on
         if (on) emoji.refresh()
         layoutPanels()
         popup.hide()
     }
 
+    private fun showClipboard(on: Boolean) {
+        if (!viewReady) return
+        if (on && searching) emoji.closeSearch()
+        emojiOpen = false
+        clipOpen = on
+        if (on) clipboardPanel.refresh()
+        layoutPanels()
+        popup.hide()
+    }
+
     /** The emoji screen replaces the keys, except while searching: then it sits above the letters. */
     private fun layoutPanels() {
-        typing.visibility = if (!emojiOpen || searching) View.VISIBLE else View.GONE
+        typing.visibility = if ((!emojiOpen && !clipOpen) || searching) View.VISIBLE else View.GONE
         toolbar.visibility = if (searching) View.GONE else View.VISIBLE
         emoji.visibility = if (emojiOpen) View.VISIBLE else View.GONE
+        clipboardPanel.visibility = if (clipOpen) View.VISIBLE else View.GONE
         keyboard.enterKind = if (searching) KeyboardView.ENTER_SEARCH else baseEnterKind
         frame.requestLayout()
     }

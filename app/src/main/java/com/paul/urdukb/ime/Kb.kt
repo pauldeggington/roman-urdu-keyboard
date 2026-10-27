@@ -17,6 +17,7 @@ object Kb {
     const val PREF_DIRECTION = "roman_urdu_direction"
 
     const val PREF_GIPHY_KEY = "giphy_key"
+    const val PREF_CLIP = "clipboard_history"
 
     fun prefs(ctx: Context): SharedPreferences =
         ctx.applicationContext.getSharedPreferences("keyboard", Context.MODE_PRIVATE)
