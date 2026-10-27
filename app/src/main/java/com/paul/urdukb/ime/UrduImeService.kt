@@ -492,7 +492,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         toolbar.suggestions = g.words.take(3).map { GlideCase.apply(it, g.capMode) }
         toolbar.suggestionIndex = g.chosen
         handler.removeCallbacks(hideSuggestions)
-        handler.postDelayed(hideSuggestions, 7000)
+        handler.postDelayed(hideSuggestions, 2500)   // then Translate, Casual and Auto come back
     }
 
     /** A suggestion was tapped: swap the word that was typed for it. */

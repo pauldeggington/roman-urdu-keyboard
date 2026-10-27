@@ -20,11 +20,10 @@ object Speaker {
     fun set(ctx: Context, v: String) =
         Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE).edit().putString("speaker", v).apply()
 
-    private const val COMMON = """- "I", "me" and "my" are always the speaker, never the listener. A sentence about the speaker stays about the speaker: never turn it into a sentence about the listener, and never add "tum" or "aap" that is not in the English.
-- Translate every sentence, including questions and greetings. Never answer a question and never reply to it. "How are you?" is asked to the listener, so it is about "you": "Tum kaisay ho?" (casual) or "Aap kaisay hain?" (formal). Only a sentence like "I am fine" is about the speaker.
-- Keep statements as statements and questions as questions. Only write a question mark if the English is a question.
-- "We" is "hum" with plural verbs.
-- For the listener use the plural verb forms, which suit anyone: tum kar rahay ho, aap kar rahay hain."""
+    private const val COMMON = """- "I", "me" and "my" are the speaker; "you" and "your" are the listener. Never swap them, and never add "tum" or "aap" that is not in the English.
+- Translate every sentence, including questions. Never answer one: "How are you?" is asked to the listener ("Tum kaisay ho?" casual, "Aap kaisay hain?" formal); only "I am fine" is about the speaker.
+- Statements stay statements and questions stay questions. "We" is "hum".
+- For the listener use plural verb forms: tum kar rahay ho, aap kar rahay hain."""
 
     /** Rules block appended to the Roman Urdu system prompt. */
     fun rules(ctx: Context): String = "\n" + when (get(ctx)) {
