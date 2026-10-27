@@ -5,8 +5,8 @@ import java.util.Random
 import kotlin.math.hypot
 import kotlin.math.max
 import kotlin.math.pow
-import kotlin.test.Test
-import kotlin.test.assertTrue
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
 /**
  * Glides are simulated: a smooth curve through the word's letters, each letter missed by a random amount and the
@@ -88,16 +88,16 @@ class GlideDecoderTest {
     fun carefulGlidesFindTheWord() {
         val (t1, t3) = accuracy(0.28f, 400, 7)
         println("careful glides: first=$t1 top3=$t3")
-        assertTrue(t1 >= 0.75, "first-choice accuracy was $t1")
-        assertTrue(t3 >= 0.92, "top-3 accuracy was $t3")
+        assertTrue("first-choice accuracy was $t1", t1 >= 0.75)
+        assertTrue("top-3 accuracy was $t3", t3 >= 0.92)
     }
 
     @Test
     fun sloppyGlidesStillMostlyWork() {
         val (t1, t3) = accuracy(0.45f, 400, 11)
         println("sloppy glides: first=$t1 top3=$t3")
-        assertTrue(t1 >= 0.65, "first-choice accuracy was $t1")
-        assertTrue(t3 >= 0.85, "top-3 accuracy was $t3")
+        assertTrue("first-choice accuracy was $t1", t1 >= 0.65)
+        assertTrue("top-3 accuracy was $t3", t3 >= 0.85)
     }
 
     @Test
@@ -106,7 +106,7 @@ class GlideDecoderTest {
         for (w in listOf("hello", "world", "thanks", "tomorrow", "because", "message", "working", "evening", "please", "morning")) {
             val key = StringBuilder().also { sb -> for (c in w) if (sb.isEmpty() || sb.last() != c) sb.append(c) }.toString()
             val result = decoder.decode(simulate(key, rnd, 0.3f, 0.04f), layout, 3)
-            assertTrue(w in result, "$w was not in $result")
+            assertTrue("$w was not in $result", w in result)
         }
     }
 
