@@ -50,7 +50,7 @@ class TranslateTextActivity : Activity() {
             isClickable = true   // taps on the sheet do not close it
         }
         note = TextView(this).apply {
-            text = "Roman Urdu → English"
+            this.text = "Roman Urdu → English"
             textSize = 13f
             setTextColor(pal.textMuted)
         }
