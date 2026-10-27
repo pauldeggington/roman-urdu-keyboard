@@ -120,7 +120,15 @@ Rules:
     fun examples(ctx: Context, style: Style): String {
         val p = sp(ctx)
         // banks saved before the speaker fix: swap the old lines that read as "you"
-        val v = p.getString("examples_${style.key}", null)?.lines()?.joinToString("\n") { DefaultBank.REPLACED[it.trim()] ?: it }
+        var v = p.getString("examples_${style.key}", null)?.lines()?.joinToString("\n") { DefaultBank.REPLACED[it.trim()] ?: it }
+        // once: add the "question to the listener" examples to banks saved before they existed
+        val flag = "added_questions_${style.key}"
+        if (v != null && !p.getBoolean(flag, false)) {
+            val have = v.lines().map { it.substringBefore("|").trim().lowercase() }.toSet()
+            val extra = DefaultBank.ADDED_QUESTIONS[style.key].orEmpty().lines().filter { it.substringBefore("|").trim().lowercase() !in have }
+            if (extra.isNotEmpty()) v = v.trimEnd() + "\n" + extra.joinToString("\n")
+            p.edit().putString("examples_${style.key}", v).putBoolean(flag, true).apply()
+        }
         return v ?: when (style) {
             Style.FORMAL -> DEFAULT_EXAMPLES_FORMAL
             Style.CASUAL -> DEFAULT_EXAMPLES_CASUAL

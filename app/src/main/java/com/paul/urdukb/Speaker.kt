@@ -21,14 +21,15 @@ object Speaker {
         Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE).edit().putString("speaker", v).apply()
 
     private const val COMMON = """- "I", "me" and "my" are always the speaker, never the listener. A sentence about the speaker stays about the speaker: never turn it into a sentence about the listener, and never add "tum" or "aap" that is not in the English.
+- Translate every sentence, including questions and greetings. Never answer a question and never reply to it. "How are you?" is asked to the listener, so it is about "you": "Tum kaisay ho?" (casual) or "Aap kaisay hain?" (formal). Only a sentence like "I am fine" is about the speaker.
 - Keep statements as statements and questions as questions. Only write a question mark if the English is a question.
 - "We" is "hum" with plural verbs.
 - For the listener use the plural verb forms, which suit anyone: tum kar rahay ho, aap kar rahay hain."""
 
     /** Rules block appended to the Roman Urdu system prompt. */
     fun rules(ctx: Context): String = "\n" + when (get(ctx)) {
-        FEMALE -> """- The speaker is female. When the English is about the speaker, write "main" with feminine first-person forms and "hoon": main theek hoon, main thak gayi hoon, main kaam kar rahi hoon, main aa sakti hoon, main bhool gayi thi, main baad mein call karti hoon."""
-        else -> """- The speaker is male. When the English is about the speaker, write "main" with masculine first-person forms and "hoon": main theek hoon, main thak gaya hoon, main kaam kar raha hoon, main aa sakta hoon, main bhool gaya tha, main baad mein call karta hoon."""
+        FEMALE -> """- The speaker is female. When the English is about the speaker, write "main" with feminine first-person forms and "hoon": main thak gayi hoon, main kaam kar rahi hoon, main aa sakti hoon, main bhool gayi thi, main baad mein call karti hoon."""
+        else -> """- The speaker is male. When the English is about the speaker, write "main" with masculine first-person forms and "hoon": main thak gaya hoon, main kaam kar raha hoon, main aa sakta hoon, main bhool gaya tha, main baad mein call karta hoon."""
     } + "\n" + COMMON
 
     /** Old rule lines that made the speaker sound like "you"; removed from saved custom rules. */

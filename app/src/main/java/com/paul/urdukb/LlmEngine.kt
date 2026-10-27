@@ -98,6 +98,24 @@ object LlmEngine {
         return created
     }
 
+    private fun key(ctx: Context, s: String): String =
+        s.lowercase().replace(Regex("[^\\p{L}\\p{N}\\s]"), " ").trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+            .joinToString(" ") { VariantMap.canon(ctx, it) }
+
+    /**
+     * A message that is exactly a line of the example bank (ignoring capitals, punctuation and spelling variants)
+     * gets that line's translation, without asking the model: it is instant and always consistent.
+     */
+    private fun exactMatch(ctx: Context, rawText: String, style: Style): String? {
+        val want = key(ctx, rawText)
+        if (want.isEmpty()) return null
+        val hit = Bank.parse(Prefs.examples(ctx, style)).firstOrNull { key(ctx, it.first) == want } ?: return null
+        return if (style == Style.TO_ENGLISH) hit.second else {
+            val glossary = Glossary.parse(Prefs.glossary(ctx))
+            Glossary.apply(glossary, Speaker.adapt(ctx, hit.second)) { VariantMap.cluster(ctx, it) }
+        }
+    }
+
     /** The few examples from the bank that are closest to this text. */
     private fun examples(ctx: Context, style: Style, text: String): List<Pair<String, String>> {
         val picked = Bank.pick(Bank.parse(Prefs.examples(ctx, style)), text, k = 6) { VariantMap.canon(ctx, it) }
@@ -112,6 +130,7 @@ object LlmEngine {
     /** Blocking. Call from a background thread. */
     @Synchronized
     fun translate(ctx: Context, rawText: String, style: Style): String {
+        exactMatch(ctx, rawText, style)?.let { return it }
         val eng = getEngine(ctx)
         // Roman Urdu shorthand (kr, nhi, tm ...) is spelled out first, so the model and the example lookup see real words
         val text = if (style == Style.TO_ENGLISH) Spelling.normalizeInput(ctx, rawText) else rawText
