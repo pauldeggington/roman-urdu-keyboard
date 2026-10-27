@@ -120,12 +120,13 @@ object LlmEngine {
     private fun examples(ctx: Context, style: Style, text: String): List<Pair<String, String>> {
         val picked = Bank.pick(Bank.parse(Prefs.examples(ctx, style)), text, k = 6) { VariantMap.canon(ctx, it) }
         // the bank is written for a male speaker; match the chosen speaker so the examples agree with the rules
-        return if (style == Style.TO_ENGLISH) picked else picked.map { (en, ur) -> en to Speaker.adapt(ctx, ur) }
+        return if (style == Style.TO_ENGLISH) picked.map { (ur, en) -> Person.tag(ur, style) to en }
+        else picked.map { (en, ur) -> Person.tag(en, style) to Speaker.adapt(ctx, ur) }
     }
 
-    private fun systemPrompt(ctx: Context, style: Style, glossary: List<Pair<String, String>>): String =
-        if (style == Style.TO_ENGLISH) Prefs.rules(ctx, style)
-        else Speaker.stripOldRules(Prefs.rules(ctx, style)) + Speaker.rules(ctx) + Glossary.promptBlock(glossary)
+    private fun systemPrompt(ctx: Context, style: Style, glossary: List<Pair<String, String>>, extra: String = ""): String =
+        (if (style == Style.TO_ENGLISH) Prefs.rules(ctx, style) + Person.tagRules(style)
+        else Speaker.stripOldRules(Prefs.rules(ctx, style)) + Speaker.rules(ctx) + Person.tagRules(style) + Glossary.promptBlock(glossary)) + extra
 
     /** Blocking. Call from a background thread. */
     @Synchronized
@@ -137,20 +138,34 @@ object LlmEngine {
         val t0 = System.nanoTime()
         // Spellings only matter for Roman Urdu output
         val glossary = if (style == Style.TO_ENGLISH) emptyList() else Glossary.parse(Prefs.glossary(ctx))
+        val examples = examples(ctx, style, text)
+        val tagged = Person.tag(text, style)
+
+        var out = ask(eng, systemPrompt(ctx, style, glossary), examples, tagged, 0.3f)
+        // "I am well" must not come back as a sentence about "you", nor "How are you?" as an answer:
+        // if the answer talks about the wrong person, try once more, stricter and with less randomness
+        val who = Person.overall(text, style)
+        if (who != null && !Person.consistent(out, who, style)) {
+            val again = ask(eng, systemPrompt(ctx, style, glossary, Person.retryNote(who, style)), examples, tagged, 0.1f)
+            if (Person.consistent(again, who, style)) out = again
+        }
+        // Roman Urdu output: your glossary, which also fixes other spellings of the same word
+        val result = if (style == Style.TO_ENGLISH) out
+            else Glossary.apply(glossary, out) { VariantMap.cluster(ctx, it) }
+        Prefs.addTranslation(ctx, (System.nanoTime() - t0) / 1_000_000)
+        return result
+    }
+
+    private fun ask(eng: Engine, system: String, examples: List<Pair<String, String>>, text: String, temperature: Float): String {
         val config = ConversationConfig(
-            systemInstruction = Contents.of(systemPrompt(ctx, style, glossary)),
-            initialMessages = examples(ctx, style, text).flatMap { (en, ur) -> listOf(Message.user(en), Message.model(ur)) },
-            samplerConfig = SamplerConfig(topK = 40, topP = 0.95, temperature = 0.3),
+            systemInstruction = Contents.of(system),
+            initialMessages = examples.flatMap { (a, b) -> listOf(Message.user(a), Message.model(b)) },
+            samplerConfig = SamplerConfig(topK = 40, topP = 0.95, temperature = temperature.toDouble()),
         )
         // A fresh conversation per translation, so earlier messages never leak into the next one.
         return eng.createConversation(config).use { conversation ->
             val reply = runBlocking { conversation.sendMessage(text) }
-            val cleaned = clean(reply.toString())
-            // Roman Urdu output: your glossary, which also fixes other spellings of the same word
-            val out = if (style == Style.TO_ENGLISH) cleaned
-                else Glossary.apply(glossary, cleaned) { VariantMap.cluster(ctx, it) }
-            Prefs.addTranslation(ctx, (System.nanoTime() - t0) / 1_000_000)
-            out
+            Person.stripTags(clean(reply.toString()))
         }
     }
 

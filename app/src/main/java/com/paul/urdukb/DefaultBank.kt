@@ -19,18 +19,40 @@ Are you okay? | Tum theek ho?
 Are you well? | Kya tum theek ho?
 How is your family? | Tumharay ghar walay kaisay hain?
 How are you feeling? | Tabiyat kaisi hai?
-Hope you are well. | Umeed hai tum theek ho.""",
+Hope you are well. | Umeed hai tum theek ho.
+You are well. | Tum theek ho.
+You are tired. | Tum thak gaye ho.
+You are late. | Tum late ho.
+You are at home. | Tum ghar par ho.
+I am late. | Main late hoon.
+I am at the office. | Main office mein hoon.
+You are working too much. | Tum bohat kaam kartay ho.
+I am working too much. | Main bohat kaam karta hoon.
+You look happy. | Tum khush lag rahay ho.
+I am happy. | Main khush hoon.""",
         "formal" to """How have you been? | Aap ka kya haal hai?
 How are you doing today? | Aaj aap kaisay hain?
 Are you okay? | Kya aap theek hain?
 Are you well? | Kya aap theek hain?
+You are well. | Aap theek hain.
+You are tired. | Aap thak gaye hain.
+You are late. | Aap late hain.
+I am late. | Main late hoon.
+I am at the office. | Main office mein hoon.
+I am happy. | Main khush hoon.
 How is your family? | Aap ke ghar walay kaisay hain?
 How are you feeling? | Aap ki tabiyat kaisi hai?""",
         "english" to """Main theek hoon. | I'm fine.
 Tum theek ho? | Are you okay?
 Aap kaisay hain? | How are you?
 Tumhara kya haal hai? | How have you been?
-Main thak gaya hoon. | I'm tired.""",
+Main thak gaya hoon. | I'm tired.
+Tum thak gaye ho. | You are tired.
+Main late hoon. | I am late.
+Tum late ho. | You are late.
+Aap theek hain. | You are fine.
+Main khush hoon. | I am happy.
+Tum khush ho. | You are happy.""",
     )
 
     val CASUAL = """How are you? | Tum kaisay ho?
