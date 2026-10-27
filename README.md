@@ -148,21 +148,7 @@ The first translation after a restart is slower while the model loads. If it fee
 
 ## Not included (yet)
 
-Word suggestions and autocorrect, glide typing, clipboard history, and layouts for other languages. GIFs and stickers need your own free GIPHY key (or a release built with one). This keyboard does one thing well.
-
-## Build it yourself
-
-The easiest way is GitHub Actions (`.github/workflows/build.yml`): fork the repo and push.
-
-To build locally you need JDK 21 and the Android SDK:
-
-```bash
-./gradlew :app:assembleDebug
-```
-
-For updates that install over the old app, sign every build with the same key. Add two repository secrets,
-`KEYSTORE_BASE64` (a base64-encoded keystore with the alias `urdukb`) and `KEYSTORE_PASSWORD`. Without them the build
-uses a random debug key.
+Word suggestions and autocorrect, glide typing, clipboard history, and layouts for other languages. GIFs and stickers need your own free GIPHY key (or a release built with one).
 
 <details>
 <summary><b>Project layout</b></summary>
