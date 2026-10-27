@@ -69,6 +69,11 @@ hook stickers; sleep 2.5; shot 21_stickers
 hook emoticons; sleep 1; shot 22_emoticons
 hook search_emoji; sleep 1.5; shot 23_search_emoji
 hook search_gif; sleep 2.5; shot 24_search_gif
+# typing while the search is open must go into the search box, not into the app
+dump; [ -s dump.txt ] || cp $OUT/keys.txt dump.txt
+read X Y < <(key a); adb shell input tap $X $Y; sleep 0.4
+read X Y < <(key b); adb shell input tap $X $Y; sleep 0.8
+shot 25_search_typed
 hook letters; sleep 1
 
 adb shell cmd uimode night no
