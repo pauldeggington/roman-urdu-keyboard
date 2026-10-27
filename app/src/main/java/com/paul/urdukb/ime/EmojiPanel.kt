@@ -305,7 +305,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
             val w = ((if (mediaList.width > 0) mediaList.width else resources.displayMetrics.widthPixels) - (8 * d).toInt()) / cols - 2 * m
             val h = if (item.sticker) w else (w * item.height / item.width.coerceAtLeast(1)).coerceIn((70 * d).toInt(), (230 * d).toInt())
             iv.layoutParams = RecyclerView.LayoutParams(w, h).apply { setMargins(m, m, m, m) }
-            iv.background = GradientDrawable().apply { cornerRadius = 10 * d; setColor(colors.chip) }
+            iv.background = GradientDrawable().apply { cornerRadius = 10 * d; setColor(this@EmojiPanel.colors.chip) }
             iv.scaleType = if (item.sticker) ImageView.ScaleType.FIT_CENTER else ImageView.ScaleType.CENTER_CROP
             MediaCache.show(iv, item.thumbUrl)
             iv.setOnClickListener { listener?.onFeedback(); listener?.onMedia(item) }
@@ -345,7 +345,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
                     val h = (if (strip.height > 0) strip.height else (112 * d).toInt()) - (8 * d).toInt()
                     val w = if (entry.sticker) h else (h * entry.width / entry.height.coerceAtLeast(1)).coerceIn((70 * d).toInt(), (220 * d).toInt())
                     layoutParams = RecyclerView.LayoutParams(w, h).apply { setMargins((2 * d).toInt(), (4 * d).toInt(), (2 * d).toInt(), (4 * d).toInt()) }
-                    background = GradientDrawable().apply { cornerRadius = 10 * d; setColor(colors.chip) }
+                    background = GradientDrawable().apply { cornerRadius = 10 * d; setColor(this@EmojiPanel.colors.chip) }
                     scaleType = if (entry.sticker) ImageView.ScaleType.FIT_CENTER else ImageView.ScaleType.CENTER_CROP
                     MediaCache.show(this, entry.thumbUrl)
                     setOnClickListener { listener?.onFeedback(); listener?.onMedia(entry) }
