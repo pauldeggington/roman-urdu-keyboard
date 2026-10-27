@@ -118,7 +118,7 @@ object LlmEngine {
 
     /** The few examples from the bank that are closest to this text. */
     private fun examples(ctx: Context, style: Style, text: String): List<Pair<String, String>> {
-        val picked = Bank.pick(Bank.parse(Prefs.examples(ctx, style)), text, k = 6) { VariantMap.canon(ctx, it) }
+        val picked = Bank.pick(Bank.parse(Prefs.examples(ctx, style)), text, k = 5) { VariantMap.canon(ctx, it) }
         // the bank is written for a male speaker; match the chosen speaker so the examples agree with the rules
         return if (style == Style.TO_ENGLISH) picked.map { (ur, en) -> Person.tag(ur, style) to en }
         else picked.map { (en, ur) -> Person.tag(en, style) to Speaker.adapt(ctx, ur) }
@@ -126,7 +126,7 @@ object LlmEngine {
 
     private fun systemPrompt(ctx: Context, style: Style, glossary: List<Pair<String, String>>, extra: String = ""): String =
         (if (style == Style.TO_ENGLISH) Prefs.rules(ctx, style) + Person.tagRules(style)
-        else Speaker.stripOldRules(Prefs.rules(ctx, style)) + Speaker.rules(ctx) + Person.tagRules(style) + Glossary.promptBlock(glossary)) + extra
+        else Speaker.stripOldRules(Prefs.rules(ctx, style)) + Speaker.rules(ctx) + Person.tagRules(style)) + extra   // the glossary is applied to the answer afterwards, so it is not repeated in the prompt (it made every translation slower)
 
     /** Blocking. Call from a background thread. */
     @Synchronized

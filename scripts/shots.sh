@@ -109,6 +109,34 @@ adb shell cmd uimode night no; sleep 2
 adb shell am start -f 0x10008000 -n $PKG/.SetupActivity --es step WELCOME > /dev/null 2>&1; sleep 4; shot app_setup_WELCOME_light
 adb shell cmd uimode night yes; sleep 2
 
+# glide typing: slide across the letters with a pointer that stays down
+adb shell am start -f 0x10008000 -n $PKG/.PreviewActivity > /dev/null 2>&1; sleep 4
+hook letters; sleep 1
+dump; [ -s dump.txt ] || cp $OUT/keys.txt dump.txt
+cp dump.txt $OUT/keys_glide.txt
+px=0; py=0
+glide() { # glide <letters...> ; optional env STOP_BEFORE_UP=1 keeps the finger down
+  local first=1
+  for k in "$@"; do
+    read X Y < <(key $k)
+    if [ $first = 1 ]; then adb shell input motionevent DOWN $X $Y; first=0
+    else
+      mx=$(( (px + X) / 2 )); my=$(( (py + Y) / 2 ))
+      adb shell input motionevent MOVE $mx $my
+      adb shell input motionevent MOVE $X $Y
+    fi
+    px=$X; py=$Y
+  done
+  if [ -n "${STOP_BEFORE_UP:-}" ]; then return; fi
+  adb shell input motionevent UP $px $py
+}
+STOP_BEFORE_UP=1 glide t h a n k s; sleep 0.4; shot 30_glide_trail
+adb shell input motionevent UP $px $py; sleep 1.5; shot 31_glide_thanks
+glide h e l l o; sleep 1.5; shot 32_glide_hello
+glide w o r l d; sleep 1.5; shot 33_glide_world
+adb shell input keyevent 67; sleep 1; shot 34_glide_backspace
+adb logcat -d -s PREVIEW:I | grep GLIDE > $OUT/glide_log.txt 2>&1 || true
+
 adb shell ime enable $IME; adb shell ime set $IME
 # animated demo: one screenshot after every step, stitched into a GIF afterwards
 mkdir -p $OUT/frames; N=0
@@ -122,6 +150,8 @@ for k in k y a space h a a l space h a i; do
   if [ "$k" = space ]; then adb shell input keyevent 62; sleep 0.35; frame; else tapkey $k; fi
 done
 frame typed; frame
+STOP_BEFORE_UP=1 glide t o m o r o w; sleep 0.3; frame; frame
+adb shell input motionevent UP $px $py; sleep 0.7; frame; frame; frame
 hook tools; sleep 1; frame; frame; hook notools; sleep 0.5
 read X Y < <(key e); adb shell input swipe $X $Y $X $Y 1800 & sleep 1.1; frame; wait
 sleep 0.5; adb shell input keyevent 67; sleep 0.4

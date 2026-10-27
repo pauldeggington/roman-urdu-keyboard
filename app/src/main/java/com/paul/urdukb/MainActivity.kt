@@ -711,6 +711,7 @@ class MainActivity : Activity() {
         switchRow(card, "Sound on key press", "", Kb.PREF_SOUND, false)
         switchRow(card, "Popup on key press", "The bubble above the key you touch", Kb.PREF_PREVIEW, true)
         switchRow(card, "Capital letter after . ? !", "Starts sentences with a capital", Kb.PREF_AUTOCAP, true)
+        switchRow(card, "Glide typing", "Slide your finger across the letters and lift to type a word. English words for now; tap a suggestion above the keys to change the word.", Kb.PREF_GLIDE, true)
         switchRow(card, "Double space types a full stop", "", Kb.PREF_DOUBLE_SPACE, true)
         switchRow(card, "Clipboard history", "Keeps text you copy for an hour so you can paste it again (clipboard button in the tools panel). Stays on this phone.", Kb.PREF_CLIP, false)
         switchRow(card, "Number hints on the top row", "The small 1 to 0; long-press a key to type it", Kb.PREF_HINTS, true)

@@ -23,7 +23,7 @@ import com.paul.urdukb.R
  */
 class ToolbarView(context: Context) : View(context) {
 
-    enum class Tool { GRID, TRANSLATE, TONE, DIRECTION, MIC, EMOJI, SELECT_ALL, COPY, CUT, CLIPBOARD, SETTINGS }
+    enum class Tool { GRID, TRANSLATE, TONE, DIRECTION, MIC, EMOJI, SELECT_ALL, COPY, CUT, CLIPBOARD, SETTINGS, SUGGESTION_1, SUGGESTION_2, SUGGESTION_3 }
 
     interface Listener {
         fun onTool(tool: Tool)
@@ -37,6 +37,11 @@ class ToolbarView(context: Context) : View(context) {
     var colors: KbColors = KbColors.of(context)
         set(v) { field = v; invalidate() }
     var toolsOpen = false
+        set(v) { field = v; invalidate() }
+    /** Words offered after a glide, best first. While there are some, they replace Translate, Casual and Auto. */
+    var suggestions: List<String> = emptyList()
+        set(v) { field = v; invalidate() }
+    var suggestionIndex = 0
         set(v) { field = v; invalidate() }
     var canRevert = false
         set(v) { field = v; invalidate() }
@@ -92,7 +97,13 @@ class ToolbarView(context: Context) : View(context) {
         val micCx = width - 23.5f * d
         val micRect = RectF(micCx - h / 2f, 0f, micCx + h / 2f, h)
         out += Tool.MIC to micRect
-        if (toolsOpen) {
+        if (!toolsOpen && suggestions.isNotEmpty()) {
+            val left = 6f * d + h + 4f * d
+            val right = micRect.left - 4f * d
+            val n = minOf(3, suggestions.size)
+            val slot = (right - left) / 3f
+            for (i in 0 until n) out += listOf(Tool.SUGGESTION_1, Tool.SUGGESTION_2, Tool.SUGGESTION_3)[i] to RectF(left + i * slot, 0f, left + (i + 1) * slot, h)
+        } else if (toolsOpen) {
             val left = 6f * d + h
             val right = micRect.left
             val slot = (right - left) / toolIcons.size
@@ -126,6 +137,26 @@ class ToolbarView(context: Context) : View(context) {
         val cy = height / 2f
         for ((tool, r) in layoutItems()) {
             val cx = r.centerX()
+            val sug = when (tool) { Tool.SUGGESTION_1 -> 0; Tool.SUGGESTION_2 -> 1; Tool.SUGGESTION_3 -> 2; else -> -1 }
+            if (sug >= 0) {
+                val word = suggestions.getOrNull(sug) ?: continue
+                val chosen = sug == suggestionIndex
+                if (chosen || pressed == tool) {
+                    paint.color = if (chosen) col.chip else col.pressed
+                    val pad = 3f * d
+                    c.drawRoundRect(r.left + pad, cy - 17f * d, r.right - pad, cy + 17f * d, 17f * d, 17f * d, paint)
+                }
+                text.textSize = 17f * d
+                text.isFakeBoldText = chosen
+                text.color = col.keyText
+                var shown = word
+                val room = r.width() - 16f * d
+                while (shown.length > 1 && text.measureText(shown) > room) shown = shown.dropLast(2) + "\u2026"
+                c.drawText(shown, cx, cy + 0.716f * 17f * d / 2f, text)
+                text.isFakeBoldText = false
+                text.textSize = 14f * d
+                continue
+            }
             if (pressed == tool) {
                 paint.color = col.pressed
                 c.drawCircle(cx, cy, 20f * d, paint)

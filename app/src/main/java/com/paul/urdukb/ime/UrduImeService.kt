@@ -51,6 +51,18 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     private var viewReady = false
     private var emojiOpen = false
     private var clipOpen = false
+
+    // glide typing
+    @Volatile private var glideDecoder: GlideDecoder? = null
+    private val glideThread = java.util.concurrent.Executors.newSingleThreadExecutor()
+
+    /** The word the last glide typed, so a suggestion can swap it and backspace can remove all of it. */
+    private class GlideCommit(val words: List<String>, var chosen: Int, val prefix: String, val capMode: Int) {
+        fun shown() = GlideCase.apply(words[chosen], capMode)
+        fun tail() = prefix + shown() + " "
+    }
+    private var glideCommit: GlideCommit? = null
+    private val hideSuggestions = Runnable { clearGlide() }
     private var clipListener: android.content.ClipboardManager.OnPrimaryClipChangedListener? = null
     private var searching = false
     private var baseEnterKind = KeyboardView.ENTER_RETURN
@@ -68,6 +80,13 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         Kb.prefs(this).registerOnSharedPreferenceChangeListener(prefListener)
         applicationContext.getSharedPreferences("look", Context.MODE_PRIVATE).registerOnSharedPreferenceChangeListener(prefListener)
         if (BuildConfig.PREVIEW) registerPreviewHooks()
+        // glide typing: load the word list in the background
+        Thread {
+            try {
+                assets.open("dict/en.tsv").bufferedReader().use { r -> glideDecoder = GlideDecoder.parse(r.lineSequence()) }
+            } catch (_: Exception) {
+            }
+        }.start()
         // clipboard history: remember what is copied while the keyboard is running
         getSystemService(android.content.ClipboardManager::class.java)?.let { cm ->
             clipListener = android.content.ClipboardManager.OnPrimaryClipChangedListener {
@@ -147,6 +166,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         clipboardPanel = ClipboardPanel(this).apply {
             listener = object : ClipboardPanel.Listener {
                 override fun onClip(text: String) {
+                    clearGlide()
                     RomanUrdu.onOtherKey(this@UrduImeService)
                     currentInputConnection?.commitText(text, 1)
                     lastSpace = 0
@@ -191,16 +211,32 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             addView(popup, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
             // draw the keyboard colour behind the navigation bar too, like Gboard
             setOnApplyWindowInsetsListener { _, insets ->
-                val nav = insets.getInsets(WindowInsets.Type.navigationBars()).bottom
-                // Gboard leaves 36 dp under the bottom row, above the navigation bar
-                container.setPadding(0, 0, 0, nav + (36f * resources.displayMetrics.density).toInt())
+                applyBottomPadding(insets)
                 insets
             }
         }
+        // some apps never send the insets to the keyboard window, which left the bottom row under the system's
+        // keyboard-switcher and hide-keyboard buttons: start with the usual height and correct it when insets arrive
+        applyBottomPadding(null)
+        frame.requestApplyInsets()
         RomanUrdu.onStateChanged = { if (viewReady) refreshToolbar() }
         viewReady = true
         refreshAll()
         return frame
+    }
+
+    /**
+     * Room under the bottom row: 36 dp (like Gboard) plus the navigation bar, where Android draws the globe and
+     * hide-keyboard buttons. When the window reports no navigation bar height, use the usual one for the phone's
+     * navigation mode (gesture bar 24 dp, buttons 48 dp) so the keys never end up under those buttons.
+     */
+    private fun applyBottomPadding(insets: WindowInsets?) {
+        if (!viewReady && !::container.isInitialized) return
+        val d = resources.displayMetrics.density
+        val reported = insets?.getInsets(WindowInsets.Type.navigationBars())?.bottom ?: 0
+        val mode = runCatching { android.provider.Settings.Secure.getInt(contentResolver, "navigation_mode", 2) }.getOrDefault(2)
+        val fallback = ((if (mode == 2) 24f else 48f) * d).toInt()
+        container.setPadding(0, 0, 0, (if (reported > 0) reported else fallback) + (36f * d).toInt())
     }
 
     private fun refreshAll() {
@@ -214,6 +250,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         popup.colors = colors
         keyboard.showHints = Kb.hints(this)
         keyboard.showPreview = Kb.preview(this)
+        keyboard.glideEnabled = Kb.glide(this)
         refreshToolbar()
     }
 
@@ -245,6 +282,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     override fun onStartInputView(info: EditorInfo, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         if (!viewReady) return
+        frame.post { applyBottomPadding(frame.rootWindowInsets); frame.requestApplyInsets() }
         val cls = info.inputType and InputType.TYPE_MASK_CLASS
         keyboard.page = if (cls == InputType.TYPE_CLASS_NUMBER || cls == InputType.TYPE_CLASS_PHONE || cls == InputType.TYPE_CLASS_DATETIME)
             Page.SYMBOLS1 else Page.LETTERS
@@ -272,7 +310,13 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
 
     override fun onUpdateSelection(oldSelStart: Int, oldSelEnd: Int, newSelStart: Int, newSelEnd: Int, candidatesStart: Int, candidatesEnd: Int) {
         super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd, candidatesStart, candidatesEnd)
-        if (viewReady) updateShift()
+        if (viewReady) {
+            glideCommit?.let { g ->
+                val tail = g.tail()
+                if (currentInputConnection?.getTextBeforeCursor(tail.length, 0)?.toString() != tail) clearGlide()
+            }
+            updateShift()
+        }
     }
 
     // ------------------------------------------------------------------ shift and capitals
@@ -304,6 +348,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     override fun onKey(key: KeyDef, text: String?) {
         if (BuildConfig.PREVIEW) Log.i("PREVIEW", "ONKEY ${key.type} $text ic=${currentInputConnection != null}")
         RomanUrdu.onOtherKey(this)
+        if (key.type != KeyType.DELETE) clearGlide()
         when (key.type) {
             KeyType.CHAR -> typeText(text ?: key.label)
             KeyType.SHIFT -> toggleShift()
@@ -353,6 +398,18 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     private fun deleteOne() {
         if (searching) { emoji.searchBackspace(); return }
         val ic = currentInputConnection ?: return
+        glideCommit?.let { g ->
+            // backspace right after a glide removes the whole word, like Gboard
+            val tail = g.tail()
+            if (ic.getTextBeforeCursor(tail.length, 0)?.toString() == tail) {
+                ic.deleteSurroundingText(tail.length, 0)
+                clearGlide()
+                lastSpace = 0
+                updateShift()
+                return
+            }
+            clearGlide()
+        }
         if (!ic.getSelectedText(0).isNullOrEmpty()) ic.commitText("", 1)
         else sendDownUpKeyEvents(KeyEvent.KEYCODE_DEL)
         lastSpace = 0
@@ -401,12 +458,73 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         }
     }
 
+    // ------------------------------------------------------------------ glide typing
+
+    override fun onGlide(path: List<GlidePoint>) {
+        val decoder = glideDecoder
+        val layout = keyboard.glideLayout()
+        if (decoder == null || layout == null) return
+        val points = ArrayList(path)
+        glideThread.execute {
+            val words = decoder.decode(points, layout, 5)
+            if (BuildConfig.PREVIEW) Log.i("PREVIEW", "GLIDE $words")
+            handler.post { if (words.isNotEmpty()) commitGlide(words) }
+        }
+    }
+
+    private fun commitGlide(words: List<String>) {
+        val ic = currentInputConnection ?: return
+        if (searching) { emoji.searchType(GlideCase.apply(words[0], KeyboardView.SHIFT_OFF) + " "); return }
+        RomanUrdu.onOtherKey(this)
+        val before = ic.getTextBeforeCursor(1, 0)?.toString().orEmpty()
+        val prefix = if (before.isNotEmpty() && !before[0].isWhitespace() && before[0] !in "([{\"'\u201C\u2018") " " else ""
+        val g = GlideCommit(words, 0, prefix, keyboard.shift)
+        ic.commitText(g.tail(), 1)
+        glideCommit = g
+        lastSpace = 0
+        if (keyboard.shift == KeyboardView.SHIFT_ON) keyboard.shift = KeyboardView.SHIFT_OFF
+        showSuggestions()
+        updateShift()
+    }
+
+    private fun showSuggestions() {
+        val g = glideCommit ?: return
+        toolbar.suggestions = g.words.take(3).map { GlideCase.apply(it, g.capMode) }
+        toolbar.suggestionIndex = g.chosen
+        handler.removeCallbacks(hideSuggestions)
+        handler.postDelayed(hideSuggestions, 2500)   // then Translate, Casual and Auto come back
+    }
+
+    /** A suggestion was tapped: swap the word that was typed for it. */
+    private fun chooseGlide(i: Int) {
+        val g = glideCommit ?: return
+        if (i !in 0 until minOf(3, g.words.size) || i == g.chosen) return
+        val ic = currentInputConnection ?: return
+        val old = g.tail()
+        if (ic.getTextBeforeCursor(old.length, 0)?.toString() != old) { clearGlide(); return }
+        ic.beginBatchEdit()
+        ic.deleteSurroundingText(old.length, 0)
+        g.chosen = i
+        ic.commitText(g.tail(), 1)
+        ic.endBatchEdit()
+        showSuggestions()
+    }
+
+    private fun clearGlide() {
+        glideCommit = null
+        handler.removeCallbacks(hideSuggestions)
+        if (viewReady) toolbar.suggestions = emptyList()
+    }
+
     // ------------------------------------------------------------------ toolbar
 
     override fun onTool(tool: ToolbarView.Tool) {
         feedback()
         val ic = currentInputConnection
         when (tool) {
+            ToolbarView.Tool.SUGGESTION_1 -> chooseGlide(0)
+            ToolbarView.Tool.SUGGESTION_2 -> chooseGlide(1)
+            ToolbarView.Tool.SUGGESTION_3 -> chooseGlide(2)
             ToolbarView.Tool.GRID -> toolbar.toolsOpen = !toolbar.toolsOpen
             ToolbarView.Tool.TRANSLATE -> RomanUrdu.translateOrRevert(this) { currentInputConnection?.finishComposingText() }
             ToolbarView.Tool.TONE -> RomanUrdu.toggleTone(this)
@@ -493,6 +611,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         val info = currentInputEditorInfo
         val ic = currentInputConnection
         if (info == null || ic == null) return
+        clearGlide()
         RomanUrdu.onOtherKey(this)
         val accepts = androidx.core.view.inputmethod.EditorInfoCompat.getContentMimeTypes(info)
             .any { android.content.ClipDescription.compareMimeTypes("image/gif", it) }
@@ -530,6 +649,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     }
 
     override fun onEmoji(text: String) {
+        clearGlide()
         RomanUrdu.onOtherKey(this)
         currentInputConnection?.commitText(text, 1)
         lastSpace = 0

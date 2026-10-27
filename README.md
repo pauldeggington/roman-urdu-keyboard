@@ -120,6 +120,7 @@ The first translation after a restart is slower while the model loads. If it fee
 - **GIFs and stickers** from GIPHY, with search and category chips. They are sent as pictures in apps that accept them (WhatsApp, Messages, Gmail and most chat apps) and as a link anywhere else.
   GIPHY needs a free key: paste it once in the app (Settings card *GIFs and stickers*, it has a button that opens GIPHY's sign-up).
 - **Light, dark or follow the phone**, with wallpaper (Material You) colours or 19 colour swatches.
+- **Glide typing** (English): slide your finger across the letters and lift to type a word. The three best matches show above the keys; tap one to swap the word, or press backspace to remove the whole word. Switch it off in the app if you prefer.
 - Auto-capital, double space for a full stop, swipe the space bar to move the cursor, hold delete to repeat.
 
 <p align="center">
@@ -148,7 +149,7 @@ The first translation after a restart is slower while the model loads. If it fee
 
 ## Not included (yet)
 
-Word suggestions and autocorrect, glide typing, clipboard history, and layouts for other languages. GIFs and stickers need your own free GIPHY key (or a release built with one).
+Autocorrect and word suggestions while tapping, glide typing in Roman Urdu (English only for now), and layouts for other languages. GIFs and stickers need your own free GIPHY key (or a release built with one).
 
 <details>
 <summary><b>Project layout</b></summary>

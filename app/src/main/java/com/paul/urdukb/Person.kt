@@ -99,9 +99,9 @@ object Person {
 
     /** What the system prompt says about the tags. */
     fun tagRules(style: Style): String = if (style == Style.TO_ENGLISH) {
-        "\n- A sentence may start with a tag: (main) means it is about the speaker (main, hoon, mujhe, mera), so write \"I\", \"me\" or \"my\". (tum/aap) means it is about the person being spoken to, so write \"you\" or \"your\". Never write the tag in your answer."
+        "\n- A tag in front of a sentence says who it is about: (main) the speaker, so write I/me/my; (tum/aap) the listener, so write you/your. Never write the tag."
     } else {
-        "\n- A sentence may start with a tag: (I) means it is about the speaker, so write main, mujhe, mera and \"hoon\" forms. (you) means it is about the person being spoken to, so write the listener forms (tum/aap, tumhara/aapka, ho/hain). Never mix them up, and never write the tag in your answer."
+        "\n- A tag in front of a sentence says who it is about: (I) the speaker (main, mujhe, mera, hoon); (you) the listener (tum/aap, tumhara/aapka, ho/hain). Follow it and never write the tag."
     }
 
     /** Extra line for the second try, when the first answer talked about the wrong person. */
