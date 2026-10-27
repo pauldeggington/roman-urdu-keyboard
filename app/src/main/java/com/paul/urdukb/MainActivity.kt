@@ -66,6 +66,7 @@ class MainActivity : Activity() {
     private lateinit var modelCard: View
     private lateinit var tryCard: View
     private lateinit var colourCard: View
+    private lateinit var giphyCard: View
 
     private lateinit var modelStatus: TextView
     private lateinit var modelDetail: TextView
@@ -151,6 +152,7 @@ class MainActivity : Activity() {
     private fun scrollToRequestedSection() {
         when (intent?.getStringExtra(EXTRA_SECTION)) {
             "colour" -> scroll.post { scrollTo(colourCard) }
+            "giphy" -> scroll.post { scrollTo(giphyCard) }
         }
         intent?.removeExtra(EXTRA_SECTION)
     }
@@ -173,6 +175,8 @@ class MainActivity : Activity() {
         root.addView(colourCard)
         root.addView(buildSpeedCard())
         root.addView(buildKeyboardCard())
+        giphyCard = buildGiphyCard()
+        root.addView(giphyCard)
         root.addView(buildCreditsCard())
         root.addView(buildErrorCard())
 
@@ -712,6 +716,43 @@ class MainActivity : Activity() {
         return card
     }
 
+    private fun buildGiphyCard(): View {
+        val card = card()
+        card.addView(title("GIFs and stickers"))
+        val builtIn = com.paul.urdukb.BuildConfig.GIPHY_KEY.isNotEmpty()
+        card.addView(muted(
+            "The GIF and Sticker tabs in the emoji screen search GIPHY, over the internet. Only the words you search for are sent, never what you type in other boxes." +
+                if (builtIn) "\n\nThis version already has a GIPHY key, so GIFs work without doing anything. You can paste your own below to replace it."
+                else "\n\nGIPHY needs a free key. Make one in two minutes: open the GIPHY developer page below, sign up, tap Create an API Key, choose API, name it anything, then paste the key here.",
+        ).apply { setPadding(0, dpi(6f), 0, dpi(4f)) })
+        val field = edit("GIPHY API key").apply {
+            setText(Kb.prefs(this@MainActivity).getString(Kb.PREF_GIPHY_KEY, "").orEmpty())
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+        }
+        card.addView(field)
+        val status = muted("").apply { setPadding(0, dpi(6f), 0, 0); textSize = 12.5f }
+        fun refreshStatus() {
+            val has = Kb.giphyKey(this).isNotEmpty()
+            status.text = if (has) "GIFs and stickers are on." else "GIFs and stickers are off until a key is added."
+        }
+        refreshStatus()
+        val r = row()
+        r.addView(button("Get a free key", false, lock = false) {
+            runCatching { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://developers.giphy.com/dashboard/"))) }
+        }, rowLp())
+        r.addView(button("Save", true, lock = false) {
+            Kb.prefs(this).edit { putString(Kb.PREF_GIPHY_KEY, field.text.toString().trim()) }
+            refreshStatus()
+            toast("Saved")
+        }, rowLp())
+        card.addView(r)
+        card.addView(status)
+        card.addView(muted("Free GIPHY keys allow 100 searches an hour. Results are remembered while the keyboard is open to save searches.").apply {
+            setPadding(0, dpi(4f), 0, 0); textSize = 12.5f
+        })
+        return card
+    }
+
     private fun buildCreditsCard(): View {
         val card = card()
         card.addView(title("Credits"))
@@ -721,6 +762,7 @@ class MainActivity : Activity() {
         card.addView(TextView(this).apply {
             text = "Keyboard: written for this app and styled after Gboard." +
                 "\n\nTranslation: Google's Gemma 4 running on your phone through LiteRT-LM (Apache 2.0)." +
+                "\n\nGIFs and stickers: GIPHY (https://giphy.com)." +
                 "\n\nIcons: Material Symbols by Google (Apache 2.0). Key font: Google Sans (SIL Open Font License). Emoji list: unicode-emoji-json (MIT) from Unicode data." +
                 dataLine +
                 "\n\nThis app is open source under GPL-3.0.\nhttps://github.com/pauldeggington/roman-urdu-keyboard"

@@ -63,6 +63,13 @@ hook symbols2; shot 07_symbols2
 hook emoji; sleep 1; shot 08_emoji
 hook emoticons; sleep 1; shot 09_emoticons
 hook letters; hook tools; shot 10_tools_row
+hook notools
+hook gif; sleep 2.5; shot 20_gif
+hook stickers; sleep 2.5; shot 21_stickers
+hook emoticons; sleep 1; shot 22_emoticons
+hook search_emoji; sleep 1.5; shot 23_search_emoji
+hook search_gif; sleep 2.5; shot 24_search_gif
+hook letters; sleep 1
 
 adb shell cmd uimode night no
 sleep 2

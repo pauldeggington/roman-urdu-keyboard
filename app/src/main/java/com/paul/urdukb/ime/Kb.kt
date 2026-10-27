@@ -16,6 +16,8 @@ object Kb {
     const val PREF_TONE = "roman_urdu_formal"
     const val PREF_DIRECTION = "roman_urdu_direction"
 
+    const val PREF_GIPHY_KEY = "giphy_key"
+
     fun prefs(ctx: Context): SharedPreferences =
         ctx.applicationContext.getSharedPreferences("keyboard", Context.MODE_PRIVATE)
 
@@ -27,4 +29,8 @@ object Kb {
     fun doubleSpace(ctx: Context) = bool(ctx, PREF_DOUBLE_SPACE, true)
     fun hints(ctx: Context) = bool(ctx, PREF_HINTS, true)
     fun preview(ctx: Context) = bool(ctx, PREF_PREVIEW, true)
+
+    /** The GIPHY key the person pasted in the app, or the one built into this release. Empty when neither exists. */
+    fun giphyKey(ctx: Context): String =
+        prefs(ctx).getString(PREF_GIPHY_KEY, "").orEmpty().trim().ifEmpty { com.paul.urdukb.BuildConfig.GIPHY_KEY }
 }
