@@ -88,16 +88,16 @@ class GlideDecoderTest {
     fun carefulGlidesFindTheWord() {
         val (t1, t3) = accuracy(0.28f, 400, 7)
         println("careful glides: first=$t1 top3=$t3")
-        assertTrue("first-choice accuracy was $t1", t1 >= 0.75)
-        assertTrue("top-3 accuracy was $t3", t3 >= 0.92)
+        assertTrue("first-choice accuracy was $t1", t1 >= 0.85)
+        assertTrue("top-3 accuracy was $t3", t3 >= 0.95)
     }
 
     @Test
     fun sloppyGlidesStillMostlyWork() {
         val (t1, t3) = accuracy(0.45f, 400, 11)
         println("sloppy glides: first=$t1 top3=$t3")
-        assertTrue("first-choice accuracy was $t1", t1 >= 0.65)
-        assertTrue("top-3 accuracy was $t3", t3 >= 0.85)
+        assertTrue("first-choice accuracy was $t1", t1 >= 0.70)
+        assertTrue("top-3 accuracy was $t3", t3 >= 0.88)
     }
 
     @Test

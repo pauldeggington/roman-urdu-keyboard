@@ -29,6 +29,7 @@ class GlideDecoder(private val entries: List<Entry>) {
         private const val COVER_RADIUS = 1.15f
         private const val WEIGHT_SHAPE = 1.0f
         private const val WEIGHT_FREQUENCY = 0.3f
+        private const val WEIGHT_ENDS = 0.4f      // how close the finger started and stopped to the first and last letter
 
         /** Lines of "word<TAB>frequency", most common first. Words with fewer than two different letters are skipped. */
         fun parse(lines: Sequence<String>): GlideDecoder {
@@ -140,7 +141,10 @@ class GlideDecoder(private val entries: List<Entry>) {
             var sum = 0f
             for (j in 0 until SAMPLES) sum += dist(rx[j], ry[j], qx[j], qy[j])
             val shape = sum / SAMPLES / kw
-            scored += (WEIGHT_SHAPE * shape - WEIGHT_FREQUENCY * e.zipf / 100f) to e.word
+            val first = layout.centers.getValue(k[0])
+            val last = layout.centers.getValue(k[k.length - 1])
+            val ends = (dist(sx, sy, first.x, first.y) + dist(ex, ey, last.x, last.y)) / kw
+            scored += (WEIGHT_SHAPE * shape + WEIGHT_ENDS * ends - WEIGHT_FREQUENCY * e.zipf / 100f) to e.word
         }
         scored.sortBy { it.first }
         val out = ArrayList<String>()
