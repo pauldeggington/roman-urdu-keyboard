@@ -150,6 +150,8 @@ for k in k y a space h a a l space h a i; do
   if [ "$k" = space ]; then adb shell input keyevent 62; sleep 0.35; frame; else tapkey $k; fi
 done
 frame typed; frame
+STOP_BEFORE_UP=1 glide t o m o r o w; sleep 0.3; frame; frame
+adb shell input motionevent UP $px $py; sleep 0.7; frame; frame; frame
 hook tools; sleep 1; frame; frame; hook notools; sleep 0.5
 read X Y < <(key e); adb shell input swipe $X $Y $X $Y 1800 & sleep 1.1; frame; wait
 sleep 0.5; adb shell input keyevent 67; sleep 0.4
