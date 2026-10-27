@@ -63,6 +63,10 @@ android {
         buildConfig = true
     }
 
+    testOptions {
+        unitTests.all { it.testLogging { showStandardStreams = true } }
+    }
+
     packaging {
         jniLibs {
             useLegacyPackaging = true
@@ -91,4 +95,7 @@ dependencies {
     implementation("com.google.ai.edge.litertlm:litertlm-android:0.18.1")
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
+
+    testImplementation("org.jetbrains.kotlin:kotlin-test:2.4.0")
+    testImplementation("junit:junit:4.13.2")
 }

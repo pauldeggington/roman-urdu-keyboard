@@ -43,6 +43,18 @@ jobs:
             echo "No signing secrets set; using a random debug key."
           fi
 
+      - name: Test the glide decoder
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:testDebugUnitTest --no-daemon --stacktrace > test.log 2>&1 && rc=0 || rc=$?
+          grep -E "careful glides|sloppy glides" test.log || true
+          if [ "$rc" -ne 0 ]; then
+            { grep -E -A6 '^e: |FAILED|AssertionError|What went wrong|Could not|error:' test.log | head -60 || true; } > terrs.txt
+            msg=$(sed 's/%/%25/g' terrs.txt | cut -c1-300 | awk '{printf "%s%%0A", $0}')
+            echo "::error title=Glide tests failed::${msg}"
+            exit "$rc"
+          fi
+
       - name: Build debug APK
         run: |
           chmod +x gradlew
