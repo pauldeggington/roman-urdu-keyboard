@@ -665,6 +665,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
 
     private fun openSearch() {
         searching = true
+        loadToken++   // a GIF list that is still loading for the browse screen must not appear over the search
         query.clear()
         hideTones()
         tabScroll.visibility = GONE
