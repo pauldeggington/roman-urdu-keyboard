@@ -78,6 +78,10 @@ hook letters; sleep 1
 hook clipboard_off; sleep 1.5; shot 26_clipboard_off
 hook clipboard; sleep 1.5; shot 27_clipboard
 hook letters; sleep 1
+adb shell am start -n $PKG/.TranslateTextActivity --es android.intent.extra.PROCESS_TEXT "Kal milte hain, aap ka bohat shukriya" > /dev/null 2>&1; sleep 4; shot 28_translate_sheet_nomodel
+adb shell am start -n $PKG/.TranslateTextActivity --es android.intent.extra.PROCESS_TEXT "Kal milte hain, aap ka bohat shukriya" --es preview_result "See you tomorrow, thank you very much" > /dev/null 2>&1; sleep 4; shot 29_translate_sheet_layout
+adb shell am start -f 0x10008000 -n $PKG/.PreviewActivity > /dev/null 2>&1; sleep 3
+hook letters; sleep 1
 
 adb shell cmd uimode night no
 sleep 2

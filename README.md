@@ -108,6 +108,7 @@ The first translation after a restart is slower while the model loads. If it fee
 - **Example bank:** for each message the closest example sentences guide the model. Fix a translation in the app and save it as
   an example, and the keyboard learns your style.
 - Understands texting shorthand and spelling variants (*kr, nhi, tm, bht*).
+- **Translate messages you receive:** select a Roman Urdu message in any app, tap **Translate to English** in the selection menu (under the three dots in some apps), and a sheet shows the English with a Copy button.
 
 ### Keyboard
 - Gboard's layout and height: borderless letters, pill-shaped ?123, space and Enter, number hints, long-press for accents and symbols.
