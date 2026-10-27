@@ -191,16 +191,32 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             addView(popup, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
             // draw the keyboard colour behind the navigation bar too, like Gboard
             setOnApplyWindowInsetsListener { _, insets ->
-                val nav = insets.getInsets(WindowInsets.Type.navigationBars()).bottom
-                // Gboard leaves 36 dp under the bottom row, above the navigation bar
-                container.setPadding(0, 0, 0, nav + (36f * resources.displayMetrics.density).toInt())
+                applyBottomPadding(insets)
                 insets
             }
         }
+        // some apps never send the insets to the keyboard window, which left the bottom row under the system's
+        // keyboard-switcher and hide-keyboard buttons: start with the usual height and correct it when insets arrive
+        applyBottomPadding(null)
+        frame.requestApplyInsets()
         RomanUrdu.onStateChanged = { if (viewReady) refreshToolbar() }
         viewReady = true
         refreshAll()
         return frame
+    }
+
+    /**
+     * Room under the bottom row: 36 dp (like Gboard) plus the navigation bar, where Android draws the globe and
+     * hide-keyboard buttons. When the window reports no navigation bar height, use the usual one for the phone's
+     * navigation mode (gesture bar 24 dp, buttons 48 dp) so the keys never end up under those buttons.
+     */
+    private fun applyBottomPadding(insets: WindowInsets?) {
+        if (!viewReady && !::container.isInitialized) return
+        val d = resources.displayMetrics.density
+        val reported = insets?.getInsets(WindowInsets.Type.navigationBars())?.bottom ?: 0
+        val mode = runCatching { android.provider.Settings.Secure.getInt(contentResolver, "navigation_mode", 2) }.getOrDefault(2)
+        val fallback = ((if (mode == 2) 24f else 48f) * d).toInt()
+        container.setPadding(0, 0, 0, (if (reported > 0) reported else fallback) + (36f * d).toInt())
     }
 
     private fun refreshAll() {
@@ -245,6 +261,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     override fun onStartInputView(info: EditorInfo, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         if (!viewReady) return
+        frame.post { applyBottomPadding(frame.rootWindowInsets); frame.requestApplyInsets() }
         val cls = info.inputType and InputType.TYPE_MASK_CLASS
         keyboard.page = if (cls == InputType.TYPE_CLASS_NUMBER || cls == InputType.TYPE_CLASS_PHONE || cls == InputType.TYPE_CLASS_DATETIME)
             Page.SYMBOLS1 else Page.LETTERS
