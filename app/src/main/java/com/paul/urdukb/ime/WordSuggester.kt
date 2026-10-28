@@ -85,6 +85,10 @@ class WordSuggester(words: List<Pair<String, Int>>) {
         val ownWord = personal.containsKey(typed)
         val inList = exact.containsKey(typed)
         val typedZipf = exact[typed] ?: -1
+        if (!ownWord && typed.length == 2 && '\'' !in typed && typed.length < byLength.size) {
+            // two letters are too few to guess a typo from, but "im" -> "i'm" is always worth offering
+            for (idx in byLength[2]) if (plain[idx] == typed && sorted[idx] != typed) { offer(sorted[idx], zipf[idx] + 250); fixes[sorted[idx]] = zipf[idx] + 250 }
+        }
         if (!ownWord && typed.length >= 3) {
             val flat = typed.replace("'", "")
             val allowed = if (flat.length >= 7) 2 else 1
