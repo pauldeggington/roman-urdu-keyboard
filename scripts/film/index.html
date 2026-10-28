@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Roman Urdu Keyboard: launch film</title>
+<style>
+@font-face{font-family:Inter;font-weight:400;src:url(assets/fonts/inter-latin-400-normal.woff)}
+@font-face{font-family:Inter;font-weight:500;src:url(assets/fonts/inter-latin-500-normal.woff)}
+@font-face{font-family:Inter;font-weight:600;src:url(assets/fonts/inter-latin-600-normal.woff)}
+@font-face{font-family:Inter;font-weight:700;src:url(assets/fonts/inter-latin-700-normal.woff)}
+@font-face{font-family:Script;font-weight:700;src:url(assets/fonts/dancing-script-latin-700-normal.woff)}
+html,body{margin:0;background:#000;overflow:hidden}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:#000;font-family:Inter,-apple-system,"Helvetica Neue",sans-serif;color:#fff;perspective:2600px}
+.wall{position:absolute;inset:0;opacity:0}
+.cap{position:absolute;opacity:0;font-weight:700;letter-spacing:-0.035em;line-height:1.02;will-change:transform,opacity,filter}
+.cap .ln{display:block;will-change:transform,opacity,filter}
+.cap small{display:block;font-weight:500;letter-spacing:-0.01em;font-size:40px;line-height:1.3;margin-top:34px;color:rgba(255,255,255,.72)}
+#phone{position:absolute;left:0;top:0;width:424px;height:884px;margin:-442px 0 0 -212px;border-radius:70px;background:#07070b;box-shadow:0 70px 140px rgba(0,0,0,.5),0 0 0 2px #1d1e26 inset;transform-style:preserve-3d}
+#screen{position:absolute;left:12px;top:12px;width:400px;height:860px;border-radius:58px;overflow:hidden;background:#0e1016}
+#status{position:absolute;left:0;right:0;top:0;height:46px}
+#status svg{position:absolute;top:15px}
+#chat{position:absolute;left:0;right:0;top:46px;bottom:0}
+.bar{position:absolute;height:9px;border-radius:5px;background:rgba(255,255,255,.14)}
+.bub{position:absolute;border-radius:22px;background:#1a1d27}
+#kb{position:absolute;left:0;bottom:0;width:400px;display:block}
+#compose{position:absolute;left:14px;right:14px;height:62px;border-radius:31px;background:#1b1e29;overflow:hidden;box-shadow:0 0 0 1.5px rgba(255,255,255,.06) inset}
+#compose .t{position:absolute;left:24px;top:0;line-height:62px;font-size:27px;font-weight:500;white-space:nowrap}
+#compose .send{position:absolute;right:9px;top:9px;width:44px;height:44px;border-radius:22px;background:#7C6BFF}
+#caret{position:absolute;top:16px;width:2.5px;height:30px;background:#9d90ff;border-radius:2px}
+#ripple{position:absolute;border-radius:50%;background:rgba(190,178,255,.55);pointer-events:none}
+.kbpatch{position:absolute;background:#191b23;color:#e6e3ee;font-size:15px;font-weight:500;text-align:center;line-height:20px;height:20px}
+.pill{position:absolute;height:30px;line-height:30px;padding:0 14px;border-radius:15px;background:#2a2447;color:#cfc7ff;font-size:14px;font-weight:600}
+#sheen{position:absolute;inset:0;border-radius:58px;background:linear-gradient(115deg,rgba(255,255,255,.07),rgba(255,255,255,0) 38%);pointer-events:none}
+#hello{position:absolute;inset:0;opacity:0}
+.tile{display:inline-block;width:178px;height:178px;border-radius:44px;margin-right:26px;position:relative;text-align:center;box-shadow:0 0 0 2px rgba(255,255,255,.14) inset}
+.tile svg{position:absolute;left:50%;top:44px;transform:translateX(-50%)}
+.tile .tl{position:absolute;left:0;right:0;bottom:22px;font-size:20px;font-weight:600;letter-spacing:-0.01em}
+#end{position:absolute;inset:0;opacity:0;text-align:center}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="wall" id="w1"></div><div class="wall" id="w2"></div><div class="wall" id="w3"></div>
+  <div class="wall" id="w4"></div><div class="wall" id="w5"></div><div class="wall" id="w6"></div>
+
+  <!-- 0: hello -->
+  <div id="hello" style="display:none">
+    <svg width="1920" height="1080" viewBox="0 0 1920 1080">
+      <defs><clipPath id="hclip"><rect id="hrect" x="0" y="0" width="0" height="1080"/></clipPath></defs>
+      <text x="960" y="650" text-anchor="middle" font-family="Script" font-weight="700" font-size="420" fill="#fff" clip-path="url(#hclip)">hello</text>
+    </svg>
+  </div>
+
+  <!-- title -->
+  <div class="cap" id="c1" style="left:0;width:1920px;top:318px;text-align:center;font-size:132px">
+    <img id="logo1" src="assets/logo.png" style="width:150px;height:150px;border-radius:36px;display:block;margin:0 auto 52px;box-shadow:0 30px 70px rgba(0,0,0,.4)">
+    <span class="ln">Type English.</span><span class="ln" style="color:#c9c0ff">Send Roman Urdu.</span>
+  </div>
+
+  <!-- phone scenes -->
+  <div class="cap" id="c2" style="left:130px;top:360px;width:960px;font-size:120px"><span class="ln">Translate</span><span class="ln">as you <span style="color:#8fd3ff">type.</span></span><small class="ln">Tap Translate and the text turns into Roman Urdu.</small></div>
+  <div class="cap" id="c3" style="left:1110px;top:400px;width:800px;font-size:120px"><span class="ln">Male or</span><span class="ln"><span style="color:#ffb3ec">female.</span></span></div>
+  <div class="cap" id="c3b" style="left:1110px;top:400px;width:800px;font-size:120px"><span class="ln">Casual or</span><span class="ln"><span style="color:#ffb3ec">formal.</span></span><small class="ln">Tum or aap, your choice.</small></div>
+  <div class="cap" id="c4a" style="left:50px;top:440px;width:520px;font-size:112px;text-align:right"><span class="ln">And back</span></div>
+  <div class="cap" id="c4b" style="left:1350px;top:440px;width:520px;font-size:112px"><span class="ln" style="color:#8ff3e0">again.</span></div>
+  <div class="cap" id="c5" style="left:130px;top:250px;width:960px;font-size:116px"><span class="ln">Runs on</span><span class="ln">your <span style="color:#9db0ff">phone.</span></span><small class="ln">Nothing you type leaves it. It works in airplane mode.</small></div>
+
+  <!-- airplane-mode proof tiles -->
+  <div id="tiles" style="position:absolute;left:130px;top:700px;opacity:0">
+    <div id="tAir" class="tile"><svg viewBox="0 0 24 24" width="56" height="56"><path id="tAirP" d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg><div class="tl">Airplane mode</div></div>
+    <div id="tWifi" class="tile"><svg viewBox="0 0 22 16" width="60" height="44"><path d="M1 5.5C7 0 15 0 21 5.5M4.5 9C8.5 5.5 13.5 5.5 17.5 9M8 12.4C10 10.6 12 10.6 14 12.4" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="11" cy="14.6" r="1.4"/><line id="tWifiX" x1="2" y1="1" x2="20" y2="15" stroke-width="2.2" stroke-linecap="round"/></svg><div class="tl">Wi-Fi</div></div>
+    <div id="tData" class="tile"><svg viewBox="0 0 22 16" width="56" height="42"><rect x="0" y="11" width="4" height="5" rx="1"/><rect x="6" y="7" width="4" height="9" rx="1"/><rect x="12" y="3" width="4" height="13" rx="1"/><rect x="18" y="0" width="4" height="16" rx="1"/><line id="tDataX" x1="2" y1="1" x2="20" y2="15" stroke-width="2.2" stroke-linecap="round"/></svg><div class="tl">Mobile data</div></div>
+  </div>
+
+  <!-- phone -->
+  <div id="phone">
+    <div id="screen">
+      <div id="status">
+        <svg id="sig" style="right:78px" width="22" height="16" viewBox="0 0 22 16"><rect x="0" y="11" width="4" height="5" rx="1" fill="#e8e6f2"/><rect x="6" y="7" width="4" height="9" rx="1" fill="#e8e6f2"/><rect x="12" y="3" width="4" height="13" rx="1" fill="#e8e6f2"/><rect x="18" y="0" width="4" height="16" rx="1" fill="#e8e6f2"/></svg>
+        <svg id="wifi" style="right:112px" width="22" height="16" viewBox="0 0 22 16"><path d="M1 5.5C7 0 15 0 21 5.5M4.5 9C8.5 5.5 13.5 5.5 17.5 9M8 12.4C10 10.6 12 10.6 14 12.4" stroke="#e8e6f2" stroke-width="2.2" fill="none" stroke-linecap="round"/><circle cx="11" cy="14.6" r="1.4" fill="#e8e6f2"/></svg>
+        <svg id="plane" style="right:112px;opacity:0" width="24" height="18" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" fill="#e8e6f2"/></svg>
+        <svg style="right:30px;top:14px" width="36" height="18" viewBox="0 0 36 18"><rect x="1" y="1" width="30" height="16" rx="5" fill="none" stroke="#e8e6f2" stroke-width="1.8"/><rect x="4" y="4" width="22" height="10" rx="3" fill="#e8e6f2"/><rect x="32.5" y="6" width="2.5" height="6" rx="1.2" fill="#e8e6f2"/></svg>
+      </div>
+      <div id="chat">
+        <div style="position:absolute;left:20px;top:14px;width:36px;height:36px;border-radius:18px;background:#2a2d3b"></div>
+        <div class="bar" style="left:68px;top:22px;width:110px"></div>
+        <div class="bar" style="left:68px;top:38px;width:64px;opacity:.6"></div>
+        <div class="pill" id="gpill" style="right:18px;top:20px">I am Male</div>
+        <div class="bub" style="left:20px;top:84px;width:230px;height:70px"><div class="bar" style="left:18px;top:20px;width:150px"></div><div class="bar" style="left:18px;top:40px;width:96px"></div></div>
+        <div class="bub" style="right:20px;top:176px;width:190px;height:50px;background:#4a3fa8"><div class="bar" style="left:18px;top:21px;width:120px;background:rgba(255,255,255,.35)"></div></div>
+        <div class="bub" style="left:20px;top:248px;width:270px;height:70px"><div class="bar" style="left:18px;top:20px;width:200px"></div><div class="bar" style="left:18px;top:40px;width:130px"></div></div>
+        <div class="bub" style="right:20px;top:340px;width:150px;height:50px;background:#4a3fa8"><div class="bar" style="left:18px;top:21px;width:80px;background:rgba(255,255,255,.35)"></div></div>
+      </div>
+      <div id="compose" style="top:421px"><div class="t" id="tTyped"></div><div class="t" id="tResult"></div><div id="caret"></div><div class="send"></div></div>
+      <img id="kb" src="assets/kb.png" alt="">
+      <div class="kbpatch" id="tonePatch" style="left:237px;width:56px;top:517px">Casual</div>
+      <div id="ripple" style="left:0;top:0;width:0;height:0"></div>
+      <div id="sheen"></div>
+    </div>
+  </div>
+
+  <!-- end card -->
+  <div id="end">
+    <img src="assets/logo.png" style="width:190px;height:190px;border-radius:46px;position:absolute;left:865px;top:250px;box-shadow:0 40px 90px rgba(0,0,0,.55)">
+    <div style="position:absolute;left:0;right:0;top:488px;font-size:104px;font-weight:700;letter-spacing:-0.035em">Roman Urdu Keyboard</div>
+    <div style="position:absolute;left:0;right:0;top:622px;font-size:42px;font-weight:500;color:rgba(255,255,255,.7)">Free and open source. Android 12 or newer.</div>
+    <div style="position:absolute;left:410px;width:1100px;top:726px;height:84px;border-radius:42px;background:rgba(255,255,255,.1);box-shadow:0 0 0 2px rgba(255,255,255,.16) inset;white-space:nowrap;font-size:36px;font-weight:600;line-height:84px;color:#d8d2ff">github.com/pauldeggington/roman-urdu-keyboard</div>
+  </div>
+</div>
+
+<script>
+const DUR = 44.5, SKIP = 3.0;   // the timeline below starts at 3.0 s: no "hello" opener
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, p) => a + (b - a) * p;
+// critically damped spring step (Apple "response" = settle speed, damping 1): 0 -> 1, no overshoot
+const step = (x, resp = 0.7) => { if (x <= 0) return 0; const w = 2 * Math.PI / resp; return 1 - (1 + w * x) * Math.exp(-w * x); };
+
+// ---------------------------------------------------------------- wallpapers
+const WALLS = [
+  { id: 'w1', t0: -5, t1: 8.6, c3: '#14102e', c4: '#2d1c73', a: '#7C6BFF', b: '#b79bff' },
+  { id: 'w2', t0: 8.0, t1: 17.4, c3: '#07122b', c4: '#0f2f7a', a: '#2f7bff', b: '#5ad1ff' },
+  { id: 'w3', t0: 16.6, t1: 29.4, c3: '#1f0a2a', c4: '#5a1a6e', a: '#ff5bd1', b: '#8a5bff' },
+  { id: 'w4', t0: 28.6, t1: 35.0, c3: '#04201f', c4: '#0a4f4a', a: '#18c3b0', b: '#4ee3a6' },
+  { id: 'w5', t0: 34.2, t1: 42.8, c3: '#05060d', c4: '#121a40', a: '#3b4bff', b: '#19b6a6' },
+  { id: 'w6', t0: 42.2, t1: 99, c3: '#000', c4: '#0a0714', a: '#7C6BFF', b: '#2a1a6b' },
+];
+function wall(w, t) {
+  const el = $(w.id);
+  const inn = step(t - w.t0, 0.8), out = step(t - w.t1, 0.8);
+  const op = clamp(inn * (1 - out));
+  el.style.opacity = op;
+  if (op <= 0.001) return;
+  const d = Math.sin(t * 0.35), e = Math.cos(t * 0.28);
+  el.style.background =
+    `radial-gradient(1100px 900px at ${30 + 8 * d}% ${25 + 6 * e}%, ${w.a}cc, transparent 70%),` +
+    `radial-gradient(1200px 950px at ${78 - 7 * e}% ${85 - 8 * d}%, ${w.b}99, transparent 70%),` +
+    `linear-gradient(135deg, ${w.c3}, ${w.c4})`;
+}
+
+// ---------------------------------------------------------------- captions
+const CAPS = [
+  { id: 'c1', t0: 3.5, t1: 8.0, lines: 3 },
+  { id: 'c2', t0: 8.6, t1: 16.4, lines: 3 },
+  { id: 'c3', t0: 17.2, t1: 22.2, lines: 2 },
+  { id: 'c3b', t0: 22.6, t1: 28.6, lines: 3 },
+  { id: 'c4a', t0: 29.4, t1: 34.2, lines: 1 },
+  { id: 'c4b', t0: 29.7, t1: 34.2, lines: 1 },
+  { id: 'c5', t0: 34.9, t1: 42.0, lines: 3 },
+];
+function caption(c, t) {
+  const el = $(c.id);
+  const inn = step(t - c.t0, 0.75), out = step(t - c.t1, 0.4);
+  const op = clamp(inn) * (1 - clamp(out));
+  el.style.opacity = op;
+  if (op <= 0.001) return;
+  const lines = el.children;
+  for (let i = 0; i < lines.length; i++) {
+    const ln = lines[i];
+    if (!ln.classList.contains('ln')) continue;
+    const k = step(t - c.t0 - 0.12 * i, 0.75);
+    const o = step(t - c.t1, 0.4);
+    ln.style.opacity = clamp(k) * (1 - clamp(o));
+    ln.style.transform = `translateY(${(1 - k) * 46 - o * 18}px)`;
+    ln.style.filter = `blur(${(1 - k) * 14 + o * 10}px)`;
+  }
+  if (c.id === 'c1') {
+    const k = step(t - c.t0, 0.75), o = step(t - c.t1, 0.4);
+    $('logo1').style.opacity = clamp(k) * (1 - clamp(o));
+    $('logo1').style.transform = `scale(${lerp(0.82, 1, k)})`;
+  }
+}
+
+// ---------------------------------------------------------------- phone pose
+const POSES = [
+  { t: 0, x: 1380, y: 1900, s: 1.5, ry: -10, rz: 0 },
+  { t: 8.0, x: 1400, y: 520, s: 1.5, ry: -10, rz: 0 },
+  { t: 16.8, x: 520, y: 520, s: 1.5, ry: 10, rz: 0 },
+  { t: 29.0, x: 960, y: 520, s: 1.5, ry: 0, rz: 0 },
+  { t: 34.5, x: 1400, y: 520, s: 1.5, ry: -9, rz: 0 },
+  { t: 41.8, x: 1400, y: 1960, s: 1.5, ry: -9, rz: 2 },
+];
+function pose(t) {
+  let k = 0;
+  for (let i = 0; i < POSES.length; i++) if (t >= POSES[i].t) k = i;
+  if (k === 0) return POSES[0];
+  const a = POSES[k - 1], b = POSES[k];
+  const p = step(t - b.t, k === POSES.length - 1 ? 0.9 : 1.0);
+  const L = key => lerp(a[key], b[key], p);
+  return { x: L('x'), y: L('y'), s: L('s'), ry: L('ry'), rz: L('rz') };
+}
+
+// ---------------------------------------------------------------- what the phone shows
+// Every segment: text typed in, translate pressed, result appears. Words are the README's own examples.
+const SEGS = [
+  { t: 9.3, typed: "I'm tired", td: 1.1, press: 11.2, sw: 0.6, result: 'Main thak gaya hoon', tone: 'Casual', gender: 'Male' },
+  { t: 17.0, typed: "I'm tired", td: 0.9, press: 18.7, sw: 0.6, result: 'Main thak gayi hoon', tone: 'Casual', gender: 'Female', genderAt: 17.2 },
+  { t: 21.4, typed: 'Where are you?', td: 1.1, press: 23.0, sw: 0.6, result: 'Tum kahan ho?', tone: 'Casual', gender: 'Female' },
+  { t: 24.9, typed: 'Where are you?', td: 0.8, press: 27.0, sw: 0.6, result: 'Aap kahan hain?', tone: 'Casual', toneTo: 'Formal', toneAt: 25.9, gender: 'Female' },
+  { t: 29.5, typed: 'Aap kaisay hain?', td: 1.2, press: 31.4, sw: 0.6, result: 'How are you?', tone: 'Formal', gender: 'Female' },
+  { t: 35.6, typed: 'Where are you?', td: 1.0, press: 37.4, sw: 0.6, result: 'Tum kahan ho?', tone: 'Casual', gender: 'Female' },
+];
+const TRANS = { x: 205.6, y: 527 };   // translate icon, in screen coordinates
+function phoneContent(t) {
+  let seg = null;
+  for (const s of SEGS) if (t >= s.t) seg = s;
+  const typedEl = $('tTyped'), resEl = $('tResult'), caret = $('caret'), rip = $('ripple'), tone = $('tonePatch'), comp = $('compose');
+  // status bar: airplane scene
+  const air = step(t - 34.8, 0.5);
+  $('plane').style.opacity = air; $('wifi').style.opacity = 1 - air; $('sig').style.opacity = 1 - air;
+  if (!seg) { typedEl.textContent = ''; resEl.textContent = ''; caret.style.opacity = 0; rip.style.width = '0'; return; }
+  const T = t - seg.t;
+  const n = clamp(Math.floor(T / seg.td * seg.typed.length + 0.0001), 0, seg.typed.length);
+  const typed = seg.typed.slice(0, n);
+  typedEl.textContent = typed;
+  const swapStart = seg.press + seg.sw;
+  const m = step(t - swapStart, 0.5);
+  typedEl.style.opacity = 1 - clamp(m * 1.6);
+  typedEl.style.filter = `blur(${m * 8}px)`;
+  typedEl.style.transform = `translateY(${-m * 12}px)`;
+  resEl.textContent = t >= swapStart ? seg.result : '';
+  resEl.style.opacity = clamp(m * 1.4);
+  resEl.style.filter = `blur(${(1 - m) * 8}px)`;
+  resEl.style.transform = `translateY(${(1 - m) * 14}px)`;
+  resEl.style.color = '#cfc7ff';
+  // caret after the typed text, blinking, until the result shows
+  const w = typedMeasure(typed);
+  caret.style.left = (24 + w + 3) + 'px';
+  caret.style.opacity = (t < swapStart && n > 0 && Math.sin(t * 9) > -0.2) ? 1 : 0;
+  // pulse while translating
+  const busy = clamp((t - seg.press) / seg.sw) * (t < swapStart ? 1 : 0);
+  comp.style.boxShadow = `0 0 0 ${1.5 + busy * 2.5}px rgba(${124 + 40 * busy},${107 + 20 * busy},255,${0.06 + busy * 0.5}) inset`;
+  // press ripple on the Translate icon: the button reacts the moment it is touched
+  const rp = clamp((t - seg.press) / 0.7);
+  if (t >= seg.press && rp < 1) {
+    const r = lerp(8, 44, step(t - seg.press, 0.45));
+    rip.style.width = rip.style.height = (r * 2) + 'px';
+    rip.style.left = (TRANS.x - r) + 'px'; rip.style.top = (TRANS.y - r) + 'px';
+    rip.style.opacity = 1 - rp;
+  } else { rip.style.width = rip.style.height = '0px'; }
+  // keyboard toolbar word: Casual / Formal
+  let toneWord = seg.tone;
+  if (seg.toneTo && t >= seg.toneAt) toneWord = seg.toneTo;
+  tone.textContent = toneWord;
+  // gender pill
+  $('gpill').textContent = 'I am ' + seg.gender;
+}
+const meas = document.createElement('canvas').getContext('2d');
+function typedMeasure(s) { meas.font = '500 27px Inter'; return meas.measureText(s).width; }
+
+// ---------------------------------------------------------------- hello + end card
+function hello(t) {
+  const el = $('hello');
+  const op = 1 - clamp((t - 3.0) / 0.5);
+  el.style.opacity = t < 0.2 ? 0 : op;
+  // handwritten: a sweep that follows the pen, quick at first and slowing like a hand does
+  const p = clamp((t - 0.35) / 2.1);
+  const e = 1 - Math.pow(1 - p, 2.2);
+  $('hrect').setAttribute('width', 360 + e * 1200);
+  $('hrect').setAttribute('x', 360);
+}
+function endCard(t) {
+  const el = $('end');
+  const k = step(t - 42.9, 0.8);
+  el.style.opacity = clamp(k);
+  el.style.transform = `translateY(${(1 - k) * 36}px) scale(${lerp(0.97, 1, k)})`;
+  el.style.filter = `blur(${(1 - k) * 12}px)`;
+}
+
+function tiles(t) {
+  const el = $('tiles');
+  const inn = step(t - 35.1, 0.7), out = step(t - 41.6, 0.4);
+  el.style.opacity = clamp(inn) * (1 - clamp(out));
+  el.style.transform = `translateY(${(1 - inn) * 40}px)`;
+  const on = step(t - 36.4, 0.35);      // airplane mode switches on, Wi-Fi and data go off with it
+  const paint = (id, active, x) => {
+    const e = $(id); e.style.background = `rgba(255,255,255,${lerp(0.2, 0.95, active)})`;
+    e.style.color = active > 0.5 ? '#1b2a6b' : 'rgba(255,255,255,.92)';
+    const f = active > 0.5 ? '#1b2a6b' : 'rgba(255,255,255,.92)';
+    e.querySelectorAll('path,rect,circle').forEach(n => { n.setAttribute('fill', n.tagName === 'path' && n.getAttribute('stroke-width') ? 'none' : f); if (n.getAttribute('stroke-width')) n.setAttribute('stroke', f); });
+  };
+  paint('tAir', on); paint('tWifi', 1 - on); paint('tData', 1 - on);
+  // before it switches on, Wi-Fi and data are lit and airplane mode is off; the slash shows once they are off
+  $('tWifiX').setAttribute('stroke', 'rgba(255,255,255,.92)'); $('tWifiX').style.opacity = on;
+  $('tDataX').setAttribute('stroke', 'rgba(255,255,255,.92)'); $('tDataX').style.opacity = on;
+}
+
+// ---------------------------------------------------------------- frame
+window.seek = function (t) {
+  t = clamp(t, 0, DUR) + SKIP;
+  document.body.setAttribute('data-t', t.toFixed(3));
+  WALLS.forEach(w => wall(w, t));
+  CAPS.forEach(c => caption(c, t));
+  const p = pose(t);
+  $('phone').style.transform = `translate3d(${p.x}px,${p.y}px,0) rotateY(${p.ry}deg) rotateZ(${p.rz}deg) scale(${p.s})`;
+  phoneContent(t);
+  tiles(t);
+  endCard(t);
+};
+
+// normal playback loops; ?render waits for seek()
+if (!location.search.includes('render')) {
+  const t0 = performance.now();
+  const tick = () => { window.seek(((performance.now() - t0) / 1000) % (DUR + 1)); requestAnimationFrame(tick); };
+  document.fonts.ready.then(tick);
+} else { document.fonts.ready.then(() => window.seek(0)); }
+</script>
+</body>
+</html>

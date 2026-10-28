@@ -35,7 +35,8 @@
 ## See it work
 
 <p align="center">
-  <img src="docs/demo.gif" alt="Typing on the keyboard, the tools panel, symbols, accent popups, emoji and the light theme" width="300">
+  <a href="docs/showcase.mp4"><img src="docs/showcase.gif" alt="Showcase film: typing English and getting Roman Urdu, male and female wording, casual and formal, Roman Urdu back to English, and translating in airplane mode" width="100%"></a><br>
+  <sub>Click for the full-quality video (1080p, 44 seconds).</sub>
 </p>
 
 Type English in any app and tap **Translate** in the toolbar. The text turns into natural Roman Urdu. Type Roman Urdu and it goes
@@ -232,6 +233,7 @@ Every change is built as a pre-release first (for example `v2.0.112-test`). Inst
 | `tools/convert_ruwv.py` | Converts the spelling data into the file the app reads |
 | `scripts/shots.sh`, `.github/workflows/preview.yml` | Boots the keyboard on an emulator in CI and takes screenshots |
 | `scripts/make_readme_images.py` | Turns those screenshots into the pictures and animation in this README |
+| `scripts/film/` | The showcase film: one HTML page drawn in code (`index.html`), rendered to frames with `render.py` and joined with ffmpeg |
 
 </details>
 
