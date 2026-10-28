@@ -21,6 +21,23 @@
   <img src="docs/hero.png" alt="Setup guide, the keyboard, the emoji screen and the personal settings" width="100%">
 </p>
 
+<p align="center">
+  <a href="#see-it-work">See it work</a> ·
+  <a href="#get-started-in-two-minutes">Install</a> ·
+  <a href="#features">Features</a> ·
+  <a href="#faq">FAQ</a> ·
+  <a href="#privacy-and-permissions">Privacy</a> ·
+  <a href="#roadmap">Roadmap</a>
+</p>
+
+| | |
+|---|---|
+| **What it is** | A Gboard-style keyboard with a built-in English ⇄ Roman Urdu translator |
+| **Where the AI runs** | On your phone (Google Gemma through LiteRT-LM). Nothing you type leaves it |
+| **Needs** | Android 12+, arm64 phone, about 3 GB free, 6 GB RAM or more |
+| **Also does** | Glide typing, suggestions, autocorrect, next word, voice typing, emoji, GIFs, stickers, clipboard history |
+| **Licence** | GPL-3.0, free, no ads, no account |
+
 ---
 
 ## See it work
@@ -112,22 +129,32 @@ The first translation after a restart is slower while the model loads. If it fee
 
 ### Keyboard
 - Gboard's layout and height: borderless letters, pill-shaped ?123, space and Enter, number hints, long-press for accents and symbols.
-- Circular key preview and pill popups, Material Symbols icons, the Google Sans key font, vibration on press.
-- Toolbar with a **mic** (voice typing right in the keyboard: your words appear as you speak and the keys stay on screen), **Translate**, **Casual/Formal** and **Auto/EN→RU/RU→EN**.
-  The grid button opens emoji, select all, copy, cut, the clipboard and settings.
-- **Clipboard history** like Gboard's: the clipboard button in the tools panel shows what you copied in the last hour as cards. Tap one to paste it, long-press to pin or delete. It is off until you turn it on, and nothing leaves the phone.
-- **Emoji screen** with a search field, categories, recents and skin tones, plus **text emoticons** in named groups (Classic, Smiling, Love, Hugging, Flexing and more).
-- **GIFs and stickers** from GIPHY, with search and category chips. They are sent as pictures in apps that accept them (WhatsApp, Messages, Gmail and most chat apps) and as a link anywhere else.
-  GIPHY needs a free key: paste it once in the app (Settings card *GIFs and stickers*, it has a button that opens GIPHY's sign-up).
-- **Light, dark or follow the phone**, with wallpaper (Material You) colours or 19 colour swatches.
-- **Word suggestions** in the strip above the keys while you type: finishes the word, fixes typos (*teh → the*, *dont → don't*), and learns your own names and Roman Urdu words on the phone only. Never in password, email or address fields, and you can switch it off or forget what it learned.
-- **Next-word suggestions**: after a word and a space, the strip offers what usually comes next (*thank* → *you*). It starts from a small built-in table of everyday English and learns the pairs you type, on the phone only. Not used for Roman Urdu text.
-- **Automatic correction**: when you press space, a clear typo is fixed for you (*teh → the*, *dont → don't*). Press Backspace straight after to undo it and the keyboard stops correcting that word. Names, ABBREVIATIONS and anything that looks like Roman Urdu are left alone. It has its own switch.
-- **Glide typing** (English): slide your finger across the letters and lift to type a word. The three best matches show above the keys; tap one to swap the word, or press backspace to remove the whole word. Switch it off in the app if you prefer.
+- Circular key preview, pill popups, Material Symbols icons, the Google Sans key font, vibration on press.
+- **Light, dark or follow the phone**, with wallpaper (Material You) colours or 19 swatches.
+- Toolbar with a **mic**, **Translate**, **Casual/Formal** and **Auto/EN→RU/RU→EN**. The grid button opens emoji, select all, copy, cut, the clipboard and settings.
 - Auto-capital, double space for a full stop, swipe the space bar to move the cursor, hold delete to repeat.
 
+### Typing help
+
+| | |
+|---|---|
+| **Word suggestions** | The strip above the keys finishes the word and fixes typos while you type. |
+| **Automatic correction** | Press space and a clear typo is fixed (*teh → the*, *recieve → receive*, *dont → don't*, *wich → which*). Backspace straight after undoes it and the keyboard stops correcting that word. Names, ABBREVIATIONS and anything that looks like Roman Urdu are left alone. |
+| **Next word** | After a word and a space the strip offers what usually follows (*thanks* → *for, a, so*). It uses a small built-in table of everyday English and the word pairs you type, and stays quiet in Roman Urdu text. |
+| **Glide typing** (English) | Slide across the letters and lift to type a word. The three best matches show above the keys; tap one to swap, or press backspace to remove the whole word. |
+| **Voice typing** | Tap the mic: your words appear as you speak and the keys stay on screen. The mic turns red while it listens. |
+| **Learning** | Your own names and spellings are learned on the phone only, never in password, email or address fields. Suggestions, autocorrect and glide typing each have a switch in the app, and one button forgets everything learned. |
+
 <p align="center">
-  <img src="docs/typing-help.png" alt="Suggestions, automatic correction (teh becomes The), Backspace to undo, next-word suggestions, and the mic listening" width="100%"><br>
+  <img src="docs/typing-help.png" alt="Suggestions, automatic correction (teh becomes The), Backspace to undo, next-word suggestions, and the mic listening" width="100%">
+</p>
+
+### Emoji, GIFs and clipboard
+- **Emoji screen** with a search field, categories, recents and skin tones, plus **text emoticons** in named groups (Classic, Smiling, Love, Hugging, Flexing and more).
+- **GIFs and stickers** from GIPHY, with search and category chips. They are sent as pictures in apps that accept them (WhatsApp, Messages, Gmail and most chat apps) and as a link anywhere else. GIPHY needs a free key: paste it once in the app (*GIFs and stickers* card, with a button to GIPHY's sign-up).
+- **Clipboard history** like Gboard's: what you copied in the last hour as cards. Tap to paste, long-press to pin or delete. Off until you turn it on; nothing leaves the phone.
+
+<p align="center">
   <img src="docs/emoji-screens.png" alt="Emoji screen, emoji search, and emoticon groups" width="100%"><br>
   <img src="docs/keyboard-dark.png" alt="Dark theme: letters, accent popup, tools panel, symbols" width="100%"><br>
   <img src="docs/keyboard-light.png" alt="Light theme: letters, emoji and emoticons" width="100%">
@@ -144,16 +171,88 @@ The first translation after a restart is slower while the model loads. If it fee
   <img src="docs/app.png" alt="The main app: updates, setup, model, try it, style" width="100%">
 </p>
 
-## Privacy
+## Privacy and permissions
 
-- Translations run **on the device**. Nothing you type is sent anywhere.
-- The `INTERNET` permission is used only to download the model, read its checksum from Hugging Face, check GitHub for a new version, and (if you use the GIF and Sticker tabs) search GIPHY. GIPHY only sees the words you search for.
-- The microphone permission is asked for only when you first tap the mic. The keyboard uses your phone's own speech recogniser (Google's or the one you chose), so what you say is handled by that service, not by this app. If the phone has no recogniser, the mic falls back to your phone's voice keyboard.
-- Your settings, glossary and examples stay on the phone.
+- Translation runs **on the device**. Nothing you type is sent anywhere.
+- Your settings, glossary, examples, learned words and clipboard history stay on the phone. Backups are switched off, and the GIPHY key is stored encrypted.
 
-## Not included (yet)
+| Permission | Why |
+|---|---|
+| Internet | Download the model, read its checksum from Hugging Face, check GitHub for updates, and search GIPHY if you use GIFs or stickers (GIPHY only sees your search words) |
+| Microphone | Voice typing. Asked for only when you first tap the mic. Speech is handled by your phone's own recogniser (Google's or the one you chose), not by this app |
+| Vibrate | Key feedback |
+| Network state | Lets the setup guide offer to wait for Wi-Fi before the big download |
 
-Next-word prediction, glide typing in Roman Urdu (English only for now), and layouts for other languages. GIFs and stickers need your own free GIPHY key (or a release built with one).
+**Check the download.** Every release is built by GitHub Actions from this repository and signed with the same key. The certificate fingerprint (SHA-256) is:
+
+`ae11bae40b0ba26c9d229e7f1bc2cb8eb9e2d7b8b696cca3909c4b2daea522a4`
+
+Verify it with `apksigner verify --print-certs roman-urdu-keyboard.apk`.
+
+## FAQ
+
+<details>
+<summary><b>Is anything I type sent to a server?</b></summary>
+
+No. Translation, suggestions, autocorrect and learning all happen on the phone. The only network use is listed in the table above.
+</details>
+
+<details>
+<summary><b>The first translation is slow.</b></summary>
+
+The model has to load into memory after a restart or after the keyboard has been idle. It then stays warm while you type. If it still feels slow, try *Use the GPU* in the app, or the smaller Gemma 3 1B model.
+</details>
+
+<details>
+<summary><b>Autocorrect changed a word I wanted. How do I stop it?</b></summary>
+
+Press Backspace right after it: the original comes back and that word is left alone from then on. You can switch automatic correction off in the app without losing suggestions.
+</details>
+
+<details>
+<summary><b>Autocorrect does nothing in an app.</b></summary>
+
+Some fields ask keyboards not to suggest (passwords, email, addresses, some search boxes), and the keyboard respects that. It also stays out of the way when your recent text looks like Roman Urdu, so it never "fixes" Roman Urdu into English.
+</details>
+
+<details>
+<summary><b>GIFs and stickers say a key is needed.</b></summary>
+
+GIPHY needs a free API key. Open the app, find the *GIFs and stickers* card, tap the button to get one, and paste it in. It takes a minute.
+</details>
+
+<details>
+<summary><b>Voice typing says it needs a connection.</b></summary>
+
+Some phones' speech recognisers work online only. Download an offline speech pack for your language in your phone's speech or voice settings and try again.
+</details>
+
+<details>
+<summary><b>Android warns about the install.</b></summary>
+
+The app isn't from the Play Store, so Play Protect may show a prompt. Tap **More details → Install anyway**. You can check the fingerprint above first.
+</details>
+
+<details>
+<summary><b>Why does Roman Urdu spelling differ from what I use?</b></summary>
+
+There is no standard spelling. Add your own in the app's glossary (*bada → barha*) and it is used every time.
+</details>
+
+## Roadmap
+
+What works today is described above. Still to come:
+
+- Roman Urdu suggestions, completion and glide typing (these are English only for now).
+- Voice typing language switch (English and Urdu).
+- Layouts for other languages.
+- Faster first translation (an experimental smaller R8 build is attached to test releases for comparing).
+
+Ideas are welcome as [issues](https://github.com/pauldeggington/roman-urdu-keyboard/issues).
+
+## Test builds
+
+Every change is built as a pre-release first (for example `v2.0.112-test`). Install one over the normal app if you want to try things early; the in-app Update button ignores them and your settings stay.
 
 <details>
 <summary><b>Project layout</b></summary>
