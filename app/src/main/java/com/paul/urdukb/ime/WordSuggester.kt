@@ -181,7 +181,7 @@ class WordSuggester(words: List<Pair<String, Int>>) {
         var first = -1
         var diffs = 0
         for (i in typed.indices) if (typed[i] != cand[i]) { if (first < 0) first = i; diffs++ }
-        if (diffs == 2 && first + 1 < typed.length && typed[first] == cand[first + 1] && typed[first + 1] == cand[first]) return 100
+        if (diffs == 2 && first + 1 < typed.length && typed[first] == cand[first + 1] && typed[first + 1] == cand[first]) return 150
         if (diffs == 1 && near(typed[first], cand[first])) return 60
         return 0
     }
