@@ -125,6 +125,57 @@ class WordSuggester(words: List<Pair<String, Int>>) {
         return ranked.take(max)
     }
 
+    private class Fix(val word: String, val score: Int, val contraction: Boolean)
+
+    /**
+     * The one word [typedRaw] should be silently replaced with when it is followed by a space, or null to leave it.
+     * Careful on purpose: only clear typos ("teh", "recieve", "dont"), where one candidate is far more common than
+     * the typed word and clearly ahead of any other. Words the person uses themselves are never changed.
+     */
+    fun autocorrect(typedRaw: String, personal: Map<String, Int> = emptyMap()): String? {
+        val typed = typedRaw.lowercase()
+        if (typed.length < 2 || typed.any { !(it.isLetter() || it == '\'') } || '\'' in typed) return null
+        if (typed.length == 2 && typed != "im") return null
+        if (personal.containsKey(typed) || typed in NOT_CONTRACTIONS) return null
+        val inList = exact.containsKey(typed)
+        val typedZipf = exact[typed] ?: -1
+        // a word that is clearly in everyday use is not a typo; the list also holds some misspellings, which are rare
+        if (inList && typedZipf >= 520) {
+            // except an apostrophe-less contraction ("dont", "cant"), handled below
+            if (!hasContraction(typed)) return null
+        }
+        val fixes = ArrayList<Fix>()
+        val allowed = if (typed.length >= 7) 2 else 1
+        for (len in maxOf(1, typed.length - allowed)..minOf(byLength.size - 1, typed.length + allowed)) {
+            for (idx in byLength[len]) {
+                if (sorted[idx] == typed) continue
+                val d = distanceWithin(typed, plain[idx], allowed)
+                if (d !in 0..allowed) continue
+                val contraction = d == 0
+                if (contraction && typed.length == 2 && typed != "im") continue
+                val margin = if (contraction) 100 else if (typed.length <= 3) 300 else 250
+                if (inList && zipf[idx] < typedZipf + margin) continue
+                if (!inList && zipf[idx] < 420) continue          // only correct towards a word in everyday use
+                fixes += Fix(sorted[idx], zipf[idx] - 120 * d + (if (contraction) 250 else 0), contraction)
+            }
+        }
+        if (fixes.isEmpty()) return null
+        fixes.sortByDescending { it.score }
+        val best = fixes[0]
+        if (fixes.size > 1 && best.score - fixes[1].score < 40) return null   // two good answers: do not guess
+        return best.word
+    }
+
+    private fun hasContraction(typed: String): Boolean {
+        val idx = lowerBound(typed.take(1))
+        var i = idx
+        while (i < sorted.size && sorted[i].startsWith(typed.take(1))) {
+            if (sorted[i].length == typed.length + 1 && plain[i] == typed && sorted[i] != typed) return true
+            i++
+        }
+        return false
+    }
+
     /** Edit distance (insert, delete, change, swap two letters) if it is at most [limit], otherwise -1. */
     private fun distanceWithin(a: String, b: String, limit: Int): Int {
         if (kotlin.math.abs(a.length - b.length) > limit) return -1
@@ -150,6 +201,9 @@ class WordSuggester(words: List<Pair<String, Int>>) {
 
     companion object {
         private const val PERSONAL_BASE = 600
+
+        /** Words that look like a contraction without the apostrophe but are real words: never auto-corrected. */
+        private val NOT_CONTRACTIONS = setOf("its", "were", "well", "ill", "id", "hell", "shell", "wed", "shed", "hed")
 
         /** "word<TAB>score" lines, as in the glide word list. */
         fun readWords(lines: Sequence<String>): List<Pair<String, Int>> {

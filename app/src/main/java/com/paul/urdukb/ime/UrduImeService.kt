@@ -27,7 +27,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
+import com.paul.urdukb.Detect
 import com.paul.urdukb.LlmEngine
+import com.paul.urdukb.VariantMap
 import com.paul.urdukb.RomanUrdu
 
 /**
@@ -71,6 +73,9 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     private var typingWord = ""                 // the word under the cursor, as it is written in the field
     private val wordBuf = StringBuilder()       // letters typed since the last space, for learning words
     private var suggestOn = true
+    private var autocorrectOn = true
+    private class AutoFix(val original: String, val replacement: String, val delimiter: String)
+    private var autoFix: AutoFix? = null           // the last automatic correction, so Backspace can undo it
     private var suggestionsAllowed = true
     private var learningAllowed = true
     private var suggestSeq = 0
@@ -289,6 +294,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         doubleSpaceOn = Kb.doubleSpace(this)
         warmOn = Kb.warm(this)
         suggestOn = Kb.suggest(this)
+        autocorrectOn = Kb.autocorrect(this)
         if (!suggestOn) clearTyping()
         refreshToolbar()
     }
@@ -403,7 +409,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     override fun onKey(key: KeyDef, text: String?) {
         if (BuildConfig.PREVIEW) Log.i("PREVIEW", "ONKEY ${key.type} $text ic=${currentInputConnection != null}")
         RomanUrdu.onOtherKey(this)
-        if (key.type != KeyType.DELETE) clearGlide()
+        if (key.type != KeyType.DELETE) { clearGlide(); autoFix = null }
         when (key.type) {
             KeyType.CHAR -> typeText(text ?: key.label)
             KeyType.SHIFT -> toggleShift()
@@ -423,7 +429,9 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             return
         }
         val ic = currentInputConnection ?: return
-        trackWord(s)
+        val endsWord = !(s[0].isLetter() || s[0] == '\'')
+        if (endsWord && s[0] != ' ' && maybeAutocorrect(ic, s)) { wordBuf.setLength(0); clearTyping() }
+        else trackWord(s)
         ic.commitText(s, 1)
         noteTyped(s.length)
         lastSpace = 0
@@ -441,7 +449,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     private fun typeSpace() {
         if (searching) { emoji.searchType(" "); return }
         val ic = currentInputConnection ?: return
-        trackWord(" ")
+        if (maybeAutocorrect(ic, " ")) wordBuf.setLength(0) else trackWord(" ")
         clearTyping()
         val now = SystemClock.uptimeMillis()
         if (doubleSpaceOn && now - lastSpace < 500) {
@@ -464,6 +472,23 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     private fun deleteOne() {
         if (searching) { emoji.searchBackspace(); return }
         val ic = currentInputConnection ?: return
+        autoFix?.let { f ->
+            // Backspace right after an automatic correction puts back what was typed (and stops correcting that word)
+            val tail = f.replacement + f.delimiter
+            autoFix = null
+            if (ic.getTextBeforeCursor(tail.length, 0)?.toString() == tail) {
+                ic.beginBatchEdit()
+                ic.deleteSurroundingText(tail.length, 0)
+                ic.commitText(f.original, 1)
+                ic.endBatchEdit()
+                if (learningAllowed) { PersonalWords.learn(this, f.original); PersonalWords.learn(this, f.original) }
+                wordBuf.setLength(0); wordBuf.append(f.original)
+                lastSpace = 0
+                updateShift()
+                scheduleSuggest()
+                return
+            }
+        }
         if (wordBuf.isNotEmpty()) wordBuf.setLength(wordBuf.length - 1)
         glideCommit?.let { g ->
             // backspace right after a glide removes the whole word, like Gboard
@@ -601,6 +626,34 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             }
         }
         if (wordBuf.length > 40) wordBuf.setLength(0)
+    }
+
+    /**
+     * When a space or punctuation mark is about to be typed: replaces a clear typo with the right word.
+     * Returns true if it changed something. Names, capitals-only words, Roman Urdu and words the person uses are left alone.
+     */
+    private fun maybeAutocorrect(ic: android.view.inputmethod.InputConnection, delimiter: String): Boolean {
+        if (!autocorrectOn || !suggestOn || !suggestionsAllowed || searching) return false
+        val suggester = GlideDict.suggester ?: return false
+        val before = ic.getTextBeforeCursor(80, 0)?.toString() ?: return false
+        var start = before.length
+        while (start > 0 && (before[start - 1].isLetter() || before[start - 1] == '\'')) start--
+        val word = before.substring(start)
+        if (word.length < 2 || word[0] == '\'' || word.any { it == '\'' }) return false
+        val lead = before.substring(0, start).trimEnd(' ')
+        val sentenceStart = lead.isEmpty() || lead.last() in ".!?\n"
+        if (word[0].isUpperCase() && !sentenceStart) return false          // probably a name
+        if (word.length > 1 && word.all { it.isUpperCase() }) return false  // an abbreviation
+        // this app is for Roman Urdu: when the text around looks like it, or the spelling is a known Roman Urdu one, hands off
+        if (VariantMap.isKnownVariant(this, word.lowercase()) || Detect.guess(before) { VariantMap.isKnownVariant(this, it) } == Detect.Language.ROMAN_URDU) return false
+        val fix = suggester.autocorrect(word, PersonalWords.snapshot(this)) ?: return false
+        val replacement = WordSuggester.matchCase(word, fix)
+        ic.beginBatchEdit()
+        ic.deleteSurroundingText(word.length, 0)
+        ic.commitText(replacement, 1)
+        ic.endBatchEdit()
+        autoFix = AutoFix(word, replacement, delimiter)
+        return true
     }
 
     /** Looks at the word under the cursor a moment after typing stops changing it (also off the main thread). */

@@ -22,6 +22,7 @@ object Kb {
     const val PREF_CLIP = "clipboard_history"
     const val PREF_WARM = "warm_translator"
     const val PREF_SUGGEST = "word_suggestions"
+    const val PREF_AUTOCORRECT = "autocorrect"
 
     fun prefs(ctx: Context): SharedPreferences =
         ctx.applicationContext.getSharedPreferences("keyboard", Context.MODE_PRIVATE)
@@ -37,9 +38,10 @@ object Kb {
     fun glide(ctx: Context) = bool(ctx, PREF_GLIDE, true)
     fun warm(ctx: Context) = bool(ctx, PREF_WARM, true)
     fun suggest(ctx: Context) = bool(ctx, PREF_SUGGEST, true)
+    fun autocorrect(ctx: Context) = bool(ctx, PREF_AUTOCORRECT, true)
 
     /** The settings that change how the keyboard looks or behaves right away; other saved values (recent emoji, clips) do not. */
-    val LIVE_KEYS = setOf(PREF_VIBRATE, PREF_SOUND, PREF_AUTOCAP, PREF_DOUBLE_SPACE, PREF_HINTS, PREF_PREVIEW, PREF_GLIDE, PREF_WARM, PREF_SUGGEST, PREF_TONE, PREF_DIRECTION)
+    val LIVE_KEYS = setOf(PREF_VIBRATE, PREF_SOUND, PREF_AUTOCAP, PREF_DOUBLE_SPACE, PREF_HINTS, PREF_PREVIEW, PREF_GLIDE, PREF_WARM, PREF_SUGGEST, PREF_AUTOCORRECT, PREF_TONE, PREF_DIRECTION)
 
     /** The key the person pasted in the app (decrypted), or empty. */
     fun ownGiphyKey(ctx: Context): String {

@@ -27,10 +27,13 @@ object PersonalWords {
         }
     }
 
+    /** Words typed at least twice: one slip of the finger does not make a word the person "uses". */
     @Synchronized
     fun snapshot(ctx: Context): Map<String, Int> {
         ensure(ctx)
-        return HashMap(counts)
+        val out = HashMap<String, Int>()
+        for ((w, n) in counts) if (n >= 2) out[w] = n
+        return out
     }
 
     /** A finished word the person typed. Only worth keeping if the built-in word list does not already know it well. */

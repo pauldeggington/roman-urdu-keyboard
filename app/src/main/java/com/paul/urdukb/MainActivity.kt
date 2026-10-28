@@ -713,6 +713,7 @@ class MainActivity : Activity() {
         switchRow(card, "Capital letter after . ? !", "Starts sentences with a capital", Kb.PREF_AUTOCAP, true)
         switchRow(card, "Get the translator ready while typing", "Loads the translator after a few letters so Translate is quick. It frees that memory again after 10 minutes of not translating.", Kb.PREF_WARM, true)
         switchRow(card, "Word suggestions", "Finishes the word you are typing and fixes typos in the strip above the keys. It learns your own words (names, Roman Urdu) on this phone only, and never in password, email or address fields.", Kb.PREF_SUGGEST, true)
+        switchRow(card, "Automatic correction", "Fixes clear typos when you press space (teh becomes the, dont becomes don't). Press Backspace right after to undo it. It leaves names, abbreviations and anything that looks like Roman Urdu alone.", Kb.PREF_AUTOCORRECT, true)
         card.addView(button("Forget the words it learned", false, lock = false) {
             com.paul.urdukb.ime.PersonalWords.clear(this)
             toast("Learned words cleared")

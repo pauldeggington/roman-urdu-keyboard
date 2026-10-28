@@ -96,4 +96,37 @@ class WordSuggesterTest {
         assertTrue(suggester.isWord("hello"))
         assertFalse(suggester.isWord("helllo"))
     }
+
+    // ---------------------------------------------------------------- automatic correction
+    @Test
+    fun correctsClearTypos() {
+        assertEquals("the", suggester.autocorrect("teh"))
+        assertEquals("receive", suggester.autocorrect("recieve"))
+        assertEquals("definitely", suggester.autocorrect("definately"))
+        assertEquals("because", suggester.autocorrect("becuase"))
+        assertEquals("their", suggester.autocorrect("thier"))
+        assertEquals("tomorrow", suggester.autocorrect("tommorow"))
+    }
+
+    @Test
+    fun correctsMissingApostrophes() {
+        assertEquals("don't", suggester.autocorrect("dont"))
+        assertEquals("i'm", suggester.autocorrect("im"))
+        assertEquals("can't", suggester.autocorrect("cant"))
+    }
+
+    @Test
+    fun leavesRealWordsAndOwnWordsAlone() {
+        for (w in listOf("form", "from", "was", "hello", "computer", "its", "were", "well", "ill", "good", "morning", "friend", "tomorrow"))
+            assertEquals("changed $w", null, suggester.autocorrect(w))
+        assertEquals(null, suggester.autocorrect("zeeshan", mapOf("zeeshan" to 5)))
+        assertEquals(null, suggester.autocorrect("teh", mapOf("teh" to 3)))   // the person types this on purpose
+    }
+
+    @Test
+    fun doesNotGuessWhenUnsure() {
+        assertEquals(null, suggester.autocorrect("xqzt"))
+        assertEquals(null, suggester.autocorrect("ab"))
+        assertEquals(null, suggester.autocorrect("hello!"))
+    }
 }
