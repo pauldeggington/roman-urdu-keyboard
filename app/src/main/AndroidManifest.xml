@@ -7,6 +7,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Wi-Fi or mobile data, so the setup guide can offer to wait for Wi-Fi -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- voice typing inside the keyboard; asked for only when the mic button is first used -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <queries>
+        <intent><action android:name="android.speech.RecognitionService" /></intent>
+    </queries>
 
     <application
         android:name=".UrduApp"
@@ -47,6 +53,11 @@
             android:exported="${previewExported}" />
 
         <!-- "Translate to English" in the text selection menu of other apps -->
+        <activity android:name=".MicPermissionActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true"
+            android:exported="false" />
+
         <activity android:name=".TranslateTextActivity"
             android:label="Translate to English"
             android:theme="@style/RomanUrduSheetTheme"

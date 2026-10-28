@@ -39,6 +39,8 @@ class ToolbarView(context: Context) : View(context) {
     var toolsOpen = false
         set(v) { field = v; invalidate() }
     /** Words offered after a glide, best first. While there are some, they replace Translate, Casual and Auto. */
+    var listening = false
+        set(v) { if (field != v) { field = v; invalidate() } }
     var suggestions: List<String> = emptyList()
         set(v) { field = v; invalidate() }
     var suggestionIndex = 0
@@ -173,9 +175,9 @@ class ToolbarView(context: Context) : View(context) {
                     drawIcon(c, R.drawable.kb_grid, cx, cy, 25f, col.keyText)
                 }
                 Tool.MIC -> {
-                    paint.color = col.chip
+                    paint.color = if (listening) 0xFFD93025.toInt() else col.chip
                     c.drawCircle(cx, cy, 17f * d, paint)
-                    drawIcon(c, R.drawable.kb_mic, cx, cy, 24f, col.keyText)
+                    drawIcon(c, R.drawable.kb_mic, cx, cy, 24f, if (listening) 0xFFFFFFFF.toInt() else col.keyText)
                 }
                 Tool.TRANSLATE -> when {
                     busy -> drawIcon(c, R.drawable.ic_rurdu_progress, cx, cy, 24f, col.keyText, angle)

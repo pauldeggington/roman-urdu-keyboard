@@ -29,6 +29,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import com.paul.urdukb.Detect
 import com.paul.urdukb.LlmEngine
+import com.paul.urdukb.MicPermissionActivity
 import com.paul.urdukb.VariantMap
 import com.paul.urdukb.RomanUrdu
 
@@ -162,6 +163,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         Kb.prefs(this).unregisterOnSharedPreferenceChangeListener(prefListener)
         applicationContext.getSharedPreferences("look", Context.MODE_PRIVATE).unregisterOnSharedPreferenceChangeListener(lookListener)
         RomanUrdu.onStateChanged = null
+        voice?.stop()
         super.onDestroy()
     }
 
@@ -364,6 +366,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     override fun onFinishInputView(finishingInput: Boolean) {
         super.onFinishInputView(finishingInput)
         handler.removeCallbacks(deleteRepeat)
+        voice?.stop()
         clearTyping()
         PersonalWords.save(this)
     }
@@ -410,6 +413,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         if (BuildConfig.PREVIEW) Log.i("PREVIEW", "ONKEY ${key.type} $text ic=${currentInputConnection != null}")
         RomanUrdu.onOtherKey(this)
         if (key.type != KeyType.DELETE) { clearGlide(); autoFix = null }
+        voice?.let { if (it.listening) it.stop() }
         when (key.type) {
             KeyType.CHAR -> typeText(text ?: key.label)
             KeyType.SHIFT -> toggleShift()
@@ -729,7 +733,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             ToolbarView.Tool.TRANSLATE -> RomanUrdu.translateOrRevert(this) { currentInputConnection?.finishComposingText() }
             ToolbarView.Tool.TONE -> RomanUrdu.toggleTone(this)
             ToolbarView.Tool.DIRECTION -> RomanUrdu.cycleDirection(this)
-            ToolbarView.Tool.MIC -> startVoice()
+            ToolbarView.Tool.MIC -> toggleVoice()
             ToolbarView.Tool.EMOJI -> showEmoji(true)
             ToolbarView.Tool.SELECT_ALL -> ic?.performContextMenuAction(android.R.id.selectAll)
             ToolbarView.Tool.COPY -> ic?.performContextMenuAction(android.R.id.copy)
@@ -739,8 +743,38 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         }
     }
 
+    private var voice: VoiceInput? = null
+
+    /** The mic button: listens inside the keyboard (the keys stay visible), or taps again to stop. */
+    private fun toggleVoice() {
+        val v = voice ?: VoiceInput(
+            this, { currentInputConnection },
+            { on -> handler.post { toolbar.listening = on } },
+            { msg -> handler.post { voiceProblem(msg) } },
+        ).also { voice = it }
+        if (v.listening) { v.stop(); return }
+        if (!VoiceInput.available(this)) { startVoice(); return }
+        if (!VoiceInput.hasPermission(this)) { askMicPermission(); return }
+        clearTyping(); wordBuf.setLength(0)
+        v.start()
+    }
+
+    private fun askMicPermission() {
+        MicPermissionActivity.onResult = { ok ->
+            MicPermissionActivity.onResult = null
+            if (ok) handler.post { voice?.start() }
+            else handler.post { Toast.makeText(this, "Microphone is off for this keyboard, so voice typing can't listen.", Toast.LENGTH_LONG).show() }
+        }
+        startActivity(Intent(this, MicPermissionActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    }
+
+    private fun voiceProblem(msg: String) {
+        if (msg == "NEEDS_PERMISSION") { askMicPermission(); return }
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+    }
+
     /**
-     * Voice typing: hands over to the phone's voice typing keyboard (Google's), which switches back here when
+     * Fallback voice typing: hands over to the phone's voice typing keyboard (Google's), which switches back here when
      * you stop talking. The app itself never touches the microphone, so it needs no microphone permission.
      */
     private fun startVoice() {

@@ -113,7 +113,7 @@ The first translation after a restart is slower while the model loads. If it fee
 ### Keyboard
 - Gboard's layout and height: borderless letters, pill-shaped ?123, space and Enter, number hints, long-press for accents and symbols.
 - Circular key preview and pill popups, Material Symbols icons, the Google Sans key font, vibration on press.
-- Toolbar with a **mic** (hands over to your phone's voice typing), **Translate**, **Casual/Formal** and **Auto/EN→RU/RU→EN**.
+- Toolbar with a **mic** (voice typing right in the keyboard: your words appear as you speak and the keys stay on screen), **Translate**, **Casual/Formal** and **Auto/EN→RU/RU→EN**.
   The grid button opens emoji, select all, copy, cut, the clipboard and settings.
 - **Clipboard history** like Gboard's: the clipboard button in the tools panel shows what you copied in the last hour as cards. Tap one to paste it, long-press to pin or delete. It is off until you turn it on, and nothing leaves the phone.
 - **Emoji screen** with a search field, categories, recents and skin tones, plus **text emoticons** in named groups (Classic, Smiling, Love, Hugging, Flexing and more).
@@ -145,12 +145,12 @@ The first translation after a restart is slower while the model loads. If it fee
 
 - Translations run **on the device**. Nothing you type is sent anywhere.
 - The `INTERNET` permission is used only to download the model, read its checksum from Hugging Face, check GitHub for a new version, and (if you use the GIF and Sticker tabs) search GIPHY. GIPHY only sees the words you search for.
-- There is no microphone permission. Voice typing is handed to your phone's own voice keyboard.
+- The microphone permission is asked for only when you first tap the mic. The keyboard uses your phone's own speech recogniser (Google's or the one you chose), so what you say is handled by that service, not by this app. If the phone has no recogniser, the mic falls back to your phone's voice keyboard.
 - Your settings, glossary and examples stay on the phone.
 
 ## Not included (yet)
 
-Automatic correction (it only suggests), next-word prediction, glide typing in Roman Urdu (English only for now), and layouts for other languages. GIFs and stickers need your own free GIPHY key (or a release built with one).
+Next-word prediction, glide typing in Roman Urdu (English only for now), and layouts for other languages. GIFs and stickers need your own free GIPHY key (or a release built with one).
 
 <details>
 <summary><b>Project layout</b></summary>
