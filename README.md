@@ -121,6 +121,7 @@ The first translation after a restart is slower while the model loads. If it fee
   GIPHY needs a free key: paste it once in the app (Settings card *GIFs and stickers*, it has a button that opens GIPHY's sign-up).
 - **Light, dark or follow the phone**, with wallpaper (Material You) colours or 19 colour swatches.
 - **Word suggestions** in the strip above the keys while you type: finishes the word, fixes typos (*teh → the*, *dont → don't*), and learns your own names and Roman Urdu words on the phone only. Never in password, email or address fields, and you can switch it off or forget what it learned.
+- **Automatic correction**: when you press space, a clear typo is fixed for you (*teh → the*, *dont → don't*). Press Backspace straight after to undo it and the keyboard stops correcting that word. Names, ABBREVIATIONS and anything that looks like Roman Urdu are left alone. It has its own switch.
 - **Glide typing** (English): slide your finger across the letters and lift to type a word. The three best matches show above the keys; tap one to swap the word, or press backspace to remove the whole word. Switch it off in the app if you prefer.
 - Auto-capital, double space for a full stop, swipe the space bar to move the cursor, hold delete to repeat.
 
