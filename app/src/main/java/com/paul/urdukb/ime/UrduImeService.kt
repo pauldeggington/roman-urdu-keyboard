@@ -76,6 +76,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     private var suggestOn = true
     private var autocorrectOn = true
     private class AutoFix(val original: String, val replacement: String, val delimiter: String)
+    private var prevWord = ""                      // the word before the one being typed, for learning word pairs
     private var autoFix: AutoFix? = null           // the last automatic correction, so Backspace can undo it
     private var suggestionsAllowed = true
     private var learningAllowed = true
@@ -625,6 +626,10 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             else {
                 val w = wordBuf.toString()
                 wordBuf.setLength(0)
+                if (w.isNotEmpty()) {
+                    if (learningAllowed && prevWord.isNotEmpty()) PersonalWords.learnPair(this, prevWord, w)
+                    prevWord = if (ch in ".!?\n") "" else w.lowercase()
+                } else if (ch in ".!?\n") prevWord = ""
                 // only words the built-in list does not know (names, slang, Roman Urdu) are remembered
                 if (learningAllowed && w.length >= 3 && GlideDict.suggester?.isWord(w) == false) PersonalWords.learn(this, w)
             }
@@ -657,6 +662,8 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         ic.commitText(replacement, 1)
         ic.endBatchEdit()
         autoFix = AutoFix(word, replacement, delimiter)
+        if (learningAllowed && prevWord.isNotEmpty()) PersonalWords.learnPair(this, prevWord, fix.lowercase())
+        prevWord = if (delimiter[0] in ".!?\n") "" else fix.lowercase()
         return true
     }
 
@@ -677,6 +684,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         var start = before.length
         while (start > 0 && (before[start - 1].isLetter() || before[start - 1] == '\'')) start--
         val word = before.substring(start).trimStart('\'')
+        if (word.isEmpty() && before.endsWith(" ")) { computeNextWord(before); return }
         if (word.length < 2) { clearTyping(); return }
         val seq = ++suggestSeq
         val app = applicationContext
@@ -684,6 +692,41 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             val found = suggester.suggest(word, PersonalWords.snapshot(app), 3)
             handler.post { if (seq == suggestSeq) showTyping(word, found) }
         }
+    }
+
+    /** After a word and a space: offers what usually comes next. Not for Roman Urdu text, and not in an empty field. */
+    private fun computeNextWord(before: String) {
+        val trimmed = before.trimEnd(' ')
+        if (trimmed.isEmpty()) { clearTyping(); return }
+        var start = trimmed.length
+        while (start > 0 && (trimmed[start - 1].isLetter() || trimmed[start - 1] == '\'')) start--
+        val prev = trimmed.substring(start).trimStart('\'').lowercase()
+        val key = if (prev.isEmpty()) (if (trimmed.last() in ".!?") "<s>" else "") else prev
+        if (key.isEmpty()) { clearTyping(); return }
+        val sentenceStart = key == "<s>"
+        val seq = ++suggestSeq
+        val app = applicationContext
+        suggestThread.execute {
+            val roman = Detect.guess(before) { VariantMap.isKnownVariant(app, it) } == Detect.Language.ROMAN_URDU
+            val found = if (roman) emptyList() else NextWord.predict(app, key).map {
+                when {
+                    it == "i" || it.startsWith("i'") -> "I" + it.drop(1)
+                    sentenceStart -> it.replaceFirstChar { c -> c.uppercase() }
+                    else -> it
+                }
+            }
+            handler.post { if (seq == suggestSeq) showNext(found) }
+        }
+    }
+
+    private fun showNext(found: List<String>) {
+        if (!viewReady || strip == Strip.GLIDE) return
+        if (found.isEmpty()) { clearTyping(); return }
+        typingWord = ""
+        typingCandidates = found
+        strip = Strip.TYPING
+        toolbar.suggestions = found
+        toolbar.suggestionIndex = -1
     }
 
     private fun showTyping(word: String, found: List<String>) {
@@ -709,15 +752,29 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         val word = typingCandidates.getOrNull(i) ?: return
         val ic = currentInputConnection ?: return
         val typed = typingWord
-        if (typed.isEmpty() || ic.getTextBeforeCursor(typed.length, 0)?.toString() != typed) { clearTyping(); return }
+        if (typed.isEmpty()) {
+            // a next-word suggestion: it goes in after the space that is already there
+            if (ic.getTextBeforeCursor(1, 0)?.toString() != " ") { clearTyping(); return }
+            if (learningAllowed && prevWord.isNotEmpty()) PersonalWords.learnPair(this, prevWord, word)
+            ic.commitText("$word ", 1)
+            prevWord = word.lowercase()
+            wordBuf.setLength(0)
+            lastSpace = 0
+            updateShift()
+            scheduleSuggest()
+            return
+        }
+        if (ic.getTextBeforeCursor(typed.length, 0)?.toString() != typed) { clearTyping(); return }
         ic.beginBatchEdit()
         ic.deleteSurroundingText(typed.length, 0)
         ic.commitText("$word ", 1)
         ic.endBatchEdit()
         wordBuf.setLength(0)
+        prevWord = word.lowercase()
         lastSpace = 0
         clearTyping()
         updateShift()
+        scheduleSuggest()
     }
 
     // ------------------------------------------------------------------ toolbar

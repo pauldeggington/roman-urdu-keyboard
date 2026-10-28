@@ -69,6 +69,19 @@ jobs:
           mkdir -p out
           cp app/build/outputs/apk/debug/*.apk out/roman-urdu-keyboard.apk
 
+      - name: Build experimental R8 copy (rewrite branch only; never blocks the build)
+        if: github.ref == 'refs/heads/rewrite'
+        continue-on-error: true
+        run: |
+          ./gradlew :app:assembleDebug -PtrialR8 --no-daemon > r8.log 2>&1 && rc=0 || rc=$?
+          if [ "$rc" -eq 0 ]; then
+            cp app/build/outputs/apk/debug/*-r8.apk out/roman-urdu-keyboard-r8.apk
+            echo "::notice title=R8 copy::$(du -h out/roman-urdu-keyboard-r8.apk | cut -f1) vs $(du -h out/roman-urdu-keyboard.apk | cut -f1) normal"
+          else
+            { grep -E -A4 '^e: |What went wrong|ERROR|Missing class' r8.log | head -20 || true; } > r8err.txt
+            echo "::warning title=R8 copy failed::$(tr '\n' ' ' < r8err.txt | cut -c1-300)"
+          fi
+
       - name: Show signing fingerprint
         run: |
           APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -n 1)
@@ -135,7 +148,14 @@ jobs:
             echo ""
             git log -1 --pretty=format:'%s'
           } > notes.md
-          gh release create "$TAG" "out/RomanUrduKeyboard-${VERSION_NAME}-test.apk" \
+          EXTRA=""
+          if [ -f out/roman-urdu-keyboard-r8.apk ]; then
+            cp out/roman-urdu-keyboard-r8.apk "out/RomanUrduKeyboard-${VERSION_NAME}-test-R8-experiment.apk"
+            EXTRA="out/RomanUrduKeyboard-${VERSION_NAME}-test-R8-experiment.apk"
+            echo "" >> notes.md
+            echo "Also attached: an experimental R8 copy (smaller, may start faster). Only use it to compare. If translation misbehaves in it, go back to the normal APK." >> notes.md
+          fi
+          gh release create "$TAG" "out/RomanUrduKeyboard-${VERSION_NAME}-test.apk" $EXTRA \
             --title "Test ${VERSION_NAME} (rewritten keyboard)" --notes-file notes.md \
             --target "$GITHUB_SHA" --prerelease
           echo "::notice title=Test release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
