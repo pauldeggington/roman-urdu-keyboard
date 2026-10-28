@@ -27,29 +27,41 @@ class WordSuggesterTest {
 
     @Test
     fun fixesCommonTypos() {
-        assertTrue("teh -> the: " + suggester.suggest("teh"), "the" in suggester.suggest("teh"))
+        assertEquals("the", suggester.suggest("teh").first())
         assertEquals("receive", suggester.suggest("recieve").first())
-        assertTrue("definately: " + suggester.suggest("definately"), "definitely" in suggester.suggest("definately"))
-        assertTrue("wiht: " + suggester.suggest("wiht"), "with" in suggester.suggest("wiht"))
+        assertEquals("definitely", suggester.suggest("definately").first())
+        assertEquals("with", suggester.suggest("wiht").first())
+        assertEquals("because", suggester.suggest("becuase").first())
+        assertEquals("their", suggester.suggest("thier").first())
+        assertEquals("tomorrow", suggester.suggest("tommorow").first())
     }
 
     @Test
     fun anApostropheLessContractionIsOffered() {
         assertTrue("dont: " + suggester.suggest("dont"), "don't" in suggester.suggest("dont"))
-        assertTrue("im: " + suggester.suggest("im"), "i'm" in suggester.suggest("im") || suggester.suggest("im").isNotEmpty())
+        assertTrue("wasnt: " + suggester.suggest("wasnt"), "wasn't" in suggester.suggest("wasnt"))
+        assertTrue("im: " + suggester.suggest("im"), "i'm" in suggester.suggest("im"))
+    }
+
+    @Test
+    fun realWordsAreNotChanged() {
+        assertEquals("form", suggester.suggest("form").first())
+        assertEquals("from", suggester.suggest("from").first())
+        assertEquals("was", suggester.suggest("was").first())
     }
 
     @Test
     fun aRealWordStaysFirst() {
         assertEquals("the", suggester.suggest("the").first())
         assertEquals("hello", suggester.suggest("hello").first())
+        assertEquals("computer", suggester.suggest("computer").first())
     }
 
     @Test
     fun yourOwnWordsAreSuggested() {
         val personal = mapOf("paulu" to 6, "zeeshan" to 12)
-        assertEquals("zeeshan", suggester.suggest("zee", personal).first())
-        assertTrue("paulu" in suggester.suggest("pau", personal))
+        assertTrue("zeeshan in " + suggester.suggest("zee", personal), "zeeshan" in suggester.suggest("zee", personal))
+        assertTrue("paulu in " + suggester.suggest("pau", personal), "paulu" in suggester.suggest("pau", personal))
         // a typed name the person already uses is left alone
         assertEquals("zeeshan", suggester.suggest("zeeshan", personal).first())
     }

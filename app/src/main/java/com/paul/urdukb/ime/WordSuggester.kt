@@ -46,11 +46,16 @@ class WordSuggester(words: List<Pair<String, Int>>) {
     /**
      * Up to [max] words for what has been typed so far, best first, all lower case.
      * [personal] is how often the person typed each word (their own words and names).
+     *
+     * The word list comes from real writing, so it also contains common misspellings ("teh", "recieve", "dont").
+     * A word that is in the list is therefore still offered a fix, when another word one or two typos away is far
+     * more common. A real word such as "form" (against "from") is left alone.
      */
     fun suggest(typedRaw: String, personal: Map<String, Int> = emptyMap(), max: Int = 3): List<String> {
         val typed = typedRaw.lowercase()
         if (typed.length < 2 || typed.any { !(it.isLetter() || it == '\'') }) return emptyList()
         val found = HashMap<String, Int>()
+        val fixes = HashMap<String, Int>()
 
         fun offer(word: String, score: Int) {
             if (word == typed) return
@@ -76,26 +81,43 @@ class WordSuggester(words: List<Pair<String, Int>>) {
         for (c in completions.take(8)) offer(c.word, c.score)
         for ((w, n) in personal) if (w.length > typed.length && w.startsWith(typed)) offer(w, PERSONAL_BASE + minOf(n, 20) * 6)
 
-        // 2. fixing a typo: only for something that is not a word, and long enough to guess from
-        val known = exact.containsKey(typed) || personal.containsKey(typed)
-        if (!known && typed.length >= 3) {
+        // 2. fixing a typo (never for a word the person uses themselves)
+        val ownWord = personal.containsKey(typed)
+        val inList = exact.containsKey(typed)
+        val typedZipf = exact[typed] ?: -1
+        if (!ownWord && typed.length >= 3) {
             val flat = typed.replace("'", "")
             val allowed = if (flat.length >= 7) 2 else 1
+            val margin = if (flat.length <= 3) 250 else 200
             for (len in maxOf(1, flat.length - allowed)..minOf(byLength.size - 1, flat.length + allowed)) {
                 for (idx in byLength[len]) {
+                    if (sorted[idx] == typed) continue
                     val d = distanceWithin(flat, plain[idx], allowed)
-                    if (d in 0..allowed) offer(sorted[idx], zipf[idx] - 120 * d)
+                    if (d !in 0..allowed) continue
+                    // "dont" -> "don't": the same letters with an apostrophe is always worth offering
+                    val contraction = d == 0
+                    if (inList && !contraction && zipf[idx] < typedZipf + margin) continue
+                    val score = zipf[idx] - 120 * d + (if (contraction) 250 else 0)
+                    offer(sorted[idx], score)
+                    fixes[sorted[idx]] = score
                 }
             }
-            for ((w, n) in personal) {
-                val d = distanceWithin(flat, w, allowed)
-                if (d in 1..allowed) offer(w, PERSONAL_BASE + minOf(n, 20) * 6 - 120 * d)
+            if (!inList) {
+                for ((w, n) in personal) {
+                    val d = distanceWithin(flat, w, allowed)
+                    if (d in 1..allowed) offer(w, PERSONAL_BASE + minOf(n, 20) * 6 - 120 * d)
+                }
             }
         }
 
         val ranked = found.entries.sortedWith(compareByDescending<Map.Entry<String, Int>> { it.value }.thenBy { it.key }).map { it.key }
-        // a word that is already complete stays first, so a tap on the strip never changes a correct word by accident
-        return if (known) (listOf(typed) + ranked).take(max) else ranked.take(max)
+        if (inList || ownWord) {
+            // a word that is already there stays on the strip, so a tap never changes a correct word by accident
+            val bestFix = fixes.maxByOrNull { it.value }?.key
+            return if (bestFix != null) (listOf(bestFix, typed) + ranked.filter { it != bestFix }).take(max)
+            else (listOf(typed) + ranked).take(max)
+        }
+        return ranked.take(max)
     }
 
     /** Edit distance (insert, delete, change, swap two letters) if it is at most [limit], otherwise -1. */
@@ -122,7 +144,7 @@ class WordSuggester(words: List<Pair<String, Int>>) {
     }
 
     companion object {
-        private const val PERSONAL_BASE = 520
+        private const val PERSONAL_BASE = 600
 
         /** "word<TAB>score" lines, as in the glide word list. */
         fun readWords(lines: Sequence<String>): List<Pair<String, Int>> {
