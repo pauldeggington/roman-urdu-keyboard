@@ -73,11 +73,12 @@ object LlmEngine {
      * have been typed. Does nothing if it is already loaded, loading, or there is no model.
      */
     fun warmUp(ctx: Context) {
-        if (engine != null || warming || !modelExists(ctx)) return
+        if (engine != null || warming) return
         warming = true
         val app = ctx.applicationContext
         Thread({
             try {
+                if (!modelExists(app)) return@Thread   // checked here: reading files is not done on the screen's thread
                 synchronized(this) { getEngine(app) }
                 touch()
             } catch (t: Throwable) {

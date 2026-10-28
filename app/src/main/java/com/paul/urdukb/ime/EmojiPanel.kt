@@ -362,7 +362,8 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
     private val deleteTouch = OnTouchListener { v, ev ->
         when (ev.actionMasked) {
             MotionEvent.ACTION_DOWN -> { listener?.onFeedback(); listener?.onDeleteDown(); v.isPressed = true }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> { listener?.onDeleteUp(); v.isPressed = false }
+            MotionEvent.ACTION_UP -> { listener?.onDeleteUp(); v.isPressed = false; v.performClick() }
+            MotionEvent.ACTION_CANCEL -> { listener?.onDeleteUp(); v.isPressed = false }
         }
         true
     }
@@ -373,6 +374,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         val circle = (34 * d).toInt()
         // top bar: back, search field (or the title on the emoticon screen)
         backBtn.setImageResource(R.drawable.kb_back)
+        backBtn.contentDescription = "Back"
         backBtn.scaleType = ImageView.ScaleType.CENTER
         backBtn.setOnClickListener { listener?.onFeedback(); if (searching) closeSearch() else listener?.onBack() }
         topBar.addView(backBtn, LinearLayout.LayoutParams(circle, circle).apply { marginStart = (8 * d).toInt(); marginEnd = (8 * d).toInt() })
@@ -387,6 +389,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         searchText.gravity = Gravity.CENTER_VERTICAL
         searchPill.addView(searchText, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f).apply { marginStart = (10 * d).toInt() })
         clearBtn.setImageResource(R.drawable.kb_close)
+        clearBtn.contentDescription = "Clear search"
         clearBtn.scaleType = ImageView.ScaleType.FIT_CENTER
         clearBtn.setPadding((4 * d).toInt(), (4 * d).toInt(), (4 * d).toInt(), (4 * d).toInt())
         clearBtn.visibility = GONE
@@ -470,6 +473,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         val ph = (38 * d).toInt()
         val gap = (4 * d).toInt()
         emojiPill.setImageResource(R.drawable.kb_emoji)
+        emojiPill.contentDescription = "Emoji"
         emojiPill.scaleType = ImageView.ScaleType.CENTER
         emojiPill.setOnClickListener { listener?.onFeedback(); setMode(Mode.EMOJI) }
         bottomBar.addView(emojiPill, LinearLayout.LayoutParams(pw, ph))
@@ -480,6 +484,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         gifPill.setOnClickListener { listener?.onFeedback(); setMode(Mode.GIF) }
         bottomBar.addView(gifPill, LinearLayout.LayoutParams(pw, ph).apply { marginStart = gap })
         stickerPill.setImageResource(R.drawable.kb_sticker)
+        stickerPill.contentDescription = "Stickers"
         stickerPill.scaleType = ImageView.ScaleType.CENTER
         stickerPill.setOnClickListener { listener?.onFeedback(); setMode(Mode.STICKER) }
         bottomBar.addView(stickerPill, LinearLayout.LayoutParams(pw, ph).apply { marginStart = gap })
@@ -491,6 +496,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         bottomBar.addView(emoticonPill, LinearLayout.LayoutParams(pw, ph).apply { marginStart = gap })
         bottomBar.addView(View(context), LinearLayout.LayoutParams(0, 1, 1f))
         deleteBtn.setImageResource(R.drawable.kb_delete)
+        deleteBtn.contentDescription = "Delete"
         deleteBtn.scaleType = ImageView.ScaleType.CENTER
         deleteBtn.setOnTouchListener(deleteTouch)
         bottomBar.addView(deleteBtn, LinearLayout.LayoutParams((64 * d).toInt(), ViewGroup.LayoutParams.MATCH_PARENT))

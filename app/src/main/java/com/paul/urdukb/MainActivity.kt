@@ -900,9 +900,9 @@ class MainActivity : Activity() {
 
     private fun toast(s: String) = Toast.makeText(this, s, Toast.LENGTH_SHORT).show()
 
-    private fun gb(bytes: Long) = String.format("%.2f GB", bytes / 1073741824.0)
+    private fun gb(bytes: Long) = String.format(java.util.Locale.US, "%.2f GB", bytes / 1073741824.0)
 
-    private fun secs(ms: Long) = String.format("%.1f s", ms / 1000.0)
+    private fun secs(ms: Long) = String.format(java.util.Locale.US, "%.1f s", ms / 1000.0)
 
     private fun showPicker() {
         getSystemService(InputMethodManager::class.java)?.showInputMethodPicker()
@@ -1084,7 +1084,7 @@ class MainActivity : Activity() {
             progressText.visibility = View.VISIBLE
             if (total > 0) progressBar.progress = (done * 1000 / total).toInt()
             val ofTotal = if (total > 0) " of ${gb(total)}" else ""
-            val sp = if (speed > 0) "  •  " + String.format("%.1f MB/s", speed / 1048576.0) else ""
+            val sp = if (speed > 0) "  •  " + String.format(java.util.Locale.US, "%.1f MB/s", speed / 1048576.0) else ""
             progressText.text = label + gb(done) + ofTotal + sp
         }
     }
@@ -1158,7 +1158,7 @@ class MainActivity : Activity() {
             return
         }
         if (dest.parentFile!!.usableSpace < m.approxBytes + 400_000_000L) {
-            toast("You need about ${String.format("%.1f", (m.approxBytes + 400_000_000L) / 1e9)} GB of free space")
+            toast("You need about ${String.format(java.util.Locale.US, "%.1f", (m.approxBytes + 400_000_000L) / 1e9)} GB of free space")
             return
         }
         Prefs.setToken(this, token)

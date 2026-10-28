@@ -43,7 +43,10 @@ class PopupLayer(context: Context) : View(context) {
     private val rowH = 50f * d
     private var anchorCx = 0f
 
+    // the popup only draws; touches go to the keys underneath
     override fun onTouchEvent(event: MotionEvent?) = false
+
+    override fun performClick() = super.performClick()
 
     // Must not make the keyboard window taller: take the parent's height only when it is fixed.
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

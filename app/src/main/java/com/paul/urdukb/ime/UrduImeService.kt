@@ -136,8 +136,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             }
         }
         val filter = IntentFilter("com.paul.urdukb.PREVIEW")
-        if (android.os.Build.VERSION.SDK_INT >= 33) registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED)
-        else registerReceiver(receiver, filter)
+        androidx.core.content.ContextCompat.registerReceiver(this, receiver, filter, androidx.core.content.ContextCompat.RECEIVER_EXPORTED)
     }
 
     override fun onDestroy() {

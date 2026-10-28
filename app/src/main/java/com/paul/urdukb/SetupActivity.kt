@@ -433,7 +433,7 @@ class SetupActivity : Activity() {
         }
         val free = runCatching { StatFs(dest.parentFile!!.path).availableBytes }.getOrDefault(Long.MAX_VALUE)
         if (free < m.approxBytes + 400_000_000L) {
-            toast("You need about ${String.format("%.1f", (m.approxBytes + 400_000_000L) / 1e9)} GB of free space. Free some up and try again.")
+            toast("You need about ${String.format(java.util.Locale.US, "%.1f", (m.approxBytes + 400_000_000L) / 1e9)} GB of free space. Free some up and try again.")
             return
         }
         val wifiOnly = BackgroundDownload.isMetered(this) && sp().getBoolean(PREF_WIFI_ONLY, true)
@@ -753,7 +753,7 @@ class SetupActivity : Activity() {
                 bar.progress = if (s.total > 0) (s.done * 1000 / s.total).toInt() else 0
                 val left = if (speed > 0 && s.total > 0) "  ·  about ${eta((s.total - s.done) / speed)} left" else ""
                 note.text = gb(s.done) + (if (s.total > 0) " of ${gb(s.total)}" else "") +
-                    (if (speed > 0) "  ·  " + String.format("%.1f MB/s", speed / 1048576.0) else "") + left +
+                    (if (speed > 0) "  ·  " + String.format(java.util.Locale.US, "%.1f MB/s", speed / 1048576.0) else "") + left +
                     "\nIt keeps going in the background, so carry on with setup."
                 primary.text = "Next"
                 secondary.text = "Cancel download"
@@ -813,11 +813,11 @@ class SetupActivity : Activity() {
     private fun dpf(v: Float) = v * resources.displayMetrics.density
     private fun lp() = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     private fun toast(s: String) = Toast.makeText(this, s, Toast.LENGTH_LONG).show()
-    private fun gb(b: Long) = String.format("%.2f GB", b / 1073741824.0)
+    private fun gb(b: Long) = String.format(java.util.Locale.US, "%.2f GB", b / 1073741824.0)
     private fun eta(sec: Double): String = when {
         sec < 90 -> "1 minute"
         sec < 3600 -> "${(sec / 60).toInt() + 1} minutes"
-        else -> String.format("%.1f hours", sec / 3600)
+        else -> String.format(java.util.Locale.US, "%.1f hours", sec / 3600)
     }
 
     private fun onBackPressedCompat() {

@@ -103,7 +103,8 @@ class ClipboardPanel(context: Context) : FrameLayout(context) {
     private val deleteTouch = OnTouchListener { v, ev ->
         when (ev.actionMasked) {
             MotionEvent.ACTION_DOWN -> { listener?.onFeedback(); listener?.onDeleteDown(); v.isPressed = true }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> { listener?.onDeleteUp(); v.isPressed = false }
+            MotionEvent.ACTION_UP -> { listener?.onDeleteUp(); v.isPressed = false; v.performClick() }
+            MotionEvent.ACTION_CANCEL -> { listener?.onDeleteUp(); v.isPressed = false }
         }
         true
     }
@@ -111,6 +112,7 @@ class ClipboardPanel(context: Context) : FrameLayout(context) {
     init {
         val circle = (34 * d).toInt()
         backBtn.setImageResource(R.drawable.kb_back)
+        backBtn.contentDescription = "Back"
         backBtn.scaleType = ImageView.ScaleType.CENTER
         backBtn.setOnClickListener { listener?.onFeedback(); listener?.onBack() }
         topBar.addView(backBtn, LinearLayout.LayoutParams(circle, circle).apply { marginStart = (8 * d).toInt(); marginEnd = (10 * d).toInt() })
@@ -164,6 +166,7 @@ class ClipboardPanel(context: Context) : FrameLayout(context) {
         bottomBar.addView(abc, LinearLayout.LayoutParams((64 * d).toInt(), ViewGroup.LayoutParams.MATCH_PARENT))
         bottomBar.addView(View(context), LinearLayout.LayoutParams(0, 1, 1f))
         deleteBtn.setImageResource(R.drawable.kb_delete)
+        deleteBtn.contentDescription = "Delete"
         deleteBtn.scaleType = ImageView.ScaleType.CENTER
         deleteBtn.setOnTouchListener(deleteTouch)
         bottomBar.addView(deleteBtn, LinearLayout.LayoutParams((64 * d).toInt(), ViewGroup.LayoutParams.MATCH_PARENT))
