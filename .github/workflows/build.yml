@@ -12,15 +12,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # 1.0.<run> for people; the Version step sets versionCode 4300+<run> so each release installs over the last
-      VERSION_NAME: 2.0.${{ github.run_number }}
       # optional: a GIPHY API key built into the release so GIFs and stickers work without pasting one
       GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Version
-        run: echo "VERSION_CODE=$((4300 + ${{ github.run_number }}))" >> "$GITHUB_ENV"
+        # <major.minor from the VERSION file>.<CI build>, e.g. 2.1.121. versionCode is 4300 + build, so every build installs over the last.
+        run: |
+          echo "VERSION_NAME=$(tr -d '[:space:]' < VERSION).${{ github.run_number }}" >> "$GITHUB_ENV"
+          echo "VERSION_CODE=$((4300 + ${{ github.run_number }}))" >> "$GITHUB_ENV"
 
       - uses: actions/setup-java@v4
         with:
@@ -129,7 +130,7 @@ jobs:
           gh release create "$TAG" \
             "out/roman-urdu-keyboard.apk" \
             "out/RomanUrduKeyboard-${VERSION_NAME}.apk" \
-            --title "Roman Urdu Keyboard ${VERSION_NAME}" \
+            --title "Roman Urdu Keyboard $(tr -d '[:space:]' < VERSION) (build ${GITHUB_RUN_NUMBER})" \
             --notes-file notes.md \
             --target "$GITHUB_SHA" \
             --latest

@@ -7,7 +7,7 @@ async def main():
     async with async_playwright() as p:
         b = await p.chromium.launch()
         pg = await b.new_page(viewport={'width':1920,'height':1080})
-        await pg.goto('file://' + os.path.abspath('index.html') + '?render')
+        await pg.goto('file://' + os.path.abspath(os.environ.get('FILM', 'index.html')) + '?render')
         await pg.evaluate('document.fonts.ready')
         await pg.wait_for_timeout(500)
         if times:

@@ -61,7 +61,8 @@ the other way. Tap Translate again to get your original text back.
 4. In any app, type something and tap **Translate** above the keys.
 
 <p align="center">
-  <img src="docs/setup.png" alt="The six setup screens" width="100%">
+  <a href="docs/setup.mp4"><img src="docs/setup.gif" alt="Setup film: welcome, download the translator, make it yours (male or female, casual or formal, theme and colour), try it in the practice box, all set" width="100%"></a><br>
+  <sub>The setup guide, start to finish. Click for the full-quality video (1080p, 36 seconds).</sub>
 </p>
 
 New versions show up on the Releases page and install over the old one, keeping your settings and the translator.
@@ -218,6 +219,10 @@ What works today is described above. Still to come:
 
 Ideas are welcome as [issues](https://github.com/pauldeggington/roman-urdu-keyboard/issues).
 
+## Versions
+
+Every release on `main` has a version number (for example **2.1**, build 121) shown in the app, in the release title and in the [changelog](CHANGELOG.md).
+
 ## Test builds
 
 Every change is built as a pre-release first (for example `v2.0.112-test`). Install one over the normal app if you want to try things early; the in-app Update button ignores them and your settings stay.
@@ -233,7 +238,7 @@ Every change is built as a pre-release first (for example `v2.0.112-test`). Inst
 | `tools/convert_ruwv.py` | Converts the spelling data into the file the app reads |
 | `scripts/shots.sh`, `.github/workflows/preview.yml` | Boots the keyboard on an emulator in CI and takes screenshots |
 | `scripts/make_readme_images.py` | Turns those screenshots into the pictures and animation in this README |
-| `scripts/film/` | The showcase film: one HTML page drawn in code (`index.html`), rendered to frames with `render.py` and joined with ffmpeg |
+| `scripts/film/` | The showcase and setup films: each is one HTML page drawn in code (`index.html`, `setup.html`), rendered to frames with `render.py` and joined with ffmpeg |
 
 </details>
 

@@ -755,7 +755,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         pasteText = text
         typingWord = ""
         val oneLine = text.replace('\n', ' ')
-        typingCandidates = listOf("Paste: " + if (oneLine.length > 20) oneLine.take(19) + "…" else oneLine)
+        typingCandidates = listOf("\uD83D\uDCCB " + if (oneLine.length > 12) oneLine.take(11).trimEnd() + "…" else oneLine)
         strip = Strip.TYPING
         toolbar.suggestions = typingCandidates
         toolbar.suggestionIndex = -1

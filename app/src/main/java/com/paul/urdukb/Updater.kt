@@ -19,9 +19,15 @@ object Updater {
     data class Release(val tag: String, val versionCode: Long, val name: String, val apkUrl: String, val notes: String, val page: String)
 
     fun installedCode(ctx: Context): Long = ctx.packageManager.getPackageInfo(ctx.packageName, 0).longVersionCode
-    fun installedName(ctx: Context): String = ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "?"
+    fun installedName(ctx: Context): String = display(ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "?")
 
-    /** CI tags releases v1.0.<run> and sets versionCode 4300 + <run>. */
+    /** "2.1.121" is shown as "2.1 (build 121)"; a test build keeps its "-test" ending. */
+    fun display(name: String): String {
+        val m = Regex("^(\\d+\\.\\d+)\\.(\\d+)(-.*)?$").matchEntire(name) ?: return name
+        return "${m.groupValues[1]} (build ${m.groupValues[2]})${m.groupValues[3]}"
+    }
+
+    /** CI tags releases v<major>.<minor>.<build> and sets versionCode 4300 + <build>. */
     fun codeFromTag(tag: String): Long = tag.substringAfterLast('.').toLongOrNull()?.let { 4300 + it } ?: -1
 
     /** Blocking; call off the main thread. */

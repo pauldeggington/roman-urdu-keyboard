@@ -64,4 +64,11 @@ class PanelsTest {
         assertEquals("a week", ClipStore.ttlWords(168))
         assertEquals("an hour", ClipStore.ttlWords(1))
     }
+
+    @Test
+    fun versionIsShownWithItsBuild() {
+        assertEquals("2.1 (build 121)", com.paul.urdukb.Updater.display("2.1.121"))
+        assertEquals("2.1 (build 121)-test", com.paul.urdukb.Updater.display("2.1.121-test"))
+        assertEquals("2.0-dev", com.paul.urdukb.Updater.display("2.0-dev"))
+    }
 }
