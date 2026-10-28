@@ -19,9 +19,12 @@ class GlideLayout(val centers: Map<Char, GlidePoint>, val keyWidth: Float)
  * path starts near its first letter, ends near its last letter, and passes close to every letter in between. Candidates
  * are then ranked by how closely the resampled paths match, with a bonus for common words.
  */
-class GlideDecoder(private val entries: List<Entry>) {
+class GlideDecoder(entries: List<Entry>) {
 
     class Entry(val word: String, val key: String, val zipf: Int)
+
+    /** Words grouped by their first letter, so a glide only looks at words that start near where the finger started. */
+    private val byFirst: Map<Char, List<Entry>> = entries.groupBy { it.key[0] }
 
     companion object {
         private const val SAMPLES = 32
@@ -110,9 +113,9 @@ class GlideDecoder(private val entries: List<Entry>) {
 
         val cover = COVER_RADIUS * kw
         val scored = ArrayList<Pair<Float, String>>()
-        for (e in entries) {
+        for (e in startKeys.flatMap { byFirst[it].orEmpty() }) {
             val k = e.key
-            if (k[0] !in startKeys || k[k.length - 1] !in endKeys) continue
+            if (k[k.length - 1] !in endKeys) continue
             var ok = true
             var i = 1
             while (i < k.length - 1 && ok) {

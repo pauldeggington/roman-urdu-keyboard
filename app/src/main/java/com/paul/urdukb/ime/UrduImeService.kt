@@ -27,6 +27,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
+import com.paul.urdukb.LlmEngine
 import com.paul.urdukb.RomanUrdu
 
 /**
@@ -53,7 +54,6 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     private var clipOpen = false
 
     // glide typing
-    @Volatile private var glideDecoder: GlideDecoder? = null
     private val glideThread = java.util.concurrent.Executors.newSingleThreadExecutor()
 
     /** The word the last glide typed, so a suggestion can swap it and backspace can remove all of it. */
@@ -62,12 +62,18 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         fun tail() = prefix + shown() + " "
     }
     private var glideCommit: GlideCommit? = null
+    private var inputSession = 0      // changes whenever a text field gets focus, so late results can be dropped
+    private var typedChars = 0
     private val hideSuggestions = Runnable { clearGlide() }
     private var clipListener: android.content.ClipboardManager.OnPrimaryClipChangedListener? = null
     private var searching = false
     private var baseEnterKind = KeyboardView.ENTER_RETURN
 
-    private val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ -> handler.post { refreshAll() } }
+    // only a changed setting redraws the keyboard; saving recent emoji, clips or a key must not
+    private val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key == null || key in Kb.LIVE_KEYS) handler.post { refreshAll() }
+    }
+    private val lookListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ -> handler.post { refreshAll() } }
     private val deleteRepeat = object : Runnable {
         override fun run() {
             deleteOne()
@@ -78,15 +84,10 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     override fun onCreate() {
         super.onCreate()
         Kb.prefs(this).registerOnSharedPreferenceChangeListener(prefListener)
-        applicationContext.getSharedPreferences("look", Context.MODE_PRIVATE).registerOnSharedPreferenceChangeListener(prefListener)
+        applicationContext.getSharedPreferences("look", Context.MODE_PRIVATE).registerOnSharedPreferenceChangeListener(lookListener)
         if (BuildConfig.PREVIEW) registerPreviewHooks()
-        // glide typing: load the word list in the background
-        Thread {
-            try {
-                assets.open("dict/en.tsv").bufferedReader().use { r -> glideDecoder = GlideDecoder.parse(r.lineSequence()) }
-            } catch (_: Exception) {
-            }
-        }.start()
+        // glide typing: the word list is normally already loaded by the app's start-up; make sure it is
+        Thread({ GlideDict.load(this) }, "glide-dict").start()
         // clipboard history: remember what is copied while the keyboard is running
         getSystemService(android.content.ClipboardManager::class.java)?.let { cm ->
             clipListener = android.content.ClipboardManager.OnPrimaryClipChangedListener {
@@ -142,7 +143,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     override fun onDestroy() {
         clipListener?.let { getSystemService(android.content.ClipboardManager::class.java)?.removePrimaryClipChangedListener(it) }
         Kb.prefs(this).unregisterOnSharedPreferenceChangeListener(prefListener)
-        applicationContext.getSharedPreferences("look", Context.MODE_PRIVATE).unregisterOnSharedPreferenceChangeListener(prefListener)
+        applicationContext.getSharedPreferences("look", Context.MODE_PRIVATE).unregisterOnSharedPreferenceChangeListener(lookListener)
         RomanUrdu.onStateChanged = null
         super.onDestroy()
     }
@@ -239,18 +240,37 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         container.setPadding(0, 0, 0, (if (reported > 0) reported else fallback) + (36f * d).toInt())
     }
 
+    private var appliedColors: KbColors? = null
+    private var vibrateOn = true
+    private var soundOn = false
+    private var autoCapOn = true
+    private var doubleSpaceOn = true
+    private var warmOn = true
+    private val vibrator by lazy { getSystemService(VibratorManager::class.java)?.defaultVibrator }
+    private val audio by lazy { getSystemService(AudioManager::class.java) }
+
     private fun refreshAll() {
         if (!viewReady) return
         val colors = KbColors.of(this)
-        container.setBackgroundColor(colors.bg)
-        keyboard.colors = colors
-        toolbar.colors = colors
-        emoji.colors = colors
-        clipboardPanel.colors = colors
-        popup.colors = colors
+        // handing the colours to every panel redraws them all, so it only happens when they really changed
+        if (colors != appliedColors) {
+            appliedColors = colors
+            container.setBackgroundColor(colors.bg)
+            keyboard.colors = colors
+            toolbar.colors = colors
+            emoji.colors = colors
+            clipboardPanel.colors = colors
+            popup.colors = colors
+        }
         keyboard.showHints = Kb.hints(this)
         keyboard.showPreview = Kb.preview(this)
         keyboard.glideEnabled = Kb.glide(this)
+        // read once here instead of on every key press
+        vibrateOn = Kb.vibrate(this)
+        soundOn = Kb.sound(this)
+        autoCapOn = Kb.autoCap(this)
+        doubleSpaceOn = Kb.doubleSpace(this)
+        warmOn = Kb.warm(this)
         refreshToolbar()
     }
 
@@ -282,6 +302,9 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     override fun onStartInputView(info: EditorInfo, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         if (!viewReady) return
+        inputSession++
+        typedChars = 0
+        clearGlide()
         frame.post { applyBottomPadding(frame.rootWindowInsets); frame.requestApplyInsets() }
         val cls = info.inputType and InputType.TYPE_MASK_CLASS
         keyboard.page = if (cls == InputType.TYPE_CLASS_NUMBER || cls == InputType.TYPE_CLASS_PHONE || cls == InputType.TYPE_CLASS_DATETIME)
@@ -325,7 +348,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         if (!viewReady || keyboard.shift == KeyboardView.SHIFT_CAPS || searching) return
         val ic = currentInputConnection
         val info = currentInputEditorInfo
-        if (ic == null || info == null || !Kb.autoCap(this) || (info.inputType and InputType.TYPE_MASK_CLASS) != InputType.TYPE_CLASS_TEXT) {
+        if (ic == null || info == null || !autoCapOn || (info.inputType and InputType.TYPE_MASK_CLASS) != InputType.TYPE_CLASS_TEXT) {
             keyboard.shift = KeyboardView.SHIFT_OFF
             return
         }
@@ -369,16 +392,24 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         }
         val ic = currentInputConnection ?: return
         ic.commitText(s, 1)
+        noteTyped(s.length)
         lastSpace = 0
         if (keyboard.shift == KeyboardView.SHIFT_ON) keyboard.shift = KeyboardView.SHIFT_OFF
         updateShift()
+    }
+
+    /** After a dozen typed characters the translator is loaded in the background, so Translate does not make you wait. */
+    private fun noteTyped(n: Int) {
+        if (typedChars >= WARM_AFTER) return
+        typedChars += n
+        if (typedChars >= WARM_AFTER && warmOn) LlmEngine.warmUp(applicationContext)
     }
 
     private fun typeSpace() {
         if (searching) { emoji.searchType(" "); return }
         val ic = currentInputConnection ?: return
         val now = SystemClock.uptimeMillis()
-        if (Kb.doubleSpace(this) && now - lastSpace < 500) {
+        if (doubleSpaceOn && now - lastSpace < 500) {
             val before = ic.getTextBeforeCursor(2, 0)
             if (before != null && before.length == 2 && before[1] == ' ' && before[0].isLetterOrDigit()) {
                 ic.beginBatchEdit()
@@ -441,34 +472,33 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     override fun onFeedback(key: KeyDef) = feedback(key.type)
 
     private fun feedback(type: KeyType? = null) {
-        if (Kb.vibrate(this)) {
-            runCatching {
-                getSystemService(VibratorManager::class.java)?.defaultVibrator
-                    ?.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
-            }
+        if (vibrateOn) {
+            runCatching { vibrator?.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK)) }
         }
-        if (Kb.sound(this)) {
+        if (soundOn) {
             val fx = when (type) {
                 KeyType.SPACE -> AudioManager.FX_KEYPRESS_SPACEBAR
                 KeyType.DELETE -> AudioManager.FX_KEYPRESS_DELETE
                 KeyType.ENTER -> AudioManager.FX_KEYPRESS_RETURN
                 else -> AudioManager.FX_KEYPRESS_STANDARD
             }
-            getSystemService(AudioManager::class.java)?.playSoundEffect(fx, -1f)
+            audio?.playSoundEffect(fx, -1f)
         }
     }
 
     // ------------------------------------------------------------------ glide typing
 
     override fun onGlide(path: List<GlidePoint>) {
-        val decoder = glideDecoder
+        val decoder = GlideDict.decoder
         val layout = keyboard.glideLayout()
         if (decoder == null || layout == null) return
         val points = ArrayList(path)
+        val session = inputSession
         glideThread.execute {
             val words = decoder.decode(points, layout, 5)
             if (BuildConfig.PREVIEW) Log.i("PREVIEW", "GLIDE $words")
-            handler.post { if (words.isNotEmpty()) commitGlide(words) }
+            // the person may have moved to another field while this was working: then the word is not wanted there
+            handler.post { if (words.isNotEmpty() && session == inputSession) commitGlide(words) }
         }
     }
 
@@ -480,6 +510,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         val prefix = if (before.isNotEmpty() && !before[0].isWhitespace() && before[0] !in "([{\"'\u201C\u2018") " " else ""
         val g = GlideCommit(words, 0, prefix, keyboard.shift)
         ic.commitText(g.tail(), 1)
+        noteTyped(words[0].length + 1)
         glideCommit = g
         lastSpace = 0
         if (keyboard.shift == KeyboardView.SHIFT_ON) keyboard.shift = KeyboardView.SHIFT_OFF
@@ -670,5 +701,6 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
 
     companion object {
         const val EXTRA_TOP_DP = 64f
+        private const val WARM_AFTER = 12
     }
 }

@@ -2,6 +2,7 @@ package com.paul.urdukb.ime
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.paul.urdukb.Secrets
 
 /** Keyboard settings. One small preferences file, shared by the keyboard and the app. */
 object Kb {
@@ -19,6 +20,7 @@ object Kb {
 
     const val PREF_GIPHY_KEY = "giphy_key"
     const val PREF_CLIP = "clipboard_history"
+    const val PREF_WARM = "warm_translator"
 
     fun prefs(ctx: Context): SharedPreferences =
         ctx.applicationContext.getSharedPreferences("keyboard", Context.MODE_PRIVATE)
@@ -32,8 +34,23 @@ object Kb {
     fun hints(ctx: Context) = bool(ctx, PREF_HINTS, true)
     fun preview(ctx: Context) = bool(ctx, PREF_PREVIEW, true)
     fun glide(ctx: Context) = bool(ctx, PREF_GLIDE, true)
+    fun warm(ctx: Context) = bool(ctx, PREF_WARM, true)
 
-    /** The GIPHY key the person pasted in the app, or the one built into this release. Empty when neither exists. */
-    fun giphyKey(ctx: Context): String =
-        prefs(ctx).getString(PREF_GIPHY_KEY, "").orEmpty().trim().ifEmpty { com.paul.urdukb.BuildConfig.GIPHY_KEY }
+    /** The settings that change how the keyboard looks or behaves right away; other saved values (recent emoji, clips) do not. */
+    val LIVE_KEYS = setOf(PREF_VIBRATE, PREF_SOUND, PREF_AUTOCAP, PREF_DOUBLE_SPACE, PREF_HINTS, PREF_PREVIEW, PREF_GLIDE, PREF_WARM, PREF_TONE, PREF_DIRECTION)
+
+    /** The key the person pasted in the app (decrypted), or empty. */
+    fun ownGiphyKey(ctx: Context): String {
+        val saved = prefs(ctx).getString(PREF_GIPHY_KEY, "").orEmpty()
+        val plain = Secrets.open(saved)
+        if (plain.isNotEmpty() && !saved.startsWith("enc1:")) setGiphyKey(ctx, plain)   // older plain value: encrypt it now
+        return plain.trim()
+    }
+
+    fun setGiphyKey(ctx: Context, key: String) {
+        prefs(ctx).edit().putString(PREF_GIPHY_KEY, Secrets.seal(key.trim())).apply()
+    }
+
+    /** The GIPHY key to use: the one pasted in the app, else the one built into this release. Empty when neither exists. */
+    fun giphyKey(ctx: Context): String = ownGiphyKey(ctx).ifEmpty { com.paul.urdukb.BuildConfig.GIPHY_KEY }
 }

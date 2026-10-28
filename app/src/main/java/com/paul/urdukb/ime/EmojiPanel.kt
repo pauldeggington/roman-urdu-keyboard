@@ -34,7 +34,7 @@ class EmojiItem(val emoji: String, val skin: Boolean, val name: String)
 object EmojiData {
     class Section(val id: String, val title: String, val icon: Int, val items: List<EmojiItem>)
 
-    private var cached: List<Section>? = null
+    @Volatile private var cached: List<Section>? = null
 
     private val titles = linkedMapOf(
         "smileys" to ("Smileys & Emotions" to R.drawable.kb_cat_smileys),
@@ -49,6 +49,7 @@ object EmojiData {
     )
 
     /** Only the emoji this phone can actually draw, so there are no empty boxes. */
+    @Synchronized
     fun load(ctx: Context): List<Section> {
         cached?.let { return it }
         val probe = Paint()
@@ -502,9 +503,10 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         addView(scrim, LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
         addView(tonePicker, LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, (52 * d).toInt()))
 
-        setMode(Mode.EMOJI)
         applyColors()
     }
+
+    private var built = false
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val h = if (searching) COMPACT_DP else HEIGHT_DP
@@ -526,7 +528,8 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
     fun refresh() {
         hideTones()
         if (searching) closeSearch()
-        if (mode == Mode.EMOJI) setMode(Mode.EMOJI)
+        // built the first time the screen opens, not when the keyboard starts (the emoji list is large)
+        if (!built || mode == Mode.EMOJI) setMode(mode)
     }
 
     /** For the emulator preview hooks. */
@@ -540,6 +543,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
     // ---------------------------------------------------------------- modes
 
     private fun setMode(m: Mode) {
+        built = true
         if (searching) closeSearch()
         mode = m
         selectedTab = 0

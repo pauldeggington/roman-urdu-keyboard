@@ -37,6 +37,8 @@ object Detect {
     // Words that are valid in both languages. They count for neither side.
     private val SHARED = setOf("to", "do", "me", "he", "the", "a", "an", "in", "on", "at", "or", "so", "no", "na", "ho", "hi", "ha", "ye", "ya", "tu", "pe", "be", "us", "it", "is", "as", "ok", "i")
 
+    private val NOT_LATIN = Regex("[^a-z']+")
+
     fun isEnglishWord(word: String): Boolean = word in ENGLISH
 
     enum class Language { ROMAN_URDU, ENGLISH }
@@ -45,7 +47,7 @@ object Detect {
         // Any Urdu/Arabic script at all: treat as Urdu script, handled by the caller as RU to EN.
         if (text.any { it in '؀'..'ۿ' }) return Language.ROMAN_URDU
 
-        val words = text.lowercase().split(Regex("[^a-z']+")).filter { it.isNotEmpty() }
+        val words = text.lowercase().split(NOT_LATIN).filter { it.isNotEmpty() }
         if (words.isEmpty()) return Language.ENGLISH
 
         var urdu = 0

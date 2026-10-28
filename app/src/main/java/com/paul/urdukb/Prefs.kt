@@ -91,8 +91,14 @@ Rules:
     fun gpu(ctx: Context) = sp(ctx).getBoolean("gpu", false)
     fun setGpu(ctx: Context, v: Boolean) = sp(ctx).edit().putBoolean("gpu", v).apply()
 
-    fun token(ctx: Context) = sp(ctx).getString("hf_token", "").orEmpty()
-    fun setToken(ctx: Context, v: String) = sp(ctx).edit().putString("hf_token", v.trim()).apply()
+    fun token(ctx: Context): String {
+        val saved = sp(ctx).getString("hf_token", "").orEmpty()
+        val plain = Secrets.open(saved)
+        // a token saved by an older version as plain text is encrypted the first time it is read
+        if (plain.isNotEmpty() && !saved.startsWith("enc1:")) setToken(ctx, plain)
+        return plain
+    }
+    fun setToken(ctx: Context, v: String) = sp(ctx).edit().putString("hf_token", Secrets.seal(v.trim())).apply()
 
     fun modelChoice(ctx: Context): ModelChoice =
         ModelChoice.entries.firstOrNull { it.key == sp(ctx).getString("model_choice", ModelChoice.GEMMA4.key) } ?: ModelChoice.GEMMA4
@@ -117,7 +123,19 @@ Rules:
         }
     }
 
+    private val examplesMemo = HashMap<String, Pair<String?, String>>()
+
+    /** The example bank for a style. The tidy-up below only runs when the saved text changed. */
+    @Synchronized
     fun examples(ctx: Context, style: Style): String {
+        val raw = sp(ctx).getString("examples_${style.key}", null)
+        examplesMemo[style.key]?.let { (seen, out) -> if (seen === raw && raw != null) return out }
+        val out = computeExamples(ctx, style)
+        examplesMemo[style.key] = sp(ctx).getString("examples_${style.key}", null) to out
+        return out
+    }
+
+    private fun computeExamples(ctx: Context, style: Style): String {
         val p = sp(ctx)
         // banks saved before the speaker fix: swap the old lines that read as "you"
         var v = p.getString("examples_${style.key}", null)?.lines()?.joinToString("\n") { DefaultBank.REPLACED[it.trim()] ?: it }

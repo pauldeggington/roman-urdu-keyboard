@@ -12,7 +12,7 @@ import com.paul.urdukb.KeyboardLook
  * ?123 and Enter pills = secondary 700, text = neutral variant 100.
  * Any other swatch builds the same set from that colour.
  */
-class KbColors(
+data class KbColors(
     val dark: Boolean,
     val bg: Int,
     val keyText: Int,

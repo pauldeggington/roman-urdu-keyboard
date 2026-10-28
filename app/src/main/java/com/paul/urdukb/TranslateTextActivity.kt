@@ -16,7 +16,6 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
-import java.util.concurrent.Executors
 
 /**
  * "Translate to English" in the text-selection menu of other apps: select a message someone sent you in Roman Urdu,
@@ -36,7 +35,8 @@ class TranslateTextActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pal = Palette(this)
-        val text = intent?.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)?.toString()?.trim().orEmpty()
+        // any app may send text here, so only a sensible amount is read
+        val text = intent?.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)?.toString()?.trim().orEmpty().take(4000)
         if (text.isEmpty()) { finish(); return }
 
         val sheet = LinearLayout(this).apply {
@@ -110,7 +110,7 @@ class TranslateTextActivity : Activity() {
             return
         }
         if (!LlmEngine.isLoaded()) note.text = "Roman Urdu → English  ·  loading the model, the first one takes a bit longer"
-        Executors.newSingleThreadExecutor().execute {
+        Thread({
             var out: String? = null
             var err: Throwable? = null
             try {
@@ -131,7 +131,7 @@ class TranslateTextActivity : Activity() {
                     copyBtn.alpha = 1f
                 }
             }
-        }
+        }, "translate-selection").start()
     }
 
     private fun pill(label: String, filled: Boolean, onClick: () -> Unit) = Button(this).apply {

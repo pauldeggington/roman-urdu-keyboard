@@ -129,6 +129,8 @@ object MediaCache {
             return
         }
         pool.execute {
+            // the row may have been scrolled away and reused for another picture while this waited in line
+            if (iv.getTag(com.paul.urdukb.R.id.media_url) != url) return@execute
             val bytes = memory.get(url) ?: fetchBytes(url)?.also { memory.put(url, it) } ?: return@execute
             val drawable: Drawable? = try {
                 ImageDecoder.decodeDrawable(ImageDecoder.createSource(ByteBuffer.wrap(bytes)))

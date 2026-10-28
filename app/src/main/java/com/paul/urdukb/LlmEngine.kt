@@ -7,6 +7,9 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 
 /** Runs Gemma 4 E2B on-device through LiteRT-LM. One shared engine, loaded on first use. */
 object LlmEngine {
@@ -40,7 +43,49 @@ object LlmEngine {
 
     fun setUseGpu(ctx: Context, value: Boolean) {
         Prefs.setGpu(ctx, value)
-        reset()
+        // dropping the engine can wait for a translation in progress, so it never runs on the screen's thread
+        Thread({ reset() }, "llm-reset").start()
+    }
+
+    // ---------------------------------------------------------------- keeping the model ready, and letting go of it
+
+    private const val IDLE_MS = 10L * 60L * 1000L
+    private val idleTimer = Executors.newSingleThreadScheduledExecutor { r -> Thread(r, "llm-idle").apply { isDaemon = true } }
+    private var idleTask: ScheduledFuture<*>? = null
+    @Volatile private var warming = false
+
+    /** Restarts the countdown that frees the model's memory after ten minutes without a translation. */
+    @Synchronized
+    private fun touch() {
+        idleTask?.cancel(false)
+        idleTask = idleTimer.schedule({ unloadIfIdle() }, IDLE_MS, TimeUnit.MILLISECONDS)
+    }
+
+    @Synchronized
+    private fun unloadIfIdle() {
+        // runs only when no translation holds the lock; the model comes back on the next use
+        try { engine?.close() } catch (_: Throwable) {}
+        engine = null
+    }
+
+    /**
+     * Loads the model in the background so the first Translate is quick. The keyboard calls this once a few letters
+     * have been typed. Does nothing if it is already loaded, loading, or there is no model.
+     */
+    fun warmUp(ctx: Context) {
+        if (engine != null || warming || !modelExists(ctx)) return
+        warming = true
+        val app = ctx.applicationContext
+        Thread({
+            try {
+                synchronized(this) { getEngine(app) }
+                touch()
+            } catch (t: Throwable) {
+                saveError(app, t)
+            } finally {
+                warming = false
+            }
+        }, "llm-warmup").apply { priority = Thread.MIN_PRIORITY; start() }
     }
 
     /** Drop the loaded engine (after a new model is installed or the backend changes). */
@@ -98,9 +143,15 @@ object LlmEngine {
         return created
     }
 
+    private val SPLIT_PUNCT = Regex("[^\\p{L}\\p{N}\\s]")
+    private val SPLIT_SPACE = Regex("\\s+")
+
     private fun key(ctx: Context, s: String): String =
-        s.lowercase().replace(Regex("[^\\p{L}\\p{N}\\s]"), " ").trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+        s.lowercase().replace(SPLIT_PUNCT, " ").trim().split(SPLIT_SPACE).filter { it.isNotEmpty() }
             .joinToString(" ") { VariantMap.canon(ctx, it) }
+
+    private var exactFor: List<Pair<String, String>>? = null
+    private var exactIndex: Map<String, Pair<String, String>> = emptyMap()
 
     /**
      * A message that is exactly a line of the example bank (ignoring capitals, punctuation and spelling variants)
@@ -109,11 +160,28 @@ object LlmEngine {
     private fun exactMatch(ctx: Context, rawText: String, style: Style): String? {
         val want = key(ctx, rawText)
         if (want.isEmpty()) return null
-        val hit = Bank.parse(Prefs.examples(ctx, style)).firstOrNull { key(ctx, it.first) == want } ?: return null
+        val bank = Bank.parse(Prefs.examples(ctx, style))
+        if (exactFor !== bank) {
+            val m = HashMap<String, Pair<String, String>>()
+            for (pair in bank) m.putIfAbsent(key(ctx, pair.first), pair)
+            exactIndex = m
+            exactFor = bank
+        }
+        val hit = exactIndex[want] ?: return null
         return if (style == Style.TO_ENGLISH) hit.second else {
             val glossary = Glossary.parse(Prefs.glossary(ctx))
             Glossary.apply(glossary, Speaker.adapt(ctx, hit.second)) { VariantMap.cluster(ctx, it) }
         }
+    }
+
+    /** Recent results, so translating the same text again (after Undo, say) is instant. Cleared when any setting that changes the answer changes. */
+    private val recent = object : LinkedHashMap<String, String>(16, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, String>?) = size > 30
+    }
+
+    private fun recentKey(ctx: Context, style: Style, text: String): String {
+        val settings = Prefs.rules(ctx, style).hashCode() * 31 + Prefs.examples(ctx, style).hashCode() * 17 + Prefs.glossary(ctx).hashCode()
+        return "${style.key}|${Speaker.get(ctx)}|${Prefs.modelChoice(ctx).key}|$settings|$text"
     }
 
     /** The few examples from the bank that are closest to this text. */
@@ -132,6 +200,8 @@ object LlmEngine {
     @Synchronized
     fun translate(ctx: Context, rawText: String, style: Style): String {
         exactMatch(ctx, rawText, style)?.let { return it }
+        val cacheKey = recentKey(ctx, style, rawText)
+        recent[cacheKey]?.let { return it }
         val eng = getEngine(ctx)
         // Roman Urdu shorthand (kr, nhi, tm ...) is spelled out first, so the model and the example lookup see real words
         val text = if (style == Style.TO_ENGLISH) Spelling.normalizeInput(ctx, rawText) else rawText
@@ -153,6 +223,8 @@ object LlmEngine {
         val result = if (style == Style.TO_ENGLISH) out
             else Glossary.apply(glossary, out) { VariantMap.cluster(ctx, it) }
         Prefs.addTranslation(ctx, (System.nanoTime() - t0) / 1_000_000)
+        if (result.isNotBlank()) recent[cacheKey] = result
+        touch()
         return result
     }
 

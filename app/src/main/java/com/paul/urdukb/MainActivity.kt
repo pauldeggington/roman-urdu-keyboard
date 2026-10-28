@@ -711,6 +711,7 @@ class MainActivity : Activity() {
         switchRow(card, "Sound on key press", "", Kb.PREF_SOUND, false)
         switchRow(card, "Popup on key press", "The bubble above the key you touch", Kb.PREF_PREVIEW, true)
         switchRow(card, "Capital letter after . ? !", "Starts sentences with a capital", Kb.PREF_AUTOCAP, true)
+        switchRow(card, "Get the translator ready while typing", "Loads the translator after a few letters so Translate is quick. It frees that memory again after 10 minutes of not translating.", Kb.PREF_WARM, true)
         switchRow(card, "Glide typing", "Slide your finger across the letters and lift to type a word. English words for now; tap a suggestion above the keys to change the word.", Kb.PREF_GLIDE, true)
         switchRow(card, "Double space types a full stop", "", Kb.PREF_DOUBLE_SPACE, true)
         switchRow(card, "Clipboard history", "Keeps text you copy for an hour so you can paste it again (clipboard button in the tools panel). Stays on this phone.", Kb.PREF_CLIP, false)
@@ -732,7 +733,7 @@ class MainActivity : Activity() {
                 else "\n\nGIPHY needs a free key. Make one in two minutes: open the GIPHY developer page below, sign up, tap Create an API Key, choose API, name it anything, then paste the key here.",
         ).apply { setPadding(0, dpi(6f), 0, dpi(4f)) })
         val field = edit("GIPHY API key").apply {
-            setText(Kb.prefs(this@MainActivity).getString(Kb.PREF_GIPHY_KEY, "").orEmpty())
+            setText(Kb.ownGiphyKey(this@MainActivity))
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
         }
         card.addView(field)
@@ -747,7 +748,7 @@ class MainActivity : Activity() {
             runCatching { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://developers.giphy.com/dashboard/"))) }
         }, rowLp())
         r.addView(button("Save", true, lock = false) {
-            Kb.prefs(this).edit { putString(Kb.PREF_GIPHY_KEY, field.text.toString().trim()) }
+            Kb.setGiphyKey(this, field.text.toString())
             refreshStatus()
             toast("Saved")
         }, rowLp())
@@ -868,8 +869,8 @@ class MainActivity : Activity() {
             textSize = 14f
             stateListAnimator = null
             elevation = 0f
-            minHeight = dpi(44f)
-            minimumHeight = dpi(44f)
+            minHeight = dpi(48f)
+            minimumHeight = dpi(48f)
             gravity = Gravity.CENTER
             setPadding(dpi(10f), 0, dpi(10f), 0)
             maxLines = 2
@@ -887,8 +888,8 @@ class MainActivity : Activity() {
         isAllCaps = false
         textSize = 13f
         stateListAnimator = null
-        minHeight = dpi(36f)
-        minimumHeight = dpi(36f)
+        minHeight = dpi(48f)
+        minimumHeight = dpi(48f)
         minWidth = 0
         minimumWidth = 0
         setPadding(dpi(14f), 0, dpi(14f), 0)

@@ -27,6 +27,39 @@ object Glossary {
         return "\n- Preferred spellings: write the word on the right instead of the one on the left: $list."
     }
 
+    private val WORD = Regex("[\\p{L}']+")
+
+    /** The glossary turned into lookups. Built once per glossary text, not per translation. */
+    private class Compiled(
+        val pairs: List<Pair<String, String>>,
+        val words: Map<String, String>,
+        val phrases: Map<String, String>,
+        val phraseRe: Regex?,
+    )
+
+    @Volatile private var compiled: Compiled? = null
+
+    private fun compile(pairs: List<Pair<String, String>>, cluster: (String) -> List<String>): Compiled {
+        val targets = pairs.map { it.second.lowercase() }.toSet()
+        val map = HashMap<String, String>()
+        for ((from, to) in pairs) {
+            for (form in cluster(from)) {
+                val f = form.lowercase()
+                if (f != to.lowercase() && f !in targets) map.putIfAbsent(f, to)
+            }
+        }
+        for ((from, to) in pairs) map[from.lowercase()] = to
+        // single words are looked up word by word; entries with spaces or punctuation are matched as phrases
+        val words = HashMap<String, String>()
+        val phrases = HashMap<String, String>()
+        for ((k, v) in map) if (k.all { it.isLetter() || it == '\'' }) words[k] = v else phrases[k] = v
+        val re = if (phrases.isEmpty()) null else {
+            val keys = phrases.keys.sortedByDescending { it.length }.joinToString("|") { Regex.escape(it) }
+            Regex("(?<![\\p{L}'])(?:$keys)(?![\\p{L}'])", RegexOption.IGNORE_CASE)
+        }
+        return Compiled(pairs, words, phrases, re)
+    }
+
     /**
      * [cluster] gives other spellings of a word (from the spelling-variant data), so a glossary entry like
      * "kaise -> kaisay" also fixes kasay, kaysy and kesay. Your own entries always win over those.
@@ -37,20 +70,13 @@ object Glossary {
         cluster: (String) -> List<String> = { emptyList() },
     ): String {
         if (pairs.isEmpty() || text.isEmpty()) return text
-        val targets = pairs.map { it.second.lowercase() }.toSet()
-        val map = HashMap<String, String>()
-        for ((from, to) in pairs) {
-            for (form in cluster(from)) {
-                val f = form.lowercase()
-                if (f != to.lowercase() && f !in targets) map.putIfAbsent(f, to)
-            }
-        }
-        for ((from, to) in pairs) map[from.lowercase()] = to
-        val keys = map.keys.sortedByDescending { it.length }.joinToString("|") { Regex.escape(it) }
-        val re = Regex("(?<![\\p{L}'])(?:$keys)(?![\\p{L}'])", RegexOption.IGNORE_CASE)
-        return re.replace(text) { m ->
-            val replacement = map[m.value.lowercase()] ?: m.value
-            matchCase(m.value, replacement)
+        val c = compiled?.takeIf { it.pairs == pairs } ?: compile(pairs, cluster).also { compiled = it }
+        var out = text
+        c.phraseRe?.let { re -> out = re.replace(out) { m -> matchCase(m.value, c.phrases[m.value.lowercase()] ?: m.value) } }
+        if (c.words.isEmpty()) return out
+        return WORD.replace(out) { m ->
+            val replacement = c.words[m.value.lowercase()]
+            if (replacement == null) m.value else matchCase(m.value, replacement)
         }
     }
 

@@ -434,6 +434,7 @@ class KeyboardView(context: Context) : View(context) {
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        fader.cancel()
         cancelAll()
     }
 }
