@@ -150,6 +150,18 @@ object LlmEngine {
         s.lowercase().replace(SPLIT_PUNCT, " ").trim().split(SPLIT_SPACE).filter { it.isNotEmpty() }
             .joinToString(" ") { VariantMap.canon(ctx, it) }
 
+    private var preparedFor: List<Pair<String, String>>? = null
+    private var prepared: Glossary.Prepared = Glossary.prepare(emptyList())
+
+    /** The glossary as lookups, built again only when the glossary text changes. */
+    private fun preparedGlossary(ctx: Context, glossary: List<Pair<String, String>>): Glossary.Prepared {
+        if (preparedFor != glossary) {
+            prepared = Glossary.prepare(glossary) { VariantMap.cluster(ctx, it) }
+            preparedFor = glossary
+        }
+        return prepared
+    }
+
     private var exactFor: List<Pair<String, String>>? = null
     private var exactIndex: Map<String, Pair<String, String>> = emptyMap()
 
@@ -170,7 +182,7 @@ object LlmEngine {
         val hit = exactIndex[want] ?: return null
         return if (style == Style.TO_ENGLISH) hit.second else {
             val glossary = Glossary.parse(Prefs.glossary(ctx))
-            Glossary.apply(glossary, Speaker.adapt(ctx, hit.second)) { VariantMap.cluster(ctx, it) }
+            Glossary.apply(preparedGlossary(ctx, glossary), Speaker.adapt(ctx, hit.second))
         }
     }
 
@@ -221,7 +233,7 @@ object LlmEngine {
         }
         // Roman Urdu output: your glossary, which also fixes other spellings of the same word
         val result = if (style == Style.TO_ENGLISH) out
-            else Glossary.apply(glossary, out) { VariantMap.cluster(ctx, it) }
+            else Glossary.apply(preparedGlossary(ctx, glossary), out)
         Prefs.addTranslation(ctx, (System.nanoTime() - t0) / 1_000_000)
         if (result.isNotBlank()) recent[cacheKey] = result
         touch()

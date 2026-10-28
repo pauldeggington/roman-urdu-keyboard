@@ -30,16 +30,15 @@ object Glossary {
     private val WORD = Regex("[\\p{L}']+")
 
     /** The glossary turned into lookups. Built once per glossary text, not per translation. */
-    private class Compiled(
+    class Prepared(
         val pairs: List<Pair<String, String>>,
         val words: Map<String, String>,
         val phrases: Map<String, String>,
         val phraseRe: Regex?,
     )
 
-    @Volatile private var compiled: Compiled? = null
-
-    private fun compile(pairs: List<Pair<String, String>>, cluster: (String) -> List<String>): Compiled {
+    /** Turns the glossary into lookups. Do this once and reuse the result for every translation. */
+    fun prepare(pairs: List<Pair<String, String>>, cluster: (String) -> List<String> = { emptyList() }): Prepared {
         val targets = pairs.map { it.second.lowercase() }.toSet()
         val map = HashMap<String, String>()
         for ((from, to) in pairs) {
@@ -57,7 +56,7 @@ object Glossary {
             val keys = phrases.keys.sortedByDescending { it.length }.joinToString("|") { Regex.escape(it) }
             Regex("(?<![\\p{L}'])(?:$keys)(?![\\p{L}'])", RegexOption.IGNORE_CASE)
         }
-        return Compiled(pairs, words, phrases, re)
+        return Prepared(pairs, words, phrases, re)
     }
 
     /**
@@ -70,7 +69,11 @@ object Glossary {
         cluster: (String) -> List<String> = { emptyList() },
     ): String {
         if (pairs.isEmpty() || text.isEmpty()) return text
-        val c = compiled?.takeIf { it.pairs == pairs } ?: compile(pairs, cluster).also { compiled = it }
+        return apply(prepare(pairs, cluster), text)
+    }
+
+    fun apply(c: Prepared, text: String): String {
+        if (c.pairs.isEmpty() || text.isEmpty()) return text
         var out = text
         c.phraseRe?.let { re -> out = re.replace(out) { m -> matchCase(m.value, c.phrases[m.value.lowercase()] ?: m.value) } }
         if (c.words.isEmpty()) return out
