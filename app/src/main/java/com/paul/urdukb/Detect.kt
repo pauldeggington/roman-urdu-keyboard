@@ -39,6 +39,9 @@ object Detect {
 
     private val NOT_LATIN = Regex("[^a-z']+")
 
+    /** Common Roman Urdu words, offered by word suggestions next to the English ones. */
+    fun urduWords(): Set<String> = URDU.filter { it.length >= 3 }.toSet()
+
     fun isEnglishWord(word: String): Boolean = word in ENGLISH
 
     enum class Language { ROMAN_URDU, ENGLISH }

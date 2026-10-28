@@ -35,13 +35,11 @@ class GlideDecoder(entries: List<Entry>) {
         private const val WEIGHT_ENDS = 0.4f      // how close the finger started and stopped to the first and last letter
 
         /** Lines of "word<TAB>frequency", most common first. Words with fewer than two different letters are skipped. */
-        fun parse(lines: Sequence<String>): GlideDecoder {
-            val out = ArrayList<Entry>(50_000)
-            for (line in lines) {
-                val tab = line.indexOf('\t')
-                if (tab <= 0) continue
-                val word = line.substring(0, tab)
-                val zipf = line.substring(tab + 1).trim().toIntOrNull() ?: continue
+        fun parse(lines: Sequence<String>): GlideDecoder = fromWords(WordSuggester.readWords(lines))
+
+        fun fromWords(words: List<Pair<String, Int>>): GlideDecoder {
+            val out = ArrayList<Entry>(words.size)
+            for ((word, zipf) in words) {
                 val sb = StringBuilder()
                 for (ch in word) {
                     if (ch !in 'a'..'z') continue            // apostrophes are not on the glide path

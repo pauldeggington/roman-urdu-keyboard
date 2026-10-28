@@ -99,7 +99,10 @@ class ToolbarView(context: Context) : View(context) {
         out += Tool.MIC to micRect
         if (!toolsOpen && suggestions.isNotEmpty()) {
             val left = 6f * d + h + 4f * d
-            val right = micRect.left - 4f * d
+            // Translate stays within reach while words are suggested; Casual and Auto make room
+            val trRight = micRect.left
+            out += Tool.TRANSLATE to RectF(trRight - 52f * d, 0f, trRight, h)
+            val right = trRight - 52f * d - 2f * d
             val n = minOf(3, suggestions.size)
             val slot = (right - left) / 3f
             for (i in 0 until n) out += listOf(Tool.SUGGESTION_1, Tool.SUGGESTION_2, Tool.SUGGESTION_3)[i] to RectF(left + i * slot, 0f, left + (i + 1) * slot, h)

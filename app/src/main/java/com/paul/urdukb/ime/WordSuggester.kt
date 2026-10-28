@@ -1,0 +1,147 @@
+package com.paul.urdukb.ime
+
+/**
+ * Word suggestions while typing: finishes the word you are typing ("th" -> the, that, this) and offers a fix when it
+ * is not a word ("teh" -> the). Plain Kotlin, so it is tested without Android.
+ *
+ * Words come with a frequency score (about 100 times the Zipf value: 7.7 for "the", 3 for a rare word). Words the
+ * person types a lot ([personal]) are ranked high, so the keyboard learns names and Roman Urdu spellings.
+ */
+class WordSuggester(words: List<Pair<String, Int>>) {
+
+    private val sorted: Array<String>
+    private val zipf: IntArray
+    private val exact = HashMap<String, Int>()
+    /** For fixing typos: word indices grouped by length of the word without apostrophes. */
+    private val byLength: Array<IntArray>
+    private val plain: Array<String>
+
+    init {
+        val list = words.filter { it.first.isNotEmpty() }.sortedBy { it.first }
+        sorted = Array(list.size) { list[it].first }
+        zipf = IntArray(list.size) { list[it].second }
+        plain = Array(list.size) { sorted[it].replace("'", "") }
+        for (i in sorted.indices) exact[sorted[i]] = zipf[i]
+        val maxLen = (plain.maxOfOrNull { it.length } ?: 0) + 1
+        val buckets = Array(maxLen + 1) { ArrayList<Int>() }
+        for (i in plain.indices) buckets[plain[i].length].add(i)
+        byLength = Array(buckets.size) { buckets[it].toIntArray() }
+    }
+
+    fun isWord(word: String) = exact.containsKey(word.lowercase())
+
+    private class Cand(val word: String, val score: Int)
+
+    /** First index in [sorted] that is >= [prefix]. */
+    private fun lowerBound(prefix: String): Int {
+        var lo = 0
+        var hi = sorted.size
+        while (lo < hi) {
+            val mid = (lo + hi) ushr 1
+            if (sorted[mid] < prefix) lo = mid + 1 else hi = mid
+        }
+        return lo
+    }
+
+    /**
+     * Up to [max] words for what has been typed so far, best first, all lower case.
+     * [personal] is how often the person typed each word (their own words and names).
+     */
+    fun suggest(typedRaw: String, personal: Map<String, Int> = emptyMap(), max: Int = 3): List<String> {
+        val typed = typedRaw.lowercase()
+        if (typed.length < 2 || typed.any { !(it.isLetter() || it == '\'') }) return emptyList()
+        val found = HashMap<String, Int>()
+
+        fun offer(word: String, score: Int) {
+            if (word == typed) return
+            val old = found[word]
+            if (old == null || score > old) found[word] = score
+        }
+
+        // 1. finishing the word
+        var i = lowerBound(typed)
+        var seen = 0
+        val completions = ArrayList<Cand>()
+        while (i < sorted.size && sorted[i].startsWith(typed) && seen < 6000) {
+            if (sorted[i] != typed) {
+                completions += Cand(sorted[i], zipf[i] + 30)
+                if (completions.size > 400) {   // keep the list small: only the commonest matter
+                    completions.sortByDescending { it.score }
+                    while (completions.size > 12) completions.removeAt(completions.size - 1)
+                }
+            }
+            i++; seen++
+        }
+        completions.sortByDescending { it.score }
+        for (c in completions.take(8)) offer(c.word, c.score)
+        for ((w, n) in personal) if (w.length > typed.length && w.startsWith(typed)) offer(w, PERSONAL_BASE + minOf(n, 20) * 6)
+
+        // 2. fixing a typo: only for something that is not a word, and long enough to guess from
+        val known = exact.containsKey(typed) || personal.containsKey(typed)
+        if (!known && typed.length >= 3) {
+            val flat = typed.replace("'", "")
+            val allowed = if (flat.length >= 7) 2 else 1
+            for (len in maxOf(1, flat.length - allowed)..minOf(byLength.size - 1, flat.length + allowed)) {
+                for (idx in byLength[len]) {
+                    val d = distanceWithin(flat, plain[idx], allowed)
+                    if (d in 0..allowed) offer(sorted[idx], zipf[idx] - 120 * d)
+                }
+            }
+            for ((w, n) in personal) {
+                val d = distanceWithin(flat, w, allowed)
+                if (d in 1..allowed) offer(w, PERSONAL_BASE + minOf(n, 20) * 6 - 120 * d)
+            }
+        }
+
+        val ranked = found.entries.sortedWith(compareByDescending<Map.Entry<String, Int>> { it.value }.thenBy { it.key }).map { it.key }
+        // a word that is already complete stays first, so a tap on the strip never changes a correct word by accident
+        return if (known) (listOf(typed) + ranked).take(max) else ranked.take(max)
+    }
+
+    /** Edit distance (insert, delete, change, swap two letters) if it is at most [limit], otherwise -1. */
+    private fun distanceWithin(a: String, b: String, limit: Int): Int {
+        if (kotlin.math.abs(a.length - b.length) > limit) return -1
+        var prev2 = IntArray(b.length + 1)
+        var prev = IntArray(b.length + 1) { it }
+        var cur = IntArray(b.length + 1)
+        for (x in 1..a.length) {
+            cur[0] = x
+            var rowMin = cur[0]
+            for (y in 1..b.length) {
+                val cost = if (a[x - 1] == b[y - 1]) 0 else 1
+                var v = minOf(prev[y] + 1, cur[y - 1] + 1, prev[y - 1] + cost)
+                if (x > 1 && y > 1 && a[x - 1] == b[y - 2] && a[x - 2] == b[y - 1]) v = minOf(v, prev2[y - 2] + 1)
+                cur[y] = v
+                if (v < rowMin) rowMin = v
+            }
+            if (rowMin > limit) return -1
+            val t = prev2; prev2 = prev; prev = cur; cur = t
+        }
+        val d = prev[b.length]
+        return if (d <= limit) d else -1
+    }
+
+    companion object {
+        private const val PERSONAL_BASE = 520
+
+        /** "word<TAB>score" lines, as in the glide word list. */
+        fun readWords(lines: Sequence<String>): List<Pair<String, Int>> {
+            val out = ArrayList<Pair<String, Int>>(50_000)
+            for (line in lines) {
+                val tab = line.indexOf('\t')
+                if (tab <= 0) continue
+                val score = line.substring(tab + 1).trim().toIntOrNull() ?: continue
+                out += line.substring(0, tab) to score
+            }
+            return out
+        }
+
+        /** Gives a suggestion the capitals of what was typed: Th -> The, TH -> THE, th -> the. */
+        fun matchCase(typed: String, suggestion: String): String = when {
+            typed.length > 1 && typed.all { !it.isLetter() || it.isUpperCase() } -> suggestion.uppercase()
+            typed.isNotEmpty() && typed[0].isUpperCase() -> suggestion.replaceFirstChar { it.uppercaseChar() }
+            suggestion == "i" || suggestion.startsWith("i'") -> "I" + suggestion.substring(1)
+            else -> suggestion
+        }
+    }
+}
