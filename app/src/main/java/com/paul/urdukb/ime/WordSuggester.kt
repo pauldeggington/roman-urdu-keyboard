@@ -160,7 +160,8 @@ class WordSuggester(words: List<Pair<String, Int>>) {
                 // a dropped letter is the commonest slip ("sory", "helo"); a deleted one is rarer and riskier ("hows" is not "how")
                 val dropped = plain[idx].length > typed.length && isSubsequence(typed, plain[idx])
                 val shorter = plain[idx].length < typed.length && !contraction
-                fixes += Fix(sorted[idx], zipf[idx] - 120 * d + (if (contraction) 250 else 0) + (if (dropped) 80 else 0) - (if (shorter) 90 else 0), contraction)
+                val bonus = (if (dropped) 150 else 0) + slipBonus(typed, plain[idx]) - (if (shorter) 90 else 0)
+                fixes += Fix(sorted[idx], zipf[idx] - 120 * d + (if (contraction) 250 else 0) + bonus, contraction)
             }
         }
         trace?.invoke("$typed zipf=$typedZipf inList=$inList " + fixes.sortedByDescending { it.score }.take(3).joinToString { "${it.word}:${it.score}" })
@@ -173,6 +174,24 @@ class WordSuggester(words: List<Pair<String, Int>>) {
 
     /** Only for tests: sees why a word was or was not corrected. */
     internal var trace: ((String) -> Unit)? = null
+
+    /** Typing slips that fingers really make: two neighbouring letters swapped, or a key next to the right one. */
+    private fun slipBonus(typed: String, cand: String): Int {
+        if (typed.length != cand.length) return 0
+        var first = -1
+        var diffs = 0
+        for (i in typed.indices) if (typed[i] != cand[i]) { if (first < 0) first = i; diffs++ }
+        if (diffs == 2 && first + 1 < typed.length && typed[first] == cand[first + 1] && typed[first + 1] == cand[first]) return 100
+        if (diffs == 1 && near(typed[first], cand[first])) return 60
+        return 0
+    }
+
+    private fun near(a: Char, b: Char): Boolean {
+        val ra = ROWS.indexOfFirst { a in it }
+        val rb = ROWS.indexOfFirst { b in it }
+        if (ra < 0 || rb < 0 || kotlin.math.abs(ra - rb) > 1) return false
+        return kotlin.math.abs(ROWS[ra].indexOf(a) - ROWS[rb].indexOf(b)) <= 1 && !(ra == rb && a == b)
+    }
 
     private fun isSubsequence(small: String, big: String): Boolean {
         var i = 0
@@ -214,6 +233,7 @@ class WordSuggester(words: List<Pair<String, Int>>) {
     }
 
     companion object {
+        private val ROWS = listOf("qwertyuiop", "asdfghjkl", "zxcvbnm")
         /** Chat shorthand that is plainly one thing. */
         private val SHORTHAND = mapOf("thanx" to "thanks", "thankyou" to "thank you", "alot" to "a lot", "tonite" to "tonight", "gud" to "good", "hows" to "how's", "whos" to "who's", "wheres" to "where's")
 
