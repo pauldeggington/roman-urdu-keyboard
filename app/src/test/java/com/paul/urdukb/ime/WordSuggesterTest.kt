@@ -129,4 +129,20 @@ class WordSuggesterTest {
         assertEquals(null, suggester.autocorrect("ab"))
         assertEquals(null, suggester.autocorrect("hello!"))
     }
+
+    @Test
+    fun fixesDroppedLettersAndShorthand() {
+        assertEquals("hello", suggester.autocorrect("helo"))
+        assertEquals("which", suggester.autocorrect("wich"))
+        assertEquals("sorry", suggester.autocorrect("sory"))
+        assertEquals("please", suggester.autocorrect("pleas"))
+        assertEquals("remember", suggester.autocorrect("rember"))
+        assertEquals("thanks", suggester.autocorrect("thanx"))
+        assertEquals("a lot", suggester.autocorrect("alot"))
+    }
+
+    @Test
+    fun doesNotShortenWords() {
+        assertEquals(null, suggester.autocorrect("hows"))
+    }
 }

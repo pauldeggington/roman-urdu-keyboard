@@ -137,6 +137,7 @@ class WordSuggester(words: List<Pair<String, Int>>) {
         if (typed.length < 2 || typed.any { !(it.isLetter() || it == '\'') } || '\'' in typed) return null
         if (typed.length == 2 && typed != "im") return null
         if (personal.containsKey(typed) || typed in NOT_CONTRACTIONS) return null
+        SHORTHAND[typed]?.let { return it }
         val typedZipf = exact[typed] ?: -1
         val inList = typedZipf >= 320          // below that the list entry is a common misspelling, not a word
         // a word that is clearly in everyday use is not a typo; the list also holds some misspellings, which are rare
@@ -156,7 +157,10 @@ class WordSuggester(words: List<Pair<String, Int>>) {
                 val margin = if (contraction) 100 else if (typed.length <= 3) 300 else 250
                 if (inList && zipf[idx] < typedZipf + margin) continue
                 if (!inList && zipf[idx] < 420) continue          // only correct towards a word in everyday use
-                fixes += Fix(sorted[idx], zipf[idx] - 120 * d + (if (contraction) 250 else 0), contraction)
+                // a dropped letter is the commonest slip ("sory", "helo"); a deleted one is rarer and riskier ("hows" is not "how")
+                val dropped = plain[idx].length > typed.length && isSubsequence(typed, plain[idx])
+                val shorter = plain[idx].length < typed.length && !contraction
+                fixes += Fix(sorted[idx], zipf[idx] - 120 * d + (if (contraction) 250 else 0) + (if (dropped) 80 else 0) - (if (shorter) 90 else 0), contraction)
             }
         }
         if (fixes.isEmpty()) return null
@@ -164,6 +168,12 @@ class WordSuggester(words: List<Pair<String, Int>>) {
         val best = fixes[0]
         if (fixes.size > 1 && best.score - fixes[1].score < 40) return null   // two good answers: do not guess
         return best.word
+    }
+
+    private fun isSubsequence(small: String, big: String): Boolean {
+        var i = 0
+        for (c in big) if (i < small.length && small[i] == c) i++
+        return i == small.length
     }
 
     private fun hasContraction(typed: String): Boolean {
@@ -200,6 +210,9 @@ class WordSuggester(words: List<Pair<String, Int>>) {
     }
 
     companion object {
+        /** Chat shorthand that is plainly one thing. */
+        private val SHORTHAND = mapOf("thanx" to "thanks", "thankyou" to "thank you", "alot" to "a lot", "tonite" to "tonight", "gud" to "good")
+
         private const val PERSONAL_BASE = 600
 
         /** Words that look like a contraction without the apostrophe but are real words: never auto-corrected. */
