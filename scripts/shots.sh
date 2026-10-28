@@ -168,4 +168,5 @@ hook letters; sleep 0.8; frame
 adb logcat -d -s PREVIEW:I > $OUT/preview_log.txt
 adb shell dumpsys window windows > $OUT/windows.txt 2>&1
 adb logcat -d -t 400 *:E > $OUT/errors.txt
+adb logcat -d | grep -i -E 'StrictMode|FATAL EXCEPTION|ANR in' > $OUT/strictmode.txt 2>&1 || true
 echo done

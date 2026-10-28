@@ -35,6 +35,12 @@ jobs:
             exit "$rc"
           fi
 
+      - name: Android Lint (report only)
+        run: |
+          ./gradlew :app:lintDebug -PnoNative --no-daemon > lint.log 2>&1 || true
+          mkdir -p shots
+          cp app/build/reports/lint-results-debug.txt shots/lint.txt 2>/dev/null || tail -n 60 lint.log > shots/lint.txt
+
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules

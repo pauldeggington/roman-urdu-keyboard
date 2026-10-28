@@ -44,7 +44,7 @@ object LlmEngine {
     fun setUseGpu(ctx: Context, value: Boolean) {
         Prefs.setGpu(ctx, value)
         // dropping the engine can wait for a translation in progress, so it never runs on the screen's thread
-        Thread({ reset() }, "llm-reset").start()
+        resetAsync()
     }
 
     // ---------------------------------------------------------------- keeping the model ready, and letting go of it
@@ -86,6 +86,11 @@ object LlmEngine {
                 warming = false
             }
         }, "llm-warmup").apply { priority = Thread.MIN_PRIORITY; start() }
+    }
+
+    /** [reset] without waiting: for callers on the screen's thread, since a translation in progress holds the lock. */
+    fun resetAsync() {
+        Thread({ reset() }, "llm-reset").start()
     }
 
     /** Drop the loaded engine (after a new model is installed or the backend changes). */
