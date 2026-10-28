@@ -7,7 +7,12 @@ import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.Typeface
+import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.RippleDrawable
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.OvalShape
 import android.os.Handler
 import android.os.Looper
 import android.util.TypedValue
@@ -27,6 +32,33 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.paul.urdukb.R
+
+/** Remembers the skin tone picked for each emoji, so the next tap uses it. */
+object ToneMemory {
+    private const val KEY = "emoji_tones"
+    @Volatile private var map: HashMap<String, String>? = null
+
+    @Synchronized
+    private fun load(ctx: Context): HashMap<String, String> {
+        map?.let { return it }
+        val m = HashMap<String, String>()
+        for (part in Kb.prefs(ctx).getString(KEY, "").orEmpty().split('|')) {
+            val i = part.indexOf('=')
+            if (i > 0) m[part.substring(0, i)] = part.substring(i + 1)
+        }
+        map = m
+        return m
+    }
+
+    fun get(ctx: Context, base: String): String? = load(ctx)[base]
+
+    @Synchronized
+    fun set(ctx: Context, base: String, variant: String) {
+        val m = load(ctx)
+        if (variant == base) m.remove(base) else m[base] = variant
+        Kb.prefs(ctx).edit().putString(KEY, m.entries.joinToString("|") { "${it.key}=${it.value}" }).apply()
+    }
+}
 
 /** One emoji from the bundled list. */
 class EmojiItem(val emoji: String, val skin: Boolean, val name: String)
@@ -75,44 +107,17 @@ object EmojiData {
             if (p.size < 2) null else p[0] to p.drop(1)
         }
 
-    private val synonyms = mapOf(
-        "lol" to listOf("joy", "rolling on the floor"), "haha" to listOf("joy", "grinning", "rolling on the floor"),
-        "laugh" to listOf("joy", "grinning", "rolling on the floor"), "love" to listOf("heart", "kiss", "love"),
-        "sad" to listOf("cry", "sad", "pensive", "disappointed"), "happy" to listOf("smil", "grin"),
-        "angry" to listOf("angry", "rage", "pouting"), "mad" to listOf("angry", "rage", "pouting"),
-        "ok" to listOf("ok hand", "thumbs up"), "thanks" to listOf("folded hands"), "thank" to listOf("folded hands"),
-        "pray" to listOf("folded hands"), "dua" to listOf("folded hands"), "eid" to listOf("crescent", "mosque", "star and crescent"),
-        "cool" to listOf("sunglasses"), "yes" to listOf("thumbs up", "check mark"), "no" to listOf("thumbs down", "cross mark", "prohibited"),
-        "party" to listOf("party", "confetti", "balloon", "tada"), "sleep" to listOf("sleep", "zzz"), "tired" to listOf("sleep", "yawning", "weary", "tired"),
-        "food" to listOf("pizza", "hamburger", "food", "rice", "curry"), "chai" to listOf("teacup", "hot beverage"), "tea" to listOf("teacup", "hot beverage"),
-        "smile" to listOf("smil", "grin"), "wow" to listOf("astonished", "star-struck", "exploding head"), "bye" to listOf("waving hand"), "hi" to listOf("waving hand"),
-        "hello" to listOf("waving hand"), "think" to listOf("thinking"), "money" to listOf("money", "dollar", "coin"), "fire" to listOf("fire"),
-    )
-
-    /** Emoji whose name contains every word typed (with a few everyday synonyms), best matches first. */
+    /** Emoji whose name fits every word typed, best matches first; a typo in a longer word is forgiven if nothing else matches. */
     fun search(ctx: Context, query: String): List<EmojiItem> {
-        val words = query.lowercase().trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+        val words = EmojiSearch.words(query)
         if (words.isEmpty()) return emptyList()
-        val scored = ArrayList<Pair<Int, EmojiItem>>()
-        for (section in load(ctx)) for (item in section.items) {
-            val name = item.name.lowercase()
-            var total = 0
-            var all = true
-            for (w in words) {
-                val options = synonyms[w] ?: listOf(w)
-                var best = -1
-                for (o in options) {
-                    val i = name.indexOf(o)
-                    if (i < 0) continue
-                    val score = if (i == 0) 0 else if (name[i - 1] == ' ') 1 else 2
-                    if (best < 0 || score < best) best = score
-                }
-                if (best < 0) { all = false; break }
-                total += best
-            }
-            if (all) scored += total to item
+        val all = load(ctx).flatMap { it.items }
+        for (fuzzy in listOf(false, true)) {
+            val scored = ArrayList<Pair<Int, EmojiItem>>()
+            for (item in all) EmojiSearch.score(item.name.lowercase(), words, fuzzy)?.let { scored += it to item }
+            if (scored.isNotEmpty()) return scored.sortedBy { it.first }.map { it.second }.take(80)
         }
-        return scored.sortedBy { it.first }.map { it.second }.take(80)
+        return emptyList()
     }
 
     private val tones = listOf("🏻", "🏼", "🏽", "🏾", "🏿")
@@ -151,13 +156,17 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         private const val SPAN = 24
         private const val RECENT_PREF = "recent_emoji"
         private const val MAX_RECENT = 32
-        private const val DEBOUNCE_MS = 1100L
+        private const val DEBOUNCE_MS = 450L
+        private const val PAGE = 30
+        private const val RECENT_Q = "\u0000recent"
 
         /** Search words shown as chips on the GIF and sticker screens; the first is the trending feed. */
         private val MEDIA_CHIPS = listOf(
             "Trending" to "", "Happy" to "happy", "Love" to "love", "Haha" to "haha", "Sad" to "sad", "Wow" to "wow",
             "Thanks" to "thank you", "Yes" to "yes", "No" to "no", "OK" to "ok", "Hello" to "hello", "Bye" to "bye",
             "Eid Mubarak" to "eid mubarak", "Birthday" to "happy birthday", "Good night" to "good night",
+            "Good morning" to "good morning", "Congrats" to "congratulations", "Sorry" to "sorry", "Miss you" to "miss you",
+            "Cricket" to "cricket", "Chai" to "tea", "Dance" to "dance", "Cute" to "cute", "Funny" to "funny",
         )
     }
 
@@ -189,6 +198,11 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
     private var emoticonCats: List<Pair<String, List<String>>> = emptyList()
     private var mediaItems: List<GifItem> = emptyList()
     private var stripItems: List<Any> = emptyList()
+    private var mediaSticker = false
+    private var mediaQuery = ""
+    private var mediaOffset = 0
+    private var mediaMore = false
+    private var mediaLoading = false
 
     // ------------------------------------------------------------ views
     private val column = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
@@ -270,12 +284,15 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
             when (val r = rows[position]) {
                 is Row.Header -> { tv.text = r.title; tv.setTextColor(c.hint); tv.setOnClickListener(null); tv.setOnLongClickListener(null) }
                 is Row.Emoji -> {
-                    tv.text = r.item.emoji
-                    tv.setOnClickListener { listener?.onFeedback(); pick(r.item.emoji) }
+                    val shown = if (r.item.skin) ToneMemory.get(context, r.item.emoji) ?: r.item.emoji else r.item.emoji
+                    tv.text = shown
+                    tv.background = ripple(null, ovalMask())
+                    tv.setOnClickListener { listener?.onFeedback(); pick(shown) }
                     if (r.item.skin) tv.setOnLongClickListener { showTones(tv, r.item); true } else tv.setOnLongClickListener(null)
                 }
                 is Row.Emoticon -> {
                     tv.text = r.text
+                    tv.background = ripple(null, ShapeDrawable())
                     tv.setTextColor(c.keyText)
                     tv.setOnClickListener { listener?.onFeedback(); listener?.onEmoji(r.text) }
                     tv.setOnLongClickListener(null)
@@ -309,7 +326,8 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
             iv.background = GradientDrawable().apply { cornerRadius = 10 * d; setColor(this@EmojiPanel.colors.chip) }
             iv.scaleType = if (item.sticker) ImageView.ScaleType.FIT_CENTER else ImageView.ScaleType.CENTER_CROP
             MediaCache.show(iv, item.thumbUrl)
-            iv.setOnClickListener { listener?.onFeedback(); listener?.onMedia(item) }
+            iv.foreground = ripple(null, ShapeDrawable())
+            iv.setOnClickListener { listener?.onFeedback(); sendMedia(item) }
         }
 
         override fun onViewRecycled(holder: RecyclerView.ViewHolder) = MediaCache.release(holder.itemView as ImageView)
@@ -349,7 +367,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
                     background = GradientDrawable().apply { cornerRadius = 10 * d; setColor(this@EmojiPanel.colors.chip) }
                     scaleType = if (entry.sticker) ImageView.ScaleType.FIT_CENTER else ImageView.ScaleType.CENTER_CROP
                     MediaCache.show(this, entry.thumbUrl)
-                    setOnClickListener { listener?.onFeedback(); listener?.onMedia(entry) }
+                    setOnClickListener { listener?.onFeedback(); sendMedia(entry) }
                 }
             }
         }
@@ -426,6 +444,18 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
 
         mediaList.itemAnimator = null
         mediaList.adapter = mediaAdapter
+        mediaList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+                if (dy <= 0) return
+                val lm = rv.layoutManager
+                val last = when (lm) {
+                    is GridLayoutManager -> lm.findLastVisibleItemPosition()
+                    is StaggeredGridLayoutManager -> lm.findLastVisibleItemPositions(null).maxOrNull() ?: 0
+                    else -> 0
+                }
+                if (last >= mediaItems.size - 9) loadMore()
+            }
+        })
         mediaList.setPadding((4 * d).toInt(), 0, (4 * d).toInt(), (4 * d).toInt())
         mediaList.clipToPadding = false
         mediaList.visibility = GONE
@@ -568,11 +598,15 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
             Mode.GIF, Mode.STICKER -> {
                 mediaList.layoutManager = if (m == Mode.STICKER) GridLayoutManager(context, 4)
                 else StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+                val chips = chips()
+                selectedTab = chips.indexOfFirst { it.second == "" }.coerceAtLeast(0)   // opens on Trending
                 buildTabs()
-                loadMedia(m == Mode.STICKER, MEDIA_CHIPS[0].second, toStrip = false)
+                loadMedia(m == Mode.STICKER, chips[selectedTab].second, toStrip = false)
             }
         }
         paintBottom()
+        content.alpha = 0f
+        content.animate().alpha(1f).setDuration(140).start()
     }
 
     private fun updateHint() {
@@ -631,9 +665,30 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         messageBox.visibility = VISIBLE
     }
 
+    /** The chips above the GIF and sticker results: Recent (only once something was sent), then the fixed ones. */
+    private fun chips(): List<Pair<String, String>> =
+        if (RecentMedia.list(context, mode == Mode.STICKER).isNotEmpty()) listOf("Recent" to RECENT_Q) + MEDIA_CHIPS else MEDIA_CHIPS
+
+    private fun sendMedia(item: GifItem) {
+        RecentMedia.add(context, item)
+        listener?.onMedia(item)
+    }
+
     private fun loadMedia(sticker: Boolean, q: String, toStrip: Boolean) {
         val token = ++loadToken
+        mediaLoading = false
+        mediaMore = false
         if (toStrip) strip.visibility = GONE else mediaList.visibility = GONE
+        if (q == RECENT_Q && !toStrip) {
+            val recent = RecentMedia.list(context, sticker)
+            if (recent.isEmpty()) { showMessage("GIFs and stickers you send will show up here."); return }
+            messageBox.visibility = GONE
+            mediaItems = recent
+            mediaAdapter.notifyDataSetChanged()
+            mediaList.scrollToPosition(0)
+            mediaList.visibility = VISIBLE
+            return
+        }
         if (!GiphyApi.hasKey(context)) {
             showMessage("GIFs and stickers come from GIPHY. Add a free GIPHY key in the app to turn them on.", "Open app")
             return
@@ -662,10 +717,41 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
                     strip.scrollToPosition(0)
                     strip.visibility = VISIBLE
                 } else {
+                    mediaSticker = sticker
+                    mediaQuery = q
+                    mediaOffset = PAGE
+                    mediaMore = items.size >= PAGE
                     mediaItems = items
                     mediaAdapter.notifyDataSetChanged()
                     mediaList.scrollToPosition(0)
                     mediaList.visibility = VISIBLE
+                }
+            }
+        }.start()
+    }
+
+    /** Fetches the next page when the person scrolls near the end of the GIF or sticker results. */
+    private fun loadMore() {
+        if (mediaLoading || !mediaMore || searching || mediaQuery == RECENT_Q) return
+        mediaLoading = true
+        val token = loadToken
+        val sticker = mediaSticker
+        val q = mediaQuery
+        val offset = mediaOffset
+        Thread {
+            val more = try { GiphyApi.fetch(context, sticker, q, offset) } catch (_: Exception) { null }
+            handler.post {
+                if (token != loadToken) return@post
+                mediaLoading = false
+                if (more == null) return@post
+                val have = mediaItems.map { it.id }.toHashSet()
+                val fresh = more.filter { it.id !in have }
+                mediaOffset += PAGE
+                if (more.size < PAGE || fresh.isEmpty()) mediaMore = false
+                if (fresh.isNotEmpty()) {
+                    val start = mediaItems.size
+                    mediaItems = mediaItems + fresh
+                    mediaAdapter.notifyItemRangeInserted(start, fresh.size)
                 }
             }
         }.start()
@@ -717,7 +803,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
             Mode.EMOJI -> list.visibility = VISIBLE
             Mode.GIF, Mode.STICKER -> {
                 attribution.visibility = VISIBLE
-                if (mediaItems.isNotEmpty()) mediaList.visibility = VISIBLE else loadMedia(mode == Mode.STICKER, MEDIA_CHIPS.getOrNull(selectedTab)?.second.orEmpty(), toStrip = false)
+                if (mediaItems.isNotEmpty()) mediaList.visibility = VISIBLE else loadMedia(mode == Mode.STICKER, chips().getOrNull(selectedTab)?.second.orEmpty(), toStrip = false)
             }
             Mode.EMOTICON -> list.visibility = VISIBLE
         }
@@ -807,7 +893,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
             Mode.EMOTICON -> emoticonCats.forEachIndexed { i, (title, _) ->
                 addChip(title) { showEmoticonCategory(i); paintTabs() }
             }
-            Mode.GIF, Mode.STICKER -> MEDIA_CHIPS.forEachIndexed { i, (label, q) ->
+            Mode.GIF, Mode.STICKER -> chips().forEachIndexed { i, (label, q) ->
                 addChip(label) {
                     selectedTab = i
                     paintTabs()
@@ -837,6 +923,12 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         tabScroll.post { tabScroll.smoothScrollTo((v.left - tabScroll.width / 2 + v.width / 2).coerceAtLeast(0), 0) }
     }
 
+    /** A touch ripple in the accent colour over [bg] (or over nothing, clipped to [mask]). */
+    private fun ripple(bg: Drawable?, mask: Drawable? = null): Drawable =
+        RippleDrawable(ColorStateList.valueOf(colors.selected.withAlpha(0.35f)), bg, if (bg == null) mask else null)
+
+    private fun ovalMask() = ShapeDrawable(OvalShape())
+
     private fun circle(color: Int) = GradientDrawable().apply { shape = GradientDrawable.OVAL; setColor(color) }
 
     private fun pill(color: Int) = GradientDrawable().apply { cornerRadius = 100f * d; setColor(color) }
@@ -846,10 +938,10 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         tabViews.forEachIndexed { i, v ->
             val sel = i == selectedTab
             if (v is ImageView) {
-                v.background = if (sel) circle(c.selected) else null
+                v.background = ripple(if (sel) circle(c.selected) else null, ovalMask())
                 v.colorFilter = PorterDuffColorFilter(if (sel) c.selectedText else c.hint, PorterDuff.Mode.SRC_IN)
             } else if (v is TextView) {
-                v.background = pill(if (sel) c.selected else c.chip)
+                v.background = ripple(pill(if (sel) c.selected else c.chip))
                 v.setTextColor(if (sel) c.selectedText else c.keyText)
             }
         }
@@ -858,7 +950,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
     private fun paintBottom() {
         val c = colors
         fun style(v: View, on: Boolean) {
-            v.background = pill(if (on) c.selected else c.chip)
+            v.background = ripple(pill(if (on) c.selected else c.chip))
             val fg = if (on) c.selectedText else c.keyText
             when (v) {
                 is ImageView -> v.colorFilter = PorterDuffColorFilter(fg, PorterDuff.Mode.SRC_IN)
@@ -916,7 +1008,12 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
                 text = e
                 gravity = Gravity.CENTER
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, 28f)
-                setOnClickListener { hideTones(); listener?.onFeedback(); pick(e) }
+                setOnClickListener {
+                    hideTones(); listener?.onFeedback()
+                    ToneMemory.set(context, item.emoji, e)
+                    adapter.notifyDataSetChanged()
+                    pick(e)
+                }
             }, LinearLayout.LayoutParams((44 * d).toInt(), ViewGroup.LayoutParams.MATCH_PARENT))
         }
         val loc = IntArray(2); val me = IntArray(2)

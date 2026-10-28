@@ -23,6 +23,7 @@ object Kb {
     const val PREF_WARM = "warm_translator"
     const val PREF_SUGGEST = "word_suggestions"
     const val PREF_AUTOCORRECT = "autocorrect"
+    const val PREF_CLIP_TTL = "clip_ttl_hours"
 
     fun prefs(ctx: Context): SharedPreferences =
         ctx.applicationContext.getSharedPreferences("keyboard", Context.MODE_PRIVATE)

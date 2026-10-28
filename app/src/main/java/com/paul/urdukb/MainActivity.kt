@@ -697,10 +697,23 @@ class MainActivity : Activity() {
         card.addView(row)
     }
 
+    /** A button that cycles how long copied text is kept: an hour, a day or a week. */
+    private fun clipKeepButton(card: LinearLayout) {
+        fun label() = "Keep clipboard history for " + com.paul.urdukb.ime.ClipStore.ttlWords(com.paul.urdukb.ime.ClipStore.ttlHours(this))
+        val b = button(label(), false, lock = false) {} as TextView
+        b.setOnClickListener {
+            val choices = com.paul.urdukb.ime.ClipStore.TTL_CHOICES
+            val next = choices[(choices.indexOf(com.paul.urdukb.ime.ClipStore.ttlHours(this)) + 1) % choices.size]
+            com.paul.urdukb.ime.ClipStore.setTtlHours(this, next)
+            b.text = label()
+        }
+        card.addView(b, lp().apply { topMargin = dpi(10f) })
+    }
+
     private fun buildKeyboardCard(): View {
         val card = card()
         card.addView(title("Keyboard"))
-        card.addView(muted("Translate, Casual/Formal and Auto are in the bar above the keys. The mic uses your phone's voice typing.").apply {
+        card.addView(muted("Translate, Casual/Formal and Auto are in the bar above the keys. The mic types what you say right in the keyboard.").apply {
             setPadding(0, dpi(6f), 0, 0)
         })
         val r = row()
@@ -720,7 +733,8 @@ class MainActivity : Activity() {
         }, lp().apply { topMargin = dpi(10f) })
         switchRow(card, "Glide typing", "Slide your finger across the letters and lift to type a word. English words for now; tap a suggestion above the keys to change the word.", Kb.PREF_GLIDE, true)
         switchRow(card, "Double space types a full stop", "", Kb.PREF_DOUBLE_SPACE, true)
-        switchRow(card, "Clipboard history", "Keeps text you copy for an hour so you can paste it again (clipboard button in the tools panel). Stays on this phone.", Kb.PREF_CLIP, false)
+        switchRow(card, "Clipboard history", "Keeps text you copy so you can paste it again (clipboard button in the tools panel), and offers what you just copied as a Paste chip above the keys. Stays on this phone.", Kb.PREF_CLIP, false)
+        clipKeepButton(card)
         switchRow(card, "Number hints on the top row", "The small 1 to 0; long-press a key to type it", Kb.PREF_HINTS, true)
         card.addView(button("Run the setup guide again", false, lock = false) {
             SetupActivity.reset(this)

@@ -7,7 +7,7 @@ PKG=com.paul.urdukb
 IME=$PKG/.ime.UrduImeService
 
 shot() { sleep 1.2; adb exec-out screencap -p > "$OUT/$1.png"; echo "shot $1"; }
-hook() { adb shell am broadcast -a com.paul.urdukb.PREVIEW -p $PKG --es do "$1" > /dev/null; }
+hook() { adb shell am broadcast -a com.paul.urdukb.PREVIEW -p $PKG --es do "$1" ${2:+--es q "$2"} > /dev/null; }
 key() { # x y of a key from the last dump
   grep -E "KEY $1 " dump.txt | tail -1 | awk '{print $3, $4}'
 }
@@ -66,8 +66,10 @@ hook letters; hook tools; shot 10_tools_row
 hook notools
 hook gif; sleep 2.5; shot 20_gif
 hook stickers; sleep 2.5; shot 21_stickers
+hook gif_recent; sleep 2.5; shot 21b_gif_recent
 hook emoticons; sleep 1; shot 22_emoticons
 hook search_emoji; sleep 1.5; shot 23_search_emoji
+hook search_emoji khushi; sleep 1.5; shot 23b_search_roman_urdu
 hook search_gif; sleep 2.5; shot 24_search_gif
 # typing while the search is open must go into the search box, not into the app
 dump; [ -s dump.txt ] || cp $OUT/keys.txt dump.txt
@@ -137,6 +139,9 @@ glide w o r l d; sleep 1.5; shot 33_glide_world
 adb shell input keyevent 67; sleep 1; shot 34_glide_backspace
 adb logcat -d -s PREVIEW:I | grep GLIDE > $OUT/glide_log.txt 2>&1 || true
 
+# paste chip: something was just copied and the field is empty
+adb shell am start -f 0x10008000 -n $PKG/.PreviewActivity > /dev/null 2>&1; sleep 4
+hook paste_offer; sleep 1.5; shot 47_paste_offer
 # word suggestions while typing
 adb shell am start -f 0x10008000 -n $PKG/.PreviewActivity > /dev/null 2>&1; sleep 4
 hook letters; sleep 1

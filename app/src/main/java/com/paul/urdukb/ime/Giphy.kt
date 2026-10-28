@@ -58,7 +58,7 @@ object GiphyApi {
     fun fetch(ctx: Context, sticker: Boolean, query: String?, offset: Int = 0): List<GifItem> {
         val key = Kb.giphyKey(ctx)
         if (key.isEmpty()) {
-            if (BuildConfig.PREVIEW) return previewFake(sticker)
+            if (BuildConfig.PREVIEW) return if (offset == 0) previewFake(sticker) else emptyList()
             throw GiphyException(GiphyException.Kind.NO_KEY, "No key")
         }
         val q = query?.trim().orEmpty()
@@ -105,6 +105,43 @@ object GiphyApi {
             conn.disconnect()
         }
     }
+}
+
+/** The GIFs and stickers you sent lately, so they are one tap away (kept on this phone, never uploaded). */
+object RecentMedia {
+    private const val KEY = "recent_media"
+    private const val MAX_PER_KIND = 24
+
+    fun encode(i: GifItem): String =
+        listOf(i.id, i.title, i.thumbUrl, i.fullUrl, i.pageUrl, i.width, i.height, if (i.sticker) 1 else 0)
+            .joinToString("\t") { it.toString().replace('\t', ' ').replace('\n', ' ') }
+
+    fun decode(line: String): GifItem? {
+        val p = line.split('\t')
+        if (p.size < 8 || p[0].isEmpty() || p[2].isEmpty() || p[3].isEmpty()) return null
+        return GifItem(p[0], p[1], p[2], p[3], p[4], p[5].toIntOrNull() ?: 200, p[6].toIntOrNull() ?: 200, p[7] == "1")
+    }
+
+    private fun all(ctx: Context): List<GifItem> =
+        Kb.prefs(ctx).getString(KEY, "").orEmpty().split('\n').mapNotNull { if (it.isBlank()) null else decode(it) }
+
+    fun list(ctx: Context, sticker: Boolean): List<GifItem> = all(ctx).filter { it.sticker == sticker }
+
+    fun add(ctx: Context, item: GifItem) {
+        if (item.id.startsWith("preview")) return
+        val kept = all(ctx).filter { it.id != item.id || it.sticker != item.sticker }
+        val now = listOf(item) + kept
+        val out = ArrayList<GifItem>()
+        var gifs = 0
+        var stickers = 0
+        for (i in now) {
+            if (i.sticker) { if (stickers++ >= MAX_PER_KIND) continue } else { if (gifs++ >= MAX_PER_KIND) continue }
+            out += i
+        }
+        Kb.prefs(ctx).edit().putString(KEY, out.joinToString("\n") { encode(it) }).apply()
+    }
+
+    fun clear(ctx: Context) = Kb.prefs(ctx).edit().remove(KEY).apply()
 }
 
 /** Downloads and caches the pictures, and puts them on screen. */

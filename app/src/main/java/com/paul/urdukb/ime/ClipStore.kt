@@ -5,14 +5,30 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * Clipboard history, like Gboard's: text you copy is kept for an hour (longer if pinned), only on this phone, and
+ * Clipboard history, like Gboard's: text you copy is kept for an hour, a day or a week as chosen (pinned clips stay), only on this phone, and
  * only after the person turns it on. Passwords copied from a password manager are flagged sensitive and are skipped.
  */
 object ClipStore {
     class Clip(val text: String, var pinned: Boolean, val time: Long)
 
     private const val KEY = "clipboard_clips"
-    private const val TTL_MS = 60L * 60L * 1000L
+    /** How long unpinned clips are kept, in hours: an hour, a day or a week. */
+    val TTL_CHOICES = listOf(1, 24, 168)
+
+    fun ttlHours(ctx: Context): Int = Kb.prefs(ctx).getInt(Kb.PREF_CLIP_TTL, 1).takeIf { it in TTL_CHOICES } ?: 1
+    fun setTtlHours(ctx: Context, hours: Int) = Kb.prefs(ctx).edit().putInt(Kb.PREF_CLIP_TTL, hours).apply()
+    fun ttlWords(hours: Int) = when (hours) { 24 -> "a day"; 168 -> "a week"; else -> "an hour" }
+
+    /** "just now", "5 min ago", "3 h ago", "2 d ago". */
+    fun ago(now: Long, then: Long): String {
+        val s = ((now - then) / 1000).coerceAtLeast(0)
+        return when {
+            s < 60 -> "just now"
+            s < 3600 -> "${s / 60} min ago"
+            s < 86400 -> "${s / 3600} h ago"
+            else -> "${s / 86400} d ago"
+        }
+    }
     private const val MAX_UNPINNED = 25
     private const val MAX_LENGTH = 20_000
 
@@ -48,7 +64,8 @@ object ClipStore {
         if (!enabled(ctx)) return emptyList()
         val now = System.currentTimeMillis()
         val clips = read(ctx)
-        val kept = clips.filter { it.pinned || now - it.time < TTL_MS }
+        val ttl = ttlHours(ctx) * 60L * 60L * 1000L
+        val kept = clips.filter { it.pinned || now - it.time < ttl }
         if (kept.size != clips.size) write(ctx, kept)
         return kept.sortedWith(compareByDescending<Clip> { it.pinned }.thenByDescending { it.time })
     }

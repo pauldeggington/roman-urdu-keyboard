@@ -76,6 +76,9 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     private var suggestOn = true
     private var autocorrectOn = true
     private class AutoFix(val original: String, val replacement: String, val delimiter: String)
+    private var pasteOffer: String? = null            // what was just copied, offered as a Paste chip in an empty field
+    private var pasteOfferAt = 0L
+    private var pasteText: String? = null             // set while the strip shows that chip
     private var prevWord = ""                      // the word before the one being typed, for learning word pairs
     private var autoFix: AutoFix? = null           // the last automatic correction, so Backspace can undo it
     private var suggestionsAllowed = true
@@ -108,6 +111,8 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         if (BuildConfig.PREVIEW) registerPreviewHooks()
         // glide typing: the word list is normally already loaded by the app's start-up; make sure it is
         Thread({ GlideDict.load(this) }, "glide-dict").start()
+        // the emoji list is large: load it shortly after start-up so the emoji screen opens at once
+        handler.postDelayed({ Thread({ try { EmojiData.load(applicationContext) } catch (_: Exception) {} }, "emoji-load").apply { priority = Thread.MIN_PRIORITY }.start() }, 3000)
         // clipboard history: remember what is copied while the keyboard is running
         getSystemService(android.content.ClipboardManager::class.java)?.let { cm ->
             clipListener = android.content.ClipboardManager.OnPrimaryClipChangedListener {
@@ -115,7 +120,13 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
                     val clip = cm.primaryClip ?: return@OnPrimaryClipChangedListener
                     val sensitive = clip.description.extras?.getBoolean("android.content.extra.IS_SENSITIVE") == true
                     if (!sensitive && clip.itemCount > 0) {
-                        clip.getItemAt(0).coerceToText(this)?.toString()?.let { ClipStore.add(this, it) }
+                        clip.getItemAt(0).coerceToText(this)?.toString()?.let {
+                            ClipStore.add(this, it)
+                            if (ClipStore.enabled(this) && it.isNotBlank() && it.length <= 2000) {
+                                pasteOffer = it.trim(); pasteOfferAt = SystemClock.uptimeMillis()
+                                handler.post { scheduleSuggest() }
+                            }
+                        }
                     }
                 } catch (_: Exception) {
                 }
@@ -140,13 +151,23 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
                         "clipboard_off" -> { ClipStore.setEnabled(this@UrduImeService, false); showClipboard(true) }
                         "gif" -> { showEmoji(true); emoji.showMode("gif") }
                         "stickers" -> { showEmoji(true); emoji.showMode("sticker") }
-                        "search_emoji" -> { showEmoji(true); emoji.showMode("emoji"); emoji.openSearchFromHook(); emoji.searchType("heart") }
+                        "search_emoji" -> { showEmoji(true); emoji.showMode("emoji"); emoji.openSearchFromHook(); emoji.searchType(intent.getStringExtra("q") ?: "heart") }
                         "search_gif" -> { showEmoji(true); emoji.showMode("gif"); emoji.openSearchFromHook(); emoji.searchType("thanks") }
                         "tools" -> toolbar.toolsOpen = true
                         "notools" -> toolbar.toolsOpen = false
                         "shift" -> keyboard.shift = KeyboardView.SHIFT_ON
                         "space" -> { typeSpace(); scheduleSuggest() }
                         "back" -> deleteOne()
+                        "paste_offer" -> {
+                            ClipStore.seedForPreview(this@UrduImeService)
+                            pasteOffer = "Meeting moved to Thursday 3 pm"; pasteOfferAt = SystemClock.uptimeMillis()
+                            showEmoji(false); keyboard.page = Page.LETTERS; scheduleSuggest()
+                        }
+                        "gif_recent" -> {
+                            for ((i, c) in listOf("e57373", "4fc3f7", "aed581").withIndex())
+                                RecentMedia.add(this@UrduImeService, GifItem("pv$i", "Sample", "preview:$c", "preview:$c", "https://giphy.com", 200, 150 + 40 * i, false))
+                            showEmoji(true); emoji.showMode("gif")
+                        }
                         "mic_on" -> toolbar.listening = true
                         "mic_off" -> toolbar.listening = false
                         "dump" -> {
@@ -366,6 +387,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         keyboard.enterKind = baseEnterKind
         refreshAll()
         updateShift()
+        scheduleSuggest()
     }
 
     override fun onFinishInputView(finishingInput: Boolean) {
@@ -685,6 +707,11 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         val after = ic.getTextAfterCursor(1, 0)?.toString().orEmpty()
         // only when the cursor is at the end of a word
         if (after.isNotEmpty() && (after[0].isLetter() || after[0] == '\'')) { clearTyping(); return }
+        // an empty field and something was copied a moment ago: offer to paste it
+        val offer = pasteOffer
+        if (before.isEmpty() && after.isEmpty() && offer != null && SystemClock.uptimeMillis() - pasteOfferAt < 120_000) {
+            showPaste(offer); return
+        }
         var start = before.length
         while (start > 0 && (before[start - 1].isLetter() || before[start - 1] == '\'')) start--
         val word = before.substring(start).trimStart('\'')
@@ -723,6 +750,17 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         }
     }
 
+    private fun showPaste(text: String) {
+        if (!viewReady || strip == Strip.GLIDE) return
+        pasteText = text
+        typingWord = ""
+        val oneLine = text.replace('\n', ' ')
+        typingCandidates = listOf("Paste: " + if (oneLine.length > 20) oneLine.take(19) + "…" else oneLine)
+        strip = Strip.TYPING
+        toolbar.suggestions = typingCandidates
+        toolbar.suggestionIndex = -1
+    }
+
     private fun showNext(found: List<String>) {
         if (!viewReady || strip == Strip.GLIDE) return
         if (found.isEmpty()) { clearTyping(); return }
@@ -748,6 +786,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         handler.removeCallbacks(suggestRunnable)
         typingCandidates = emptyList()
         typingWord = ""
+        pasteText = null
         if (viewReady && strip == Strip.TYPING) { strip = Strip.NONE; toolbar.suggestions = emptyList() }
     }
 
@@ -755,6 +794,14 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     private fun chooseTyping(i: Int) {
         val word = typingCandidates.getOrNull(i) ?: return
         val ic = currentInputConnection ?: return
+        pasteText?.let { t ->
+            ic.commitText(t, 1)
+            pasteOffer = null
+            lastSpace = 0
+            clearTyping()
+            updateShift()
+            return
+        }
         val typed = typingWord
         if (typed.isEmpty()) {
             // a next-word suggestion: it goes in after the space that is already there

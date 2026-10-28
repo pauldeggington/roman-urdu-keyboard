@@ -3,7 +3,13 @@ package com.paul.urdukb.ime
 import android.annotation.SuppressLint
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.PorterDuff
+import android.graphics.drawable.RippleDrawable
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.graphics.PorterDuffColorFilter
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
@@ -69,7 +75,7 @@ class ClipboardPanel(context: Context) : FrameLayout(context) {
             val tv = TextView(context).apply {
                 typeface = font
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
-                maxLines = 7
+                maxLines = 8
                 ellipsize = TextUtils.TruncateAt.END
                 minHeight = (64 * d).toInt()
                 gravity = Gravity.TOP or Gravity.START
@@ -86,9 +92,16 @@ class ClipboardPanel(context: Context) : FrameLayout(context) {
             val m = (3 * d).toInt()
             val w = (resources.displayMetrics.widthPixels - (12 * d).toInt()) / 2 - 2 * m
             tv.layoutParams = RecyclerView.LayoutParams(w, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(m, m, m, m) }
-            tv.text = clip.text
+            // the clip, and under it in small grey type how long ago it was copied
+            val meta = ClipStore.ago(System.currentTimeMillis(), clip.time)
+            val body = SpannableStringBuilder(clip.text.trim().take(400)).append("\n").append(meta)
+            val start = body.length - meta.length
+            body.setSpan(RelativeSizeSpan(0.8f), start, body.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            body.setSpan(ForegroundColorSpan(c.hint), start, body.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            tv.text = body
             tv.setTextColor(c.keyText)
-            tv.background = GradientDrawable().apply { cornerRadius = 16 * d; setColor(c.chip) }
+            val card = GradientDrawable().apply { cornerRadius = 16 * d; setColor(c.chip) }
+            tv.background = RippleDrawable(ColorStateList.valueOf(c.selected and 0x00FFFFFF or 0x59000000), card, null)
             if (clip.pinned) {
                 val pin = ResourcesCompat.getDrawable(resources, R.drawable.kb_pin, null)?.mutate()
                 pin?.setBounds(0, 0, (16 * d).toInt(), (16 * d).toInt())
@@ -129,7 +142,7 @@ class ClipboardPanel(context: Context) : FrameLayout(context) {
         topBar.addView(clearBtn, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, (34 * d).toInt()).apply { marginEnd = (10 * d).toInt() })
         column.addView(topBar, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (50 * d).toInt()))
 
-        hint.text = "Tap a clip to paste it. Long-press to pin or delete. Clips that aren't pinned are removed after an hour."
+        hint.text = hintText()
         hint.typeface = font
         hint.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12f)
         hint.setPadding((16 * d).toInt(), 0, (16 * d).toInt(), (6 * d).toInt())
@@ -183,6 +196,9 @@ class ClipboardPanel(context: Context) : FrameLayout(context) {
         super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec((EmojiPanel.HEIGHT_DP * d).toInt(), MeasureSpec.EXACTLY))
     }
 
+    private fun hintText() =
+        "Tap a clip to paste it. Long-press to pin or delete. Clips that aren't pinned are removed after ${ClipStore.ttlWords(ClipStore.ttlHours(context))}."
+
     /** Reload the cards. Called each time the panel opens. */
     fun refresh() {
         hideActions()
@@ -192,13 +208,14 @@ class ClipboardPanel(context: Context) : FrameLayout(context) {
             hint.visibility = GONE
             clearBtn.visibility = GONE
             showMessage(
-                "Clipboard history is off. Turn it on to keep text you copy for an hour, so you can paste it again. It stays on this phone.",
+                "Clipboard history is off. Turn it on to keep text you copy, so you can paste it again. It stays on this phone.",
                 "Turn on clipboard history", { ClipStore.setEnabled(context, true); captureCurrent(); refresh() },
                 "Paste what's copied now", { currentClipText()?.let { listener?.onClip(it) } },
             )
             return
         }
         captureCurrent()
+        hint.text = hintText()
         clips = ClipStore.all(context)
         adapter.notifyDataSetChanged()
         list.scrollToPosition(0)
