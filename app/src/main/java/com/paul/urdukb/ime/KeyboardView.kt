@@ -214,7 +214,8 @@ class KeyboardView(context: Context) : View(context) {
 
     override fun onDraw(c: Canvas) {
         val col = colors
-        val down = ptrs.values.filter { !it.gliding }.map { it.key }
+        // nothing is allocated while no finger is down, which is most of the time the keys are redrawn
+        val down = if (ptrs.isEmpty()) emptyList() else ptrs.values.filter { !it.gliding }.map { it.key }
         for (k in keys) {
             val def = k.def
             val r = k.rect
