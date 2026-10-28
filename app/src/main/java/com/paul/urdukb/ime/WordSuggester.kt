@@ -115,8 +115,9 @@ class WordSuggester(words: List<Pair<String, Int>>) {
         }
 
         val ranked = found.entries.sortedWith(compareByDescending<Map.Entry<String, Int>> { it.value }.thenBy { it.key }).map { it.key }
-        if (inList || ownWord) {
-            // a word that is already there stays on the strip, so a tap never changes a correct word by accident
+        // the word as typed stays on the strip when it is a word the person uses or a common one, so a tap never
+        // changes a correct word by accident (a rare list entry like "th" is not given a slot)
+        if (ownWord || (inList && typedZipf >= 400)) {
             val bestFix = fixes.maxByOrNull { it.value }?.key
             return if (bestFix != null) (listOf(bestFix, typed) + ranked.filter { it != bestFix }).take(max)
             else (listOf(typed) + ranked).take(max)
