@@ -15,7 +15,10 @@ class AutocorrectCoverageTest {
             val (t, want) = pair.split(' ')
             if (t == want || t == "wanna" || t == "gonna" || t == "evening") continue
             total++
+            var why = ""
+            s.trace = { why = it }
             val got = s.autocorrect(t)
+            if (got != want && t in setOf("helo", "wich", "sory", "pleas", "rember", "hellp", "wnat", "lets", "probly", "alot")) println("AUTOCORRECT why: $why -> $got")
             if (got == want) ok++ else if (got == null) miss += t else { wrong++; miss += "$t->$got(want $want)" }
         }
         println("AUTOCORRECT coverage: fixed $ok of $total, wrong $wrong")

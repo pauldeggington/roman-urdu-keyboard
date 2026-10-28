@@ -143,6 +143,6 @@ class WordSuggesterTest {
 
     @Test
     fun doesNotShortenWords() {
-        assertEquals(null, suggester.autocorrect("hows"))
+        assertEquals("how's", suggester.autocorrect("hows"))
     }
 }

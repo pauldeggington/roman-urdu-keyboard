@@ -163,12 +163,16 @@ class WordSuggester(words: List<Pair<String, Int>>) {
                 fixes += Fix(sorted[idx], zipf[idx] - 120 * d + (if (contraction) 250 else 0) + (if (dropped) 80 else 0) - (if (shorter) 90 else 0), contraction)
             }
         }
+        trace?.invoke("$typed zipf=$typedZipf inList=$inList " + fixes.sortedByDescending { it.score }.take(3).joinToString { "${it.word}:${it.score}" })
         if (fixes.isEmpty()) return null
         fixes.sortByDescending { it.score }
         val best = fixes[0]
         if (fixes.size > 1 && best.score - fixes[1].score < 40) return null   // two good answers: do not guess
         return best.word
     }
+
+    /** Only for tests: sees why a word was or was not corrected. */
+    internal var trace: ((String) -> Unit)? = null
 
     private fun isSubsequence(small: String, big: String): Boolean {
         var i = 0
@@ -211,7 +215,7 @@ class WordSuggester(words: List<Pair<String, Int>>) {
 
     companion object {
         /** Chat shorthand that is plainly one thing. */
-        private val SHORTHAND = mapOf("thanx" to "thanks", "thankyou" to "thank you", "alot" to "a lot", "tonite" to "tonight", "gud" to "good")
+        private val SHORTHAND = mapOf("thanx" to "thanks", "thankyou" to "thank you", "alot" to "a lot", "tonite" to "tonight", "gud" to "good", "hows" to "how's", "whos" to "who's", "wheres" to "where's")
 
         private const val PERSONAL_BASE = 600
 
