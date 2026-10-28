@@ -137,6 +137,18 @@ glide w o r l d; sleep 1.5; shot 33_glide_world
 adb shell input keyevent 67; sleep 1; shot 34_glide_backspace
 adb logcat -d -s PREVIEW:I | grep GLIDE > $OUT/glide_log.txt 2>&1 || true
 
+# word suggestions while typing
+adb shell am start -f 0x10008000 -n $PKG/.PreviewActivity > /dev/null 2>&1; sleep 4
+hook letters; sleep 1
+dump; [ -s dump.txt ] || cp $OUT/keys.txt dump.txt
+TY=$(awk '/TOOLBAR/ {print $3 + $5/2}' dump.txt | head -1 | cut -d. -f1)
+for k in t h; do read X Y < <(key $k); adb shell input tap $X $Y; sleep 0.5; done
+sleep 1; shot 40_suggest_th
+for k in backspace; do adb shell input keyevent 67; sleep 0.3; done
+adb shell input keyevent 67; sleep 0.5
+for k in t e h; do read X Y < <(key $k); adb shell input tap $X $Y; sleep 0.5; done
+sleep 1; shot 41_suggest_teh
+adb shell input tap 258 $TY; sleep 1; shot 42_suggest_applied
 adb shell ime enable $IME; adb shell ime set $IME
 # animated demo: one screenshot after every step, stitched into a GIF afterwards
 mkdir -p $OUT/frames; N=0
