@@ -233,3 +233,114 @@ for f in sorted(os.listdir(OUT)):
     p = os.path.join(OUT, f)
     if os.path.isfile(p):
         print(f, os.path.getsize(p) // 1024, "KB")
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# banner and feature grid (text drawn with Poppins and Inter, emoji with Noto Color Emoji)
+from PIL import ImageFont
+
+FONTS = "/usr/share/fonts/truetype/google-fonts/"
+INTER = "/usr/share/fonts/opentype/inter/"
+
+
+def font(path, size):
+    return ImageFont.truetype(path, size)
+
+
+def emoji_img(ch, size):
+    f = ImageFont.truetype("/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf", 109)
+    im = Image.new("RGBA", (136, 128), (0, 0, 0, 0))
+    ImageDraw.Draw(im).text((0, 0), ch, font=f, embedded_color=True)
+    return im.resize((size, round(size * 128 / 136)), Image.LANCZOS)
+
+
+def wrap(draw, text, fnt, width):
+    lines, cur = [], ""
+    for w in text.split():
+        t = (cur + " " + w).strip()
+        if draw.textlength(t, font=fnt) <= width:
+            cur = t
+        else:
+            lines.append(cur)
+            cur = w
+    lines.append(cur)
+    return lines
+
+
+def glow(canvas, cx, cy, r, color, alpha):
+    layer = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
+    ImageDraw.Draw(layer).ellipse([cx - r, cy - r, cx + r, cy + r], fill=color + (alpha,))
+    canvas.alpha_composite(layer.filter(ImageFilter.GaussianBlur(r // 2)))
+
+
+def pill(cv, box, radius, fill, outline=None, width=2):
+    """A translucent rounded box (drawn on its own layer so the alpha blends instead of replacing)."""
+    layer = Image.new("RGBA", cv.size, (0, 0, 0, 0))
+    ImageDraw.Draw(layer).rounded_rectangle(box, radius, fill=fill, outline=outline, width=width)
+    cv.alpha_composite(layer)
+
+
+def banner():
+    W, H = 2400, 900
+    cv = bg_dark(W, H).convert("RGBA")
+    glow(cv, 1750, 250, 420, (124, 107, 255), 120)
+    glow(cv, 2200, 800, 360, (61, 220, 200), 50)
+    glow(cv, 200, 880, 300, (124, 107, 255), 60)
+    d = ImageDraw.Draw(cv)
+    logo = Image.open(os.path.join(os.path.dirname(OUT.rstrip("/")) or ".", "docs", "logo.png")) if False else Image.open(os.path.join(OUT, "logo.png")).convert("RGBA")
+    logo = rounded(logo.resize((170, 170), Image.LANCZOS), 40)
+    cv.alpha_composite(logo, (150, 130))
+    d.text((150, 330), "Roman Urdu", font=font(FONTS + "Poppins-Bold.ttf", 132), fill=(255, 255, 255))
+    d.text((150, 480), "Keyboard", font=font(FONTS + "Poppins-Bold.ttf", 132), fill=(255, 255, 255))
+    d.text((156, 665), "Type English. Send Roman Urdu.", font=font(INTER + "Inter-SemiBold.otf", 52), fill=(190, 178, 255))
+    x = 156
+    for e, label in (("🔒", "On-device AI"), ("✈️", "Works offline"), ("💜", "Free and open source")):
+        f = font(INTER + "Inter-Medium.otf", 32)
+        w = int(d.textlength(label, font=f)) + 130
+        pill(cv, [x, 780, x + w, 856], 38, (255, 255, 255, 28), (255, 255, 255, 70))
+        cv.alpha_composite(emoji_img(e, 40), (x + 26, 797))
+        d = ImageDraw.Draw(cv)
+        d.text((x + 82, 797), label, font=f, fill=(235, 235, 250))
+        x += w + 22
+    phones = [
+        (phone(labelled("typed"), 380), 1330, 170),
+        (phone(labelled("emoji"), 380), 1740, 70),
+        (phone(load("app_setup_PERSONAL"), 380), 2130, 200),
+    ]
+    for im, px, py in phones:
+        sh = shadow(im, blur=30, offset=(0, 20), alpha=150)
+        cv.alpha_composite(sh, (px - 90, py - 90))
+    return cv.convert("RGB")
+
+
+banner().save(os.path.join(OUT, "banner.png"), optimize=True)
+
+
+def feature_grid():
+    tiles = [
+        ("🔒", "Private", "The AI runs on your phone. Nothing you type is sent anywhere, and it works in airplane mode."),
+        ("🗣️", "Sounds like you", "Male or female, casual (tum) or formal (aap), and your own spellings."),
+        ("⌨️", "Feels like Gboard", "Same layout and key font, light and dark, Material You colours."),
+        ("✍️", "Types for you", "Glide typing, suggestions, automatic correction and next word."),
+        ("🎙️", "Voice in the keyboard", "Speak and watch the words appear. The keys stay on screen."),
+        ("😀", "Emoji, GIFs, clipboard", "Emoji search, GIPHY GIFs and stickers, Gboard-style clipboard history."),
+    ]
+    TW, TH, G, P = 720, 300, 28, 48
+    W = P * 2 + TW * 3 + G * 2
+    H = P * 2 + TH * 2 + G
+    cv = bg_dark(W, H).convert("RGBA")
+    d = ImageDraw.Draw(cv)
+    for i, (e, title, text) in enumerate(tiles):
+        x = P + (i % 3) * (TW + G)
+        y = P + (i // 3) * (TH + G)
+        pill(cv, [x, y, x + TW, y + TH], 36, (255, 255, 255, 22), (255, 255, 255, 55))
+        cv.alpha_composite(emoji_img(e, 70), (x + 36, y + 34))
+        d = ImageDraw.Draw(cv)
+        d.text((x + 36, y + 122), title, font=font(FONTS + "Poppins-SemiBold.ttf" if os.path.exists(FONTS + "Poppins-SemiBold.ttf") else FONTS + "Poppins-Medium.ttf", 42), fill=(255, 255, 255))
+        f = font(INTER + "Inter-Regular.otf", 29)
+        for j, ln in enumerate(wrap(d, text, f, TW - 72)[:3]):
+            d.text((x + 36, y + 184 + j * 38), ln, font=f, fill=(205, 205, 225))
+    return cv.convert("RGB")
+
+
+feature_grid().save(os.path.join(OUT, "features.png"), optimize=True)

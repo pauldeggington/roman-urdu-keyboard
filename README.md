@@ -1,13 +1,10 @@
-<p align="center">
-  <img src="docs/logo.png" width="112" alt="Roman Urdu Keyboard logo">
-</p>
-
-<h1 align="center">Roman Urdu Keyboard</h1>
+<h1 align="center">
+  <img src="docs/banner.png" alt="Roman Urdu Keyboard: type English, send Roman Urdu. An Android keyboard with on-device AI translation. Works offline, free and open source." width="100%">
+</h1>
 
 <p align="center">
-  <b>Type English. Send Roman Urdu.</b><br>
-  An Android keyboard that translates <b>English ⇄ Roman Urdu</b> as you type, using Google's Gemma AI model
-  that runs <b>entirely on your phone</b>.
+  Translate <b>English ⇄ Roman Urdu</b> as you type, with Google's Gemma AI running <b>entirely on your phone</b>.<br>
+  Glide typing, autocorrect, voice, emoji, GIFs and clipboard, in a keyboard that feels like Gboard.
 </p>
 
 <p align="center">
@@ -17,9 +14,6 @@
   <img src="https://img.shields.io/badge/works-offline-2E3350?style=for-the-badge" alt="Works offline">
 </p>
 
-<p align="center">
-  <img src="docs/hero.png" alt="Setup guide, the keyboard, the emoji screen and the personal settings" width="100%">
-</p>
 
 <p align="center">
   <a href="#see-it-work">See it work</a> ·
@@ -30,13 +24,11 @@
   <a href="#roadmap">Roadmap</a>
 </p>
 
-| | |
-|---|---|
-| **What it is** | A Gboard-style keyboard with a built-in English ⇄ Roman Urdu translator |
-| **Where the AI runs** | On your phone (Google Gemma through LiteRT-LM). Nothing you type leaves it |
-| **Needs** | Android 12+, arm64 phone, about 3 GB free, 6 GB RAM or more |
-| **Also does** | Glide typing, suggestions, autocorrect, next word, voice typing, emoji, GIFs, stickers, clipboard history |
-| **Licence** | GPL-3.0, free, no ads, no account |
+## What you get
+
+<p align="center">
+  <img src="docs/features.png" alt="Private, sounds like you, feels like Gboard, types for you, voice in the keyboard, emoji GIFs and clipboard" width="100%">
+</p>
 
 ---
 
@@ -57,31 +49,6 @@ the other way. Tap Translate again to get your original text back.
 | *Aap kaisay hain?* | How are you? |
 
 *Illustrative. A small model on a phone won't be perfect every time.*
-
-## Why it's different
-
-<table>
-<tr>
-<td width="33%" valign="top">
-
-### 🔒 Private
-The model runs on the phone. Nothing you type is sent anywhere, and after setup it works in airplane mode.
-
-</td>
-<td width="33%" valign="top">
-
-### 🗣️ Sounds like you
-Choose **Male or Female**, **casual (*tum*) or formal (*aap*)**, and your own spellings (*kaisay*, *chahtay*, *barha*).
-
-</td>
-<td width="33%" valign="top">
-
-### ⌨️ Feels like Gboard
-Same proportions, same key font, Material You colours, light and dark. You don't have to learn a new keyboard.
-
-</td>
-</tr>
-</table>
 
 ## Get started in two minutes
 
