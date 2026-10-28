@@ -149,6 +149,18 @@ adb shell input keyevent 67; sleep 0.5
 for k in t e h; do read X Y < <(key $k); adb shell input tap $X $Y; sleep 0.5; done
 sleep 1; shot 41_suggest_teh
 adb shell input tap 258 $TY; sleep 1; shot 42_suggest_applied
+# automatic correction: "teh" + space becomes "The"; Backspace puts "teh" back
+adb shell input keyevent KEYCODE_MOVE_END; for i in 1 2 3 4 5 6; do adb shell input keyevent 67; done; sleep 0.5
+hook shift; sleep 0.5
+for k in t e h; do read X Y < <(key $k); adb shell input tap $X $Y; sleep 0.4; done
+hook space; sleep 1; shot 43_autocorrected
+hook back; sleep 1; shot 44_autocorrect_undone
+# next word: after "thanks " the strip offers what usually follows
+for i in 1 2 3 4 5 6; do adb shell input keyevent 67; done; sleep 0.5
+for k in t h a n k s; do read X Y < <(key $k); adb shell input tap $X $Y; sleep 0.35; done
+hook space; sleep 1.2; shot 45_nextword
+# listening indicator on the mic button (the emulator has no speech recogniser, so this only shows the look)
+hook mic_on; hook notools; sleep 1; shot 46_mic_listening; hook mic_off
 adb shell ime enable $IME; adb shell ime set $IME
 # animated demo: one screenshot after every step, stitched into a GIF afterwards
 mkdir -p $OUT/frames; N=0

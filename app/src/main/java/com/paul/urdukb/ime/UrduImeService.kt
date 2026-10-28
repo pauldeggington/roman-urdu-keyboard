@@ -145,6 +145,10 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
                         "tools" -> toolbar.toolsOpen = true
                         "notools" -> toolbar.toolsOpen = false
                         "shift" -> keyboard.shift = KeyboardView.SHIFT_ON
+                        "space" -> { typeSpace(); scheduleSuggest() }
+                        "back" -> deleteOne()
+                        "mic_on" -> toolbar.listening = true
+                        "mic_off" -> toolbar.listening = false
                         "dump" -> {
                             keyboard.keyCenters().forEach { Log.i("PREVIEW", "KEY ${it.first} ${it.second.toInt()} ${it.third.toInt()}") }
                             val loc = IntArray(2)

@@ -137,6 +137,22 @@ kb2 = row(
 )
 kb2.save(os.path.join(OUT, "keyboard-light.png"), optimize=True)
 
+# --- typing help: suggestions, automatic correction and its undo, next word, the mic
+smart = row(
+    [
+        card(keyboard_crop("41_suggest_teh", 1000), 360),
+        card(keyboard_crop("43_autocorrected", 1000), 360),
+        card(keyboard_crop("44_autocorrect_undone", 1000), 360),
+        card(keyboard_crop("45_nextword", 1000), 360),
+        card(keyboard_crop("46_mic_listening", 1000), 360),
+    ],
+    bg_dark,
+    gap=24,
+    pad=40,
+    anchor="center",
+)
+smart.save(os.path.join(OUT, "typing-help.png"), optimize=True)
+
 # --- emoji screens
 emo = row(
     [
