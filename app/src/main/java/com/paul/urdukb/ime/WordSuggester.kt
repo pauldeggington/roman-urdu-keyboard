@@ -137,8 +137,8 @@ class WordSuggester(words: List<Pair<String, Int>>) {
         if (typed.length < 2 || typed.any { !(it.isLetter() || it == '\'') } || '\'' in typed) return null
         if (typed.length == 2 && typed != "im") return null
         if (personal.containsKey(typed) || typed in NOT_CONTRACTIONS) return null
-        val inList = exact.containsKey(typed)
         val typedZipf = exact[typed] ?: -1
+        val inList = typedZipf >= 320          // below that the list entry is a common misspelling, not a word
         // a word that is clearly in everyday use is not a typo; the list also holds some misspellings, which are rare
         if (inList && typedZipf >= 520) {
             // except an apostrophe-less contraction ("dont", "cant"), handled below
