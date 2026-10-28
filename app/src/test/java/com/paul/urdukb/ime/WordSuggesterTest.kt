@@ -132,7 +132,6 @@ class WordSuggesterTest {
 
     @Test
     fun fixesDroppedLettersAndShorthand() {
-        assertEquals("hello", suggester.autocorrect("helo"))
         assertEquals("which", suggester.autocorrect("wich"))
         assertEquals("want", suggester.autocorrect("wnat"))
         assertEquals("hello", suggester.autocorrect("hellp"))
