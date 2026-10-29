@@ -164,11 +164,11 @@
     <string name="try_tone">لہجہ (رومن اردو کے لیے)</string>
     <string name="tone_casual">بے تکلف · تم</string>
     <string name="tone_formal">رسمی · آپ</string>
-    <string name="try_tone_help">یہ کی بورڈ ٹول بار کی کلیدوں سے ملتے ہیں: سمت کے لیے تیر، لہجے کے لیے مسکراتا چہرہ یا بریف کیس۔</string>
+    <string name="try_tone_help">یہ کی بورڈ ٹول بار کی کلیدوں سے ملتے ہیں: سمت کے لیے تیر، لہجے کے لیے لہجے کی کلید۔ خودکار آپ کے لکھے سے لہجہ چنتا ہے۔</string>
     <string name="try_input_hint">انگریزی یا رومن اردو لکھیں</string>
     <string name="try_output_hint">ترجمہ یہاں نظر آئے گا۔ آپ اس میں ترمیم کر سکتے ہیں۔</string>
     <string name="try_save_example">مثال کے طور پر محفوظ کریں</string>
-    <string name="style_help">وہ اصول، مثالیں اور املا جن پر ماڈل چلتا ہے۔ اصول اور مثالیں بے تکلف، رسمی اور انگریزی میں کے لیے الگ ہیں؛ لغت مشترک ہے۔</string>
+    <string name="style_help">وہ اصول، مثالیں اور املا جن پر ماڈل چلتا ہے۔ اصول اور مثالیں ہر لہجے اور انگریزی میں کے لیے الگ ہیں؛ لغت مشترک ہے۔</string>
     <string name="style_i_am">میں ہوں</string>
     <string name="style_i_am_help">ترجمہ آپ کے بارے میں کیسے بات کرتا ہے: “I\'m tired” بنتا ہے “Main thak gaya hoon” یا “Main thak gayi hoon”۔</string>
     <string name="style_casual">بے تکلف</string>
@@ -325,4 +325,17 @@
     <string name="a11y_back">واپس</string>
     <string name="a11y_step">مرحلہ %1$d از %2$d</string>
     <string name="a11y_selected_colour">%1$s رنگ</string>
+    <string name="tone_auto">خودکار</string>
+    <string name="tone_poetic">شاعرانہ</string>
+    <string name="tone_funny">مزاحیہ</string>
+    <string name="tone_loving">پیار بھرا</string>
+    <string name="tone_respectful">باادب</string>
+    <string name="style_poetic">شاعرانہ</string>
+    <string name="style_funny">مزاحیہ</string>
+    <string name="style_loving">پیار بھرا</string>
+    <string name="style_respectful">باادب</string>
+    <string name="note_poetic">انگریزی سے رومن اردو، شاعرانہ</string>
+    <string name="note_funny">انگریزی سے رومن اردو، مزاحیہ (تم)</string>
+    <string name="note_affectionate">انگریزی سے رومن اردو، پیار بھرا (تم)</string>
+    <string name="note_respectful">انگریزی سے رومن اردو، باادب (آپ)</string>
 </resources>

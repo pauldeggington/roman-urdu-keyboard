@@ -66,6 +66,7 @@ class MainModel(app: Application) : AndroidViewModel(app) {
         val gpu: Boolean = false,
         val error: String = "",
         val formal: Boolean = false,
+        val toneChoice: String = RomanUrdu.TONE_AUTO,
         val direction: String = RomanUrdu.DIR_AUTO,
     )
 
@@ -299,7 +300,7 @@ class MainModel(app: Application) : AndroidViewModel(app) {
             status = status, statusTone = tone, detail = detail, choice = choice, downloadLabel = downloadLabel,
             downloading = bg.active, showRemove = f.exists() || part.exists(), showVerify = f.exists() && !verified,
             barProgress = bar, checks = checks, stats = stats, gpu = Prefs.gpu(ctx), error = Prefs.lastError(ctx),
-            formal = RomanUrdu.isFormal(ctx), direction = RomanUrdu.direction(ctx),
+            formal = RomanUrdu.isFormal(ctx), toneChoice = RomanUrdu.toneChoice(ctx), direction = RomanUrdu.direction(ctx),
         )
         updateBusy(busy)
     }
@@ -472,8 +473,12 @@ class MainModel(app: Application) : AndroidViewModel(app) {
 
     // ================================================================ Try it
 
-    fun setTone(formal: Boolean) {
-        KbSettings.of(ctx).formalTone = formal
+    /** "auto" or a tone key. Casual and Formal also set the usual register that Auto starts from. */
+    fun setToneChoice(choice: String) {
+        val kb = KbSettings.of(ctx)
+        kb.toneChoice = choice
+        if (choice == Style.CASUAL.key) kb.formalTone = false
+        if (choice == Style.FORMAL.key) kb.formalTone = true
         refresh()
     }
 
@@ -515,6 +520,10 @@ class MainModel(app: Application) : AndroidViewModel(app) {
             Style.TO_ENGLISH -> str(R.string.note_to_english)
             Style.FORMAL -> str(R.string.note_formal)
             Style.CASUAL -> str(R.string.note_casual)
+            Style.POETIC -> str(R.string.note_poetic)
+            Style.FUNNY -> str(R.string.note_funny)
+            Style.AFFECTIONATE -> str(R.string.note_affectionate)
+            Style.RESPECTFUL -> str(R.string.note_respectful)
         }
         val firstLoad = !LlmEngine.isLoaded()
         tryNote = direction + if (firstLoad) str(R.string.note_first_load) else ""

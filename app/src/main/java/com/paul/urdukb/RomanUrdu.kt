@@ -15,7 +15,7 @@ import java.util.concurrent.Executors
 /**
  * The Roman Urdu controls on the toolbar.
  * Translate: replaces the whole text field with Roman Urdu. Tapping it again (before typing anything else)
- * puts the English back. Tone: switches between Casual (tum) and Formal (aap).
+ * puts the English back. Tone: Auto (guessed from the sentence) or one of Casual, Formal, Poetic, Funny, Affectionate, Respectful.
  */
 object RomanUrdu {
 
@@ -61,15 +61,33 @@ object RomanUrdu {
             DIR_TO_RU -> false
             else -> Detect.guess(text) { VariantMap.isKnownVariant(ctx, it) } == Detect.Language.ROMAN_URDU
         }
-        return when {
-            toEnglish -> Style.TO_ENGLISH
-            isFormal(ctx) -> Style.FORMAL
-            else -> Style.CASUAL
-        }
+        if (toEnglish) return Style.TO_ENGLISH
+        val usual = if (isFormal(ctx)) Style.FORMAL else Style.CASUAL
+        val choice = toneChoice(ctx)
+        return if (choice == TONE_AUTO) ToneGuess.guess(text, usual) else Style.fromKey(choice)?.takeIf { it.isTone } ?: usual
     }
 
-    /** Short word shown on the toolbar: Casual / Formal. */
-    fun toneLabel(ctx: Context): String = if (isFormal(ctx)) "Formal" else "Casual"
+    const val TONE_AUTO = "auto"
+
+    /** "auto" or the key of one tone. */
+    fun toneChoice(ctx: Context): String = KbSettings.of(ctx).toneChoice
+
+    /** The name of a tone, as shown on the toolbar and in messages. */
+    fun toneName(style: Style): String = when (style) {
+        Style.CASUAL -> "Casual"
+        Style.FORMAL -> "Formal"
+        Style.POETIC -> "Poetic"
+        Style.FUNNY -> "Funny"
+        Style.AFFECTIONATE -> "Loving"
+        Style.RESPECTFUL -> "Respectful"
+        Style.TO_ENGLISH -> "English"
+    }
+
+    /** Short word shown on the toolbar: Auto, or the tone chosen by hand. */
+    fun toneLabel(ctx: Context): String {
+        val choice = toneChoice(ctx)
+        return if (choice == TONE_AUTO) "Auto" else Style.fromKey(choice)?.let { toneName(it) } ?: "Auto"
+    }
 
     /** Short word shown on the toolbar: Auto, EN\u2192RU or RU\u2192EN. */
     fun directionShort(ctx: Context): String = when (direction(ctx)) {
@@ -86,14 +104,27 @@ object RomanUrdu {
         main.post { Toast.makeText(ctx.applicationContext, msg, Toast.LENGTH_SHORT).show() }
     }
 
-    fun toggleTone(ime: Context) {
-        val formal = !isFormal(ime)
-        KbSettings.of(ime).formalTone = formal
+    /** Tapping the tone chip steps through Auto and the six tones. */
+    fun cycleTone(ime: Context) {
+        val order = listOf(TONE_AUTO) + Style.TONES.map { it.key }
+        val next = order[(order.indexOf(toneChoice(ime)).coerceAtLeast(0) + 1) % order.size]
+        val settings = KbSettings.of(ime)
+        settings.toneChoice = next
+        // Casual and Formal are also the usual register that Auto starts from
+        if (next == Style.CASUAL.key) settings.formalTone = false
+        if (next == Style.FORMAL.key) settings.formalTone = true
         refreshToolbar(ime)
         toast(
             ime,
-            if (formal) "Formal tone (aap): translations to Roman Urdu will be respectful"
-            else "Casual tone (tum): translations to Roman Urdu will be friendly"
+            when (next) {
+                TONE_AUTO -> "Auto tone: the tone is picked from what you wrote"
+                Style.CASUAL.key -> "Casual tone (tum): friendly, everyday"
+                Style.FORMAL.key -> "Formal tone (aap): polite and respectful"
+                Style.POETIC.key -> "Poetic tone: shayari-style, for feelings"
+                Style.FUNNY.key -> "Funny tone: playful and teasing"
+                Style.AFFECTIONATE.key -> "Loving tone: warm, for family and partner"
+                else -> "Respectful tone: for elders and people of rank"
+            }
         )
     }
 
@@ -179,11 +210,8 @@ object RomanUrdu {
         }
 
         val style = styleFor(ctx, text)
-        val label = when (style) {
-            Style.TO_ENGLISH -> "Roman Urdu \u2192 English"
-            Style.FORMAL -> "English \u2192 Roman Urdu (formal)"
-            Style.CASUAL -> "English \u2192 Roman Urdu (casual)"
-        }
+        val label = if (style == Style.TO_ENGLISH) "Roman Urdu \u2192 English"
+            else "English \u2192 Roman Urdu (${toneName(style).lowercase()})"
         toast(ctx, if (LlmEngine.isLoaded()) label else "$label. Loading the model, the first one takes a few seconds")
         busy = true
         refreshToolbar(ctx)

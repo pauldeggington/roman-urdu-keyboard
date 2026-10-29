@@ -120,6 +120,7 @@ Rules:
             Style.FORMAL -> DEFAULT_RULES_FORMAL
             Style.CASUAL -> DEFAULT_RULES_CASUAL
             Style.TO_ENGLISH -> DEFAULT_RULES_ENGLISH
+            else -> ToneRules.forStyle(style) ?: DEFAULT_RULES_CASUAL
         }
     }
 
@@ -151,6 +152,7 @@ Rules:
             Style.FORMAL -> DEFAULT_EXAMPLES_FORMAL
             Style.CASUAL -> DEFAULT_EXAMPLES_CASUAL
             Style.TO_ENGLISH -> DEFAULT_EXAMPLES_ENGLISH
+            else -> ToneBank.forStyle(style) ?: DEFAULT_EXAMPLES_CASUAL
         }
     }
 

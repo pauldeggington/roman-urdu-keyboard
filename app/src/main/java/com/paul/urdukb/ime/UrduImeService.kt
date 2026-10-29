@@ -583,7 +583,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             ToolbarView.Tool.SUGGESTION_3 -> if (strip == Strip.TYPING) assist.choose(2) else chooseGlide(2)
             ToolbarView.Tool.GRID -> toolbar.toolsOpen = !toolbar.toolsOpen
             ToolbarView.Tool.TRANSLATE -> RomanUrdu.translateOrRevert(this) { currentInputConnection?.finishComposingText() }
-            ToolbarView.Tool.TONE -> RomanUrdu.toggleTone(this)
+            ToolbarView.Tool.TONE -> RomanUrdu.cycleTone(this)
             ToolbarView.Tool.DIRECTION -> RomanUrdu.cycleDirection(this)
             ToolbarView.Tool.MIC -> voiceController.toggle()
             ToolbarView.Tool.EMOJI -> showEmoji(true)

@@ -228,7 +228,20 @@ private fun TryCard(model: MainModel) {
             selected = s.direction,
         ) { model.setDirection(it) }
         FieldLabel(stringResource(R.string.try_tone))
-        Segmented(listOf(stringResource(R.string.tone_casual) to false, stringResource(R.string.tone_formal) to true), selected = s.formal) { model.setTone(it) }
+        Segmented(
+            listOf(
+                stringResource(R.string.tone_auto) to RomanUrdu.TONE_AUTO, stringResource(R.string.style_casual) to Style.CASUAL.key,
+                stringResource(R.string.style_formal) to Style.FORMAL.key, stringResource(R.string.tone_poetic) to Style.POETIC.key,
+            ),
+            selected = s.toneChoice,
+        ) { model.setToneChoice(it) }
+        Segmented(
+            listOf(
+                stringResource(R.string.tone_funny) to Style.FUNNY.key, stringResource(R.string.tone_loving) to Style.AFFECTIONATE.key,
+                stringResource(R.string.tone_respectful) to Style.RESPECTFUL.key,
+            ),
+            selected = s.toneChoice,
+        ) { model.setToneChoice(it) }
         Muted(stringResource(R.string.try_tone_help), Modifier.padding(top = 6.dp), size = Type.caption)
         TextBox(
             model.tryInput, { model.tryInput = it }, stringResource(R.string.try_input_hint),
@@ -262,7 +275,17 @@ private fun StyleCard(model: MainModel) {
         Muted(stringResource(R.string.style_i_am_help), Modifier.padding(top = 6.dp))
         if (model.styleOpen) {
             Segmented(
-                listOf(stringResource(R.string.style_casual) to Style.CASUAL, stringResource(R.string.style_formal) to Style.FORMAL, stringResource(R.string.dir_to_en) to Style.TO_ENGLISH),
+                listOf(
+                    stringResource(R.string.style_casual) to Style.CASUAL, stringResource(R.string.style_formal) to Style.FORMAL,
+                    stringResource(R.string.style_poetic) to Style.POETIC, stringResource(R.string.style_funny) to Style.FUNNY,
+                ),
+                selected = model.styleSel,
+            ) { model.showStyle(it) }
+            Segmented(
+                listOf(
+                    stringResource(R.string.style_loving) to Style.AFFECTIONATE, stringResource(R.string.style_respectful) to Style.RESPECTFUL,
+                    stringResource(R.string.dir_to_en) to Style.TO_ENGLISH,
+                ),
                 selected = model.styleSel,
             ) { model.showStyle(it) }
             FieldLabel(stringResource(R.string.style_rules))

@@ -159,6 +159,9 @@ object LlmEngine {
     private var preparedFor: List<Pair<String, String>>? = null
     private var prepared: Glossary.Prepared = Glossary.prepare(emptyList())
 
+    /** The built-in Urdu-letter spellings first, then the person's own glossary, which wins where they overlap. */
+    private fun effectiveGlossary(ctx: Context): List<Pair<String, String>> = SpellingRules.PAIRS + Glossary.parse(Prefs.glossary(ctx))
+
     /** The glossary as lookups, built again only when the glossary text changes. */
     private fun preparedGlossary(ctx: Context, glossary: List<Pair<String, String>>): Glossary.Prepared {
         if (preparedFor != glossary) {
@@ -187,8 +190,7 @@ object LlmEngine {
         }
         val hit = exactIndex[want] ?: return null
         return if (style == Style.TO_ENGLISH) hit.second else {
-            val glossary = Glossary.parse(Prefs.glossary(ctx))
-            Glossary.apply(preparedGlossary(ctx, glossary), Speaker.adapt(ctx, hit.second))
+            Glossary.apply(preparedGlossary(ctx, effectiveGlossary(ctx)), Speaker.adapt(ctx, hit.second))
         }
     }
 
@@ -204,7 +206,11 @@ object LlmEngine {
 
     /** The few examples from the bank that are closest to this text. */
     private fun examples(ctx: Context, style: Style, text: String): List<Pair<String, String>> {
-        val picked = Bank.pick(Bank.parse(Prefs.examples(ctx, style)), text, k = 5) { VariantMap.canon(ctx, it) }
+        // the four extra tones show their own closest examples, then two of the everyday register's, so plain phrasing still comes out right
+        val own = Bank.pick(Bank.parse(Prefs.examples(ctx, style)), text, k = if (style.isExtraTone) 3 else 5) { VariantMap.canon(ctx, it) }
+        val picked = if (style.isExtraTone) {
+            Bank.pick(Bank.parse(Prefs.examples(ctx, style.register)), text, k = 2) { VariantMap.canon(ctx, it) } + own
+        } else own
         // the bank is written for a male speaker; match the chosen speaker so the examples agree with the rules
         return if (style == Style.TO_ENGLISH) picked.map { (ur, en) -> Person.tag(ur, style) to en }
         else picked.map { (en, ur) -> Person.tag(en, style) to Speaker.adapt(ctx, ur) }
@@ -212,7 +218,7 @@ object LlmEngine {
 
     private fun systemPrompt(ctx: Context, style: Style, glossary: List<Pair<String, String>>, extra: String = ""): String =
         (if (style == Style.TO_ENGLISH) Prefs.rules(ctx, style) + Person.tagRules(style)
-        else Speaker.stripOldRules(Prefs.rules(ctx, style)) + Speaker.rules(ctx) + Person.tagRules(style)) + extra   // the glossary is applied to the answer afterwards, so it is not repeated in the prompt (it made every translation slower)
+        else Speaker.stripOldRules(Prefs.rules(ctx, style)) + SpellingRules.PROMPT + Speaker.rules(ctx) + Person.tagRules(style)) + extra   // the glossary is applied to the answer afterwards, so it is not repeated in the prompt (it made every translation slower)
 
     /** Blocking. Call from a background thread. */
     @Synchronized
@@ -225,7 +231,7 @@ object LlmEngine {
         val text = if (style == Style.TO_ENGLISH) Spelling.normalizeInput(ctx, rawText) else rawText
         val t0 = System.nanoTime()
         // Spellings only matter for Roman Urdu output
-        val glossary = if (style == Style.TO_ENGLISH) emptyList() else Glossary.parse(Prefs.glossary(ctx))
+        val glossary = if (style == Style.TO_ENGLISH) emptyList() else effectiveGlossary(ctx)
         val examples = examples(ctx, style, text)
         val tagged = Person.tag(text, style)
 

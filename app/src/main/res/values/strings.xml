@@ -169,11 +169,11 @@
     <string name="try_tone">Tone (for Roman Urdu)</string>
     <string name="tone_casual">Casual · tum</string>
     <string name="tone_formal">Formal · aap</string>
-    <string name="try_tone_help">These match the keys in the keyboard toolbar: arrows for direction, smiley or briefcase for tone.</string>
+    <string name="try_tone_help">These match the keys in the keyboard toolbar: arrows for direction, the tone key for tone. Auto picks the tone from what you wrote.</string>
     <string name="try_input_hint">Type English or Roman Urdu</string>
     <string name="try_output_hint">The translation shows up here. You can edit it.</string>
     <string name="try_save_example">Save as example</string>
-    <string name="style_help">The rules, example bank and spellings the model follows. Rules and examples are separate for Casual, Formal and To English; the glossary is shared.</string>
+    <string name="style_help">The rules, example bank and spellings the model follows. Rules and examples are separate for each tone and for To English; the glossary is shared.</string>
     <string name="style_i_am">I am</string>
     <string name="style_i_am_help">How the translation talks about you: \"I\'m tired\" becomes \"Main thak gaya hoon\" or \"Main thak gayi hoon\".</string>
     <string name="style_casual">Casual</string>
@@ -334,4 +334,17 @@
     <string name="a11y_back">Back</string>
     <string name="a11y_step">Step %1$d of %2$d</string>
     <string name="a11y_selected_colour">%1$s colour</string>
+    <string name="tone_auto">Auto</string>
+    <string name="tone_poetic">Poetic</string>
+    <string name="tone_funny">Funny</string>
+    <string name="tone_loving">Loving</string>
+    <string name="tone_respectful">Respectful</string>
+    <string name="style_poetic">Poetic</string>
+    <string name="style_funny">Funny</string>
+    <string name="style_loving">Loving</string>
+    <string name="style_respectful">Respectful</string>
+    <string name="note_poetic">English → Roman Urdu, poetic</string>
+    <string name="note_funny">English → Roman Urdu, funny (tum)</string>
+    <string name="note_affectionate">English → Roman Urdu, loving (tum)</string>
+    <string name="note_respectful">English → Roman Urdu, respectful (aap)</string>
 </resources>

@@ -37,6 +37,11 @@ class KbSettings private constructor(private val sp: SharedPreferences) {
         get() = sp.getBoolean("roman_urdu_formal", false)
         set(v) { sp.edit().putBoolean("roman_urdu_formal", v).apply() }
 
+    /** "auto" (the app guesses the tone from the sentence) or the key of a tone: casual, formal, poetic, funny, affectionate, respectful. */
+    var toneChoice: String
+        get() = sp.getString("roman_urdu_tone", "auto") ?: "auto"
+        set(v) { sp.edit().putString("roman_urdu_tone", v).apply() }
+
     /** "auto", "to_ru" or "to_en" (see RomanUrdu). */
     var direction: String
         get() = sp.getString("roman_urdu_direction", "auto") ?: "auto"
