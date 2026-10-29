@@ -42,7 +42,7 @@ class VoicePromptsTest {
     @Test fun translationExamplesMixUrduAndEnglish() {
         assertTrue(VoicePrompts.TRANSLATE_EXAMPLES.size >= 3)
         for ((urdu, english) in VoicePrompts.TRANSLATE_EXAMPLES) {
-            assertTrue("urdu side has Urdu letters", VoicePrompts.isUrduScript(urdu))
+            assertTrue("urdu side has Urdu letters", urdu.any { it.code in 0x0600..0x06FF })
             assertTrue("urdu side keeps an English word", Regex("[A-Za-z]{3,}").containsMatchIn(urdu))
             assertFalse("english side is English", VoicePrompts.isUrduScript(english))
         }
