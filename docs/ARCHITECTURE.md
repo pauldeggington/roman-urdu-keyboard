@@ -65,9 +65,16 @@ The keyboard stays on Canvas views; the app screens are Compose. Each screen is 
 | Setup guide (`SetupActivity`) | `ui/SetupScreen.kt`: one composable per step | `ui/SetupModel.kt`: which step, download and file check, keyboard on or not |
 | Translate to English sheet (`TranslateTextActivity`) | one composable in the same file | calls the engine directly |
 
-- `ui/AppTheme.kt` builds the Material theme from the same `Palette` the keyboard settings use (wallpaper colours, or the chosen swatch, light or dark).
-- `ui/Components.kt` has the shared pieces: `AppCard`, `PillButton`, `Segmented`, `TextBox`, `SwitchRow`. Use them for new screens.
+- The models are `AndroidViewModel`s, so a turned screen or a colour change keeps the download, the typed text and the step. They never hold an activity: things only an activity can do (keep the screen on, close the guide) are state or events the activity reacts to.
+- **One design system.** Swatches and the colour maths for both the keyboard and the app screens are in `core/.../design/` (`Swatches`, `SeedPalette`), so they are plain Kotlin with a unit test that checks the readability (WCAG contrast) of every swatch in light and dark. `ui/AppTheme.kt` turns them into the Material theme; `ui/Type.kt` is the type scale. Use `Type.body` etc., not loose font sizes.
+- `ui/Components.kt` has the shared pieces: `AppCard`, `PillButton`, `Segmented`, `TextBox`, `SwitchRow`. Use them for new screens. `ui/Gallery.kt` shows them all together and has the `@Preview`s for Android Studio.
 - The activities only start the model and the screen. To change how something looks, edit the screen file; to change what it does, edit the model.
+
+### Screenshot and accessibility tests (no emulator)
+
+`app/src/test/.../ui/ScreenshotTest.kt` draws the gallery and the setup guide on the JVM (Robolectric) in light, dark, Urdu right-to-left and large text, and compares each picture with the saved one in `app/src/test/snapshots/`. A change that moves more than 0.5% of the pixels fails the test. CI publishes the new pictures to the `ci-ui-shots` branch; if a change is on purpose, copy them over the saved ones. The same file checks that every tappable control is at least 48dp and has a label for a screen reader.
+
+Accessibility rules for new screens: 48dp touch targets, a label (text or `contentDescription`) on everything tappable, `selectable` / `toggleable` for choices so the state is read out, headings marked with `heading()`, and start/end instead of left/right so Urdu mirrors.
 - All text is in `res/values/strings.xml`, so a translation is one new `values-xx/strings.xml`.
 
 ## Data and privacy

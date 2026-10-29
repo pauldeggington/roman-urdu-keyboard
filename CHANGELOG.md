@@ -11,6 +11,8 @@ The app shows it as, for example, "Version 2.1 (build 121)". Test builds are tag
 - Contributor guide, architecture page and editor settings added.
 - **Smaller download:** the main APK is now shrunk with R8 (about a third of the size). The unshrunk build is attached to each release as `-standard.apk`, in case anything misbehaves.
 - **Urdu app screens:** the app and setup screens, and the keyboard's messages, are available in Urdu script when the phone's language is Urdu.
+- **Easier to read and use:** every tap target is at least 48dp, switches and colour choices are labelled for TalkBack, Urdu text is drawn larger (it reads small at the same size), the back arrow mirrors in right-to-left, and line heights have room for large text. The Android-free `core` tests check the contrast of every colour swatch, in light and dark.
+- **State survives:** turning the screen or changing the colour no longer resets the settings and setup screens mid-download.
 - **Cleaner code:** all settings in one typed `KbSettings` class; the keyboard service is split into `TypingAssist`, `MediaSender`, `VoiceController` and `PreviewHooks`.
 
 ## 2.1

@@ -34,7 +34,7 @@ It has hooks that let CI drive the keyboard and take screenshots (see `scripts/s
 
 1. Branch from `main`.
 2. If the logic can live in `core/`, write it there with a test. Tests that need the word list read it from `app/src/main/assets/dict/`.
-3. Run `./gradlew :core:test :app:testDebugUnitTest`.
+3. Run `./gradlew :core:test :app:testDebugUnitTest`. If you changed how a screen looks, the screenshot test will say which picture moved; see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#screenshot-and-accessibility-tests-no-emulator).
 4. Open a pull request. CI builds the APK, runs the tests and boots the keyboard on an emulator for screenshots.
 5. Keep one change per pull request, and say what you could and could not test on a real phone.
 
