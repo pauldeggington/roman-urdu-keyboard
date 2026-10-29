@@ -1,5 +1,6 @@
 plugins {
     id("com.android.application")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
@@ -64,6 +65,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        compose = true
     }
 
     testOptions {
@@ -100,6 +102,13 @@ dependencies {
     implementation(libs.litertlm)
     implementation(libs.androidx.core)
     implementation(libs.androidx.recyclerview)
+
+    // Jetpack Compose: the setup guide and settings screens (the keyboard itself stays on Canvas views)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.activity.compose)
 
     testImplementation(libs.junit)
 }

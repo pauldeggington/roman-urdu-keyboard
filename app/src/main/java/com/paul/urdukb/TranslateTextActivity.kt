@@ -1,147 +1,163 @@
 package com.paul.urdukb
 
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.text.TextUtils
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.paul.urdukb.ui.RomanUrduTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * "Translate to English" in the text-selection menu of other apps: select a message someone sent you in Roman Urdu,
  * and a small sheet shows the English. Runs on the phone with the same model as the keyboard.
  */
-class TranslateTextActivity : Activity() {
-
-    private val ui = Handler(Looper.getMainLooper())
-    private lateinit var pal: Palette
-    private lateinit var result: TextView
-    private lateinit var note: TextView
-    private lateinit var copyBtn: Button
-    private var translated: String? = null
-
-    private fun dp(v: Float) = (v * resources.displayMetrics.density).toInt()
+class TranslateTextActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        pal = Palette(this)
         // any app may send text here, so only a sensible amount is read
         val text = intent?.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)?.toString()?.trim().orEmpty().take(4000)
         if (text.isEmpty()) { finish(); return }
+        // emulator preview builds have no model: a finished layout for a screenshot (never in real builds)
+        val previewResult = if (BuildConfig.PREVIEW) intent.getStringExtra("preview_result") else null
 
-        val sheet = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(dp(22f), dp(20f), dp(22f), dp(22f))
-            background = GradientDrawable().apply {
-                setColor(pal.card)
-                val r = dp(28f).toFloat()
-                cornerRadii = floatArrayOf(r, r, r, r, 0f, 0f, 0f, 0f)
-            }
-            isClickable = true   // taps on the sheet do not close it
-        }
-        note = TextView(this).apply {
-            this.text = "Roman Urdu → English"
-            textSize = 13f
-            setTextColor(pal.textMuted)
-        }
-        sheet.addView(note)
-        sheet.addView(TextView(this).apply {
-            this.text = text
-            textSize = 14f
-            maxLines = 4
-            ellipsize = TextUtils.TruncateAt.END
-            setTextColor(pal.textMuted)
-            setPadding(0, dp(8f), 0, dp(12f))
-        })
-        result = TextView(this).apply {
-            textSize = 20f
-            setTextColor(pal.text)
-            setLineSpacing(0f, 1.15f)
-            setTextIsSelectable(true)
-            this.text = Words.thinking()
-        }
-        sheet.addView(result, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-
-        val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; setPadding(0, dp(18f), 0, 0) }
-        copyBtn = pill("Copy", true) {
-            translated?.let {
-                getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("English", it))
-                note.text = "Copied"
-            }
-        }.apply { isEnabled = false; alpha = 0.5f }
-        row.addView(copyBtn, LinearLayout.LayoutParams(0, dp(46f), 1f).apply { marginEnd = dp(8f) })
-        row.addView(pill("Close", false) { finish() }, LinearLayout.LayoutParams(0, dp(46f), 1f))
-        sheet.addView(row)
-
-        val root = FrameLayout(this).apply {
-            setBackgroundColor(0x66000000)
-            setOnClickListener { finish() }
-            addView(sheet, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM))
-            // keep the sheet above the gesture bar
-            setOnApplyWindowInsetsListener { _, insets ->
-                val bars = insets.getInsets(android.view.WindowInsets.Type.systemBars())
-                sheet.setPadding(dp(22f), dp(20f), dp(22f), dp(22f) + bars.bottom)
-                insets
+        setContent {
+            RomanUrduTheme {
+                TranslateSheet(text, previewResult, onClose = { finish() })
             }
         }
-        setContentView(root)
+    }
+}
 
-        // emulator preview builds have no model: this shows the finished layout for a screenshot (never in real builds)
-        if (BuildConfig.PREVIEW && intent.hasExtra("preview_result")) {
-            translated = intent.getStringExtra("preview_result")
-            result.text = translated
-            copyBtn.isEnabled = true
-            copyBtn.alpha = 1f
-            return
-        }
-        if (!LlmEngine.modelExists(this)) {
-            result.text = "The translator isn't downloaded yet. Open Roman Urdu Keyboard and finish the setup, then try again."
-            copyBtn.visibility = View.GONE
-            return
-        }
-        if (!LlmEngine.isLoaded()) note.text = "Roman Urdu → English  ·  loading the model, the first one takes a bit longer"
-        Thread({
-            var out: String? = null
-            var err: Throwable? = null
+private sealed interface SheetState {
+    data object Loading : SheetState
+    data class Done(val english: String) : SheetState
+    data object NoModel : SheetState
+    data object Failed : SheetState
+}
+
+@Composable
+private fun TranslateSheet(source: String, previewResult: String?, onClose: () -> Unit) {
+    val ctx = LocalContext.current
+    val thinking = remember { Words.thinking() }
+    var state by remember {
+        mutableStateOf<SheetState>(
+            when {
+                previewResult != null -> SheetState.Done(previewResult)
+                !LlmEngine.modelExists(ctx) -> SheetState.NoModel
+                else -> SheetState.Loading
+            },
+        )
+    }
+    var copied by remember { mutableStateOf(false) }
+    val firstLoad = remember { !LlmEngine.isLoaded() }
+
+    LaunchedEffect(Unit) {
+        if (state != SheetState.Loading) return@LaunchedEffect
+        val out = withContext(Dispatchers.IO) {
             try {
-                out = LlmEngine.translate(this, text, Style.TO_ENGLISH)
+                LlmEngine.translate(ctx, source, Style.TO_ENGLISH)
             } catch (t: Throwable) {
-                err = t
-                LlmEngine.saveError(this, t)
+                LlmEngine.saveError(ctx, t)
+                null
             }
-            ui.post {
-                if (isFinishing || isDestroyed) return@post
-                if (err != null || out.isNullOrBlank()) {
-                    result.text = "That didn't work. The details are in the app under Last error."
-                } else {
-                    translated = out
-                    result.text = out
-                    note.text = "Roman Urdu → English"
-                    copyBtn.isEnabled = true
-                    copyBtn.alpha = 1f
-                }
-            }
-        }, "translate-selection").start()
+        }
+        state = if (out.isNullOrBlank()) SheetState.Failed else SheetState.Done(out)
     }
 
-    private fun pill(label: String, filled: Boolean, onClick: () -> Unit) = Button(this).apply {
-        text = label
-        isAllCaps = false
-        textSize = 15f
-        stateListAnimator = null
-        elevation = 0f
-        setTextColor(if (filled) pal.onPrimary else pal.onTonal)
-        background = roundedBg(if (filled) pal.primary else pal.tonal, dp(100f).toFloat())
-        setOnClickListener { onClick() }
+    val nothing = remember { MutableInteractionSource() }
+    Box(
+        Modifier.fillMaxSize().background(Color(0x66000000)).clickable(interactionSource = nothing, indication = null) { onClose() },
+    ) {
+        Column(
+            Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { }   // taps on the sheet do not close it
+                .navigationBarsPadding()
+                .padding(start = 22.dp, end = 22.dp, top = 20.dp, bottom = 22.dp),
+        ) {
+            val muted = MaterialTheme.colorScheme.onSurfaceVariant
+            Text(
+                when {
+                    copied -> stringResource(R.string.sheet_copied)
+                    state == SheetState.Loading && firstLoad -> stringResource(R.string.sheet_loading_first)
+                    else -> stringResource(R.string.sheet_direction)
+                },
+                color = muted, fontSize = 13.sp,
+            )
+            Text(source, color = muted, fontSize = 14.sp, maxLines = 4, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 8.dp, bottom = 12.dp))
+            SelectionContainer {
+                Text(
+                    when (val s = state) {
+                        SheetState.Loading -> thinking
+                        is SheetState.Done -> s.english
+                        SheetState.NoModel -> stringResource(R.string.sheet_no_model)
+                        SheetState.Failed -> stringResource(R.string.sheet_failed)
+                    },
+                    color = MaterialTheme.colorScheme.onSurface, fontSize = 20.sp, lineHeight = 26.sp,
+                )
+            }
+            Row(Modifier.padding(top = 18.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (state != SheetState.NoModel) {
+                    Button(
+                        onClick = {
+                            (state as? SheetState.Done)?.let {
+                                ctx.getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("English", it.english))
+                                copied = true
+                            }
+                        },
+                        enabled = state is SheetState.Done,
+                        modifier = Modifier.weight(1f).height(46.dp),
+                    ) { Text(stringResource(R.string.sheet_copy), fontSize = 15.sp) }
+                }
+                Button(
+                    onClick = onClose,
+                    modifier = Modifier.weight(1f).height(46.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    ),
+                ) { Text(stringResource(R.string.sheet_close), fontSize = 15.sp) }
+            }
+        }
     }
 }

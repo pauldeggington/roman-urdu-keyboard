@@ -9,6 +9,7 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:9.1.1")
         classpath(kotlin("gradle-plugin", version = kotlinVersion))
+        classpath(kotlin("compose-compiler-gradle-plugin", version = kotlinVersion))
     }
 }
 

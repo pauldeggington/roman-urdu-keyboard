@@ -46,4 +46,13 @@
     <string name="voice_none">No speech recognition on this phone.</string>
     <string name="voice_not_on">Voice typing isn\'t turned on. In Settings, go to System > Keyboard > On-screen keyboard and turn on Google voice typing.</string>
     <string name="voice_stopped">Voice typing stopped (error %1$d).</string>
+
+    <!-- Translate to English sheet -->
+    <string name="sheet_direction">Roman Urdu → English</string>
+    <string name="sheet_loading_first">Roman Urdu → English  ·  loading the model, the first one takes a bit longer</string>
+    <string name="sheet_copied">Copied</string>
+    <string name="sheet_copy">Copy</string>
+    <string name="sheet_close">Close</string>
+    <string name="sheet_no_model">The translator isn\'t downloaded yet. Open Roman Urdu Keyboard and finish the setup, then try again.</string>
+    <string name="sheet_failed">That didn\'t work. The details are in the app under Last error.</string>
 </resources>
