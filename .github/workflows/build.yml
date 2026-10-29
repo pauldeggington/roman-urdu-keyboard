@@ -58,6 +58,14 @@ jobs:
             exit "$rc"
           fi
 
+      - name: Keep the screenshots the tests drew
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: app/build/screenshots/*.png
+          if-no-files-found: ignore
+
       - name: Build debug APK
         run: |
           chmod +x gradlew

@@ -1,0 +1,103 @@
+package com.paul.urdukb.ui
+
+import android.app.Application
+import android.content.ComponentName
+import android.content.Context
+import android.graphics.Bitmap
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.test.junit4.createEmptyComposeRule
+import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.core.content.edit
+import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider
+import com.paul.urdukb.KeyboardLook
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
+import java.io.File
+import kotlin.math.abs
+
+/**
+ * Draws screens to PNG on the JVM, no emulator. Each picture is written to build/screenshots and compared with the saved
+ * copy in src/test/snapshots; a change that moves pixels fails the test, and the new picture is there to look at.
+ * To accept a change on purpose, copy the new picture over the saved one.
+ */
+@RunWith(RobolectricTestRunner::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+@Config(sdk = [35], qualifiers = "w411dp-h860dp-xxhdpi")
+class ScreenshotTest {
+    @get:Rule val rule = createEmptyComposeRule()
+
+    private val ctx: Context get() = ApplicationProvider.getApplicationContext<Application>()
+
+    @Before
+    fun registerActivity() {
+        shadowOf(ctx.packageManager).addActivityIfNotPresent(ComponentName(ctx.packageName, ComponentActivity::class.java.name))
+    }
+
+    private fun look(mode: String, swatch: String) {
+        ctx.getSharedPreferences("look", Context.MODE_PRIVATE).edit(commit = true) {
+            putString("mode", mode)
+            putString("swatch", swatch)
+        }
+    }
+
+    private fun shoot(name: String, rtl: Boolean = false, fontScale: Float = 1f, content: @androidx.compose.runtime.Composable () -> Unit) {
+        ActivityScenario.launch(ComponentActivity::class.java).use { scenario ->
+            scenario.onActivity { activity ->
+                activity.setContent {
+                    val d = LocalDensity.current
+                    CompositionLocalProvider(
+                        LocalDensity provides Density(d.density, fontScale),
+                        LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LayoutDirection.Ltr,
+                    ) { RomanUrduTheme(content) }
+                }
+            }
+            rule.waitForIdle()
+            val bmp = rule.onRoot().captureToImage().asAndroidBitmap()
+            check(name, bmp)
+        }
+    }
+
+    private fun check(name: String, bmp: Bitmap) {
+        val out = File("build/screenshots").apply { mkdirs() }
+        File(out, "$name.png").outputStream().use { bmp.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        val golden = File("src/test/snapshots/$name.png")
+        if (!golden.exists()) {
+            println("SNAPSHOT new: $name (no saved copy yet)")
+            return
+        }
+        val saved = android.graphics.BitmapFactory.decodeFile(golden.path)
+        assertTrue("$name: size changed ${saved.width}x${saved.height} -> ${bmp.width}x${bmp.height}", saved.width == bmp.width && saved.height == bmp.height)
+        var off = 0
+        for (y in 0 until bmp.height) for (x in 0 until bmp.width) {
+            val a = saved.getPixel(x, y)
+            val b = bmp.getPixel(x, y)
+            val d = abs((a shr 16 and 255) - (b shr 16 and 255)) + abs((a shr 8 and 255) - (b shr 8 and 255)) + abs((a and 255) - (b and 255))
+            if (d > 24) off++
+        }
+        val share = off.toDouble() / (bmp.width * bmp.height)
+        println("SNAPSHOT $name: ${"%.3f".format(share * 100)}% of pixels differ")
+        assertTrue("$name: ${"%.2f".format(share * 100)}% of pixels changed (limit 0.5%)", share <= 0.005)
+    }
+
+    @Test fun galleryLight() { look("light", "blue"); shoot("gallery-light") { ComponentGallery() } }
+    @Test fun galleryDark() { look("dark", "blue"); shoot("gallery-dark") { ComponentGallery() } }
+    @Test fun galleryLemonLight() { look("light", "lemon"); shoot("gallery-lemon-light") { ComponentGallery() } }
+    @Test fun galleryUrduRtl() { look("light", "blue"); shoot("gallery-urdu-rtl", rtl = true) { ComponentGallery(urduGallery) } }
+    @Test fun galleryLargeText() { look("light", "blue"); shoot("gallery-large-text", fontScale = 1.6f) { ComponentGallery() } }
+}
