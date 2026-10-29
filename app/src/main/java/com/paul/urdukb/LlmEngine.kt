@@ -208,6 +208,13 @@ object LlmEngine {
     /** The few examples from the bank that are closest to this text. */
     private fun examples(ctx: Context, style: Style, text: String, situation: ToneAnalysis.Situation? = null): List<Pair<String, String>> {
         // the four extra tones show their own closest examples, then two of the everyday register's, so plain phrasing still comes out right
+        // a bare word or short phrase is shown only word-and-phrase examples, so it is not imitated into a sentence or a question
+        if (style.isTone && ShortInput.isShort(text)) {
+            val words = Bank.parseGrouped(Prefs.examples(ctx, style.register)).filter { it.group == ShortInput.GROUP }.map { it.input to it.output }
+            if (words.size >= 4) {
+                return Bank.pick(words, text, k = 4) { VariantMap.canon(ctx, it) }.map { (en, ur) -> Person.tag(en, style) to Speaker.adapt(ctx, ur) }
+            }
+        }
         var ownBank = Bank.parse(Prefs.examples(ctx, style))
         // when the model said what the sentence is about, choose from the examples of that situation first
         if (situation != null && style.isExtraTone) {
@@ -225,7 +232,7 @@ object LlmEngine {
 
     private fun systemPrompt(ctx: Context, style: Style, glossary: List<Pair<String, String>>, extra: String = ""): String =
         (if (style == Style.TO_ENGLISH) Prefs.rules(ctx, style) + Person.tagRules(style)
-        else Speaker.stripOldRules(Prefs.rules(ctx, style)) + SpellingRules.PROMPT + Speaker.rules(ctx) + Person.tagRules(style)) + extra   // the glossary is applied to the answer afterwards, so it is not repeated in the prompt (it made every translation slower)
+        else Speaker.stripOldRules(Prefs.rules(ctx, style)) + SpellingRules.PROMPT + ShortInput.PROMPT + Speaker.rules(ctx) + Person.tagRules(style)) + extra   // the glossary is applied to the answer afterwards, so it is not repeated in the prompt (it made every translation slower)
 
     /** Blocking. Call from a background thread. */
     @Synchronized
@@ -264,6 +271,11 @@ object LlmEngine {
         if (who != null && !Person.consistent(out, who, style)) {
             val again = ask(eng, systemPrompt(ctx, style, glossary, Person.retryNote(who, style)), examples, tagged, 0.1f)
             if (Person.consistent(again, who, style)) out = again
+        }
+        // a word or short phrase must not come back as a question or a long answer: one stricter try
+        if (style.isTone && ShortInput.wrong(text, out)) {
+            val again = ask(eng, systemPrompt(ctx, style, glossary, ShortInput.RETRY_NOTE), examples, tagged, 0.1f)
+            if (!ShortInput.wrong(text, again)) out = again
         }
         // Roman Urdu output: your glossary, which also fixes other spellings of the same word
         val result = if (style == Style.TO_ENGLISH) out

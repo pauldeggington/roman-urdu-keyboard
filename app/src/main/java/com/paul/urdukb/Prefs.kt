@@ -141,13 +141,15 @@ Rules:
         val p = sp(ctx)
         // banks saved before the speaker fix: swap the old lines that read as "you"
         var v = p.getString("examples_${style.key}", null)?.lines()?.joinToString("\n") { DefaultBank.REPLACED[it.trim()] ?: it }
-        // once: add the "question to the listener" examples to banks saved before they existed
-        val flag = "added_questions_${style.key}"
-        if (v != null && !p.getBoolean(flag, false)) {
-            val have = v.lines().map { it.substringBefore("|").trim().lowercase() }.toSet()
-            val extra = DefaultBank.ADDED_QUESTIONS[style.key].orEmpty().lines().filter { it.substringBefore("|").trim().lowercase() !in have }
-            if (extra.isNotEmpty()) v = v.trimEnd() + "\n" + extra.joinToString("\n")
-            p.edit().putString("examples_${style.key}", v).putBoolean(flag, true).apply()
+        // once each: add the "question to the listener" examples and the bare words and phrases to banks saved before they existed
+        for ((flag, added) in listOf("added_questions" to DefaultBank.ADDED_QUESTIONS, "added_words" to DefaultBank.ADDED_WORDS)) {
+            val key = "${flag}_${style.key}"
+            if (v != null && !p.getBoolean(key, false)) {
+                val have = v.lines().map { it.substringBefore("|").trim().lowercase() }.toSet()
+                val extra = added[style.key].orEmpty().lines().filter { it.substringBefore("|").trim().lowercase() !in have }
+                if (extra.isNotEmpty()) v = v!!.trimEnd() + "\n" + extra.joinToString("\n")
+                p.edit().putString("examples_${style.key}", v).putBoolean(key, true).apply()
+            }
         }
         return v ?: when (style) {
             Style.FORMAL -> DEFAULT_EXAMPLES_FORMAL

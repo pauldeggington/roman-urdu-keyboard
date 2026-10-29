@@ -55,6 +55,51 @@ Main khush hoon. | I am happy.
 Tum khush ho. | You are happy.""",
     )
 
+    /** Bare words and short phrases, so a one-word message is translated as one word and never as a sentence or a question. */
+    private const val WORDS_COMMON = """# words and phrases
+Friend | Dost
+Friends | Dost
+Best friend | Sab se achha dost
+Brother | Bhai
+Sister | Behen
+Mother | Ammi
+Father | Abbu
+Family | Ghar walay
+Water | Pani
+Food | Khana
+Tea | Chai
+Home | Ghar
+Money | Paisay
+Time | Waqt
+Work | Kaam
+Market | Bazaar
+Teacher | Ustad
+Doctor | Doctor
+Good morning | Subah bakhair
+Good night | Shab bakhair
+Welcome | Khush aamdeed
+Yes | Haan
+No | Nahi
+Today | Aaj
+Tomorrow | Kal
+Morning | Subah
+Night | Raat
+Beautiful | Khoobsurat
+Happy | Khush
+Tired | Thaka hua
+Hungry | Bhooka
+Big | Barha
+Small | Chhota
+Good | Achha
+Bad | Bura
+My friend | Mera dost
+My name | Mera naam"""
+
+    val ADDED_WORDS = mapOf(
+        "casual" to WORDS_COMMON + "\nYour friend | Tumhara dost\nYour name | Tumhara naam\nYour family | Tumharay ghar walay",
+        "formal" to WORDS_COMMON + "\nYour friend | Aap ka dost\nYour name | Aap ka naam\nYour family | Aap ke ghar walay",
+    )
+
     val CASUAL = """How are you? | Tum kaisay ho?
 What are you doing? | Kya kar rahay ho?
 What do you want to eat? | Kya khana chahtay ho?
@@ -99,7 +144,7 @@ I am working right now. | Main abhi kaam kar raha hoon.
 I'm making dinner. | Main raat ka khana bana raha hoon.
 I can't come today. | Main aaj nahi aa sakta.
 I am at home. | Main ghar par hoon.
-I already ate. | Main ne khana kha liya hai.""" + "\n" + ADDED_QUESTIONS.getValue("casual")
+I already ate. | Main ne khana kha liya hai.""" + "\n" + ADDED_QUESTIONS.getValue("casual") + "\n" + ADDED_WORDS.getValue("casual")
 
     val FORMAL = """How are you? | Aap kaisay hain?
 What would you like to eat? | Aap kya khana chahtay hain?
@@ -132,7 +177,7 @@ Thank you for your help. | Aap ki madad ka shukriya.
 Could we meet on Monday? | Kya hum peer ko mil saktay hain?
 I hope you are well. | Umeed hai aap khairiyat se hon gay.
 I am fine, thank you. | Main theek hoon, shukriya.
-I am working on it. | Main is par kaam kar raha hoon.""" + "\n" + ADDED_QUESTIONS.getValue("formal")
+I am working on it. | Main is par kaam kar raha hoon.""" + "\n" + ADDED_QUESTIONS.getValue("formal") + "\n" + ADDED_WORDS.getValue("formal")
 
     val TO_ENGLISH = """Tum kaisay ho? | How are you?
 Tum aaj kya karna chahtay ho? | What do you want to do today?
