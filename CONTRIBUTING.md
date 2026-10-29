@@ -53,7 +53,7 @@ All screen text is in `app/src/main/res/values/strings.xml`. To add a language, 
 ## Versions and releases
 
 `VERSION` holds major.minor. CI adds the build number (for example 2.1.122). Merging to `main` publishes a release; other
-branches publish `-test` pre-releases. The main APK is the R8-shrunk build; `-standard.apk` beside it is the same app unshrunk. See [CHANGELOG.md](CHANGELOG.md).
+other branches publish no release (the APK is a download on the CI run). The main APK is the R8-shrunk build; `-standard.apk` beside it is the same app unshrunk. See [CHANGELOG.md](CHANGELOG.md).
 
 ## Privacy rules for contributors
 

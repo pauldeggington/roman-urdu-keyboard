@@ -169,28 +169,3 @@ jobs:
             --latest
           echo "::notice title=Released::https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
 
-      - name: Publish test release (rewrite branch, not the main download)
-        if: github.ref == 'refs/heads/rewrite' && github.event_name == 'push'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          TAG="v${VERSION_NAME}-test"
-          cp out/roman-urdu-keyboard.apk "out/RomanUrduKeyboard-${VERSION_NAME}-test.apk"
-          {
-            echo "**Test version of the rewritten keyboard.** It is not the main download and the in-app Update button ignores it."
-            echo ""
-            echo "Install it like any APK. It installs over the current app and keeps your settings. If Android's install screen warns about it, choose More details, then Install anyway."
-            echo ""
-            git log -1 --pretty=format:'%s'
-          } > notes.md
-          EXTRA=""
-          if [ -f out/roman-urdu-keyboard-standard.apk ]; then
-            cp out/roman-urdu-keyboard-standard.apk "out/RomanUrduKeyboard-${VERSION_NAME}-test-standard.apk"
-            EXTRA="out/RomanUrduKeyboard-${VERSION_NAME}-test-standard.apk"
-            echo "" >> notes.md
-            echo "The main file is shrunk with R8. The -standard file is the same app without shrinking, as a fallback." >> notes.md
-          fi
-          gh release create "$TAG" "out/RomanUrduKeyboard-${VERSION_NAME}-test.apk" $EXTRA \
-            --title "Test ${VERSION_NAME} (rewritten keyboard)" --notes-file notes.md \
-            --target "$GITHUB_SHA" --prerelease
-          echo "::notice title=Test release::https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"

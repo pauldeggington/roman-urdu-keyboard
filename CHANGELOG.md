@@ -2,7 +2,7 @@
 
 Every release on `main` has a version: **major.minor.build**. The major and minor numbers (`VERSION` in the repo) go up when
 a set of changes is merged to `main`; the build number is the CI build, so a newer build always installs over an older one.
-The app shows it as, for example, "Version 2.1 (build 121)". Test builds are tagged `-test` and are never offered by the in-app update.
+The app shows it as, for example, "Version 2.1 (build 121)". Work-in-progress builds are not published as releases; they are only kept as a download on the CI run.
 
 ## 2.2
 
