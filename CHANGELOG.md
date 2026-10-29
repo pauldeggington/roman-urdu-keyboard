@@ -6,6 +6,9 @@ The app shows it as, for example, "Version 2.1 (build 121)". Work-in-progress bu
 
 ## 2.4
 
+- **Careful listening (switch in the Voice card):** each Urdu voice note is heard twice, at normal speed and slowed down by a quarter, and the two transcripts are combined. More accurate, two to three times slower.
+- **Mixed Urdu and English:** the translation step keeps English words, names and places as they are and translates the Urdu around them, with worked examples.
+
 - **Better Urdu voice notes:** the model now writes down what it hears first, then a separate step translates that transcript, which gave far better English than doing both at once. English names and places in the note are kept in Latin letters.
 
 - **Voice, Urdu to English:** share an Urdu voice note from WhatsApp (Share, then Roman Urdu Keyboard) and the on-device model listens and shows Urdu text and English, both copyable. Long notes are cut into pieces at quiet moments (the model hears 30 seconds at a time).
