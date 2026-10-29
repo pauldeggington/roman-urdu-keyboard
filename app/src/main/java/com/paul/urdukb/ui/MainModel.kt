@@ -135,7 +135,6 @@ class MainModel(app: Application) : AndroidViewModel(app) {
     var styleOpen by mutableStateOf(false)
     var styleSel by mutableStateOf(Style.CASUAL)
         private set
-    var rules by mutableStateOf("")
     var examples by mutableStateOf("")
     var glossary by mutableStateOf(Prefs.glossary(ctx))
 
@@ -569,12 +568,11 @@ class MainModel(app: Application) : AndroidViewModel(app) {
 
     fun showStyle(style: Style) {
         styleSel = style
-        rules = Prefs.rules(ctx, style)
         examples = Prefs.examples(ctx, style)
     }
 
     fun saveStyle() {
-        Prefs.setStyle(ctx, styleSel, rules, examples)
+        Prefs.setExamples(ctx, styleSel, examples)
         Prefs.setGlossary(ctx, glossary)
         toast(str(R.string.saved))
     }

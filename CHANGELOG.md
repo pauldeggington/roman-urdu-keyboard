@@ -4,6 +4,12 @@ Every release on `main` has a version: **major.minor.build**. The major and mino
 a set of changes is merged to `main`; the build number is the CI build, so a newer build always installs over an older one.
 The app shows it as, for example, "Version 2.1 (build 121)". Work-in-progress builds are not published as releases; they are only kept as a download on the CI run.
 
+## 2.3 (in progress)
+
+- **Tone matrix:** Roman Urdu translation now has six tones: Casual, Formal, and new Poetic, Funny, Loving and Respectful (for elders). **Auto** (the default) picks the tone from the sentence, for example "Good morning, my love" is Loving and "Please give my salaam to Mother" is Respectful. Tap the tone key on the toolbar to pick one by hand. Each tone has its own rules and example bank, grouped by situation.
+- **Spelling follows the Urdu letters:** parhna, barha, larka, phir, fikar, zindagi, waqt (not padhna, badha, ladka, fir, phikar, jindagi, vaqt). The model is told the rule and every answer is checked against about 190 built-in fixes; your own glossary still wins.
+- **Instructions hidden:** the model's instructions are built in and no longer shown or editable in the app, so improvements reach everyone. The example bank and the glossary stay editable.
+
 ## 2.2
 
 - **Easier to change:** the app screens (settings, setup guide, Translate sheet) are rewritten in Jetpack Compose, each split into a screen and a model. The plain-Kotlin logic (suggestions, glide, detection, translation prompts) moved into its own `core` module with fast tests, and the dependency versions are in one catalog. Everything looks and works as before.

@@ -168,12 +168,11 @@
     <string name="try_input_hint">انگریزی یا رومن اردو لکھیں</string>
     <string name="try_output_hint">ترجمہ یہاں نظر آئے گا۔ آپ اس میں ترمیم کر سکتے ہیں۔</string>
     <string name="try_save_example">مثال کے طور پر محفوظ کریں</string>
-    <string name="style_help">وہ اصول، مثالیں اور املا جن پر ماڈل چلتا ہے۔ اصول اور مثالیں ہر لہجے اور انگریزی میں کے لیے الگ ہیں؛ لغت مشترک ہے۔</string>
+    <string name="style_help">وہ مثالیں اور املا جن پر ماڈل چلتا ہے۔ مثالیں ہر لہجے اور انگریزی میں کے لیے الگ ہیں؛ لغت مشترک ہے۔</string>
     <string name="style_i_am">میں ہوں</string>
     <string name="style_i_am_help">ترجمہ آپ کے بارے میں کیسے بات کرتا ہے: “I\'m tired” بنتا ہے “Main thak gaya hoon” یا “Main thak gayi hoon”۔</string>
     <string name="style_casual">بے تکلف</string>
     <string name="style_formal">رسمی</string>
-    <string name="style_rules">اصول</string>
     <string name="style_examples_label">مثالوں کا ذخیرہ (ان پٹ | آؤٹ پٹ، ہر سطر میں ایک)۔ ہر پیغام کے لیے کی بورڈ 6 قریب ترین مثالیں چنتا ہے۔</string>
     <string name="style_examples_hint">ان پٹ | آؤٹ پٹ، ہر سطر میں ایک</string>
     <string name="style_glossary_label">املا کی لغت (لفظ -> پسندیدہ املا، ہر سطر میں ایک)۔ رومن اردو آؤٹ پٹ کے لیے استعمال ہوتی ہے۔</string>

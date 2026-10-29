@@ -173,12 +173,11 @@
     <string name="try_input_hint">Type English or Roman Urdu</string>
     <string name="try_output_hint">The translation shows up here. You can edit it.</string>
     <string name="try_save_example">Save as example</string>
-    <string name="style_help">The rules, example bank and spellings the model follows. Rules and examples are separate for each tone and for To English; the glossary is shared.</string>
+    <string name="style_help">The example bank and spellings the model follows. Examples are separate for each tone and for To English; the glossary is shared.</string>
     <string name="style_i_am">I am</string>
     <string name="style_i_am_help">How the translation talks about you: \"I\'m tired\" becomes \"Main thak gaya hoon\" or \"Main thak gayi hoon\".</string>
     <string name="style_casual">Casual</string>
     <string name="style_formal">Formal</string>
-    <string name="style_rules">Rules</string>
     <string name="style_examples_label">Example bank (input | output, one per line). For each message the keyboard picks the 6 closest.</string>
     <string name="style_examples_hint">Input | Output, one per line</string>
     <string name="style_glossary_label">Spelling glossary (word -> preferred spelling, one per line). Used for Roman Urdu output.</string>

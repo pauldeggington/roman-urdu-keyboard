@@ -113,15 +113,16 @@ Rules:
     fun setModelSize(ctx: Context, v: Long) = sp(ctx).edit().putLong(sizeKey(ctx), v).apply()
 
     // ---- style, one set per style (styles saved by old 1.x versions are ignored) ----
-    fun rules(ctx: Context, style: Style): String {
-        val p = sp(ctx)
-        val v = p.getString("rules_${style.key}", null)
-        return v?.takeIf { it.isNotBlank() } ?: when (style) {
-            Style.FORMAL -> DEFAULT_RULES_FORMAL
-            Style.CASUAL -> DEFAULT_RULES_CASUAL
-            Style.TO_ENGLISH -> DEFAULT_RULES_ENGLISH
-            else -> ToneRules.forStyle(style) ?: DEFAULT_RULES_CASUAL
-        }
+    /**
+     * The model's instructions for a style. They are built in and not shown or editable in the app, so every improvement
+     * to them reaches everyone (rules saved by older versions are ignored).
+     */
+    @Suppress("UNUSED_PARAMETER")
+    fun rules(ctx: Context, style: Style): String = when (style) {
+        Style.FORMAL -> DEFAULT_RULES_FORMAL
+        Style.CASUAL -> DEFAULT_RULES_CASUAL
+        Style.TO_ENGLISH -> DEFAULT_RULES_ENGLISH
+        else -> ToneRules.forStyle(style) ?: DEFAULT_RULES_CASUAL
     }
 
     private val examplesMemo = HashMap<String, Pair<String?, String>>()
@@ -170,8 +171,8 @@ Rules:
         sp(ctx).edit().putString("examples_${style.key}", "$current\n$a | $b").apply()
     }
 
-    fun setStyle(ctx: Context, style: Style, rules: String, examples: String) {
-        sp(ctx).edit().putString("rules_${style.key}", rules.trim()).putString("examples_${style.key}", examples.trim()).apply()
+    fun setExamples(ctx: Context, style: Style, examples: String) {
+        sp(ctx).edit().putString("examples_${style.key}", examples.trim()).apply()
     }
 
     fun resetStyle(ctx: Context, style: Style) {

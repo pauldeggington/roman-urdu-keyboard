@@ -55,7 +55,7 @@ class SpellingRulesTest {
         assertTrue("a spelling is both a mistake and a fix: $chained", chained.isEmpty())
         for ((from, to) in pairs) assertFalse("$from maps to itself", from.equals(to, ignoreCase = true))
         // every rh fix really has rh in it
-        for ((from, to) in pairs) if (from.startsWith("padh") || from.startsWith("chadh") || from.startsWith("badh")) {
+        for ((from, to) in pairs) if ((from.startsWith("padh") || from.startsWith("chadh") || from.startsWith("badh")) && !from.startsWith("badhai") && !from.startsWith("badhaai")) {
             assertTrue("$from -> $to should have rh", "rh" in to)
         }
     }

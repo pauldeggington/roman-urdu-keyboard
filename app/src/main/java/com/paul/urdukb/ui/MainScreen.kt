@@ -288,8 +288,6 @@ private fun StyleCard(model: MainModel) {
                 ),
                 selected = model.styleSel,
             ) { model.showStyle(it) }
-            FieldLabel(stringResource(R.string.style_rules))
-            TextBox(model.rules, { model.rules = it }, stringResource(R.string.style_rules), minLines = 4)
             FieldLabel(stringResource(R.string.style_examples_label))
             TextBox(model.examples, { model.examples = it }, stringResource(R.string.style_examples_hint), minLines = 4)
             FieldLabel(stringResource(R.string.style_glossary_label))
