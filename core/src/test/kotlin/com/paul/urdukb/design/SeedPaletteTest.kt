@@ -27,9 +27,9 @@ class SeedPaletteTest {
         assertEquals(4.48, Contrast.ratio(0xFF777777.toInt(), 0xFFFFFFFF.toInt()), 0.05)
     }
 
-    /** Prints every pair that is below the usual limits, so a bad swatch shows up in the build log. */
+    /** Every swatch, light and dark, keeps text readable (4.5, hints 3) on the colour it sits on. */
     @Test
-    fun reportContrastOfEverySwatch() {
+    fun everySwatchIsReadable() {
         val bad = ArrayList<String>()
         for (sw in Swatches.SEEDED) for (dark in listOf(false, true)) {
             val mode = if (dark) "dark" else "light"
@@ -54,6 +54,7 @@ class SeedPaletteTest {
             check("app onPrimary/primary", a.onPrimary, a.primary, 4.5)
             check("app onTonal/tonal", a.onTonal, a.tonal, 4.5)
         }
-        println("CONTRAST below limit (${bad.size}): " + bad.joinToString("; "))
+        if (bad.isNotEmpty()) println("CONTRAST below limit (${bad.size}): " + bad.joinToString("; "))
+        assertTrue("Colours too faint to read: $bad", bad.isEmpty())
     }
 }

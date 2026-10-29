@@ -45,6 +45,20 @@ data class AppRoles(
  */
 object SeedPalette {
 
+    /**
+     * A button fill of this hue that the given text colour can be read on: starts at the lightness the design wants and
+     * darkens only as far as needed to reach the 4.5 contrast limit. Swatches that already pass are unchanged.
+     */
+    private fun fill(h: Float, s: Float, l: Float, text: Int): Int {
+        var ll = l
+        var col = Hsl.toArgb(h, s, ll)
+        while (Contrast.ratio(text, col) < 4.55 && ll > 0.15f) {
+            ll -= 0.01f
+            col = Hsl.toArgb(h, s, ll)
+        }
+        return col
+    }
+
     fun keyboard(seed: Int, tint: Float, dark: Boolean): KeyboardRoles {
         val h = Hsl.hue(seed)
         val k = tint
@@ -74,11 +88,11 @@ object SeedPalette {
             pill = c(0.32f * k, 0.86f),
             pillText = c(0.40f * k, 0.18f),
             space = c(0.24f * k, 0.89f),
-            action = c(0.55f * kk, 0.42f),
+            action = fill(h, 0.55f * kk, 0.42f, c(0.30f * k, 0.99f)),
             actionText = c(0.30f * k, 0.99f),
             popupBg = c(0.30f * k, 0.99f),
             popupText = c(0.30f * k, 0.12f),
-            selected = c(0.55f * kk, 0.42f),
+            selected = fill(h, 0.55f * kk, 0.42f, c(0.30f * k, 0.99f)),
             selectedText = c(0.30f * k, 0.99f),
             pressed = c(0.24f * k, 0.88f),
             chip = c(0.24f * k, 0.89f),
@@ -107,7 +121,7 @@ object SeedPalette {
             field = c(0.93f, 0.30f * k),
             text = c(0.12f, 0.30f * k),
             textMuted = c(0.40f, 0.14f * k),
-            primary = c(0.40f, 0.60f * k.coerceAtLeast(0.35f)),
+            primary = fill(h, 0.60f * k.coerceAtLeast(0.35f), 0.40f, c(0.99f, 0.30f * k)),
             onPrimary = c(0.99f, 0.30f * k),
             tonal = c(0.89f, 0.55f * k),
             onTonal = c(0.18f, 0.55f * k),
