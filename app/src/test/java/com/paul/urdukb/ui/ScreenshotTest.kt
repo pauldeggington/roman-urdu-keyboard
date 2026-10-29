@@ -4,15 +4,18 @@ import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Modifier
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.content.edit
@@ -65,14 +68,29 @@ class ScreenshotTest {
                 CompositionLocalProvider(
                     LocalDensity provides Density(d.density, fontScale),
                     LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LayoutDirection.Ltr,
-                ) { RomanUrduTheme(content) }
+                ) {
+                    RomanUrduTheme {
+                        Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) { content() }
+                    }
+                }
             }
             rule.waitForIdle()
-            check(name, rule.onRoot().captureToImage().asAndroidBitmap())
+            check(name, draw())
         } catch (e: Throwable) {
             println("SCREENSHOTFAIL $name: ${e.javaClass.simpleName}: ${e.message?.take(400)?.replace('\n', ' ')}")
             throw e
         }
+    }
+
+    /** The whole window drawn into a bitmap (Robolectric's native graphics draw it for real). */
+    private fun draw(): Bitmap {
+        lateinit var bmp: Bitmap
+        rule.runOnUiThread {
+            val v = rule.activity.window.decorView
+            bmp = Bitmap.createBitmap(v.width, v.height, Bitmap.Config.ARGB_8888)
+            v.draw(Canvas(bmp))
+        }
+        return bmp
     }
 
     private fun check(name: String, bmp: Bitmap) {
@@ -102,11 +120,4 @@ class ScreenshotTest {
     @Test fun galleryLemonLight() { look("light", "lemon"); shoot("gallery-lemon-light") { ComponentGallery() } }
     @Test fun galleryUrduRtl() { look("light", "blue"); shoot("gallery-urdu-rtl", rtl = true) { ComponentGallery(urduGallery) } }
     @Test fun galleryLargeText() { look("light", "blue"); shoot("gallery-large-text", fontScale = 1.6f) { ComponentGallery() } }
-
-    // TEMPORARY: find which building block keeps the test from going idle
-    @Test fun probeText() { look("light", "blue"); shoot("probe-text") { androidx.compose.material3.Text("hello") } }
-    @Test fun probeCard() { look("light", "blue"); shoot("probe-card") { AppCard { CardTitle("t"); Muted("m") } } }
-    @Test fun probeButton() { look("light", "blue"); shoot("probe-button") { PillButton("go", filled = true) {} } }
-    @Test fun probeSwitch() { look("light", "blue"); shoot("probe-switch") { SwitchRow("a", "b", true) {} } }
-    @Test fun probeField() { look("light", "blue"); shoot("probe-field") { TextBox("", {}, "hint") } }
 }
