@@ -10,18 +10,18 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.captureToImage
-import androidx.compose.ui.test.junit4.createEmptyComposeRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.content.edit
-import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import com.paul.urdukb.KeyboardLook
 import org.junit.Assert.assertTrue
-import org.junit.Before
 import org.junit.Rule
+import org.junit.rules.ExternalResource
+import org.junit.rules.RuleChain
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -40,14 +40,16 @@ import kotlin.math.abs
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [35], qualifiers = "w411dp-h860dp-xxhdpi")
 class ScreenshotTest {
-    @get:Rule val rule = createEmptyComposeRule()
-
     private val ctx: Context get() = ApplicationProvider.getApplicationContext<Application>()
 
-    @Before
-    fun registerActivity() {
-        shadowOf(ctx.packageManager).addActivityIfNotPresent(ComponentName(ctx.packageName, ComponentActivity::class.java.name))
+    // the test activity is not in the app's manifest (that would ship it), so it is registered before the rule launches it
+    private val register = object : ExternalResource() {
+        override fun before() {
+            shadowOf(ctx.packageManager).addActivityIfNotPresent(ComponentName(ctx.packageName, ComponentActivity::class.java.name))
+        }
     }
+    private val rule = createAndroidComposeRule<ComponentActivity>()
+    @get:Rule val chain: RuleChain = RuleChain.outerRule(register).around(rule)
 
     private fun look(mode: String, swatch: String) {
         ctx.getSharedPreferences("look", Context.MODE_PRIVATE).edit(commit = true) {
@@ -57,20 +59,15 @@ class ScreenshotTest {
     }
 
     private fun shoot(name: String, rtl: Boolean = false, fontScale: Float = 1f, content: @androidx.compose.runtime.Composable () -> Unit) {
-        ActivityScenario.launch(ComponentActivity::class.java).use { scenario ->
-            scenario.onActivity { activity ->
-                activity.setContent {
-                    val d = LocalDensity.current
-                    CompositionLocalProvider(
-                        LocalDensity provides Density(d.density, fontScale),
-                        LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LayoutDirection.Ltr,
-                    ) { RomanUrduTheme(content) }
-                }
-            }
-            rule.waitForIdle()
-            val bmp = rule.onRoot().captureToImage().asAndroidBitmap()
-            check(name, bmp)
+        rule.setContent {
+            val d = LocalDensity.current
+            CompositionLocalProvider(
+                LocalDensity provides Density(d.density, fontScale),
+                LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LayoutDirection.Ltr,
+            ) { RomanUrduTheme(content) }
         }
+        rule.waitForIdle()
+        check(name, rule.onRoot().captureToImage().asAndroidBitmap())
     }
 
     private fun check(name: String, bmp: Bitmap) {
