@@ -521,7 +521,6 @@ class MainModel(app: Application) : AndroidViewModel(app) {
             Style.CASUAL -> str(R.string.note_casual)
             Style.POETIC -> str(R.string.note_poetic)
             Style.FUNNY -> str(R.string.note_funny)
-            Style.AFFECTIONATE -> str(R.string.note_affectionate)
             Style.RESPECTFUL -> str(R.string.note_respectful)
         }
         val firstLoad = !LlmEngine.isLoaded()

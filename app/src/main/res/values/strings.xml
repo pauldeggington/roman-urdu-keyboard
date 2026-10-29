@@ -336,14 +336,11 @@
     <string name="tone_auto">Auto</string>
     <string name="tone_poetic">Poetic</string>
     <string name="tone_funny">Funny</string>
-    <string name="tone_loving">Loving</string>
     <string name="tone_respectful">Respectful</string>
     <string name="style_poetic">Poetic</string>
     <string name="style_funny">Funny</string>
-    <string name="style_loving">Loving</string>
     <string name="style_respectful">Respectful</string>
     <string name="note_poetic">English → Roman Urdu, poetic</string>
     <string name="note_funny">English → Roman Urdu, funny (tum)</string>
-    <string name="note_affectionate">English → Roman Urdu, loving (tum)</string>
     <string name="note_respectful">English → Roman Urdu, respectful (aap)</string>
 </resources>

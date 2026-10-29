@@ -327,14 +327,11 @@
     <string name="tone_auto">خودکار</string>
     <string name="tone_poetic">شاعرانہ</string>
     <string name="tone_funny">مزاحیہ</string>
-    <string name="tone_loving">پیار بھرا</string>
     <string name="tone_respectful">باادب</string>
     <string name="style_poetic">شاعرانہ</string>
     <string name="style_funny">مزاحیہ</string>
-    <string name="style_loving">پیار بھرا</string>
     <string name="style_respectful">باادب</string>
     <string name="note_poetic">انگریزی سے رومن اردو، شاعرانہ</string>
     <string name="note_funny">انگریزی سے رومن اردو، مزاحیہ (تم)</string>
-    <string name="note_affectionate">انگریزی سے رومن اردو، پیار بھرا (تم)</string>
     <string name="note_respectful">انگریزی سے رومن اردو، باادب (آپ)</string>
 </resources>

@@ -1,7 +1,7 @@
 package com.paul.urdukb
 
 /**
- * Guesses the tone of an English sentence from the words around it: who it is to (an elder, a partner), how it
+ * Guesses the tone of an English sentence from the words around it: who it is to (an elder, a loved one), how it
  * feels (joking, longing). Plain and cautious on purpose: when nothing clear points one way the answer is the
  * person's usual tone, never a surprise. The person can always pick a tone by hand.
  */
@@ -55,6 +55,8 @@ object ToneGuess {
 
         val elder = ELDERS.count { it in set }
         var love = LOVE.count { it in set } + LOVE_PHRASES.count { lower.contains(it) } + emojiScore(text, "❤", "😘", "🥰", "💕", "💖", "💗")
+        // "love" in a sentence about food or things is not about a person: ask for a second cue
+        if (love == 1 && set.any { it == "pizza" || it == "biryani" || it == "movie" || it == "movies" || it == "music" || it == "coffee" }) love = 0
         // a clear sign of a joke counts three, an everyday word one; three is a joke
         val funny = 3 * (FUNNY_STRONG.count { it in set } + FUNNY_PHRASES.count { lower.contains(it) } + emojiScore(text, "😂", "🤣", "😜", "😝", "😆")) +
             FUNNY_WEAK.count { it in set }
@@ -62,16 +64,13 @@ object ToneGuess {
         val asked = POETIC_ASK.any { it in set }
         val poetic = if (asked) 3 else poeticWords
 
-        // "love" in a sentence about food or things is not about a person: ask for a second cue
-        if (love == 1 && set.any { it == "pizza" || it == "biryani" || it == "movie" || it == "movies" || it == "music" || it == "coffee" }) love = 0
 
         val formalBase = base == Style.FORMAL
         return when {
-            elder >= 1 && love < 2 -> Style.RESPECTFUL
+            elder >= 1 -> Style.RESPECTFUL
             formalBase && poetic >= 2 -> Style.POETIC
             formalBase -> Style.FORMAL
-            love >= 1 && poetic >= 2 -> Style.POETIC
-            love >= 1 -> Style.AFFECTIONATE
+            love >= 1 -> Style.POETIC
             funny >= 3 -> Style.FUNNY
             poetic >= 2 -> Style.POETIC
             else -> base

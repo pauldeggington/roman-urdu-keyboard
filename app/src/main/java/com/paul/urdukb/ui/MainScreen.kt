@@ -237,8 +237,7 @@ private fun TryCard(model: MainModel) {
         ) { model.setToneChoice(it) }
         Segmented(
             listOf(
-                stringResource(R.string.tone_funny) to Style.FUNNY.key, stringResource(R.string.tone_loving) to Style.AFFECTIONATE.key,
-                stringResource(R.string.tone_respectful) to Style.RESPECTFUL.key,
+                stringResource(R.string.tone_funny) to Style.FUNNY.key, stringResource(R.string.tone_respectful) to Style.RESPECTFUL.key,
             ),
             selected = s.toneChoice,
         ) { model.setToneChoice(it) }
@@ -283,8 +282,7 @@ private fun StyleCard(model: MainModel) {
             ) { model.showStyle(it) }
             Segmented(
                 listOf(
-                    stringResource(R.string.style_loving) to Style.AFFECTIONATE, stringResource(R.string.style_respectful) to Style.RESPECTFUL,
-                    stringResource(R.string.dir_to_en) to Style.TO_ENGLISH,
+                    stringResource(R.string.style_respectful) to Style.RESPECTFUL, stringResource(R.string.dir_to_en) to Style.TO_ENGLISH,
                 ),
                 selected = model.styleSel,
             ) { model.showStyle(it) }

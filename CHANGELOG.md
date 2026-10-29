@@ -6,7 +6,7 @@ The app shows it as, for example, "Version 2.1 (build 121)". Work-in-progress bu
 
 ## 2.3 (in progress)
 
-- **Tone matrix:** Roman Urdu translation now has six tones: Casual, Formal, and new Poetic, Funny, Loving and Respectful (for elders). **Auto** (the default) picks the tone from the sentence, for example "Good morning, my love" is Loving and "Please give my salaam to Mother" is Respectful. Tap the tone key on the toolbar to pick one by hand. Each tone has its own rules and example bank, grouped by situation.
+- **Tone matrix:** Roman Urdu translation now has five tones: Casual, Formal, and new Poetic, Funny and Respectful (for elders). **Auto** (the default) picks the tone from the sentence, for example "Please give my salaam to Mother" is Respectful and "Good morning, my love" is Poetic (which also covers warm words to a partner or family). Tap the tone key on the toolbar to pick one by hand. Each tone has its own rules and example bank, grouped by situation.
 - **Spelling follows the Urdu letters:** parhna, barha, larka, phir, fikar, zindagi, waqt (not padhna, badha, ladka, fir, phikar, jindagi, vaqt). The model is told the rule and every answer is checked against about 190 built-in fixes; your own glossary still wins.
 - **Instructions hidden:** the model's instructions are built in and no longer shown or editable in the app, so improvements reach everyone. The example bank and the glossary stay editable.
 

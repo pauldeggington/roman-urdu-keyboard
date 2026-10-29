@@ -135,7 +135,7 @@ The first translation after a restart is slower while the model loads. If it fee
 - A **setup guide** with buttons that jump to the right Android setting, steps that tick themselves off, and a practice box.
   The model downloads in the background with a notification while you finish.
 - Model checksum check, and import from a file if you already have it.
-- A **Try it** box with direction and tone (Auto or one of six), the example bank, the glossary, and speed numbers
+- A **Try it** box with direction and tone (Auto or one of five), the example bank, the glossary, and speed numbers
   (load time and seconds per translation, CPU or GPU).
 
 <p align="center">

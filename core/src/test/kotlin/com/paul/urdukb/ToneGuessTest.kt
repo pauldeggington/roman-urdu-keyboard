@@ -13,10 +13,12 @@ class ToneGuessTest {
         assertEquals(Style.CASUAL, g("I'll call you later, I'm in a meeting."))
     }
 
-    @Test fun lovingWordsMeanAffectionate() {
-        assertEquals(Style.AFFECTIONATE, g("Good morning, my love."))
-        assertEquals(Style.AFFECTIONATE, g("I miss you so much ❤"))
-        assertEquals(Style.AFFECTIONATE, g("Come home soon, sweetheart."))
+    @Test fun loveTalkIsPoetic() {
+        assertEquals(Style.POETIC, g("Good morning, my love."))
+        assertEquals(Style.POETIC, g("I miss you so much \u2764"))
+        assertEquals(Style.POETIC, g("Come home soon, sweetheart."))
+        // someone who chose Formal keeps aap
+        assertEquals(Style.FORMAL, g("Good morning, my love.", Style.FORMAL))
     }
 
     @Test fun lovingAFoodIsNotAffection() {

@@ -15,7 +15,7 @@ import java.util.concurrent.Executors
 /**
  * The Roman Urdu controls on the toolbar.
  * Translate: replaces the whole text field with Roman Urdu. Tapping it again (before typing anything else)
- * puts the English back. Tone: Auto (guessed from the sentence) or one of Casual, Formal, Poetic, Funny, Affectionate, Respectful.
+ * puts the English back. Tone: Auto (guessed from the sentence) or one of Casual, Formal, Poetic, Funny, Respectful.
  */
 object RomanUrdu {
 
@@ -78,7 +78,6 @@ object RomanUrdu {
         Style.FORMAL -> "Formal"
         Style.POETIC -> "Poetic"
         Style.FUNNY -> "Funny"
-        Style.AFFECTIONATE -> "Loving"
         Style.RESPECTFUL -> "Respectful"
         Style.TO_ENGLISH -> "English"
     }
@@ -104,7 +103,7 @@ object RomanUrdu {
         main.post { Toast.makeText(ctx.applicationContext, msg, Toast.LENGTH_SHORT).show() }
     }
 
-    /** Tapping the tone chip steps through Auto and the six tones. */
+    /** Tapping the tone chip steps through Auto and the five tones. */
     fun cycleTone(ime: Context) {
         val order = listOf(TONE_AUTO) + Style.TONES.map { it.key }
         val next = order[(order.indexOf(toneChoice(ime)).coerceAtLeast(0) + 1) % order.size]
@@ -122,7 +121,6 @@ object RomanUrdu {
                 Style.FORMAL.key -> "Formal tone (aap): polite and respectful"
                 Style.POETIC.key -> "Poetic tone: shayari-style, for feelings"
                 Style.FUNNY.key -> "Funny tone: playful and teasing"
-                Style.AFFECTIONATE.key -> "Loving tone: warm, for family and partner"
                 else -> "Respectful tone: for elders and people of rank"
             }
         )

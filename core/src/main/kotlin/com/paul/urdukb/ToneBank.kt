@@ -12,7 +12,7 @@ object ToneBank {
 I miss you more with every passing night. | Har guzarti raat ke saath tumhari yaad aur gehri ho jati hai.
 Your memory visits me like the evening breeze. | Tumhari yaad shaam ki hawa ki tarah mujh tak chali aati hai.
 I still wait for you at the end of every day. | Har din ke aakhir mein main aaj bhi tumhara intezar karta hoon.
-# love
+# love: poetic
 You are the dream my eyes never want to wake from. | Tum woh khwab ho jis se meri aankhein kabhi jagna nahi chahtin.
 My heart has found its home in you. | Mere dil ko tum mein apna ghar mil gaya hai.
 Even the moon feels incomplete without you. | Tumharay bina chand bhi adhoora lagta hai.
@@ -32,6 +32,28 @@ Thank you for being my light. | Meri roshni bannay ka shukriya.
 # journey
 Life is a journey, not a destination. | Zindagi ek safar hai, manzil nahi.
 Wherever you go, my prayers go with you. | Tum jahan bhi jao, meri duayein tumharay saath jayen gi.
+# love: good morning and good night
+Good morning, my love. | Subah bakhair, meri jaan.
+Good night, sweet dreams. | Shab bakhair, meethay khwab.
+Sleep well, I'll see you in my dreams. | Aram se sona, khwabon mein miltay hain.
+# love: words of love
+I love you more than words can say. | Mujhe tum se itna pyaar hai ke lafz kam par jatay hain.
+You mean everything to me. | Tum meray liye sab kuch ho.
+You make me so happy. | Tum mujhe bohat khush rakhtay ho.
+# love: missing someone
+I can't wait to see you. | Mujh se tumhein dekhnay ka intezar nahi ho raha.
+Come home soon, I miss you. | Jaldi ghar aa jao, mujhe tumhari bohat yaad aa rahi hai.
+# love: care
+Did you eat? Please don't skip meals. | Khana khaya? Please khana skip mat kiya karo.
+Take care of yourself for me. | Meray liye apna khayal rakhna.
+Are you feeling better, sweetheart? | Ab tabiyat behtar hai, meri jaan?
+# love: comfort
+I'm always here for you. | Main hamesha tumharay saath hoon.
+Don't cry, everything will be okay. | Ro mat, sab theek ho jayega.
+# love: appreciation
+You're the best thing that ever happened to me. | Tum meri zindagi ki sab se achi cheez ho.
+Thank you for always understanding me. | Mujhe hamesha samajhnay ka shukriya.
+I'm so proud of you. | Mujhe tum par bohat fakhar hai.
 # plain things stay plain
 What time is the meeting? | Meeting kitnay baje hai?
 I'll be there at five. | Main paanch baje wahan hoon ga."""
@@ -59,29 +81,6 @@ It's Monday again. Send help. | Phir peer aa gaya. Madad bhejo.
 My wallet is crying right now. | Mera wallet is waqt ro raha hai.
 # self
 I'm not short, I'm fun-sized. | Main chhota nahi hoon, main fun-size hoon."""
-
-    val AFFECTIONATE = """# good morning and good night
-Good morning, my love. | Subah bakhair, meri jaan.
-Good night, sweet dreams. | Shab bakhair, meethay khwab.
-Sleep well, I'll see you in my dreams. | Aram se sona, khwabon mein miltay hain.
-# love
-I love you more than words can say. | Mujhe tum se itna pyaar hai ke lafz kam par jatay hain.
-You mean everything to me. | Tum meray liye sab kuch ho.
-You make me so happy. | Tum mujhe bohat khush rakhtay ho.
-# missing
-I can't wait to see you. | Mujh se tumhein dekhnay ka intezar nahi ho raha.
-Come home soon, I miss you. | Jaldi ghar aa jao, mujhe tumhari bohat yaad aa rahi hai.
-# care
-Did you eat? Please don't skip meals. | Khana khaya? Please khana skip mat kiya karo.
-Take care of yourself for me. | Meray liye apna khayal rakhna.
-Are you feeling better, sweetheart? | Ab tabiyat behtar hai, meri jaan?
-# comfort
-I'm always here for you. | Main hamesha tumharay saath hoon.
-Don't cry, everything will be okay. | Ro mat, sab theek ho jayega.
-# appreciation
-You're the best thing that ever happened to me. | Tum meri zindagi ki sab se achi cheez ho.
-Thank you for always understanding me. | Mujhe hamesha samajhnay ka shukriya.
-I'm so proud of you. | Mujhe tum par bohat fakhar hai."""
 
     val RESPECTFUL = """# greeting
 Hello, how are you, Uncle? | Assalam o alaikum Uncle, aap kaisay hain?
@@ -112,7 +111,6 @@ With your permission, I will leave now. | Aap ki ijazat ho to main ab chalta hoo
     fun forStyle(style: Style): String? = when (style) {
         Style.POETIC -> POETIC
         Style.FUNNY -> FUNNY
-        Style.AFFECTIONATE -> AFFECTIONATE
         Style.RESPECTFUL -> RESPECTFUL
         else -> null
     }
