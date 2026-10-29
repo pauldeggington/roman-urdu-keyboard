@@ -305,11 +305,7 @@ private fun ModelStep(model: SetupModel, pickModelFile: () -> Unit) {
     // mobile data choice, only when on a metered network
     if (live.metered) {
         var wifiOnly by remember { mutableStateOf(model.wifiOnly) }
-        Row(Modifier.fillMaxWidth().padding(top = 14.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(R.drawable.ic_setup_wifi, cs.onSurfaceVariant, 22.dp)
-            Body(stringResource(R.string.setup_mobile_data), Modifier.weight(1f).padding(start = 10.dp, end = 8.dp, top = 0.dp))
-            Switch(checked = wifiOnly, onCheckedChange = { wifiOnly = it; model.wifiOnly = it })
-        }
+        SwitchRow(stringResource(R.string.setup_mobile_data), "", wifiOnly) { wifiOnly = it; model.wifiOnly = it }
     }
 }
 

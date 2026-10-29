@@ -151,8 +151,9 @@ class ScreenshotTest {
                 val named = cfg.contains(SemanticsProperties.ContentDescription) || cfg.contains(SemanticsProperties.Text)
                 if (!named) problems += "$step #$i has no label"
                 val density = ctx.resources.displayMetrics.density
-                val w = node.size.width / density
-                val h = node.size.height / density
+                // the area a finger can hit, which Compose pads out to 48dp for small controls
+                val w = node.touchBoundsInRoot.width / density
+                val h = node.touchBoundsInRoot.height / density
                 if (w < 48f - 0.5f || h < 48f - 0.5f) problems += "$step #$i is %.0fx%.0fdp".format(w, h)
             }
         }

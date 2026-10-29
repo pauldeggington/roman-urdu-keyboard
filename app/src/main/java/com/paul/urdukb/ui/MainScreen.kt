@@ -333,11 +333,8 @@ private fun ColourCard(recreateScreen: () -> Unit) {
 private fun SpeedCard(model: MainModel) {
     AppCard {
         CardTitle(stringResource(R.string.card_speed))
-        Text(model.snap.stats, Modifier.padding(top = 8.dp), color = MaterialTheme.colorScheme.onSurface, fontSize = Type.body, lineHeight = 21.sp)
-        Row(Modifier.fillMaxWidth().padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.speed_gpu), Modifier.weight(1f).padding(end = 12.dp), color = MaterialTheme.colorScheme.onSurface, fontSize = Type.body)
-            Switch(checked = model.snap.gpu, onCheckedChange = { model.setGpu(it) })
-        }
+        Text(model.snap.stats, Modifier.padding(top = 8.dp), color = MaterialTheme.colorScheme.onSurface, fontSize = Type.body, lineHeight = Type.body * 1.4f)
+        SwitchRow(stringResource(R.string.speed_gpu), "", model.snap.gpu) { model.setGpu(it) }
         Muted(stringResource(R.string.speed_gpu_help))
         PillButton(stringResource(R.string.speed_reset), Modifier.fillMaxWidth().padding(top = 10.dp), enabled = !model.busy) { model.resetStats() }
     }
