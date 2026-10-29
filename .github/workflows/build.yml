@@ -67,6 +67,22 @@ jobs:
           path: app/build/screenshots/*.png
           if-no-files-found: ignore
 
+      - name: Publish the drawn screens to the ci-ui-shots branch (to look at without opening Actions)
+        if: always() && github.ref != 'refs/heads/main'
+        continue-on-error: true
+        run: |
+          ls app/build/screenshots/*.png > /dev/null 2>&1 || exit 0
+          git config user.name "ci"
+          git config user.email "ci@users.noreply.github.com"
+          rm -rf /tmp/ui-shots && mkdir /tmp/ui-shots && cp app/build/screenshots/*.png /tmp/ui-shots/
+          git checkout --orphan ci-ui-shots
+          git rm -rf . > /dev/null 2>&1 || true
+          cp /tmp/ui-shots/*.png .
+          git add -A
+          git commit -q -m "Drawn screens for ${GITHUB_SHA}"
+          git push -f origin ci-ui-shots
+          git checkout -f "${GITHUB_SHA}"
+
       - name: Build debug APK
         run: |
           chmod +x gradlew
