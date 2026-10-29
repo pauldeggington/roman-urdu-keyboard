@@ -21,6 +21,25 @@ object Bank {
     @Synchronized
     fun parse(text: String): List<Pair<String, String>> = parsedCache.getOrPut(text) { parseLines(text) }
 
+    /** One example line with the "# heading" it sits under (empty if none). */
+    class Entry(val group: String, val input: String, val output: String)
+
+    /** Like [parse], but keeps each line's heading, so examples can be chosen by situation. */
+    fun parseGrouped(text: String): List<Entry> {
+        var group = ""
+        val out = ArrayList<Entry>()
+        for (line in text.lines()) {
+            val t = line.trim()
+            if (t.startsWith("#")) { group = t.trimStart('#').trim(); continue }
+            val i = t.indexOf('|')
+            if (i <= 0) continue
+            val a = t.substring(0, i).trim()
+            val b = t.substring(i + 1).trim()
+            if (a.isNotEmpty() && b.isNotEmpty()) out += Entry(group, a, b)
+        }
+        return out
+    }
+
     private fun parseLines(text: String): List<Pair<String, String>> =
         text.lines().mapNotNull { line ->
             val i = line.indexOf('|')

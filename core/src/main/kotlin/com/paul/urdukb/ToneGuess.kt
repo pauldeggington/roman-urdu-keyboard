@@ -47,10 +47,18 @@ object ToneGuess {
      * The tone to use for [text]. [base] is the person's usual register (Casual or Formal). Someone who chose Formal
      * (aap) keeps it unless the sentence is clearly for an elder or is poetry: a joke or a pet name in "aap" would read oddly.
      */
-    fun guess(text: String, base: Style): Style {
+    fun guess(text: String, base: Style): Style = detailed(text, base).style
+
+    /** A guess and whether the words gave a clear reason for it. Without one, the app may ask the model. */
+    class Guess(val style: Style, val confident: Boolean)
+
+    /** Sentences this short are not worth an extra model call: they stay in the usual tone. */
+    private const val SHORT_WORDS = 4
+
+    fun detailed(text: String, base: Style): Guess {
         val lower = text.lowercase()
         val words = WORD.findAll(lower).map { it.value }.toList()
-        if (words.isEmpty()) return base
+        if (words.isEmpty()) return Guess(base, true)
         val set = words.toHashSet()
 
         val elder = ELDERS.count { it in set }
@@ -66,7 +74,8 @@ object ToneGuess {
 
 
         val formalBase = base == Style.FORMAL
-        return when {
+        val cue = elder >= 1 || love >= 1 || funny >= 3 || poetic >= 2
+        val style = when {
             elder >= 1 -> Style.RESPECTFUL
             formalBase && poetic >= 2 -> Style.POETIC
             formalBase -> Style.FORMAL
@@ -75,5 +84,6 @@ object ToneGuess {
             poetic >= 2 -> Style.POETIC
             else -> base
         }
+        return Guess(style, cue || words.size < SHORT_WORDS)
     }
 }

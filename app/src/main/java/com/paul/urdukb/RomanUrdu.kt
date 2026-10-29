@@ -208,8 +208,9 @@ object RomanUrdu {
         }
 
         val style = styleFor(ctx, text)
+        val auto = style.isTone && toneChoice(ctx) == TONE_AUTO
         val label = if (style == Style.TO_ENGLISH) "Roman Urdu \u2192 English"
-            else "English \u2192 Roman Urdu (${toneName(style).lowercase()})"
+            else "English \u2192 Roman Urdu (${if (auto) "auto, " else ""}${toneName(style).lowercase()})"
         toast(ctx, if (LlmEngine.isLoaded()) label else "$label. Loading the model, the first one takes a few seconds")
         busy = true
         refreshToolbar(ctx)
@@ -218,7 +219,7 @@ object RomanUrdu {
             var out: String? = null
             var failure: Throwable? = null
             try {
-                out = LlmEngine.translate(ctx, text, style)
+                out = LlmEngine.translate(ctx, text, style, auto)
             } catch (t: Throwable) {
                 failure = t
                 LlmEngine.saveError(ctx, t)

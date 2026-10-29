@@ -334,4 +334,6 @@
     <string name="note_poetic">انگریزی سے رومن اردو، شاعرانہ</string>
     <string name="note_funny">انگریزی سے رومن اردو، مزاحیہ (تم)</string>
     <string name="note_respectful">انگریزی سے رومن اردو، باادب (آپ)</string>
+    <string name="kb_smart_tone">سمارٹ لہجہ (خودکار)</string>
+    <string name="kb_smart_tone_sub">جب الفاظ سے لہجہ واضح نہ ہو تو ڈیوائس پر موجود ماڈل پہلے جملہ پڑھتا ہے۔ ان ترجموں میں تقریباً ایک سیکنڈ بڑھ جاتا ہے۔</string>
 </resources>

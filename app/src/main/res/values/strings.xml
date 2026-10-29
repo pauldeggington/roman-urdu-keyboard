@@ -343,4 +343,6 @@
     <string name="note_poetic">English → Roman Urdu, poetic</string>
     <string name="note_funny">English → Roman Urdu, funny (tum)</string>
     <string name="note_respectful">English → Roman Urdu, respectful (aap)</string>
+    <string name="kb_smart_tone">Smart tone (Auto)</string>
+    <string name="kb_smart_tone_sub">When the words alone do not show the tone, the on-device model reads the sentence first. Adds about a second to those translations.</string>
 </resources>

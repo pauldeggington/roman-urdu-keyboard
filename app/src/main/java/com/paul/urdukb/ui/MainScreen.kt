@@ -388,6 +388,7 @@ private fun KeyboardCard(model: MainModel) {
         PrefSwitch(stringResource(R.string.kb_popup), stringResource(R.string.kb_popup_sub), KbSettings.KEY_PREVIEW)
         PrefSwitch(stringResource(R.string.kb_autocap), stringResource(R.string.kb_autocap_sub), KbSettings.AUTOCAP)
         PrefSwitch(stringResource(R.string.kb_warm), stringResource(R.string.kb_warm_sub), KbSettings.WARM_TRANSLATOR)
+        PrefSwitch(stringResource(R.string.kb_smart_tone), stringResource(R.string.kb_smart_tone_sub), KbSettings.SMART_TONE)
         PrefSwitch(stringResource(R.string.kb_suggest), stringResource(R.string.kb_suggest_sub), KbSettings.SUGGEST)
         PrefSwitch(stringResource(R.string.kb_autocorrect), stringResource(R.string.kb_autocorrect_sub), KbSettings.AUTOCORRECT)
         PillButton(stringResource(R.string.kb_forget_words), Modifier.fillMaxWidth().padding(top = 10.dp)) {

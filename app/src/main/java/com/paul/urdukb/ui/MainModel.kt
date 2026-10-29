@@ -515,14 +515,8 @@ class MainModel(app: Application) : AndroidViewModel(app) {
         }
         val style = RomanUrdu.styleFor(ctx, text)
         tryHasResult = false
-        val direction = when (style) {
-            Style.TO_ENGLISH -> str(R.string.note_to_english)
-            Style.FORMAL -> str(R.string.note_formal)
-            Style.CASUAL -> str(R.string.note_casual)
-            Style.POETIC -> str(R.string.note_poetic)
-            Style.FUNNY -> str(R.string.note_funny)
-            Style.RESPECTFUL -> str(R.string.note_respectful)
-        }
+        val auto = style.isTone && RomanUrdu.toneChoice(ctx) == RomanUrdu.TONE_AUTO
+        val direction = noteFor(style)
         val firstLoad = !LlmEngine.isLoaded()
         tryNote = direction + if (firstLoad) str(R.string.note_first_load) else ""
         tryOutput = Words.thinking()
@@ -533,7 +527,7 @@ class MainModel(app: Application) : AndroidViewModel(app) {
             var out: String? = null
             var err: Throwable? = null
             try {
-                out = LlmEngine.translate(ctx, text, style)
+                out = LlmEngine.translate(ctx, text, style, auto)
             } catch (t: Throwable) {
                 err = t
                 LlmEngine.saveError(ctx, t)
@@ -547,14 +541,25 @@ class MainModel(app: Application) : AndroidViewModel(app) {
                 } else {
                     tryOutput = result
                     tryHasResult = true
-                    lastStyle = style
+                    // in Auto the engine says which tone it really used
+                    val used = if (auto) LlmEngine.lastStyle ?: style else style
+                    lastStyle = used
                     lastInput = text
-                    tryNote = direction + "  ·  " + Words.done()
+                    tryNote = noteFor(used) + "  ·  " + Words.done()
                 }
                 updateBusy(false)
                 refresh()
             }
         }
+    }
+
+    private fun noteFor(style: Style): String = when (style) {
+        Style.TO_ENGLISH -> str(R.string.note_to_english)
+        Style.FORMAL -> str(R.string.note_formal)
+        Style.CASUAL -> str(R.string.note_casual)
+        Style.POETIC -> str(R.string.note_poetic)
+        Style.FUNNY -> str(R.string.note_funny)
+        Style.RESPECTFUL -> str(R.string.note_respectful)
     }
 
     // ================================================================ style editor

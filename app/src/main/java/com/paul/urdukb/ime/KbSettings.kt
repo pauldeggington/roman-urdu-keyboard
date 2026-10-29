@@ -78,6 +78,8 @@ class KbSettings private constructor(private val sp: SharedPreferences) {
         val SUGGEST = Flag("word_suggestions", true)
         val AUTOCORRECT = Flag("autocorrect", true)
         val CLIPBOARD_HISTORY = Flag("clipboard_history", false)
+        /** In Auto tone, let the on-device model judge tone, listener and situation when the words alone do not settle it. */
+        val SMART_TONE = Flag("smart_tone", true)
 
         val CLIP_KEEP_CHOICES = listOf(1, 24, 168)
 

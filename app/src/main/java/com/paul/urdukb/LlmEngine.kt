@@ -1,6 +1,7 @@
 package com.paul.urdukb
 
 import android.content.Context
+import com.paul.urdukb.ime.KbSettings
 import com.google.ai.edge.litertlm.*
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -205,9 +206,15 @@ object LlmEngine {
     }
 
     /** The few examples from the bank that are closest to this text. */
-    private fun examples(ctx: Context, style: Style, text: String): List<Pair<String, String>> {
+    private fun examples(ctx: Context, style: Style, text: String, situation: ToneAnalysis.Situation? = null): List<Pair<String, String>> {
         // the four extra tones show their own closest examples, then two of the everyday register's, so plain phrasing still comes out right
-        val own = Bank.pick(Bank.parse(Prefs.examples(ctx, style)), text, k = if (style.isExtraTone) 3 else 5) { VariantMap.canon(ctx, it) }
+        var ownBank = Bank.parse(Prefs.examples(ctx, style))
+        // when the model said what the sentence is about, choose from the examples of that situation first
+        if (situation != null && style.isExtraTone) {
+            val same = Bank.parseGrouped(Prefs.examples(ctx, style)).filter { ToneAnalysis.headingMatches(situation, it.group) }.map { it.input to it.output }
+            if (same.size >= 2) ownBank = same
+        }
+        val own = Bank.pick(ownBank, text, k = if (style.isExtraTone) 3 else 5) { VariantMap.canon(ctx, it) }
         val picked = if (style.isExtraTone) {
             Bank.pick(Bank.parse(Prefs.examples(ctx, style.register)), text, k = 2) { VariantMap.canon(ctx, it) } + own
         } else own
@@ -222,17 +229,32 @@ object LlmEngine {
 
     /** Blocking. Call from a background thread. */
     @Synchronized
-    fun translate(ctx: Context, rawText: String, style: Style): String {
-        exactMatch(ctx, rawText, style)?.let { return it }
-        val cacheKey = recentKey(ctx, style, rawText)
+    fun translate(ctx: Context, rawText: String, styleIn: Style, auto: Boolean = false): String {
+        exactMatch(ctx, rawText, styleIn)?.let { return it }
+        val cacheKey = recentKey(ctx, styleIn, rawText) + if (auto) "|auto" else ""
         recent[cacheKey]?.let { return it }
         val eng = getEngine(ctx)
+        // Auto tone: the keywords decide the clear cases; when they cannot, the model reads the sentence first
+        var style = styleIn
+        var situation: ToneAnalysis.Situation? = null
+        if (auto && styleIn.isTone) {
+            val base = if (RomanUrdu.isFormal(ctx)) Style.FORMAL else Style.CASUAL
+            val keyword = ToneGuess.detailed(rawText, base)
+            if (!keyword.confident && KbSettings.of(ctx).let { it[KbSettings.SMART_TONE] }) {
+                val analysis = analyse(eng, rawText)
+                style = ToneAnalysis.decide(keyword.style, analysis, base)
+                situation = analysis?.situation
+            } else style = keyword.style
+            // the tone changed, so another bank may now hold this exact sentence
+            if (style != styleIn) exactMatch(ctx, rawText, style)?.let { lastStyle = style; return it }
+        }
+        lastStyle = style
         // Roman Urdu shorthand (kr, nhi, tm ...) is spelled out first, so the model and the example lookup see real words
         val text = if (style == Style.TO_ENGLISH) Spelling.normalizeInput(ctx, rawText) else rawText
         val t0 = System.nanoTime()
         // Spellings only matter for Roman Urdu output
         val glossary = if (style == Style.TO_ENGLISH) emptyList() else effectiveGlossary(ctx)
-        val examples = examples(ctx, style, text)
+        val examples = examples(ctx, style, text, situation)
         val tagged = Person.tag(text, style)
 
         var out = ask(eng, systemPrompt(ctx, style, glossary), examples, tagged, 0.3f)
@@ -249,6 +271,31 @@ object LlmEngine {
         Prefs.addTranslation(ctx, (System.nanoTime() - t0) / 1_000_000)
         if (result.isNotBlank()) recent[cacheKey] = result
         touch()
+        return result
+    }
+
+    /** The tone the last Auto translation used, so the app can say which one it picked. */
+    @Volatile var lastStyle: Style? = null
+        private set
+
+    private val analyses = object : LinkedHashMap<String, ToneAnalysis.Analysis?>(16, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, ToneAnalysis.Analysis?>?) = size > 30
+    }
+
+    /** One short model call: tone, listener and situation of the sentence. Null if the reply was not usable. */
+    private fun analyse(eng: Engine, text: String): ToneAnalysis.Analysis? {
+        if (analyses.containsKey(text)) return analyses[text]
+        val result = runCatching {
+            val config = ConversationConfig(
+                systemInstruction = Contents.of(ToneAnalysis.PROMPT),
+                initialMessages = ToneAnalysis.EXAMPLES.flatMap { (a, b) -> listOf(Message.user(a), Message.model(b)) },
+                samplerConfig = SamplerConfig(topK = 1, topP = 0.9, temperature = 0.05),
+            )
+            eng.createConversation(config).use { conversation ->
+                ToneAnalysis.parse(runBlocking { conversation.sendMessage(text) }.toString())
+            }
+        }.getOrNull()
+        analyses[text] = result
         return result
     }
 

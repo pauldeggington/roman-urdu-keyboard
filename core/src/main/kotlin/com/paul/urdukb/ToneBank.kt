@@ -12,7 +12,7 @@ object ToneBank {
 I miss you more with every passing night. | Har guzarti raat ke saath tumhari yaad aur gehri ho jati hai.
 Your memory visits me like the evening breeze. | Tumhari yaad shaam ki hawa ki tarah mujh tak chali aati hai.
 I still wait for you at the end of every day. | Har din ke aakhir mein main aaj bhi tumhara intezar karta hoon.
-# love: poetic
+# devotion
 You are the dream my eyes never want to wake from. | Tum woh khwab ho jis se meri aankhein kabhi jagna nahi chahtin.
 My heart has found its home in you. | Mere dil ko tum mein apna ghar mil gaya hai.
 Even the moon feels incomplete without you. | Tumharay bina chand bhi adhoora lagta hai.
@@ -32,25 +32,25 @@ Thank you for being my light. | Meri roshni bannay ka shukriya.
 # journey
 Life is a journey, not a destination. | Zindagi ek safar hai, manzil nahi.
 Wherever you go, my prayers go with you. | Tum jahan bhi jao, meri duayein tumharay saath jayen gi.
-# love: good morning and good night
+# tender: good morning and good night
 Good morning, my love. | Subah bakhair, meri jaan.
 Good night, sweet dreams. | Shab bakhair, meethay khwab.
 Sleep well, I'll see you in my dreams. | Aram se sona, khwabon mein miltay hain.
-# love: words of love
+# tender: words of affection
 I love you more than words can say. | Mujhe tum se itna pyaar hai ke lafz kam par jatay hain.
 You mean everything to me. | Tum meray liye sab kuch ho.
 You make me so happy. | Tum mujhe bohat khush rakhtay ho.
-# love: missing someone
+# tender: missing someone
 I can't wait to see you. | Mujh se tumhein dekhnay ka intezar nahi ho raha.
 Come home soon, I miss you. | Jaldi ghar aa jao, mujhe tumhari bohat yaad aa rahi hai.
-# love: care
+# tender: care
 Did you eat? Please don't skip meals. | Khana khaya? Please khana skip mat kiya karo.
 Take care of yourself for me. | Meray liye apna khayal rakhna.
 Are you feeling better, sweetheart? | Ab tabiyat behtar hai, meri jaan?
-# love: comfort
+# tender: comfort
 I'm always here for you. | Main hamesha tumharay saath hoon.
 Don't cry, everything will be okay. | Ro mat, sab theek ho jayega.
-# love: appreciation
+# tender: appreciation
 You're the best thing that ever happened to me. | Tum meri zindagi ki sab se achi cheez ho.
 Thank you for always understanding me. | Mujhe hamesha samajhnay ka shukriya.
 I'm so proud of you. | Mujhe tum par bohat fakhar hai.
