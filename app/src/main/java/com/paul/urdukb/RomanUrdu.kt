@@ -1,5 +1,6 @@
 package com.paul.urdukb
 
+import com.paul.urdukb.R
 import android.content.Context
 import android.content.Intent
 import android.inputmethodservice.InputMethodService
@@ -168,15 +169,15 @@ object RomanUrdu {
 
         val text = whole.trim()
         if (text.isEmpty()) {
-            toast(ctx, "Type some English first, then tap Translate")
+            toast(ctx, ctx.getString(R.string.type_first))
             return
         }
         if (ctx.getSystemService(UserManager::class.java)?.isUserUnlocked == false) {
-            toast(ctx, "Unlock your phone first")
+            toast(ctx, ctx.getString(R.string.unlock_first))
             return
         }
         if (!LlmEngine.modelExists(ctx)) {
-            toast(ctx, "No model yet. Open the Roman Urdu Keyboard app to download it.")
+            toast(ctx, ctx.getString(R.string.no_model))
             return
         }
 
@@ -203,8 +204,8 @@ object RomanUrdu {
             main.post {
                 busy = false
                 when {
-                    failure != null -> toast(ctx, "Translation failed. Open the app to see why.")
-                    translated.isBlank() -> toast(ctx, "The model returned nothing. Try again.")
+                    failure != null -> toast(ctx, ctx.getString(R.string.translation_failed))
+                    translated.isBlank() -> toast(ctx, ctx.getString(R.string.model_nothing))
                     else -> {
                         val conn = ime.currentInputConnection
                         if (conn == null) {

@@ -1,13 +1,18 @@
+root = true
+
 [*]
 charset = utf-8
 end_of_line = lf
-indent_size = 4
-indent_style = space
 insert_final_newline = true
-max_line_length = 140
-tab_width = 4
 trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
 
-[{*.markdown,*.md}]
-trim_trailing_whitespace = false
+[*.{kt,kts}]
+max_line_length = 160
+ij_kotlin_imports_layout = *
+ij_kotlin_name_count_to_use_star_import = 999
+ij_kotlin_name_count_to_use_star_import_for_members = 999
+
+[*.{xml,yml,yaml,json,toml,md}]
 indent_size = 2

@@ -125,15 +125,15 @@ class ClipboardPanel(context: Context) : FrameLayout(context) {
     init {
         val circle = (34 * d).toInt()
         backBtn.setImageResource(R.drawable.kb_back)
-        backBtn.contentDescription = "Back"
+        backBtn.contentDescription = context.getString(R.string.cd_back)
         backBtn.scaleType = ImageView.ScaleType.CENTER
         backBtn.setOnClickListener { listener?.onFeedback(); listener?.onBack() }
         topBar.addView(backBtn, LinearLayout.LayoutParams(circle, circle).apply { marginStart = (8 * d).toInt(); marginEnd = (10 * d).toInt() })
-        title.text = "Clipboard"
+        title.text = context.getString(R.string.clipboard_title)
         title.typeface = font
         title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18f)
         topBar.addView(title, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
-        clearBtn.text = "Clear all"
+        clearBtn.text = context.getString(R.string.clear_all)
         clearBtn.typeface = font
         clearBtn.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
         clearBtn.gravity = Gravity.CENTER
@@ -197,7 +197,7 @@ class ClipboardPanel(context: Context) : FrameLayout(context) {
     }
 
     private fun hintText() =
-        "Tap a clip to paste it. Long-press to pin or delete. Clips that aren't pinned are removed after ${ClipStore.ttlWords(ClipStore.ttlHours(context))}."
+        context.getString(R.string.clipboard_hint, ClipStore.ttlWords(ClipStore.ttlHours(context)))
 
     /** Reload the cards. Called each time the panel opens. */
     fun refresh() {
@@ -208,9 +208,9 @@ class ClipboardPanel(context: Context) : FrameLayout(context) {
             hint.visibility = GONE
             clearBtn.visibility = GONE
             showMessage(
-                "Clipboard history is off. Turn it on to keep text you copy, so you can paste it again. It stays on this phone.",
-                "Turn on clipboard history", { ClipStore.setEnabled(context, true); captureCurrent(); refresh() },
-                "Paste what's copied now", { currentClipText()?.let { listener?.onClip(it) } },
+                context.getString(R.string.clipboard_off_msg),
+                context.getString(R.string.clipboard_turn_on), { ClipStore.setEnabled(context, true); captureCurrent(); refresh() },
+                context.getString(R.string.clipboard_paste_now), { currentClipText()?.let { listener?.onClip(it) } },
             )
             return
         }
@@ -221,7 +221,7 @@ class ClipboardPanel(context: Context) : FrameLayout(context) {
         list.scrollToPosition(0)
         hint.visibility = if (clips.isEmpty()) GONE else VISIBLE
         clearBtn.visibility = if (clips.any { !it.pinned }) VISIBLE else GONE
-        if (clips.isEmpty()) showMessage("Text you copy will show up here, ready to paste again.", null, null, null, null)
+        if (clips.isEmpty()) showMessage(context.getString(R.string.clipboard_empty), null, null, null, null)
         else messageBox.visibility = GONE
     }
 
@@ -269,8 +269,8 @@ class ClipboardPanel(context: Context) : FrameLayout(context) {
             setPadding((16 * d).toInt(), 0, (16 * d).toInt(), 0)
             setOnClickListener { hideActions(); listener?.onFeedback(); onTap() }
         }
-        actions.addView(item(if (clip.pinned) "Unpin" else "Pin") { ClipStore.togglePin(context, clip); refresh() }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT))
-        actions.addView(item("Delete") { ClipStore.delete(context, clip); refresh() }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        actions.addView(item(if (clip.pinned) context.getString(R.string.unpin) else context.getString(R.string.pin)) { ClipStore.togglePin(context, clip); refresh() }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        actions.addView(item(context.getString(R.string.delete)) { ClipStore.delete(context, clip); refresh() }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT))
         actions.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
         val loc = IntArray(2); val me = IntArray(2)
         anchor.getLocationInWindow(loc); getLocationInWindow(me)

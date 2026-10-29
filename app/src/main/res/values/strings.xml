@@ -1,4 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Roman Urdu Keyboard</string>
+
+    <!-- Keyboard and translate messages -->
+    <string name="cd_back">Back</string>
+    <string name="cd_clear_search">Clear search</string>
+    <string name="cd_close_search">Close search</string>
+    <string name="cd_stickers">Stickers</string>
+    <string name="clear_all">Clear all</string>
+    <string name="clipboard_empty">Text you copy will show up here, ready to paste again.</string>
+    <string name="clipboard_hint">Tap a clip to paste it. Long-press to pin or delete. Clips that aren\'t pinned are removed after %1$s.</string>
+    <string name="clipboard_off_msg">Clipboard history is off. Turn it on to keep text you copy, so you can paste it again. It stays on this phone.</string>
+    <string name="clipboard_paste_now">Paste what\'s copied now</string>
+    <string name="clipboard_title">Clipboard</string>
+    <string name="clipboard_turn_on">Turn on clipboard history</string>
+    <string name="delete">Delete</string>
+    <string name="emoji_emoticons">Emoticons</string>
+    <string name="emoji_recent">Recent Emoji</string>
+    <string name="gif_link_typed">This app can\'t take GIFs from a keyboard, so the link was typed instead.</string>
+    <string name="gif_send_failed">Couldn\'t send the picture, so the link was typed instead.</string>
+    <string name="giphy_bad_key">GIPHY did not accept the key. Check it in the app.</string>
+    <string name="giphy_limit">GIPHY\'s free limit was reached. Try again in a little while.</string>
+    <string name="giphy_need_key">GIFs and stickers come from GIPHY. Add a free GIPHY key in the app to turn them on.</string>
+    <string name="giphy_network">Couldn\'t reach GIPHY. Check your connection.</string>
+    <string name="giphy_powered">Powered by GIPHY</string>
+    <string name="loading">Loading…</string>
+    <string name="media_recent_empty">GIFs and stickers you send will show up here.</string>
+    <string name="mic_off">Microphone is off for this keyboard, so voice typing can\'t listen.</string>
+    <string name="model_nothing">The model returned nothing. Try again.</string>
+    <string name="no_emoji_for">No emoji for “%1$s”</string>
+    <string name="no_model">No model yet. Open the Roman Urdu Keyboard app to download it.</string>
+    <string name="no_results">No results</string>
+    <string name="open_app">Open app</string>
+    <string name="pin">Pin</string>
+    <string name="search_emoji_hint">Search emoji</string>
+    <string name="search_gifs_hint">Search GIFs</string>
+    <string name="search_stickers_hint">Search stickers</string>
+    <string name="translation_failed">Translation failed. Open the app to see why.</string>
+    <string name="type_first">Type some English first, then tap Translate</string>
+    <string name="type_then_search">Type what you\'re looking for, then tap search</string>
+    <string name="type_to_find_emoji">Type to find an emoji</string>
+    <string name="unlock_first">Unlock your phone first</string>
+    <string name="unpin">Unpin</string>
+    <string name="voice_network">Voice typing needs a connection, or an offline speech pack in your phone\'s settings.</string>
+    <string name="voice_none">No speech recognition on this phone.</string>
+    <string name="voice_not_on">Voice typing isn\'t turned on. In Settings, go to System > Keyboard > On-screen keyboard and turn on Google voice typing.</string>
+    <string name="voice_stopped">Voice typing stopped (error %1$d).</string>
 </resources>

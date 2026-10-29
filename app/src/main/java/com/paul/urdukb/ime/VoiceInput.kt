@@ -1,5 +1,6 @@
 package com.paul.urdukb.ime
 
+import com.paul.urdukb.R
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -36,7 +37,7 @@ class VoiceInput(
 
     fun start() {
         if (listening) return
-        if (!available(ctx)) { onProblem("No speech recognition on this phone."); return }
+        if (!available(ctx)) { onProblem(ctx.getString(R.string.voice_none)); return }
         if (!hasPermission(ctx)) { onProblem("NEEDS_PERMISSION"); return }
         listening = true
         quietRounds = 0
@@ -81,8 +82,8 @@ class VoiceInput(
                     }
                     SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> main.postDelayed({ begin() }, 400)
                     SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> { stop(); onProblem("NEEDS_PERMISSION") }
-                    SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> { stop(); onProblem("Voice typing needs a connection, or an offline speech pack in your phone's settings.") }
-                    else -> { stop(); onProblem("Voice typing stopped (error $error).") }
+                    SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> { stop(); onProblem(ctx.getString(R.string.voice_network)) }
+                    else -> { stop(); onProblem(ctx.getString(R.string.voice_stopped, error)) }
                 }
             }
 

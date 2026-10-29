@@ -1,5 +1,6 @@
 package com.paul.urdukb.ime
 
+import com.paul.urdukb.R
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -871,7 +872,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         MicPermissionActivity.onResult = { ok ->
             MicPermissionActivity.onResult = null
             if (ok) handler.post { voice?.start() }
-            else handler.post { Toast.makeText(this, "Microphone is off for this keyboard, so voice typing can't listen.", Toast.LENGTH_LONG).show() }
+            else handler.post { Toast.makeText(this, getString(R.string.mic_off), Toast.LENGTH_LONG).show() }
         }
         startActivity(Intent(this, MicPermissionActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
@@ -901,7 +902,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         }
         Toast.makeText(
             this,
-            "Voice typing isn't turned on. In Settings, go to System > Keyboard > On-screen keyboard and turn on Google voice typing.",
+            getString(R.string.voice_not_on),
             Toast.LENGTH_LONG,
         ).show()
     }
@@ -959,7 +960,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             .any { android.content.ClipDescription.compareMimeTypes("image/gif", it) }
         if (!accepts) {
             ic.commitText(item.pageUrl + " ", 1)
-            Toast.makeText(this, "This app can't take GIFs from a keyboard, so the link was typed instead.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.gif_link_typed), Toast.LENGTH_SHORT).show()
             return
         }
         Thread {
@@ -979,7 +980,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
                 }
                 if (!sent) {
                     ic2?.commitText(item.pageUrl + " ", 1)
-                    Toast.makeText(this, "Couldn't send the picture, so the link was typed instead.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.gif_send_failed), Toast.LENGTH_SHORT).show()
                 }
             }
         }.start()

@@ -392,7 +392,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         val circle = (34 * d).toInt()
         // top bar: back, search field (or the title on the emoticon screen)
         backBtn.setImageResource(R.drawable.kb_back)
-        backBtn.contentDescription = "Back"
+        backBtn.contentDescription = context.getString(R.string.cd_back)
         backBtn.scaleType = ImageView.ScaleType.CENTER
         backBtn.setOnClickListener { listener?.onFeedback(); if (searching) closeSearch() else listener?.onBack() }
         topBar.addView(backBtn, LinearLayout.LayoutParams(circle, circle).apply { marginStart = (8 * d).toInt(); marginEnd = (8 * d).toInt() })
@@ -407,7 +407,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         searchText.gravity = Gravity.CENTER_VERTICAL
         searchPill.addView(searchText, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f).apply { marginStart = (10 * d).toInt() })
         clearBtn.setImageResource(R.drawable.kb_close)
-        clearBtn.contentDescription = "Clear search"
+        clearBtn.contentDescription = context.getString(R.string.cd_clear_search)
         clearBtn.scaleType = ImageView.ScaleType.FIT_CENTER
         clearBtn.setPadding((4 * d).toInt(), (4 * d).toInt(), (4 * d).toInt(), (4 * d).toInt())
         clearBtn.visibility = GONE
@@ -418,7 +418,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
 
         titleView.typeface = font
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18f)
-        titleView.text = "Emoticons"
+        titleView.text = context.getString(R.string.emoji_emoticons)
         titleView.visibility = GONE
         topBar.addView(titleView, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
         column.addView(topBar, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (50 * d).toInt()))
@@ -482,7 +482,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         messageBox.addView(messageBtn, LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, (40 * d).toInt()).apply { topMargin = (12 * d).toInt() })
         content.addView(messageBox, LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
 
-        attribution.text = "Powered by GIPHY"
+        attribution.text = context.getString(R.string.giphy_powered)
         attribution.typeface = font
         attribution.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10.5f)
         attribution.setPadding((9 * d).toInt(), (3 * d).toInt(), (9 * d).toInt(), (3 * d).toInt())
@@ -514,7 +514,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         gifPill.setOnClickListener { listener?.onFeedback(); setMode(Mode.GIF) }
         bottomBar.addView(gifPill, LinearLayout.LayoutParams(pw, ph).apply { marginStart = gap })
         stickerPill.setImageResource(R.drawable.kb_sticker)
-        stickerPill.contentDescription = "Stickers"
+        stickerPill.contentDescription = context.getString(R.string.cd_stickers)
         stickerPill.scaleType = ImageView.ScaleType.CENTER
         stickerPill.setOnClickListener { listener?.onFeedback(); setMode(Mode.STICKER) }
         bottomBar.addView(stickerPill, LinearLayout.LayoutParams(pw, ph).apply { marginStart = gap })
@@ -611,9 +611,9 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
 
     private fun updateHint() {
         searchText.hint = when (mode) {
-            Mode.GIF -> "Search GIFs"
-            Mode.STICKER -> "Search stickers"
-            else -> "Search emoji"
+            Mode.GIF -> context.getString(R.string.search_gifs_hint)
+            Mode.STICKER -> context.getString(R.string.search_stickers_hint)
+            else -> context.getString(R.string.search_emoji_hint)
         }
     }
 
@@ -624,7 +624,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         val rec = recents()
         if (rec.isNotEmpty()) {
             starts += out.size; icons += R.drawable.kb_cat_recent
-            out += Row.Header("Recent Emoji", starts.size - 1)
+            out += Row.Header(context.getString(R.string.emoji_recent), starts.size - 1)
             rec.forEach { out += Row.Emoji(EmojiItem(it, false, "")) }
         }
         EmojiData.load(context).forEach { s ->
@@ -681,7 +681,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         if (toStrip) strip.visibility = GONE else mediaList.visibility = GONE
         if (q == RECENT_Q && !toStrip) {
             val recent = RecentMedia.list(context, sticker)
-            if (recent.isEmpty()) { showMessage("GIFs and stickers you send will show up here."); return }
+            if (recent.isEmpty()) { showMessage(context.getString(R.string.media_recent_empty)); return }
             messageBox.visibility = GONE
             mediaItems = recent
             mediaAdapter.notifyDataSetChanged()
@@ -690,26 +690,26 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
             return
         }
         if (!GiphyApi.hasKey(context)) {
-            showMessage("GIFs and stickers come from GIPHY. Add a free GIPHY key in the app to turn them on.", "Open app")
+            showMessage(context.getString(R.string.giphy_need_key), context.getString(R.string.open_app))
             return
         }
-        showMessage("Loading…")
+        showMessage(context.getString(R.string.loading))
         Thread {
             val result = try { GiphyApi.fetch(context, sticker, q) } catch (e: GiphyException) { e } catch (e: Exception) { GiphyException(GiphyException.Kind.NETWORK, e.message ?: "") }
             handler.post {
                 if (token != loadToken) return@post
                 if (result is GiphyException) {
                     when (result.kind) {
-                        GiphyException.Kind.NO_KEY -> showMessage("GIFs and stickers come from GIPHY. Add a free GIPHY key in the app to turn them on.", "Open app")
-                        GiphyException.Kind.BAD_KEY -> showMessage("GIPHY did not accept the key. Check it in the app.", "Open app")
-                        GiphyException.Kind.LIMIT -> showMessage("GIPHY's free limit was reached. Try again in a little while.")
-                        GiphyException.Kind.NETWORK -> showMessage("Couldn't reach GIPHY. Check your connection.")
+                        GiphyException.Kind.NO_KEY -> showMessage(context.getString(R.string.giphy_need_key), context.getString(R.string.open_app))
+                        GiphyException.Kind.BAD_KEY -> showMessage(context.getString(R.string.giphy_bad_key), context.getString(R.string.open_app))
+                        GiphyException.Kind.LIMIT -> showMessage(context.getString(R.string.giphy_limit))
+                        GiphyException.Kind.NETWORK -> showMessage(context.getString(R.string.giphy_network))
                     }
                     return@post
                 }
                 @Suppress("UNCHECKED_CAST")
                 val items = result as List<GifItem>
-                if (items.isEmpty()) { showMessage("No results"); return@post }
+                if (items.isEmpty()) { showMessage(context.getString(R.string.no_results)); return@post }
                 messageBox.visibility = GONE
                 if (toStrip) {
                     stripItems = items
@@ -780,9 +780,9 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
             stripItems = recents().map { EmojiItem(it, false, "") }
             stripAdapter.notifyDataSetChanged()
             strip.visibility = if (stripItems.isEmpty()) GONE else VISIBLE
-            if (stripItems.isEmpty()) showMessage("Type to find an emoji")
+            if (stripItems.isEmpty()) showMessage(context.getString(R.string.type_to_find_emoji))
         } else {
-            showMessage("Type what you're looking for, then tap search")
+            showMessage(context.getString(R.string.type_then_search))
         }
     }
 
@@ -845,7 +845,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
                 messageBox.visibility = GONE
             } else {
                 stripItems = EmojiData.search(context, q)
-                if (stripItems.isEmpty()) showMessage("No emoji for “$q”") else messageBox.visibility = GONE
+                if (stripItems.isEmpty()) showMessage(context.getString(R.string.no_emoji_for, q)) else messageBox.visibility = GONE
             }
             stripAdapter.notifyDataSetChanged()
             strip.scrollToPosition(0)
@@ -861,7 +861,7 @@ class EmojiPanel(context: Context) : FrameLayout(context) {
         searchText.setTextColor(c.keyText)
         searchText.setHintTextColor(c.hint)
         clearBtn.visibility = if (searching && query.isNotEmpty()) VISIBLE else GONE
-        backBtn.contentDescription = if (searching) "Close search" else "Back"
+        backBtn.contentDescription = if (searching) context.getString(R.string.cd_close_search) else context.getString(R.string.cd_back)
         searchPill.background = pill(if (searching) c.selected.withAlpha(0.35f) else c.chip)
     }
 
