@@ -118,7 +118,7 @@ private fun Header() {
             modifier = Modifier.size(64.dp).clip(RoundedCornerShape(19.dp)),
         )
         Column(Modifier.padding(start = 16.dp)) {
-            Text(greeting, color = MaterialTheme.colorScheme.onBackground, fontSize = 22.sp, fontWeight = FontWeight.Medium)
+            Text(greeting, color = MaterialTheme.colorScheme.onBackground, fontSize = Type.title, fontWeight = FontWeight.Medium)
             Muted(stringResource(R.string.header_tagline), Modifier.padding(top = 4.dp))
         }
     }
@@ -146,11 +146,11 @@ private fun ChecklistCard(model: MainModel) {
                     Modifier.size(30.dp).clip(CircleShape).background(if (c.done) cs.primary else cs.secondaryContainer),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text(if (c.done) "✓" else "${i + 1}", color = if (c.done) cs.onPrimary else cs.onSecondaryContainer, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text(if (c.done) "✓" else "${i + 1}", color = if (c.done) cs.onPrimary else cs.onSecondaryContainer, fontSize = Type.body, fontWeight = FontWeight.Bold)
                 }
                 Column(Modifier.weight(1f).padding(start = 12.dp, end = 8.dp)) {
-                    Text(c.label, color = cs.onSurface.copy(alpha = if (c.done) 0.75f else 1f), fontSize = 15.sp)
-                    if (c.sub.isNotEmpty()) Muted(c.sub, size = 12.5.sp)
+                    Text(c.label, color = cs.onSurface.copy(alpha = if (c.done) 0.75f else 1f), fontSize = Type.body)
+                    if (c.sub.isNotEmpty()) Muted(c.sub, size = Type.caption)
                 }
                 if (c.action != null && !c.done) PillButton(c.action, filled = true) { model.onCheckAction(i) }
             }
@@ -169,12 +169,12 @@ private fun ModelCard(model: MainModel, pickModelFile: () -> Unit) {
             listOf(stringResource(R.string.model_choice_gemma4) to ModelChoice.GEMMA4, stringResource(R.string.model_choice_gemma3) to ModelChoice.GEMMA3),
             selected = s.choice,
         ) { model.chooseModel(it) }
-        Muted(stringResource(R.string.model_choice_help), Modifier.padding(top = 6.dp), size = 12.5.sp)
+        Muted(stringResource(R.string.model_choice_help), Modifier.padding(top = 6.dp), size = Type.caption)
         Text(
             s.status,
             Modifier.padding(top = 8.dp),
             color = when (s.statusTone) { MainModel.Tone.OK -> okColor; MainModel.Tone.ERROR -> errColor; else -> cs.onSurface },
-            fontSize = 15.sp, fontWeight = FontWeight.Medium,
+            fontSize = Type.body, fontWeight = FontWeight.Medium,
         )
         Muted(s.detail)
 
@@ -190,7 +190,7 @@ private fun ModelCard(model: MainModel, pickModelFile: () -> Unit) {
 
         Muted(stringResource(R.string.model_background_note), Modifier.padding(top = 14.dp, bottom = 6.dp))
         if (s.choice.needsToken) {
-            Muted(stringResource(R.string.model_token_help), size = 12.5.sp)
+            Muted(stringResource(R.string.model_token_help), size = Type.caption)
             TextBox(model.token, { model.token = it }, stringResource(R.string.model_token_hint), password = true)
         }
         ButtonRow {
@@ -225,7 +225,7 @@ private fun TryCard(model: MainModel) {
         ) { model.setDirection(it) }
         FieldLabel(stringResource(R.string.try_tone))
         Segmented(listOf(stringResource(R.string.tone_casual) to false, stringResource(R.string.tone_formal) to true), selected = s.formal) { model.setTone(it) }
-        Muted(stringResource(R.string.try_tone_help), Modifier.padding(top = 6.dp), size = 12.5.sp)
+        Muted(stringResource(R.string.try_tone_help), Modifier.padding(top = 6.dp), size = Type.caption)
         TextBox(
             model.tryInput, { model.tryInput = it }, stringResource(R.string.try_input_hint),
             modifier = Modifier.padding(top = 8.dp).focusRequester(focus), minLines = 2, sentences = true,
@@ -236,10 +236,10 @@ private fun TryCard(model: MainModel) {
         }
         TextBox(
             model.tryOutput, { model.tryOutput = it }, stringResource(R.string.try_output_hint),
-            modifier = Modifier.padding(top = 10.dp), minLines = 2, plain = true, fontSize = 18.sp,
+            modifier = Modifier.padding(top = 10.dp), minLines = 2, plain = true, fontSize = Type.bodyLarge,
         )
         if (model.canSaveExample) PillButton(stringResource(R.string.try_save_example), Modifier.fillMaxWidth().padding(top = 6.dp)) { model.saveExample() }
-        if (model.tryNote.isNotEmpty()) Muted(model.tryNote, Modifier.padding(top = 4.dp), size = 12.5.sp)
+        if (model.tryNote.isNotEmpty()) Muted(model.tryNote, Modifier.padding(top = 4.dp), size = Type.caption)
     }
 }
 
@@ -249,7 +249,7 @@ private fun StyleCard(model: MainModel) {
     AppCard {
         Row(Modifier.fillMaxWidth().clickable { model.styleOpen = !model.styleOpen }, verticalAlignment = Alignment.CenterVertically) {
             CardTitle(stringResource(R.string.card_style), Modifier.weight(1f))
-            Text(stringResource(if (model.styleOpen) R.string.hide else R.string.edit), color = cs.primary, fontSize = 15.sp)
+            Text(stringResource(if (model.styleOpen) R.string.hide else R.string.edit), color = cs.primary, fontSize = Type.body)
         }
         Muted(stringResource(R.string.style_help))
         // who "I" is, so "I'm tired" becomes "Main thak gaya hoon" and never reads as "you"
@@ -300,7 +300,7 @@ private fun ColourCard(recreateScreen: () -> Unit) {
                                     recreateScreen()
                                 },
                             contentAlignment = Alignment.Center,
-                        ) { if (selected) Text("✓", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold) }
+                        ) { if (selected) Text("✓", color = Color.White, fontSize = Type.bodyLarge, fontWeight = FontWeight.Bold) }
                         Muted(sw.name, Modifier.padding(top = 3.dp), size = 11.sp)
                     }
                 }
@@ -327,9 +327,9 @@ private fun ColourCard(recreateScreen: () -> Unit) {
 private fun SpeedCard(model: MainModel) {
     AppCard {
         CardTitle(stringResource(R.string.card_speed))
-        Text(model.snap.stats, Modifier.padding(top = 8.dp), color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp, lineHeight = 21.sp)
+        Text(model.snap.stats, Modifier.padding(top = 8.dp), color = MaterialTheme.colorScheme.onSurface, fontSize = Type.body, lineHeight = 21.sp)
         Row(Modifier.fillMaxWidth().padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.speed_gpu), Modifier.weight(1f).padding(end = 12.dp), color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
+            Text(stringResource(R.string.speed_gpu), Modifier.weight(1f).padding(end = 12.dp), color = MaterialTheme.colorScheme.onSurface, fontSize = Type.body)
             Switch(checked = model.snap.gpu, onCheckedChange = { model.setGpu(it) })
         }
         Muted(stringResource(R.string.speed_gpu_help))
@@ -412,8 +412,8 @@ private fun GiphyCard() {
                 Toast.makeText(ctx, ctx.getString(R.string.saved), Toast.LENGTH_SHORT).show()
             }
         }
-        Muted(stringResource(if (has) R.string.giphy_on else R.string.giphy_off), Modifier.padding(top = 6.dp), size = 12.5.sp)
-        Muted(stringResource(R.string.giphy_limits), Modifier.padding(top = 4.dp), size = 12.5.sp)
+        Muted(stringResource(if (has) R.string.giphy_on else R.string.giphy_off), Modifier.padding(top = 6.dp), size = Type.caption)
+        Muted(stringResource(R.string.giphy_limits), Modifier.padding(top = 4.dp), size = Type.caption)
     }
 }
 
@@ -432,7 +432,7 @@ private fun CreditsCard() {
     AppCard {
         CardTitle(stringResource(R.string.card_credits))
         SelectionContainer {
-            Text(linkify(text, cs.primary), Modifier.padding(top = 8.dp), color = cs.onSurfaceVariant, fontSize = 13.sp, lineHeight = 17.sp)
+            Text(linkify(text, cs.primary), Modifier.padding(top = 8.dp), color = cs.onSurfaceVariant, fontSize = Type.caption, lineHeight = 17.sp)
         }
     }
 }
@@ -456,7 +456,7 @@ private fun ErrorCard(model: MainModel) {
     AppCard {
         CardTitle(stringResource(R.string.card_error), color = cs.error)
         SelectionContainer {
-            Text(model.snap.error, Modifier.padding(vertical = 8.dp), color = cs.onSurface, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+            Text(model.snap.error, Modifier.padding(vertical = 8.dp), color = cs.onSurface, fontSize = Type.caption, fontFamily = FontFamily.Monospace)
         }
         ButtonRow {
             PillButton(stringResource(R.string.copy), Modifier.weight(1f).fillMaxHeight(), filled = true) { model.copyError() }

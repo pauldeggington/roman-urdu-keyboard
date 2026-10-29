@@ -51,11 +51,11 @@ fun AppCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -
 
 @Composable
 fun CardTitle(text: String, modifier: Modifier = Modifier, color: Color = MaterialTheme.colorScheme.onSurface) {
-    Text(text, modifier = modifier, color = color, fontSize = 18.sp, fontWeight = FontWeight.Medium)
+    Text(text, modifier = modifier, color = color, fontSize = Type.bodyLarge, fontWeight = FontWeight.Medium)
 }
 
 @Composable
-fun Muted(text: String, modifier: Modifier = Modifier, size: TextUnit = 13.5.sp) {
+fun Muted(text: String, modifier: Modifier = Modifier, size: TextUnit = Type.caption) {
     Text(text, modifier = modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = size, lineHeight = size * 1.3f)
 }
 
@@ -86,7 +86,7 @@ fun PillButton(
             disabledContentColor = (if (filled) c.onPrimary else c.onSecondaryContainer).copy(alpha = 0.7f),
         ),
     ) {
-        Text(label, fontSize = 14.sp, maxLines = 2, textAlign = TextAlign.Center, lineHeight = 17.sp)
+        Text(label, fontSize = Type.body, maxLines = 2, textAlign = TextAlign.Center, lineHeight = 17.sp)
     }
 }
 
@@ -121,7 +121,7 @@ fun TextBox(
     password: Boolean = false,
     sentences: Boolean = false,
     plain: Boolean = false,
-    fontSize: TextUnit = 14.sp,
+    fontSize: TextUnit = Type.body,
 ) {
     val c = MaterialTheme.colorScheme
     TextField(
@@ -153,8 +153,8 @@ fun TextBox(
 fun SwitchRow(label: String, sub: String, checked: Boolean, onChecked: (Boolean) -> Unit) {
     Row(Modifier.fillMaxWidth().padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f).padding(end = 12.dp)) {
-            Text(label, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp)
-            if (sub.isNotEmpty()) Muted(sub, size = 12.5.sp)
+            Text(label, color = MaterialTheme.colorScheme.onSurface, fontSize = Type.body)
+            if (sub.isNotEmpty()) Muted(sub, size = Type.caption)
         }
         Switch(checked = checked, onCheckedChange = onChecked)
     }

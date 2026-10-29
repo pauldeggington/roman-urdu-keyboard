@@ -27,7 +27,7 @@ fun RomanUrduTheme(content: @Composable () -> Unit) {
         secondaryContainer = c(pal.tonal), onSecondaryContainer = c(pal.onTonal),
         error = c(pal.error),
     )
-    MaterialTheme(colorScheme = scheme, content = content)
+    MaterialTheme(colorScheme = scheme, typography = AppTypography, content = content)
 }
 
 /** Green for "done", red for problems: not part of the Material scheme, so read from the palette. */

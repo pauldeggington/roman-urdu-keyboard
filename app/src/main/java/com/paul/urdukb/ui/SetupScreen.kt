@@ -102,7 +102,7 @@ fun SetupScreen(model: SetupModel, pickModelFile: () -> Unit, recreateScreen: ()
                 live.chip,
                 Modifier.padding(start = 24.dp, top = 4.dp).clip(RoundedCornerShape(50)).background(cs.secondaryContainer)
                     .clickable { model.show(Step.MODEL) }.padding(horizontal = 12.dp, vertical = 6.dp),
-                color = cs.onSecondaryContainer, fontSize = 12.5.sp,
+                color = cs.onSecondaryContainer, fontSize = Type.caption,
             )
         }
         Box(Modifier.weight(1f).fillMaxWidth()) {
@@ -112,7 +112,7 @@ fun SetupScreen(model: SetupModel, pickModelFile: () -> Unit, recreateScreen: ()
                     Heading(stringResource(R.string.setup_problem_title))
                     Body(stringResource(R.string.setup_problem_body))
                     SelectionContainer {
-                        Text(problem, Modifier.padding(top = 14.dp), color = cs.onSurfaceVariant, fontSize = 13.5.sp, fontFamily = FontFamily.Monospace)
+                        Text(problem, Modifier.padding(top = 14.dp), color = cs.onSurfaceVariant, fontSize = Type.caption, fontFamily = FontFamily.Monospace)
                     }
                 }
             } else {
@@ -151,7 +151,7 @@ private fun TopBar(model: SetupModel) {
             "‹",
             Modifier.alpha(if (backVisible) 1f else 0f).clickable(enabled = backVisible) { model.back() }.padding(start = 14.dp, end = 14.dp, bottom = 4.dp)
                 .semantics { contentDescription = "Back" },
-            color = cs.primary, fontSize = 30.sp, fontWeight = FontWeight.Medium,
+            color = cs.primary, fontSize = Type.display, fontWeight = FontWeight.Medium,
         )
         val n = Step.entries.size
         Row(
@@ -163,7 +163,7 @@ private fun TopBar(model: SetupModel) {
         Text(
             stringResource(R.string.setup_skip),
             Modifier.alpha(if (step == Step.DONE) 0f else 1f).clickable(enabled = step != Step.DONE) { model.finish(openApp = true) }.padding(start = 16.dp, end = 12.dp, top = 10.dp, bottom = 10.dp),
-            color = cs.primary, fontSize = 15.sp, fontWeight = FontWeight.Medium,
+            color = cs.primary, fontSize = Type.body, fontWeight = FontWeight.Medium,
         )
     }
 }
@@ -213,12 +213,12 @@ private fun BottomBar(model: SetupModel, pickModelFile: () -> Unit) {
             onClick = primaryClick, enabled = primaryEnabled,
             modifier = Modifier.fillMaxWidth().height(56.dp), shape = RoundedCornerShape(50),
             colors = ButtonDefaults.buttonColors(containerColor = cs.primary, contentColor = cs.onPrimary),
-        ) { Text(primaryLabel, fontSize = 16.sp, fontWeight = FontWeight.Medium) }
+        ) { Text(primaryLabel, fontSize = Type.bodyLarge, fontWeight = FontWeight.Medium) }
         if (secondaryLabel != null) {
             Text(
                 secondaryLabel,
                 Modifier.fillMaxWidth().clickable { secondaryClick() }.padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 6.dp),
-                color = cs.primary, fontSize = 15.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center,
+                color = cs.primary, fontSize = Type.body, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center,
             )
         }
     }
@@ -262,7 +262,7 @@ private fun ModelStep(model: SetupModel, pickModelFile: () -> Unit) {
                     .clickable { model.chooseModel(m) }.padding(horizontal = 16.dp, vertical = 12.dp),
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text((if (selected) "● " else "○ ") + m.tagline, Modifier.weight(1f), color = cs.onSurface, fontSize = 15.5.sp, fontWeight = FontWeight.Medium)
+                    Text((if (selected) "● " else "○ ") + m.tagline, Modifier.weight(1f), color = cs.onSurface, fontSize = Type.body, fontWeight = FontWeight.Medium)
                     Small(m.sizeText)
                 }
                 Small(
@@ -278,7 +278,7 @@ private fun ModelStep(model: SetupModel, pickModelFile: () -> Unit) {
     Card(Modifier.padding(top = 20.dp)) {
         Text(
             live.modelLine, color = when (live.modelTone) { SetupModel.Tone.OK -> okColor; SetupModel.Tone.ERROR -> errColor; else -> cs.onSurface },
-            fontSize = 15.sp, fontWeight = FontWeight.Medium,
+            fontSize = Type.body, fontWeight = FontWeight.Medium,
         )
         live.modelBar?.let { LinearProgressIndicator(progress = { it }, Modifier.fillMaxWidth().padding(top = 10.dp), color = cs.primary, trackColor = cs.secondaryContainer) }
         Small(live.modelNote, Modifier.padding(top = 6.dp))
@@ -376,7 +376,7 @@ private fun PersonalStep(recreateScreen: () -> Unit) {
                             .clickable { KeyboardLook.apply(ctx, sw.id, KeyboardLook.mode(ctx)); recreateScreen() }
                             .semantics { contentDescription = sw.name },
                         contentAlignment = Alignment.Center,
-                    ) { if (selected) Text("✓", color = Color.White, fontSize = 16.sp) }
+                    ) { if (selected) Text("✓", color = Color.White, fontSize = Type.bodyLarge) }
                 }
             }
         }
@@ -402,9 +402,9 @@ private fun PracticeStep(model: SetupModel) {
     }
     TextBox(
         text, { text = it }, stringResource(R.string.setup_practice_hint),
-        modifier = Modifier.padding(top = 16.dp).focusRequester(focus), minLines = 3, sentences = true, fontSize = 17.sp,
+        modifier = Modifier.padding(top = 16.dp).focusRequester(focus), minLines = 3, sentences = true, fontSize = Type.bodyLarge,
     )
-    Text(live.practiceText, Modifier.padding(top = 8.dp), color = if (live.practiceDone) okColor else cs.onSurfaceVariant, fontSize = 13.5.sp, lineHeight = 17.sp)
+    Text(live.practiceText, Modifier.padding(top = 8.dp), color = if (live.practiceDone) okColor else cs.onSurfaceVariant, fontSize = Type.caption, lineHeight = 17.sp)
 }
 
 @Composable
@@ -425,7 +425,7 @@ private fun DoneStep() {
 private fun Heading(text: String, modifier: Modifier = Modifier, center: Boolean = false) {
     Text(
         text, modifier.fillMaxWidth().padding(top = 16.dp), color = MaterialTheme.colorScheme.onBackground,
-        fontSize = 28.sp, lineHeight = 31.sp, fontWeight = FontWeight.Medium, textAlign = if (center) TextAlign.Center else TextAlign.Start,
+        fontSize = Type.headline, lineHeight = 31.sp, fontWeight = FontWeight.Medium, textAlign = if (center) TextAlign.Center else TextAlign.Start,
     )
 }
 
@@ -433,21 +433,21 @@ private fun Heading(text: String, modifier: Modifier = Modifier, center: Boolean
 private fun Body(text: String, modifier: Modifier = Modifier, center: Boolean = false) {
     Text(
         text, modifier.fillMaxWidth().padding(top = 10.dp), color = MaterialTheme.colorScheme.onSurfaceVariant,
-        fontSize = 16.sp, lineHeight = 19.sp, textAlign = if (center) TextAlign.Center else TextAlign.Start,
+        fontSize = Type.bodyLarge, lineHeight = 19.sp, textAlign = if (center) TextAlign.Center else TextAlign.Start,
     )
 }
 
 @Composable
 private fun Small(text: String, modifier: Modifier = Modifier, center: Boolean = false) {
     Text(
-        text, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.5.sp, lineHeight = 15.5.sp,
+        text, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Type.caption, lineHeight = 15.5.sp,
         textAlign = if (center) TextAlign.Center else TextAlign.Start,
     )
 }
 
 @Composable
 private fun Label(text: String) {
-    Text(text, Modifier.padding(top = 22.dp, bottom = 8.dp), color = MaterialTheme.colorScheme.onBackground, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+    Text(text, Modifier.padding(top = 22.dp, bottom = 8.dp), color = MaterialTheme.colorScheme.onBackground, fontSize = Type.body, fontWeight = FontWeight.Medium)
 }
 
 @Composable
@@ -474,7 +474,7 @@ private fun Feature(res: Int, title: String, sub: String) {
     Row(Modifier.fillMaxWidth().padding(vertical = 10.dp)) {
         Box(Modifier.size(44.dp).clip(RoundedCornerShape(22.dp)).background(cs.secondaryContainer), contentAlignment = Alignment.Center) { Icon(res, cs.onSecondaryContainer, 24.dp) }
         Column(Modifier.weight(1f).padding(start = 14.dp)) {
-            Text(title, color = cs.onSurface, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+            Text(title, color = cs.onSurface, fontSize = Type.bodyLarge, fontWeight = FontWeight.Medium)
             Small(sub, Modifier.padding(top = 2.dp))
         }
     }
@@ -485,9 +485,9 @@ private fun Numbered(n: Int, text: String) {
     val cs = MaterialTheme.colorScheme
     Row(Modifier.fillMaxWidth().padding(top = 14.dp), verticalAlignment = Alignment.CenterVertically) {
         Box(Modifier.size(30.dp).clip(CircleShape).background(cs.primary), contentAlignment = Alignment.Center) {
-            Text("$n", color = cs.onPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Text("$n", color = cs.onPrimary, fontSize = Type.body, fontWeight = FontWeight.Bold)
         }
-        Text(text, Modifier.weight(1f).padding(start = 14.dp), color = cs.onSurface, fontSize = 16.sp, lineHeight = 20.sp)
+        Text(text, Modifier.weight(1f).padding(start = 14.dp), color = cs.onSurface, fontSize = Type.bodyLarge, lineHeight = 20.sp)
     }
 }
 
@@ -500,7 +500,7 @@ private fun DoneBanner(text: String) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(R.drawable.ic_setup_check, okColor, 22.dp)
-        Text(text, Modifier.padding(start = 10.dp), color = cs.onSurface, fontSize = 15.sp)
+        Text(text, Modifier.padding(start = 10.dp), color = cs.onSurface, fontSize = Type.body)
     }
 }
 
@@ -521,7 +521,7 @@ private fun ToggleIllustration() {
         Modifier.fillMaxWidth().padding(top = 20.dp).clip(RoundedCornerShape(20.dp)).background(cs.surface).padding(horizontal = 18.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(stringResource(R.string.app_name), Modifier.weight(1f), color = cs.onSurface, fontSize = 15.sp)
+        Text(stringResource(R.string.app_name), Modifier.weight(1f), color = cs.onSurface, fontSize = Type.body)
         Box(Modifier.width(52.dp).height(32.dp).clip(RoundedCornerShape(16.dp)).background(if (on) cs.primary else cs.secondaryContainer)) {
             Box(
                 Modifier.padding(start = 5.dp).align(Alignment.CenterStart).offset(x = (20f * x).dp).size(22.dp).clip(CircleShape)
