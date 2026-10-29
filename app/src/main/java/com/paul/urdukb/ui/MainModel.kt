@@ -8,10 +8,11 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -40,7 +41,10 @@ enum class Section { MODEL, TRY, COLOUR, GIPHY }
  * check, the Try it box and the style editor. The screen ([MainScreen]) only reads these values and calls these
  * functions, so a change to how something looks never touches how it works.
  */
-class MainModel(private val act: ComponentActivity) {
+class MainModel(app: Application) : AndroidViewModel(app) {
+
+    private val ctx: Context get() = getApplication()
+
 
     enum class Tone { NORMAL, OK, ERROR }
 
@@ -72,6 +76,10 @@ class MainModel(private val act: ComponentActivity) {
         private set
     var busy by mutableStateOf(false)
         private set
+    /** True while a file is being copied or checked: the screen asks Android to stay awake. */
+    var keepScreenOn by mutableStateOf(false)
+        private set
+    private var cleared = false
     /** While a file is being copied or checked: what to say and how far along it is (0 to 1). */
     var transferText by mutableStateOf<String?>(null)
         private set
@@ -92,7 +100,7 @@ class MainModel(private val act: ComponentActivity) {
     private var checking = false
 
     // ---- model token and downloads
-    var token by mutableStateOf(Prefs.token(act))
+    var token by mutableStateOf(Prefs.token(ctx))
     @Volatile private var cancelFlag = false
     @Volatile private var phase = ""
     private var lastSpeedT = 0L
@@ -121,14 +129,14 @@ class MainModel(private val act: ComponentActivity) {
     }
 
     // ---- style editor
-    var speaker by mutableStateOf(Speaker.get(act))
+    var speaker by mutableStateOf(Speaker.get(ctx))
         private set
     var styleOpen by mutableStateOf(false)
     var styleSel by mutableStateOf(Style.CASUAL)
         private set
     var rules by mutableStateOf("")
     var examples by mutableStateOf("")
-    var glossary by mutableStateOf(Prefs.glossary(act))
+    var glossary by mutableStateOf(Prefs.glossary(ctx))
 
     init {
         paintUpdate()
@@ -137,8 +145,13 @@ class MainModel(private val act: ComponentActivity) {
         refresh()
     }
 
-    private fun toast(s: String) = Toast.makeText(act, s, Toast.LENGTH_SHORT).show()
-    private fun str(id: Int, vararg a: Any) = act.getString(id, *a)
+    override fun onCleared() {
+        cleared = true
+        main.removeCallbacksAndMessages(null)
+    }
+
+    private fun toast(s: String) = Toast.makeText(ctx, s, Toast.LENGTH_SHORT).show()
+    private fun str(id: Int, vararg a: Any) = ctx.getString(id, *a)
     private fun gb(bytes: Long) = String.format(Locale.US, "%.2f GB", bytes / 1073741824.0)
     private fun secs(ms: Long) = String.format(Locale.US, "%.1f s", ms / 1000.0)
 
@@ -146,13 +159,13 @@ class MainModel(private val act: ComponentActivity) {
 
     private fun paintUpdate() {
         val rel = latestRelease
-        if (rel != null && Updater.isNewer(act, rel)) {
+        if (rel != null && Updater.isNewer(ctx, rel)) {
             val firstChange = rel.notes.substringAfter("## Changes", "").trim().lines().firstOrNull { it.isNotBlank() }.orEmpty()
-            updateText = str(R.string.update_ready, rel.name, Updater.installedName(act)) + "\n" + firstChange + "\n" + str(R.string.update_downloads_in_browser)
+            updateText = str(R.string.update_ready, rel.name, Updater.installedName(ctx)) + "\n" + firstChange + "\n" + str(R.string.update_downloads_in_browser)
             updateButton = str(R.string.update_download)
             updateIsNew = true
         } else {
-            updateText = str(R.string.update_version, Updater.installedName(act)) + if (rel != null) str(R.string.update_up_to_date) else ""
+            updateText = str(R.string.update_version, Updater.installedName(ctx)) + if (rel != null) str(R.string.update_up_to_date) else ""
             updateButton = str(R.string.update_check)
             updateIsNew = false
         }
@@ -169,9 +182,9 @@ class MainModel(private val act: ComponentActivity) {
                 r.onSuccess { rel ->
                     latestRelease = rel
                     paintUpdate()
-                    if (!quiet && !Updater.isNewer(act, rel)) toast(str(R.string.update_latest))
+                    if (!quiet && !Updater.isNewer(ctx, rel)) toast(str(R.string.update_latest))
                 }.onFailure { e ->
-                    if (!quiet) updateText = str(R.string.update_failed, Updater.installedName(act), e.message.orEmpty())
+                    if (!quiet) updateText = str(R.string.update_failed, Updater.installedName(ctx), e.message.orEmpty())
                 }
             }
         }
@@ -179,9 +192,9 @@ class MainModel(private val act: ComponentActivity) {
 
     fun onUpdateClick() {
         val rel = latestRelease
-        if (rel == null || !Updater.isNewer(act, rel)) { checkForUpdate(quiet = false); return }
+        if (rel == null || !Updater.isNewer(ctx, rel)) { checkForUpdate(quiet = false); return }
         // the browser downloads the APK; Android then asks to install it, like any downloaded app
-        runCatching { act.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(rel.apkUrl))) }
+        runCatching { ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(rel.apkUrl)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
             .onFailure { toast(str(R.string.update_browser_failed, Updater.REPO)) }
     }
 
@@ -193,15 +206,15 @@ class MainModel(private val act: ComponentActivity) {
     // ================================================================ state of the model, keyboard and speed
 
     fun refresh() {
-        if (!busy) BackgroundDownload.finishIfDone(act)?.let { runVerify() }
-        val bg = BackgroundDownload.state(act)
-        val f = LlmEngine.modelFile(act)
+        if (!busy) BackgroundDownload.finishIfDone(ctx)?.let { runVerify() }
+        val bg = BackgroundDownload.state(ctx)
+        val f = LlmEngine.modelFile(ctx)
         val part = ModelDownloader.partFile(f)
-        val ok = LlmEngine.modelExists(act)
-        val expected = Prefs.modelSize(act)
-        val verified = f.exists() && Prefs.verifiedStamp(act) == Prefs.stamp(f)
-        val damaged = f.exists() && Prefs.damagedStamp(act) == Prefs.stamp(f)
-        val choice = Prefs.modelChoice(act)
+        val ok = LlmEngine.modelExists(ctx)
+        val expected = Prefs.modelSize(ctx)
+        val verified = f.exists() && Prefs.verifiedStamp(ctx) == Prefs.stamp(f)
+        val damaged = f.exists() && Prefs.damagedStamp(ctx) == Prefs.stamp(f)
+        val choice = Prefs.modelChoice(ctx)
 
         var status: String
         var tone = Tone.NORMAL
@@ -238,7 +251,7 @@ class MainModel(private val act: ComponentActivity) {
             bar = if (bg.total > 0) bg.done.toFloat() / bg.total else 0f
             if (!polling) {
                 polling = true
-                main.postDelayed({ polling = false; if (!act.isFinishing) refresh() }, 1500)
+                main.postDelayed({ polling = false; if (!cleared) refresh() }, 1500)
             }
         }
         if (bg.status == DownloadManager.STATUS_FAILED) {
@@ -252,11 +265,11 @@ class MainModel(private val act: ComponentActivity) {
         }
 
         // keyboard state for the checklist
-        val imm = act.getSystemService(InputMethodManager::class.java)
-        val enabled = imm?.enabledInputMethodList?.any { it.packageName == act.packageName } == true
-        val current = Settings.Secure.getString(act.contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
-            ?.startsWith("${act.packageName}/") == true
-        val tried = Prefs.count(act) > 0
+        val imm = ctx.getSystemService(InputMethodManager::class.java)
+        val enabled = imm?.enabledInputMethodList?.any { it.packageName == ctx.packageName } == true
+        val current = Settings.Secure.getString(ctx.contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
+            ?.startsWith("${ctx.packageName}/") == true
+        val tried = Prefs.count(ctx) > 0
         val checks = listOf(
             Check(ok && verified, str(R.string.check_model), if (ok && !verified) str(R.string.check_model_unchecked) else str(R.string.check_model_sub, choice.label, choice.sizeText), str(R.string.check_get)),
             Check(enabled, str(R.string.check_turn_on), str(R.string.check_turn_on_sub), str(R.string.check_turn_on_action)),
@@ -265,42 +278,41 @@ class MainModel(private val act: ComponentActivity) {
         )
 
         // speed numbers
-        val n = Prefs.count(act)
-        val backend = Prefs.backendUsed(act)
+        val n = Prefs.count(ctx)
+        val backend = Prefs.backendUsed(ctx)
         val none = str(R.string.stats_none)
         val running = when {
             backend.isEmpty() -> str(R.string.stats_not_loaded)
-            Prefs.gpu(act) && backend == "CPU" -> str(R.string.stats_gpu_failed)
+            Prefs.gpu(ctx) && backend == "CPU" -> str(R.string.stats_gpu_failed)
             else -> backend
         }
         val over = if (n == 1L) str(R.string.stats_over_one) else str(R.string.stats_over_many, n)
         val stats = listOf(
             str(R.string.stats_file, if (f.exists()) gb(f.length()) else str(R.string.stats_no_file)),
             str(R.string.stats_running, running),
-            str(R.string.stats_load, if (Prefs.loadMs(act) > 0) secs(Prefs.loadMs(act)) else none),
-            str(R.string.stats_last, if (n > 0) secs(Prefs.lastMs(act)) else none),
-            str(R.string.stats_average, if (n > 0) secs(Prefs.totalMs(act) / n) else none, over),
+            str(R.string.stats_load, if (Prefs.loadMs(ctx) > 0) secs(Prefs.loadMs(ctx)) else none),
+            str(R.string.stats_last, if (n > 0) secs(Prefs.lastMs(ctx)) else none),
+            str(R.string.stats_average, if (n > 0) secs(Prefs.totalMs(ctx) / n) else none, over),
         ).joinToString("\n")
 
         snap = Snapshot(
             status = status, statusTone = tone, detail = detail, choice = choice, downloadLabel = downloadLabel,
             downloading = bg.active, showRemove = f.exists() || part.exists(), showVerify = f.exists() && !verified,
-            barProgress = bar, checks = checks, stats = stats, gpu = Prefs.gpu(act), error = Prefs.lastError(act),
-            formal = RomanUrdu.isFormal(act), direction = RomanUrdu.direction(act),
+            barProgress = bar, checks = checks, stats = stats, gpu = Prefs.gpu(ctx), error = Prefs.lastError(ctx),
+            formal = RomanUrdu.isFormal(ctx), direction = RomanUrdu.direction(ctx),
         )
         updateBusy(busy)
     }
 
     private fun updateBusy(b: Boolean) {
         busy = b
-        if (b) act.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        else act.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        keepScreenOn = b
     }
 
     // ================================================================ checklist actions
 
-    fun openKeyboardSettings() = act.startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS))
-    fun showPicker() { act.getSystemService(InputMethodManager::class.java)?.showInputMethodPicker() }
+    fun openKeyboardSettings() = ctx.startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    fun showPicker() { ctx.getSystemService(InputMethodManager::class.java)?.showInputMethodPicker() }
 
     fun onCheckAction(index: Int) {
         when (index) {
@@ -345,7 +357,7 @@ class MainModel(private val act: ComponentActivity) {
         transferText = null
         updateBusy(false)
         if (error is ModelDownloader.CancelledException) toast(str(R.string.transfer_stopped))
-        else if (error != null) Prefs.setLastError(act, "${error.javaClass.simpleName}: ${error.message}")
+        else if (error != null) Prefs.setLastError(ctx, "${error.javaClass.simpleName}: ${error.message}")
         refresh()
     }
 
@@ -355,41 +367,41 @@ class MainModel(private val act: ComponentActivity) {
         lastSpeedT = 0L
         speed = 0.0
         main.post { transferProgress = 0f; transferText = str(R.string.verify_checking) }
-        val verdict = ModelDownloader.verify(file, Prefs.url(act), token, { d, t -> onProgress(d, t) }) { cancelFlag }
+        val verdict = ModelDownloader.verify(file, Prefs.url(ctx), token, { d, t -> onProgress(d, t) }) { cancelFlag }
         phase = ""
         val stamp = Prefs.stamp(file)
         when (verdict) {
             is ModelDownloader.Verdict.Ok -> {
-                Prefs.setVerifiedStamp(act, stamp)
-                Prefs.setDamagedStamp(act, "")
+                Prefs.setVerifiedStamp(ctx, stamp)
+                Prefs.setDamagedStamp(ctx, "")
             }
             is ModelDownloader.Verdict.Damaged -> {
-                Prefs.setVerifiedStamp(act, "")
-                Prefs.setDamagedStamp(act, stamp)
-                Prefs.setLastError(act, str(R.string.verify_damaged, verdict.detail))
+                Prefs.setVerifiedStamp(ctx, "")
+                Prefs.setDamagedStamp(ctx, stamp)
+                Prefs.setLastError(ctx, str(R.string.verify_damaged, verdict.detail))
             }
             is ModelDownloader.Verdict.Unknown -> {
-                Prefs.setVerifiedStamp(act, "")
-                Prefs.setDamagedStamp(act, "")
+                Prefs.setVerifiedStamp(ctx, "")
+                Prefs.setDamagedStamp(ctx, "")
                 main.post { toast(str(R.string.verify_unknown, verdict.reason)) }
             }
         }
     }
 
-    private fun currentToken() = token.trim().ifEmpty { Prefs.token(act) }
+    private fun currentToken() = token.trim().ifEmpty { Prefs.token(ctx) }
 
     fun chooseModel(m: ModelChoice) {
-        if (m == Prefs.modelChoice(act)) return
-        if (BackgroundDownload.state(act).active) BackgroundDownload.cancel(act)
-        Prefs.setModelChoice(act, m)
+        if (m == Prefs.modelChoice(ctx)) return
+        if (BackgroundDownload.state(ctx).active) BackgroundDownload.cancel(ctx)
+        Prefs.setModelChoice(ctx, m)
         LlmEngine.reset()
         refresh()
     }
 
     fun startDownload() {
         val t = token.trim()
-        val m = Prefs.modelChoice(act)
-        val dest = LlmEngine.modelFile(act)
+        val m = Prefs.modelChoice(ctx)
+        val dest = LlmEngine.modelFile(ctx)
         dest.parentFile?.mkdirs()
         if (m.needsToken && t.length < 8) {
             toast(str(R.string.download_need_token))
@@ -399,23 +411,23 @@ class MainModel(private val act: ComponentActivity) {
             toast(str(R.string.download_need_space, String.format(Locale.US, "%.1f", (m.approxBytes + 400_000_000L) / 1e9)))
             return
         }
-        Prefs.setToken(act, t)
+        Prefs.setToken(ctx, t)
         if (dest.exists()) removeModel()
-        BackgroundDownload.start(act, allowMobileData = true)
+        BackgroundDownload.start(ctx, allowMobileData = true)
         toast(str(R.string.download_started))
         refresh()
     }
 
     fun cancelDownload() {
         cancelFlag = true
-        if (BackgroundDownload.state(act).active) { BackgroundDownload.cancel(act); refresh() }
+        if (BackgroundDownload.state(ctx).active) { BackgroundDownload.cancel(ctx); refresh() }
     }
 
     fun runVerify() {
-        val f = LlmEngine.modelFile(act)
+        val f = LlmEngine.modelFile(ctx)
         if (!f.exists()) return
         val t = currentToken()
-        Prefs.setLastError(act, "")
+        Prefs.setLastError(ctx, "")
         beginTransfer(str(R.string.verify_checking))
         io.execute {
             var err: Throwable? = null
@@ -429,16 +441,16 @@ class MainModel(private val act: ComponentActivity) {
     }
 
     fun importModel(uri: Uri) {
-        Prefs.setLastError(act, "")
+        Prefs.setLastError(ctx, "")
         val t = currentToken()
         beginTransfer(str(R.string.import_copying))
         io.execute {
             var err: Throwable? = null
             try {
                 LlmEngine.reset()
-                val dest = LlmEngine.modelFile(act)
-                val size = ModelDownloader.importFrom(act, uri, dest, { d, tot -> onProgress(d, tot) }) { cancelFlag }
-                Prefs.setModelSize(act, size)
+                val dest = LlmEngine.modelFile(ctx)
+                val size = ModelDownloader.importFrom(ctx, uri, dest, { d, tot -> onProgress(d, tot) }) { cancelFlag }
+                Prefs.setModelSize(ctx, size)
                 verifyInline(dest, t)
             } catch (e: Throwable) {
                 err = e
@@ -449,31 +461,31 @@ class MainModel(private val act: ComponentActivity) {
 
     fun removeModel() {
         LlmEngine.reset()
-        val f = LlmEngine.modelFile(act)
+        val f = LlmEngine.modelFile(ctx)
         f.delete()
         ModelDownloader.partFile(f).delete()
-        Prefs.setModelSize(act, 0L)
-        Prefs.setVerifiedStamp(act, "")
-        Prefs.setDamagedStamp(act, "")
+        Prefs.setModelSize(ctx, 0L)
+        Prefs.setVerifiedStamp(ctx, "")
+        Prefs.setDamagedStamp(ctx, "")
         refresh()
     }
 
     // ================================================================ Try it
 
     fun setTone(formal: Boolean) {
-        KbSettings.of(act).formalTone = formal
+        KbSettings.of(ctx).formalTone = formal
         refresh()
     }
 
     fun setDirection(dir: String) {
-        KbSettings.of(act).direction = dir
+        KbSettings.of(ctx).direction = dir
         refresh()
     }
 
     fun copyOutput() {
         val t = tryOutput
         if (t.isBlank()) return
-        act.getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("Translation", t))
+        ctx.getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("Translation", t))
         toast(Words.copied())
     }
 
@@ -481,7 +493,7 @@ class MainModel(private val act: ComponentActivity) {
         val style = lastStyle
         val out = tryOutput.trim()
         if (style == null || lastInput.isBlank() || out.isBlank()) return
-        Prefs.addExample(act, style, lastInput, out)
+        Prefs.addExample(ctx, style, lastInput, out)
         toast(str(R.string.example_saved))
         if (styleSel == style) showStyle(style)
     }
@@ -492,12 +504,12 @@ class MainModel(private val act: ComponentActivity) {
             toast(str(R.string.try_type_first))
             return
         }
-        if (!LlmEngine.modelExists(act)) {
+        if (!LlmEngine.modelExists(ctx)) {
             toast(str(R.string.try_get_model))
             scrollRequest = Section.MODEL
             return
         }
-        val style = RomanUrdu.styleFor(act, text)
+        val style = RomanUrdu.styleFor(ctx, text)
         tryHasResult = false
         val direction = when (style) {
             Style.TO_ENGLISH -> str(R.string.note_to_english)
@@ -514,10 +526,10 @@ class MainModel(private val act: ComponentActivity) {
             var out: String? = null
             var err: Throwable? = null
             try {
-                out = LlmEngine.translate(act, text, style)
+                out = LlmEngine.translate(ctx, text, style)
             } catch (t: Throwable) {
                 err = t
-                LlmEngine.saveError(act, t)
+                LlmEngine.saveError(ctx, t)
             }
             val result = out.orEmpty()
             main.post {
@@ -541,55 +553,55 @@ class MainModel(private val act: ComponentActivity) {
     // ================================================================ style editor
 
     fun chooseSpeaker(v: String) {
-        Speaker.set(act, v)
+        Speaker.set(ctx, v)
         speaker = v
         toast(if (v == Speaker.MALE) "Main kar raha hoon" else "Main kar rahi hoon")
     }
 
     fun showStyle(style: Style) {
         styleSel = style
-        rules = Prefs.rules(act, style)
-        examples = Prefs.examples(act, style)
+        rules = Prefs.rules(ctx, style)
+        examples = Prefs.examples(ctx, style)
     }
 
     fun saveStyle() {
-        Prefs.setStyle(act, styleSel, rules, examples)
-        Prefs.setGlossary(act, glossary)
+        Prefs.setStyle(ctx, styleSel, rules, examples)
+        Prefs.setGlossary(ctx, glossary)
         toast(str(R.string.saved))
     }
 
     fun resetStyle() {
-        Prefs.resetStyle(act, styleSel)
+        Prefs.resetStyle(ctx, styleSel)
         showStyle(styleSel)
         toast(str(R.string.style_reset))
     }
 
     fun resetGlossary() {
-        Prefs.resetGlossary(act)
-        glossary = Prefs.glossary(act)
+        Prefs.resetGlossary(ctx)
+        glossary = Prefs.glossary(ctx)
         toast(str(R.string.glossary_reset))
     }
 
     // ================================================================ speed and errors
 
     fun setGpu(on: Boolean) {
-        LlmEngine.setUseGpu(act, on)
+        LlmEngine.setUseGpu(ctx, on)
         toast(str(R.string.gpu_next_time))
         refresh()
     }
 
     fun resetStats() {
-        Prefs.resetStats(act)
+        Prefs.resetStats(ctx)
         refresh()
     }
 
     fun copyError() {
-        act.getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("error", Prefs.lastError(act)))
+        ctx.getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("error", Prefs.lastError(ctx)))
         toast(Words.copied())
     }
 
     fun clearError() {
-        Prefs.setLastError(act, "")
+        Prefs.setLastError(ctx, "")
         refresh()
     }
 }

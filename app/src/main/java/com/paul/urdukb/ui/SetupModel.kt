@@ -12,7 +12,10 @@ import android.os.StatFs
 import android.provider.Settings
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.SavedStateHandle
+import kotlinx.coroutines.flow.MutableSharedFlow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -34,7 +37,13 @@ import java.util.concurrent.Executors
  * Everything the first-run guide does apart from drawing it: which step is showing, the model download and file
  * check, whether the keyboard is on yet, and what the buttons say. [SetupScreen] only reads and calls this.
  */
-class SetupModel(private val act: ComponentActivity, private val onFinish: (openApp: Boolean) -> Unit) {
+class SetupModel(app: Application, private val saved: SavedStateHandle) : AndroidViewModel(app) {
+
+    private val ctx: Context get() = getApplication()
+
+    /** Fires when the guide is finished or closed: true to open the app screen next. The activity collects it. */
+    val events = MutableSharedFlow<Boolean>(extraBufferCapacity = 4)
+
 
     enum class Tone { NORMAL, OK, ERROR }
     enum class Secondary { NONE, CANCEL_DOWNLOAD, IMPORT_FILE }
@@ -68,7 +77,7 @@ class SetupModel(private val act: ComponentActivity, private val onFinish: (open
     /** Set when a step hits a problem: the details, so the person can copy them and carry on. */
     var problem by mutableStateOf<String?>(null)
         private set
-    var token by mutableStateOf(Prefs.token(act))
+    var token by mutableStateOf(Prefs.token(ctx))
 
     @Volatile private var verifying = false
     private var verifyDone = 0L
@@ -91,15 +100,15 @@ class SetupModel(private val act: ComponentActivity, private val onFinish: (open
         step = runCatching { Step.valueOf(sp().getString(PREF_STEP, Step.WELCOME.name)!!) }.getOrDefault(Step.WELCOME)
         // emulator preview builds can open any step, to take screenshots
         if (BuildConfig.PREVIEW) {
-            act.intent.getStringExtra("step")?.let { n -> runCatching { Step.valueOf(n) }.getOrNull()?.let { step = it } }
+            saved.get<String>("step")?.let { n -> runCatching { Step.valueOf(n) }.getOrNull()?.let { step = it } }
         }
-        if (step == Step.PRACTICE) practiceStartCount = Prefs.count(act)
+        if (step == Step.PRACTICE) practiceStartCount = Prefs.count(ctx)
         tick()
     }
 
-    private fun sp() = Prefs.store(act).getSharedPreferences("settings", Context.MODE_PRIVATE)
-    private fun str(id: Int, vararg a: Any) = act.getString(id, *a)
-    private fun toast(s: String) = Toast.makeText(act, s, Toast.LENGTH_LONG).show()
+    private fun sp() = Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE)
+    private fun str(id: Int, vararg a: Any) = ctx.getString(id, *a)
+    private fun toast(s: String) = Toast.makeText(ctx, s, Toast.LENGTH_LONG).show()
     private fun gb(b: Long) = String.format(Locale.US, "%.2f GB", b / 1073741824.0)
     private fun eta(sec: Double): String = when {
         sec < 90 -> str(R.string.setup_eta_minute)
@@ -108,6 +117,8 @@ class SetupModel(private val act: ComponentActivity, private val onFinish: (open
     }
 
     // ---- lifecycle
+
+    override fun onCleared() { ui.removeCallbacksAndMessages(null) }
 
     fun start() { ui.removeCallbacks(poller); ui.post(poller) }
     fun stop() { ui.removeCallbacks(poller) }
@@ -119,7 +130,7 @@ class SetupModel(private val act: ComponentActivity, private val onFinish: (open
         step = s
         sp().edit { putString(PREF_STEP, s.name) }
         autoAdvancePosted = false
-        if (s == Step.PRACTICE) practiceStartCount = Prefs.count(act)
+        if (s == Step.PRACTICE) practiceStartCount = Prefs.count(ctx)
         tick()
     }
 
@@ -134,45 +145,45 @@ class SetupModel(private val act: ComponentActivity, private val onFinish: (open
 
     fun finish(openApp: Boolean) {
         sp().edit { putBoolean(PREF_DONE, true); remove(PREF_STEP) }
-        onFinish(openApp)
+        events.tryEmit(openApp)
     }
 
     // ---- actions the buttons call
 
-    fun openKeyboardSettings() = act.startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS))
-    fun showPicker() { act.getSystemService(InputMethodManager::class.java)?.showInputMethodPicker() }
-    fun openUrl(url: String) { runCatching { act.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) } }
+    fun openKeyboardSettings() = ctx.startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    fun showPicker() { ctx.getSystemService(InputMethodManager::class.java)?.showInputMethodPicker() }
+    fun openUrl(url: String) { runCatching { ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) } }
 
     var wifiOnly: Boolean
         get() = sp().getBoolean(PREF_WIFI_ONLY, true)
         set(v) { sp().edit { putBoolean(PREF_WIFI_ONLY, v) } }
 
     fun chooseModel(m: ModelChoice) {
-        if (m == Prefs.modelChoice(act)) return
-        if (BackgroundDownload.state(act).active || verifying) { toast(str(R.string.setup_cancel_first)); return }
-        Prefs.setModelChoice(act, m)
+        if (m == Prefs.modelChoice(ctx)) return
+        if (BackgroundDownload.state(ctx).active || verifying) { toast(str(R.string.setup_cancel_first)); return }
+        Prefs.setModelChoice(ctx, m)
         LlmEngine.reset()
         tick()
     }
 
     fun saveToken(t: String) {
         token = t
-        Prefs.setToken(act, t)
+        Prefs.setToken(ctx, t)
     }
 
     fun onModelPrimary() {
-        val s = BackgroundDownload.state(act)
+        val s = BackgroundDownload.state(ctx)
         when {
-            LlmEngine.modelExists(act) || s.active || verifying -> next()
+            LlmEngine.modelExists(ctx) || s.active || verifying -> next()
             else -> startDownload()
         }
     }
 
     private fun startDownload() {
-        val dest = LlmEngine.modelFile(act)
+        val dest = LlmEngine.modelFile(ctx)
         dest.parentFile?.mkdirs()
-        val m = Prefs.modelChoice(act)
-        if (m.needsToken && Prefs.token(act).length < 8) {
+        val m = Prefs.modelChoice(ctx)
+        if (m.needsToken && Prefs.token(ctx).length < 8) {
             toast(str(R.string.setup_need_token))
             return
         }
@@ -181,14 +192,14 @@ class SetupModel(private val act: ComponentActivity, private val onFinish: (open
             toast(str(R.string.setup_need_space, String.format(Locale.US, "%.1f", (m.approxBytes + 400_000_000L) / 1e9)))
             return
         }
-        val wifi = BackgroundDownload.isMetered(act) && wifiOnly
-        BackgroundDownload.start(act, allowMobileData = !wifi)
+        val wifi = BackgroundDownload.isMetered(ctx) && wifiOnly
+        BackgroundDownload.start(ctx, allowMobileData = !wifi)
         lastT = 0L; speed = 0.0
         toast(str(R.string.setup_downloading_toast))
         tick()
     }
 
-    fun cancelDownload() { BackgroundDownload.cancel(act); tick() }
+    fun cancelDownload() { BackgroundDownload.cancel(ctx); tick() }
 
     fun importFile(uri: Uri) {
         verifying = true
@@ -196,12 +207,12 @@ class SetupModel(private val act: ComponentActivity, private val onFinish: (open
         io.execute {
             try {
                 LlmEngine.reset()
-                val dest = LlmEngine.modelFile(act)
-                val size = ModelDownloader.importFrom(act, uri, dest, { d, t -> verifyDone = d; verifyTotal = t }) { false }
-                Prefs.setModelSize(act, size)
+                val dest = LlmEngine.modelFile(ctx)
+                val size = ModelDownloader.importFrom(ctx, uri, dest, { d, t -> verifyDone = d; verifyTotal = t }) { false }
+                Prefs.setModelSize(ctx, size)
                 verifyFile(dest)
             } catch (t: Throwable) {
-                Prefs.setLastError(act, "${t.javaClass.simpleName}: ${t.message}")
+                Prefs.setLastError(ctx, "${t.javaClass.simpleName}: ${t.message}")
                 ui.post { toast(str(R.string.setup_copy_failed)) }
             } finally {
                 verifying = false
@@ -212,13 +223,13 @@ class SetupModel(private val act: ComponentActivity, private val onFinish: (open
     private fun verifyFile(f: File) {
         verifying = true
         verifyDone = 0; verifyTotal = f.length()
-        val verdict = ModelDownloader.verify(f, Prefs.url(act), Prefs.token(act), { d, t -> verifyDone = d; verifyTotal = t }) { false }
+        val verdict = ModelDownloader.verify(f, Prefs.url(ctx), Prefs.token(ctx), { d, t -> verifyDone = d; verifyTotal = t }) { false }
         val stamp = Prefs.stamp(f)
         when (verdict) {
-            is ModelDownloader.Verdict.Ok -> { Prefs.setVerifiedStamp(act, stamp); Prefs.setDamagedStamp(act, "") }
+            is ModelDownloader.Verdict.Ok -> { Prefs.setVerifiedStamp(ctx, stamp); Prefs.setDamagedStamp(ctx, "") }
             is ModelDownloader.Verdict.Damaged -> {
-                Prefs.setVerifiedStamp(act, ""); Prefs.setDamagedStamp(act, stamp)
-                Prefs.setLastError(act, str(R.string.verify_damaged, verdict.detail))
+                Prefs.setVerifiedStamp(ctx, ""); Prefs.setDamagedStamp(ctx, stamp)
+                Prefs.setLastError(ctx, str(R.string.verify_damaged, verdict.detail))
             }
             is ModelDownloader.Verdict.Unknown -> Unit // could not check (offline); the file is still usable
         }
@@ -226,7 +237,7 @@ class SetupModel(private val act: ComponentActivity, private val onFinish: (open
     }
 
     fun copyProblem() {
-        act.getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("error", problem.orEmpty()))
+        ctx.getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("error", problem.orEmpty()))
         toast(str(R.string.sheet_copied))
     }
 
@@ -234,17 +245,17 @@ class SetupModel(private val act: ComponentActivity, private val onFinish: (open
 
     // ---- live state
 
-    fun keyboardEnabled() = act.getSystemService(InputMethodManager::class.java)
-        ?.enabledInputMethodList?.any { it.packageName == act.packageName } == true
+    fun keyboardEnabled() = ctx.getSystemService(InputMethodManager::class.java)
+        ?.enabledInputMethodList?.any { it.packageName == ctx.packageName } == true
 
-    fun keyboardCurrent() = Settings.Secure.getString(act.contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
-        ?.startsWith("${act.packageName}/") == true
+    fun keyboardCurrent() = Settings.Secure.getString(ctx.contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
+        ?.startsWith("${ctx.packageName}/") == true
 
     fun tick() {
         try { tickInner() } catch (t: Throwable) {
             ui.removeCallbacks(poller)
             val detail = "${t.javaClass.simpleName}: ${t.message}\n" + t.stackTrace.take(6).joinToString("\n") { "  at $it" }
-            Prefs.setLastError(act, "Setup, step ${step.name}: $detail")
+            Prefs.setLastError(ctx, "Setup, step ${step.name}: $detail")
             problem = detail
         }
     }
@@ -252,16 +263,16 @@ class SetupModel(private val act: ComponentActivity, private val onFinish: (open
     private fun tickInner() {
         // finish a download that completed while we were away, then check it
         if (!verifying) {
-            val installed = runCatching { BackgroundDownload.finishIfDone(act) }.getOrNull()
+            val installed = runCatching { BackgroundDownload.finishIfDone(ctx) }.getOrNull()
             if (installed != null) {
                 verifying = true
                 io.execute { runCatching { verifyFile(installed) }; verifying = false }
             }
         }
-        val s = BackgroundDownload.state(act)
-        val ready = LlmEngine.modelExists(act) && !verifying
+        val s = BackgroundDownload.state(ctx)
+        val ready = LlmEngine.modelExists(ctx) && !verifying
         val pct = if (s.total > 0) (s.done * 100 / s.total).toInt() else 0
-        val choice = Prefs.modelChoice(act)
+        val choice = Prefs.modelChoice(ctx)
         val on = keyboardEnabled()
         val current = keyboardCurrent()
 
@@ -282,7 +293,7 @@ class SetupModel(private val act: ComponentActivity, private val onFinish: (open
             }
             ready -> {
                 line = str(R.string.setup_ready); tone = Tone.OK
-                note = "${choice.label} · ${gb(LlmEngine.modelFile(act).length())}"; primary = str(R.string.next)
+                note = "${choice.label} · ${gb(LlmEngine.modelFile(ctx).length())}"; primary = str(R.string.next)
             }
             s.active -> {
                 updateSpeed(s.done)
@@ -306,7 +317,7 @@ class SetupModel(private val act: ComponentActivity, private val onFinish: (open
             }
         }
 
-        val translated = Prefs.count(act) > practiceStartCount
+        val translated = Prefs.count(ctx) > practiceStartCount
         val practice = when {
             translated -> str(R.string.setup_practice_done)
             !current -> str(R.string.setup_practice_not_active)
@@ -318,8 +329,8 @@ class SetupModel(private val act: ComponentActivity, private val onFinish: (open
         live = Live(
             chip = chip, keyboardOn = on, keyboardCurrent = current, modelLine = line, modelTone = tone, modelBar = bar, modelNote = note,
             modelPrimary = primary, secondary = secondary, secondaryLabel = secondaryLabel, practiceText = practice, practiceDone = translated,
-            modelLocked = s.active || verifying, modelNeedsToken = choice.needsToken && !LlmEngine.modelExists(act),
-            metered = BackgroundDownload.isMetered(act) && !LlmEngine.modelExists(act),
+            modelLocked = s.active || verifying, modelNeedsToken = choice.needsToken && !LlmEngine.modelExists(ctx),
+            metered = BackgroundDownload.isMetered(ctx) && !LlmEngine.modelExists(ctx),
         )
 
         // the keyboard steps tick themselves off, then move on

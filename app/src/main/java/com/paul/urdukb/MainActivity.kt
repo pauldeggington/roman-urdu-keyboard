@@ -2,10 +2,13 @@ package com.paul.urdukb
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.compose.runtime.LaunchedEffect
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.WindowCompat
 import com.paul.urdukb.ui.MainModel
@@ -19,11 +22,13 @@ import com.paul.urdukb.ui.Section
  */
 class MainActivity : ComponentActivity() {
 
-    private var model: MainModel? = null
+    // Lives in a ViewModel, so a turned screen or a colour change keeps the download, the Try it text and the style editor.
+    private val model: MainModel by viewModels()
+    private var ready = false
 
     // the system file picker, to use a model file that is already on the phone
     private val pickModelFile = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        if (uri != null) model?.importModel(uri)
+        if (uri != null) model.importModel(uri)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,11 +50,15 @@ class MainActivity : ComponentActivity() {
                 return
             }
         }
-        val m = MainModel(this)
-        model = m
+        ready = true
         setContent {
+            val keepAwake = model.keepScreenOn
+            LaunchedEffect(keepAwake) {
+                if (keepAwake) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
             RomanUrduTheme {
-                MainScreen(m, pickModelFile = { pickModelFile.launch(arrayOf("*/*")) }, recreateScreen = { recreate() })
+                MainScreen(model, pickModelFile = { pickModelFile.launch(arrayOf("*/*")) }, recreateScreen = { recreate() })
             }
         }
         scrollToRequestedSection()
@@ -57,7 +66,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        model?.onResume()
+        if (ready) model.onResume()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -67,9 +76,10 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun scrollToRequestedSection() {
+        if (!ready) return
         when (intent?.getStringExtra(EXTRA_SECTION)) {
-            "colour" -> model?.scrollRequest = Section.COLOUR
-            "giphy" -> model?.scrollRequest = Section.GIPHY
+            "colour" -> model.scrollRequest = Section.COLOUR
+            "giphy" -> model.scrollRequest = Section.GIPHY
         }
         intent?.removeExtra(EXTRA_SECTION)
     }

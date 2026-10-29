@@ -6,6 +6,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.compose.runtime.LaunchedEffect
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.WindowCompat
 import com.paul.urdukb.ui.RomanUrduTheme
@@ -26,7 +28,8 @@ class SetupActivity : ComponentActivity() {
 
     enum class Step { WELCOME, MODEL, ENABLE, SWITCH, PERSONAL, PRACTICE, DONE }
 
-    private lateinit var model: SetupModel
+    // Lives in a ViewModel, so the step, the download progress and a half-typed token survive turning the screen.
+    private val model: SetupModel by viewModels()
 
     // the system file picker, for a model file that is already on the phone
     private val pickModelFile = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -41,11 +44,13 @@ class SetupActivity : ComponentActivity() {
             isAppearanceLightStatusBars = !pal.dark
             isAppearanceLightNavigationBars = !pal.dark
         }
-        model = SetupModel(this) { openApp ->
-            if (openApp) startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-            finish()
-        }
         setContent {
+            LaunchedEffect(Unit) {
+                model.events.collect { openApp ->
+                    if (openApp) startActivity(Intent(this@SetupActivity, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                    finish()
+                }
+            }
             RomanUrduTheme {
                 SetupScreen(model, pickModelFile = { pickModelFile.launch(arrayOf("*/*")) }, recreateScreen = { recreate() }, closeGuide = { finish() })
             }
@@ -65,7 +70,7 @@ class SetupActivity : ComponentActivity() {
     // the keyboard picker is a dialog: when it closes, focus comes back here
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if (hasFocus && ::model.isInitialized) model.tick()
+        if (hasFocus) model.tick()
     }
 
     companion object {
