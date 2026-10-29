@@ -4,10 +4,12 @@ Every release on `main` has a version: **major.minor.build**. The major and mino
 a set of changes is merged to `main`; the build number is the CI build, so a newer build always installs over an older one.
 The app shows it as, for example, "Version 2.1 (build 121)". Work-in-progress builds are not published as releases; they are only kept as a download on the CI run.
 
-## 2.3 (in progress)
+## 2.3
 
 - **Tone matrix:** Roman Urdu translation now has five tones: Casual, Formal, and new Poetic, Funny and Respectful (for elders). **Auto** (the default) picks the tone from the sentence, for example "Please give my salaam to Mother" is Respectful and "Good morning, my love" is Poetic (which also covers warm words to a partner or family). Tap the tone key on the toolbar to pick one by hand. Each tone has its own rules and example bank, grouped by situation.
 - **Spelling follows the Urdu letters:** parhna, barha, larka, phir, fikar, zindagi, waqt (not padhna, badha, ladka, fir, phikar, jindagi, vaqt). The model is told the rule and every answer is checked against about 190 built-in fixes; your own glossary still wins.
+- **Smart tone:** in Auto, when the words alone do not show the tone, the on-device model reads the sentence first and works out the tone, who it is to (an elder always gets Respectful) and what it is about, which picks the closest examples. Clear cases stay instant. There is a switch for it in settings.
+- **Words stay words:** a single word or short phrase ("friend") now comes back as that word, not as a question.
 - **Instructions hidden:** the model's instructions are built in and no longer shown or editable in the app, so improvements reach everyone. The example bank and the glossary stay editable.
 
 ## 2.2
