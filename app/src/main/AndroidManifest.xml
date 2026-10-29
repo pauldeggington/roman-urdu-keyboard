@@ -12,6 +12,7 @@
 
     <queries>
         <intent><action android:name="android.speech.RecognitionService" /></intent>
+        <intent><action android:name="android.intent.action.TTS_SERVICE" /></intent>
     </queries>
 
     <application
@@ -57,6 +58,20 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:excludeFromRecents="true"
             android:exported="false" />
+
+        <!-- An Urdu voice note shared from WhatsApp (or anywhere) is read out as Urdu text and English -->
+        <activity android:name=".VoiceActivity"
+            android:label="Roman Urdu Keyboard"
+            android:theme="@style/RomanUrduSheetTheme"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="audio/*" />
+            </intent-filter>
+        </activity>
 
         <activity android:name=".TranslateTextActivity"
             android:label="Translate to English"

@@ -17,6 +17,8 @@ object LlmEngine {
 
     private var engine: Engine? = null
     private var engineIsGpu = false
+    /** True when the loaded engine can also listen (audio backend); it is only started that way when voice is used. */
+    private var engineHasAudio = false
 
     /**
      * Where the model lives. Older installs kept it in internal storage; new downloads go to the app's
@@ -102,7 +104,7 @@ object LlmEngine {
         engine = null
     }
 
-    private fun build(ctx: Context): Pair<Engine, Boolean> {
+    private fun build(ctx: Context, audio: Boolean = false): Pair<Engine, Boolean> {
         val path = modelFile(ctx).absolutePath
         val errors = mutableListOf<String>()
         val backends = if (Prefs.gpu(ctx)) listOf(true, false) else listOf(false)
@@ -112,12 +114,15 @@ object LlmEngine {
                 val label = (if (gpu) "GPU" else "CPU") + " config ${variant + 1}"
                 try {
                     val backend = if (gpu) Backend.GPU() else Backend.CPU()
+                    // the audio encoder runs on the CPU; it is only loaded when the voice features ask for it
+                    val audioBackend = if (audio) Backend.CPU() else null
                     val config = when (variant) {
-                        0 -> EngineConfig(modelPath = path, backend = backend, cacheDir = Prefs.store(ctx).cacheDir.path)
-                        1 -> EngineConfig(modelPath = path, backend = backend)
+                        0 -> EngineConfig(modelPath = path, backend = backend, audioBackend = audioBackend, cacheDir = Prefs.store(ctx).cacheDir.path)
+                        1 -> EngineConfig(modelPath = path, backend = backend, audioBackend = audioBackend)
                         else -> EngineConfig(
                             modelPath = path,
                             backend = backend,
+                            audioBackend = audioBackend,
                             maxNumTokens = 4096,
                             cacheDir = Prefs.store(ctx).cacheDir.path,
                         )
@@ -138,16 +143,65 @@ object LlmEngine {
     }
 
     @Synchronized
-    private fun getEngine(ctx: Context): Engine {
+    private fun getEngine(ctx: Context, audio: Boolean = false): Engine {
         val wantGpu = Prefs.gpu(ctx)
         engine?.let {
-            if (engineIsGpu == wantGpu || !wantGpu) return it
+            // a listening engine also translates text, so it is kept; a text-only one is replaced when audio is needed
+            if ((engineIsGpu == wantGpu || !wantGpu) && (engineHasAudio || !audio)) return it
             reset()
         }
-        val (created, usedGpu) = build(ctx)
+        val (created, usedGpu) = build(ctx, audio)
         engine = created
         engineIsGpu = usedGpu
+        engineHasAudio = audio
         return created
+    }
+
+    // ---------------------------------------------------------------- voice
+
+    /** What the last listen used: "wav" or "raw", for the error report. */
+    @Volatile var lastAudioFormat = ""
+        private set
+
+    /**
+     * Listens to one piece of audio (16 kHz mono, at most 30 seconds) and answers [prompt] about it. Blocking.
+     * It is sent as a WAV file; if the engine rejects that, as raw samples.
+     */
+    @Synchronized
+    fun listen(ctx: Context, pcm: ShortArray, prompt: String): String {
+        val eng = getEngine(ctx, audio = true)
+        fun send(bytes: ByteArray): String {
+            val config = ConversationConfig(
+                samplerConfig = SamplerConfig(topK = 1, topP = 0.9, temperature = 0.05),
+            )
+            return eng.createConversation(config).use { conversation ->
+                runBlocking { conversation.sendMessage(Contents.of(Content.AudioBytes(bytes), Content.Text(prompt))) }.toString()
+            }
+        }
+        val reply = try {
+            lastAudioFormat = "wav"
+            send(com.paul.urdukb.voice.Pcm.wav(pcm))
+        } catch (t: Throwable) {
+            lastAudioFormat = "raw"
+            send(com.paul.urdukb.voice.Pcm.raw(pcm))
+        }
+        touch()
+        return reply.replace("<end_of_turn>", "").trim()
+    }
+
+    /** One text-in, text-out call with its own instructions (used for English to Urdu script). Blocking. */
+    @Synchronized
+    fun askText(ctx: Context, system: String, user: String): String {
+        val eng = getEngine(ctx)
+        val config = ConversationConfig(
+            systemInstruction = Contents.of(system),
+            samplerConfig = SamplerConfig(topK = 40, topP = 0.95, temperature = 0.2),
+        )
+        val out = eng.createConversation(config).use { conversation ->
+            runBlocking { conversation.sendMessage(user) }.toString()
+        }
+        touch()
+        return clean(out)
     }
 
     private val SPLIT_PUNCT = Regex("[^\\p{L}\\p{N}\\s]")

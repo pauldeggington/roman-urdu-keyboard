@@ -100,6 +100,7 @@ fun MainScreen(model: MainModel, pickModelFile: () -> Unit, recreateScreen: () -
             item { ChecklistCard(model) }
             item { ModelCard(model, pickModelFile) }
             item { TryCard(model) }
+            item { VoiceCard(model) }
             item { StyleCard(model) }
             item { ColourCard(recreateScreen) }
             item { SpeedCard(model) }
@@ -344,6 +345,22 @@ private fun ColourCard(recreateScreen: () -> Unit) {
                 KeyboardLook.apply(ctx, KeyboardLook.swatchId(ctx), it)
                 recreateScreen()
             }
+        }
+    }
+}
+
+/** Voice: speak English to get an Urdu voice message; Urdu voice notes arrive through the Share menu of other apps. */
+@Composable
+private fun VoiceCard(model: MainModel) {
+    val ctx = LocalContext.current
+    AppCard {
+        CardTitle(stringResource(R.string.card_voice))
+        Muted(stringResource(R.string.voice_help), Modifier.padding(top = 4.dp))
+        PillButton(
+            stringResource(R.string.voice_speak_button), Modifier.fillMaxWidth().padding(top = 12.dp), filled = true,
+            enabled = !model.busy,
+        ) {
+            ctx.startActivity(Intent(ctx, com.paul.urdukb.VoiceActivity::class.java).putExtra(com.paul.urdukb.VoiceActivity.EXTRA_MODE, com.paul.urdukb.VoiceActivity.MODE_SPEAK))
         }
     }
 }

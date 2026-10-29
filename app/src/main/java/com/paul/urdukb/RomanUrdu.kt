@@ -69,6 +69,14 @@ object RomanUrdu {
 
     const val TONE_AUTO = "auto"
 
+    /** The tone to translate English text in, ignoring the direction setting (the text is known to be English), and whether it is Auto. */
+    fun toneStyleFor(ctx: Context, text: String): Pair<Style, Boolean> {
+        val usual = if (isFormal(ctx)) Style.FORMAL else Style.CASUAL
+        val choice = toneChoice(ctx)
+        return if (choice == TONE_AUTO) ToneGuess.guess(text, usual) to true
+        else (Style.fromKey(choice)?.takeIf { it.isTone } ?: usual) to false
+    }
+
     /** "auto" or the key of one tone. */
     fun toneChoice(ctx: Context): String = KbSettings.of(ctx).toneChoice
 
