@@ -14,6 +14,7 @@ import java.net.URL
 object Updater {
     const val REPO = "pauldeggington/roman-urdu-keyboard"
     private const val ASSET = "roman-urdu-keyboard.apk"
+    private val VERSIONED_ASSET = Regex("RomanUrduKeyboard-[0-9][0-9.]*\\.apk")
     private const val PREF_DL = "update_dm_id"
 
     data class Release(val tag: String, val versionCode: Long, val name: String, val apkUrl: String, val notes: String, val page: String)
@@ -44,9 +45,12 @@ object Updater {
             val tag = o.getString("tag_name")
             val assets = o.getJSONArray("assets")
             var url = ""
+            // releases carry RomanUrduKeyboard-<version>.apk (the -standard copy is the unshrunk fallback, never picked here);
+            // older releases used the plain name
             for (i in 0 until assets.length()) {
                 val a = assets.getJSONObject(i)
-                if (a.getString("name") == ASSET) url = a.getString("browser_download_url")
+                val n = a.getString("name")
+                if (VERSIONED_ASSET.matches(n) || (url.isEmpty() && n == ASSET)) url = a.getString("browser_download_url")
             }
             if (url.isEmpty()) throw IllegalStateException("The latest release has no APK.")
             return Release(tag, codeFromTag(tag), o.optString("name", tag), url, o.optString("body", ""), o.optString("html_url", ""))

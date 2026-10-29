@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/pauldeggington/roman-urdu-keyboard/releases/latest/download/roman-urdu-keyboard.apk"><img src="https://img.shields.io/badge/%E2%AC%87%20Download-APK-7C6BFF?style=for-the-badge" alt="Download the APK"></a>
+  <a href="https://github.com/pauldeggington/roman-urdu-keyboard/releases/latest"><img src="https://img.shields.io/badge/%E2%AC%87%20Download-APK-7C6BFF?style=for-the-badge" alt="Download the APK"></a>
   <a href="https://github.com/pauldeggington/roman-urdu-keyboard/releases/latest"><img src="https://img.shields.io/github/v/release/pauldeggington/roman-urdu-keyboard?style=for-the-badge&color=2E3350&label=latest" alt="Latest release"></a>
   <img src="https://img.shields.io/badge/Android-12%2B-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android 12 or newer">
   <img src="https://img.shields.io/badge/works-offline-2E3350?style=for-the-badge" alt="Works offline">
@@ -53,8 +53,8 @@ the other way. Tap Translate again to get your original text back.
 
 ## Get started in two minutes
 
-1. On your Android phone, tap **[Download the APK](https://github.com/pauldeggington/roman-urdu-keyboard/releases/latest/download/roman-urdu-keyboard.apk)**
-   (or pick it from the [Releases](https://github.com/pauldeggington/roman-urdu-keyboard/releases) page).
+1. On your Android phone, open the **[latest release](https://github.com/pauldeggington/roman-urdu-keyboard/releases/latest)**
+   and download `RomanUrduKeyboard-<version>.apk` (the file with `-standard` in its name is the unshrunk fallback).
 2. Open the file. If Android asks, allow installs from your browser or Files app, then tap **Install**.
 3. Open **Roman Urdu Keyboard**. A setup guide walks you through everything, one step per screen:
    download the translator, turn the keyboard on, switch to it, pick your style, and try it.

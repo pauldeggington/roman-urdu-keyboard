@@ -143,7 +143,7 @@ jobs:
           {
             echo "## Install"
             echo ""
-            echo "1. On your Android phone, download **roman-urdu-keyboard.apk** below."
+            echo "1. On your Android phone, download **RomanUrduKeyboard-${VERSION_NAME}.apk** below."
             echo "2. Open it. If Android asks, allow installs from your browser or Files app, then tap **Install**."
             echo "3. Open **Roman Urdu Keyboard** and follow the setup guide. It downloads the translator (about 2.6 GB, once) and walks you through turning the keyboard on."
             echo ""
@@ -155,7 +155,7 @@ jobs:
             echo ""
             git log -1 --pretty=format:'%s%n%n%b' | grep -v -E '^(Co-Authored-By|Claude-Session):' | sed '/^$/N;/^\n$/D'
           } > notes.md
-          ASSETS="out/roman-urdu-keyboard.apk out/RomanUrduKeyboard-${VERSION_NAME}.apk"
+          ASSETS="out/RomanUrduKeyboard-${VERSION_NAME}.apk"
           if [ -f out/roman-urdu-keyboard-standard.apk ]; then
             cp out/roman-urdu-keyboard-standard.apk "out/RomanUrduKeyboard-${VERSION_NAME}-standard.apk"
             ASSETS="$ASSETS out/RomanUrduKeyboard-${VERSION_NAME}-standard.apk"
