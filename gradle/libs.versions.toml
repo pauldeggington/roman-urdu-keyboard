@@ -1,0 +1,16 @@
+# One place for every version, so upgrading is a one-line change.
+[versions]
+kotlin = "2.4.0"
+agp = "9.1.1"
+litertlm = "0.18.1"
+androidxCore = "1.17.0"
+recyclerview = "1.4.0"
+junit = "4.13.2"
+
+[libraries]
+litertlm = { module = "com.google.ai.edge.litertlm:litertlm-android", version.ref = "litertlm" }
+androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidxCore" }
+androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
+junit = { module = "junit:junit", version.ref = "junit" }
+
+[plugins]

@@ -7,7 +7,7 @@ import org.junit.Test
 class BigramTableTest {
     @Test
     fun tableIsWellFormed() {
-        val lines = File("src/main/assets/dict/bigrams.tsv").readLines().filter { it.isNotBlank() }
+        val lines = File("../app/src/main/assets/dict/bigrams.tsv").readLines().filter { it.isNotBlank() }
         assertTrue(lines.size > 100)
         val seen = HashSet<String>()
         for (ln in lines) {

@@ -28,7 +28,7 @@ class GlideDecoderTest {
         keyW,
     )
 
-    private val lines = File("src/main/assets/dict/en.tsv").readLines()
+    private val lines = File("../app/src/main/assets/dict/en.tsv").readLines()
     private val decoder = GlideDecoder.parse(lines.asSequence())
 
     private class Word(val word: String, val key: String, val zipf: Int)

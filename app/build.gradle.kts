@@ -94,10 +94,12 @@ android {
 }
 
 dependencies {
+    // the plain-Kotlin logic: suggestions, glide, detection, translation prompts
+    implementation(project(":core"))
     // on-device Gemma via LiteRT-LM
-    implementation("com.google.ai.edge.litertlm:litertlm-android:0.18.1")
-    implementation("androidx.core:core-ktx:1.17.0")
-    implementation("androidx.recyclerview:recyclerview:1.4.0")
+    implementation(libs.litertlm)
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.recyclerview)
 
-    testImplementation("junit:junit:4.13.2")
+    testImplementation(libs.junit)
 }

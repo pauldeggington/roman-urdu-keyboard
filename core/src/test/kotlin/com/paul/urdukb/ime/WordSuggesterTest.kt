@@ -8,7 +8,7 @@ import org.junit.Test
 
 class WordSuggesterTest {
 
-    private val words = WordSuggester.readWords(File("src/main/assets/dict/en.tsv").readLines().asSequence())
+    private val words = WordSuggester.readWords(File("../app/src/main/assets/dict/en.tsv").readLines().asSequence())
     private val suggester = WordSuggester(words)
 
     @Test

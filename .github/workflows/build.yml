@@ -47,7 +47,7 @@ jobs:
       - name: Test the glide decoder
         run: |
           chmod +x gradlew
-          ./gradlew :app:testDebugUnitTest --no-daemon --stacktrace > test.log 2>&1 && rc=0 || rc=$?
+          ./gradlew :core:test :app:testDebugUnitTest --no-daemon --stacktrace > test.log 2>&1 && rc=0 || rc=$?
           grep -E "careful glides|sloppy glides" test.log || true
           grep -E "AUTOCORRECT" test.log | cut -c1-900 | while read -r l; do echo "::notice title=Autocorrect::$l"; done
           if [ "$rc" -ne 0 ]; then

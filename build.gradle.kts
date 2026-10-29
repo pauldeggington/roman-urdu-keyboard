@@ -1,7 +1,7 @@
 // Top-level build file.
 
 buildscript {
-    val kotlinVersion = "2.4.0"
+    val kotlinVersion = "2.4.0"   // keep in step with libs.versions.toml
     repositories {
         mavenCentral()
         google()
