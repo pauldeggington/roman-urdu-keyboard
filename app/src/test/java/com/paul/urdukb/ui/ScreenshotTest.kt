@@ -137,6 +137,7 @@ class ScreenshotTest {
     @Test fun setupGuideLargeText() { look("light", "blue"); val m = setupModel(); shoot("setup-welcome-large-text", fontScale = 1.6f) { SetupScreen(m, {}, {}, {}) } }
 
     /** Every tappable thing is at least 48dp each way and says what it is, on the first three steps of the guide. */
+    @Config(sdk = [35], qualifiers = "w411dp-h2600dp-xxhdpi") // tall, so nothing is scrolled out of view
     @Test fun setupGuideIsAccessible() {
         look("light", "blue")
         val m = setupModel()
