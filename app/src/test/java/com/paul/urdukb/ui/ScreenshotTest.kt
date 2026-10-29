@@ -63,6 +63,7 @@ class ScreenshotTest {
 
     private fun shoot(name: String, rtl: Boolean = false, fontScale: Float = 1f, content: @androidx.compose.runtime.Composable () -> Unit) {
         try {
+            rule.runOnUiThread { rule.activity.actionBar?.hide() }
             rule.setContent {
                 val d = LocalDensity.current
                 CompositionLocalProvider(
