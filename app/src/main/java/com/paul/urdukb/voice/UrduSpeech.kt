@@ -48,11 +48,11 @@ class UrduSpeech(ctx: Context) {
         if (check() != Availability.READY) return false
         tts.language = urdu
         val done = CountDownLatch(1)
-        @Volatile var ok = false
+        val ok = java.util.concurrent.atomic.AtomicBoolean(false)
         val id = UUID.randomUUID().toString()
         tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
             override fun onStart(utteranceId: String?) {}
-            override fun onDone(utteranceId: String?) { if (utteranceId == id) { ok = true; done.countDown() } }
+            override fun onDone(utteranceId: String?) { if (utteranceId == id) { ok.set(true); done.countDown() } }
             @Deprecated("Deprecated in Java")
             override fun onError(utteranceId: String?) { if (utteranceId == id) done.countDown() }
         })
@@ -61,7 +61,7 @@ class UrduSpeech(ctx: Context) {
         val queued = tts.synthesizeToFile(text, null, file, id)
         if (queued != TextToSpeech.SUCCESS) return false
         done.await(90, TimeUnit.SECONDS)
-        return ok && file.length() > 44
+        return ok.get() && file.length() > 44
     }
 
     fun shutdown() { runCatching { tts.stop(); tts.shutdown() } }
