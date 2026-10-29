@@ -3,7 +3,7 @@ package com.paul.urdukb.ime
 import android.R as A
 import android.content.Context
 import android.content.res.Configuration
-import androidx.core.graphics.ColorUtils
+import com.paul.urdukb.design.SeedPalette
 import com.paul.urdukb.KeyboardLook
 
 /**
@@ -78,46 +78,12 @@ data class KbColors(
             )
         }
 
-        private fun hsl(h: Float, s: Float, l: Float) =
-            ColorUtils.HSLToColor(floatArrayOf(h, s.coerceIn(0f, 1f), l.coerceIn(0f, 1f)))
-
         private fun fromSeed(seed: Int, k: Float, dark: Boolean): KbColors {
-            val out = FloatArray(3)
-            ColorUtils.colorToHSL(seed, out)
-            val h = out[0]
-            val kk = k.coerceAtLeast(0.4f)
-            return if (dark) KbColors(
-                dark = true,
-                bg = hsl(h, 0.18f * k, 0.11f),
-                keyText = hsl(h, 0.30f * k, 0.93f),
-                hint = hsl(h, 0.16f * k, 0.62f),
-                pill = hsl(h, 0.20f * k, 0.255f),
-                pillText = hsl(h, 0.30f * k, 0.90f),
-                space = hsl(h, 0.14f * k, 0.19f),
-                action = hsl(h, 0.55f * kk, 0.78f),
-                actionText = hsl(h, 0.55f * kk, 0.14f),
-                popupBg = hsl(h, 0.16f * k, 0.24f),
-                popupText = hsl(h, 0.30f * k, 0.93f),
-                selected = hsl(h, 0.55f * kk, 0.78f),
-                selectedText = hsl(h, 0.55f * kk, 0.14f),
-                pressed = hsl(h, 0.16f * k, 0.22f),
-                chip = hsl(h, 0.14f * k, 0.19f),
-            ) else KbColors(
-                dark = false,
-                bg = hsl(h, 0.30f * k, 0.95f),
-                keyText = hsl(h, 0.30f * k, 0.12f),
-                hint = hsl(h, 0.14f * k, 0.40f),
-                pill = hsl(h, 0.32f * k, 0.86f),
-                pillText = hsl(h, 0.40f * k, 0.18f),
-                space = hsl(h, 0.24f * k, 0.89f),
-                action = hsl(h, 0.55f * kk, 0.42f),
-                actionText = hsl(h, 0.30f * k, 0.99f),
-                popupBg = hsl(h, 0.30f * k, 0.99f),
-                popupText = hsl(h, 0.30f * k, 0.12f),
-                selected = hsl(h, 0.55f * kk, 0.42f),
-                selectedText = hsl(h, 0.30f * k, 0.99f),
-                pressed = hsl(h, 0.24f * k, 0.88f),
-                chip = hsl(h, 0.24f * k, 0.89f),
+            val r = SeedPalette.keyboard(seed, k, dark)
+            return KbColors(
+                dark = r.dark, bg = r.bg, keyText = r.keyText, hint = r.hint, pill = r.pill, pillText = r.pillText,
+                space = r.space, action = r.action, actionText = r.actionText, popupBg = r.popupBg, popupText = r.popupText,
+                selected = r.selected, selectedText = r.selectedText, pressed = r.pressed, chip = r.chip,
             )
         }
     }

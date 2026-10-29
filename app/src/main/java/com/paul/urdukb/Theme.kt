@@ -4,7 +4,7 @@ import android.R as A
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.drawable.GradientDrawable
-import androidx.core.graphics.ColorUtils
+import com.paul.urdukb.design.SeedPalette
 
 /** Colours for the setup app. Wallpaper (Material You) by default, or built from the chosen swatch. */
 class Palette(ctx: Context) {
@@ -16,15 +16,6 @@ class Palette(ctx: Context) {
 
     private val seed: Int? = KeyboardLook.seedColor(ctx)
     private val sys = { id: Int -> ctx.getColor(id) }
-
-    private fun hsl(l: Float, s: Float, hue: Float) = ColorUtils.HSLToColor(floatArrayOf(hue, s.coerceIn(0f, 1f), l.coerceIn(0f, 1f)))
-
-    private val hue: Float = seed?.let {
-        val out = FloatArray(3)
-        ColorUtils.colorToHSL(it, out)
-        out[0]
-    } ?: 0f
-    private val tint: Float = KeyboardLook.tintOf(ctx)
 
     val appBg: Int
     val card: Int
@@ -48,16 +39,9 @@ class Palette(ctx: Context) {
             tonal = sys(if (dark) A.color.system_accent2_700 else A.color.system_accent2_100)
             onTonal = sys(if (dark) A.color.system_accent2_100 else A.color.system_accent2_900)
         } else {
-            val k = tint
-            appBg = if (dark) hsl(0.09f, 0.20f * k, hue) else hsl(0.97f, 0.40f * k, hue)
-            card = if (dark) hsl(0.14f, 0.18f * k, hue) else hsl(0.995f, 0.30f * k, hue)
-            field = if (dark) hsl(0.19f, 0.18f * k, hue) else hsl(0.93f, 0.30f * k, hue)
-            text = if (dark) hsl(0.93f, 0.30f * k, hue) else hsl(0.12f, 0.30f * k, hue)
-            textMuted = if (dark) hsl(0.66f, 0.14f * k, hue) else hsl(0.40f, 0.14f * k, hue)
-            primary = if (dark) hsl(0.76f, 0.70f * k.coerceAtLeast(0.35f), hue) else hsl(0.40f, 0.60f * k.coerceAtLeast(0.35f), hue)
-            onPrimary = if (dark) hsl(0.14f, 0.50f * k, hue) else hsl(0.99f, 0.30f * k, hue)
-            tonal = if (dark) hsl(0.27f, 0.30f * k, hue) else hsl(0.89f, 0.55f * k, hue)
-            onTonal = if (dark) hsl(0.90f, 0.50f * k, hue) else hsl(0.18f, 0.55f * k, hue)
+            val r = SeedPalette.app(seed, KeyboardLook.tintOf(ctx), dark)
+            appBg = r.appBg; card = r.card; field = r.field; text = r.text; textMuted = r.textMuted
+            primary = r.primary; onPrimary = r.onPrimary; tonal = r.tonal; onTonal = r.onTonal
         }
     }
 
