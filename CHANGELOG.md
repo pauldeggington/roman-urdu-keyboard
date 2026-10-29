@@ -9,7 +9,9 @@ The app shows it as, for example, "Version 2.1 (build 121)". Test builds are tag
 - **Easier to change:** the app screens (settings, setup guide, Translate sheet) are rewritten in Jetpack Compose, each split into a screen and a model. The plain-Kotlin logic (suggestions, glide, detection, translation prompts) moved into its own `core` module with fast tests, and the dependency versions are in one catalog. Everything looks and works as before.
 - **Text in one place:** the screens' and keyboard's messages are in `strings.xml`, ready for translation.
 - Contributor guide, architecture page and editor settings added.
-- The APK is larger (Compose adds about 15 MB); the experimental R8 test build shows how much smaller it can get.
+- **Smaller download:** the main APK is now shrunk with R8 (about a third of the size). The unshrunk build is attached to each release as `-standard.apk`, in case anything misbehaves.
+- **Urdu app screens:** the app and setup screens, and the keyboard's messages, are available in Urdu script when the phone's language is Urdu.
+- **Cleaner code:** all settings in one typed `KbSettings` class; the keyboard service is split into `TypingAssist`, `MediaSender`, `VoiceController` and `PreviewHooks`.
 
 ## 2.1
 

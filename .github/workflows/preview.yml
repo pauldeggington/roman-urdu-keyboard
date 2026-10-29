@@ -23,10 +23,10 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Build preview APK (no native code, installs on any CPU)
+      - name: Build preview APK (no native code, shrunk with R8 like the release)
         run: |
           chmod +x gradlew
-          ./gradlew :app:assembleDebug -PnoNative --no-daemon --stacktrace > build.log 2>&1 && rc=0 || rc=$?
+          ./gradlew :app:assembleDebug -PnoNative -Pminify --no-daemon --stacktrace > build.log 2>&1 && rc=0 || rc=$?
           tail -n 30 build.log
           if [ "$rc" -ne 0 ]; then
             { grep -E -A8 '^e: |What went wrong|Could not|error:|ERROR:' build.log | head -90 || true; } > errs.txt

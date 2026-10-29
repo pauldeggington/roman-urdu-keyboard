@@ -71,17 +71,18 @@ jobs:
           mkdir -p out
           cp app/build/outputs/apk/debug/*.apk out/roman-urdu-keyboard.apk
 
-      - name: Build experimental R8 copy (rewrite branch only; never blocks the build)
-        if: github.ref == 'refs/heads/rewrite'
+      - name: Build the R8 (shrunk) copy; it becomes the main APK if it builds, the normal one stays as a fallback
         continue-on-error: true
         run: |
-          ./gradlew :app:assembleDebug -PtrialR8 --no-daemon > r8.log 2>&1 && rc=0 || rc=$?
+          ./gradlew :app:assembleDebug -Pminify --no-daemon > r8.log 2>&1 && rc=0 || rc=$?
           if [ "$rc" -eq 0 ]; then
             cp app/build/outputs/apk/debug/*-r8.apk out/roman-urdu-keyboard-r8.apk
-            echo "::notice title=R8 copy::$(du -h out/roman-urdu-keyboard-r8.apk | cut -f1) vs $(du -h out/roman-urdu-keyboard.apk | cut -f1) normal"
+            mv out/roman-urdu-keyboard.apk out/roman-urdu-keyboard-standard.apk
+            cp out/roman-urdu-keyboard-r8.apk out/roman-urdu-keyboard.apk
+            echo "::notice title=R8 build::$(du -h out/roman-urdu-keyboard.apk | cut -f1) shipped, $(du -h out/roman-urdu-keyboard-standard.apk | cut -f1) standard kept as fallback"
           else
             { grep -E -A4 '^e: |What went wrong|ERROR|Missing class' r8.log | head -20 || true; } > r8err.txt
-            echo "::warning title=R8 copy failed::$(tr '\n' ' ' < r8err.txt | cut -c1-300)"
+            echo "::warning title=R8 build failed, shipping the standard APK::$(tr '\n' ' ' < r8err.txt | cut -c1-300)"
           fi
 
       - name: Show signing fingerprint
@@ -127,9 +128,14 @@ jobs:
             echo ""
             git log -1 --pretty=format:'%s%n%n%b' | grep -v -E '^(Co-Authored-By|Claude-Session):' | sed '/^$/N;/^\n$/D'
           } > notes.md
-          gh release create "$TAG" \
-            "out/roman-urdu-keyboard.apk" \
-            "out/RomanUrduKeyboard-${VERSION_NAME}.apk" \
+          ASSETS="out/roman-urdu-keyboard.apk out/RomanUrduKeyboard-${VERSION_NAME}.apk"
+          if [ -f out/roman-urdu-keyboard-standard.apk ]; then
+            cp out/roman-urdu-keyboard-standard.apk "out/RomanUrduKeyboard-${VERSION_NAME}-standard.apk"
+            ASSETS="$ASSETS out/RomanUrduKeyboard-${VERSION_NAME}-standard.apk"
+            echo "" >> notes.md
+            echo "**If something misbehaves:** the main APK is shrunk with R8 (about a third of the size). \`RomanUrduKeyboard-${VERSION_NAME}-standard.apk\` is the same app without shrinking; install it over the top." >> notes.md
+          fi
+          gh release create "$TAG" $ASSETS \
             --title "Roman Urdu Keyboard $(tr -d '[:space:]' < VERSION) (build ${GITHUB_RUN_NUMBER})" \
             --notes-file notes.md \
             --target "$GITHUB_SHA" \
@@ -151,11 +157,11 @@ jobs:
             git log -1 --pretty=format:'%s'
           } > notes.md
           EXTRA=""
-          if [ -f out/roman-urdu-keyboard-r8.apk ]; then
-            cp out/roman-urdu-keyboard-r8.apk "out/RomanUrduKeyboard-${VERSION_NAME}-test-R8-experiment.apk"
-            EXTRA="out/RomanUrduKeyboard-${VERSION_NAME}-test-R8-experiment.apk"
+          if [ -f out/roman-urdu-keyboard-standard.apk ]; then
+            cp out/roman-urdu-keyboard-standard.apk "out/RomanUrduKeyboard-${VERSION_NAME}-test-standard.apk"
+            EXTRA="out/RomanUrduKeyboard-${VERSION_NAME}-test-standard.apk"
             echo "" >> notes.md
-            echo "Also attached: an experimental R8 copy (smaller, may start faster). Only use it to compare. If translation misbehaves in it, go back to the normal APK." >> notes.md
+            echo "The main file is shrunk with R8. The -standard file is the same app without shrinking, as a fallback." >> notes.md
           fi
           gh release create "$TAG" "out/RomanUrduKeyboard-${VERSION_NAME}-test.apk" $EXTRA \
             --title "Test ${VERSION_NAME} (rewritten keyboard)" --notes-file notes.md \

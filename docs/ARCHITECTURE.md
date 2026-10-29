@@ -31,11 +31,15 @@ New logic that can be written without Android goes in `:core` first.
 
 ## The keyboard (`app/.../ime/`)
 
-- `UrduImeService` is the input method service. It owns the views and decides what each key and toolbar button does.
+- `UrduImeService` is the input method service. It owns the views and decides what each key and toolbar button does. The work it hands off:
+  - `TypingAssist`: word suggestions, automatic correction and its undo, next word, the Paste chip, and learning words (talks to the service through the small `TypingHost` interface).
+  - `MediaSender`: sends a GIF or sticker as a picture, or a link.
+  - `VoiceController`: the mic button (permission, `VoiceInput`, the fallback to the phone's voice keyboard).
+  - `PreviewHooks`: test hooks that exist only in the emulator build CI uses for screenshots.
 - `KeyboardView` and `ToolbarView` draw the keys and the bar above them directly on a Canvas, like Gboard, so they are fast and look the same on every phone. `Layouts` (in `:core`) describes the rows of keys.
 - `EmojiPanel` is the emoji, GIF, sticker and emoticon screen. `ClipboardPanel` is the clipboard screen.
 - Typing help: `WordSuggester` (suggestions and autocorrect), `NextWord` and `PersonalWords` (next word and what the phone learns), `GlideDecoder` (glide typing), `VoiceInput` (the mic).
-- Keyboard colours come from `KbColors`; settings keys are in `Kb`.
+- Keyboard colours come from `KbColors`. Every setting is declared once in `KbSettings` (its key, its default, typed access); the keyboard and the app screens both go through it.
 
 ### What happens when you type a letter
 
@@ -68,7 +72,7 @@ The keyboard stays on Canvas views; the app screens are Compose. Each screen is 
 
 ## Data and privacy
 
-- Settings are SharedPreferences (`Prefs`, `Kb`). Learned words, clipboard history and recent GIFs are kept there too, on the phone only. The GIPHY key is stored encrypted with the Android Keystore (`Secrets`).
+- Settings are SharedPreferences (`Prefs` for the model, `KbSettings` for the keyboard). They are not DataStore on purpose: DataStore reads are asynchronous and the keyboard reads a few flags on every key press. Learned words, clipboard history and recent GIFs are kept there too, on the phone only. The GIPHY key is stored encrypted with the Android Keystore (`Secrets`).
 - Network use: model download (Hugging Face), update check (GitHub), GIPHY search. Nothing typed is sent.
 
 ## Build and CI

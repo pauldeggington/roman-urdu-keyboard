@@ -68,6 +68,8 @@ the other way. Tap Translate again to get your original text back.
 New versions show up on the Releases page and install over the old one, keeping your settings and the translator.
 The app has an **Update** button that opens the download for you.
 
+> **Smaller download.** The main APK is shrunk with R8, so it is about a third of the unshrunk size. Every release also has a `-standard.apk` (the same app unshrunk). If something misbehaves, install that one over the top.
+
 > **Play Protect warning?** The app is new and not from the Play Store, so Google may show a "harmful app" prompt. Tap
 > **More details → Install anyway**. The source code is in this repository, and every release is built here by GitHub Actions.
 

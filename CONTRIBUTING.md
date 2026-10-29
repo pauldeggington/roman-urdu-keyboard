@@ -46,10 +46,14 @@ It has hooks that let CI drive the keyboard and take screenshots (see `scripts/s
 - User-visible text lives in `strings.xml`.
 - Do not add a dependency without a reason; the app has three on purpose. Versions live in `gradle/libs.versions.toml`.
 
+## Translating the app
+
+All screen text is in `app/src/main/res/values/strings.xml`. To add a language, copy it to `values-xx/strings.xml` (see `values-ur/` for Urdu) and translate the values; keep `%1$s`-style placeholders as they are. Android picks the file by the phone's language.
+
 ## Versions and releases
 
 `VERSION` holds major.minor. CI adds the build number (for example 2.1.122). Merging to `main` publishes a release; other
-branches publish `-test` pre-releases. See [CHANGELOG.md](CHANGELOG.md).
+branches publish `-test` pre-releases. The main APK is the R8-shrunk build; `-standard.apk` beside it is the same app unshrunk. See [CHANGELOG.md](CHANGELOG.md).
 
 ## Privacy rules for contributors
 

@@ -1,4 +1,4 @@
-# Only used by the experimental -PtrialR8 build.
+# Used by the -Pminify build (R8), which is what CI publishes as the main APK.
 # LiteRT-LM is reached from native code, so its classes must keep their names and members.
 -keep class com.google.ai.edge.** { *; }
 -keep class com.google.protobuf.** { *; }

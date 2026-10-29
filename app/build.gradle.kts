@@ -42,9 +42,9 @@ android {
     buildTypes {
         debug {
             // This is the build that gets published: not debuggable, not minified (keeps LiteRT-LM's JNI classes intact).
-            // -PtrialR8 builds an experimental smaller/faster copy (see proguard-rules.pro); the normal build stays unminified
-            isMinifyEnabled = project.hasProperty("trialR8")
-            isShrinkResources = project.hasProperty("trialR8")
+            // -Pminify shrinks the app with R8 (see proguard-rules.pro). CI publishes that build, with the unshrunk one beside it as a fallback.
+            isMinifyEnabled = project.hasProperty("minify")
+            isShrinkResources = project.hasProperty("minify")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             isJniDebuggable = false
             isDebuggable = false
@@ -58,7 +58,7 @@ android {
     androidComponents.onVariants { variant ->
         variant.outputs.forEach { output ->
             if (output is com.android.build.api.variant.impl.VariantOutputImpl) {
-                output.outputFileName = "RomanUrduKeyboard_${System.getenv("VERSION_NAME") ?: "dev"}-${variant.buildType}${if (project.hasProperty("trialR8")) "-r8" else ""}.apk"
+                output.outputFileName = "RomanUrduKeyboard_${System.getenv("VERSION_NAME") ?: "dev"}-${variant.buildType}${if (project.hasProperty("minify")) "-r8" else ""}.apk"
             }
         }
     }
