@@ -76,12 +76,18 @@ fun VoiceScreen(
                     VoiceModel.UiState.Decoding -> Body(stringResource(R.string.voice_decoding))
                     is VoiceModel.UiState.Listening -> {
                         Body(
-                            if (state.of > 1) stringResource(R.string.voice_listening_part, state.part, state.of)
-                            else stringResource(R.string.voice_listening),
+                            when {
+                                state.of > 1 && state.passes > 1 -> stringResource(R.string.voice_listening_part_pass, state.part, state.of, state.pass, state.passes)
+                                state.of > 1 -> stringResource(R.string.voice_listening_part, state.part, state.of)
+                                state.passes > 1 -> stringResource(R.string.voice_listening_pass, state.pass, state.passes)
+                                else -> stringResource(R.string.voice_listening)
+                            },
                         )
                         if (model.firstLoad) Muted(stringResource(R.string.sheet_loading_first), Modifier.padding(top = 6.dp))
                         Muted(thinking, Modifier.padding(top = 6.dp))
                     }
+                    VoiceModel.UiState.Comparing -> Body(stringResource(R.string.voice_comparing))
+                    VoiceModel.UiState.Checking -> Body(stringResource(R.string.voice_checking))
                     VoiceModel.UiState.WritingUrdu -> Body(stringResource(R.string.voice_writing_urdu))
                     is VoiceModel.UiState.ListeningSlow -> Body(
                         if (state.of > 1) stringResource(R.string.voice_listening_slow_part, state.part, state.of) else stringResource(R.string.voice_listening_slow),
@@ -101,7 +107,7 @@ fun VoiceScreen(
             }
             Row(Modifier.padding(top = 18.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (speak && state !is VoiceModel.UiState.NoModel) {
-                    val busy = state is VoiceModel.UiState.Listening || state is VoiceModel.UiState.ListeningSlow || state is VoiceModel.UiState.Comparing || state is VoiceModel.UiState.WritingUrdu || state is VoiceModel.UiState.WritingEnglish
+                    val busy = state is VoiceModel.UiState.Listening || state is VoiceModel.UiState.Comparing || state is VoiceModel.UiState.Checking || state is VoiceModel.UiState.WritingUrdu || state is VoiceModel.UiState.WritingEnglish
                     PillButton(
                         if (state is VoiceModel.UiState.Recording) stringResource(R.string.voice_stop)
                         else if (state is VoiceModel.UiState.Done) stringResource(R.string.voice_record_again)
@@ -137,6 +143,7 @@ private fun DoneBody(
         Muted(stringResource(R.string.voice_roman), Modifier.padding(top = 14.dp))
         SelectionContainer { Text(s.roman, style = content, color = cs.onSurface, fontSize = Type.bodyLarge, lineHeight = Type.bodyLarge * 1.4f) }
     }
+    if (s.unsure) Muted(stringResource(R.string.voice_unsure), Modifier.padding(top = 10.dp))
     if (s.truncated) Muted(stringResource(R.string.voice_truncated), Modifier.padding(top = 10.dp))
 
     ButtonRow {

@@ -366,9 +366,11 @@
     <string name="voice_help">واٹس ایپ سے اردو وائس نوٹ اس ایپ کو شیئر کریں (شیئر، پھر رومن اردو کی بورڈ) تاکہ انگریزی میں پڑھ سکیں۔ یا انگریزی بولیں اور بھیجنے کے لیے اردو آواز کا پیغام پائیں۔ فون پر چلتا ہے، انٹرنیٹ نہیں چاہیے۔</string>
     <string name="voice_speak_button">انگریزی بولیں ← اردو آواز</string>
     <string name="voice_writing_english">انگریزی میں ترجمہ ہو رہا ہے…</string>
-    <string name="voice_listening_slow">آہستہ کر کے دوبارہ سن رہا ہے…</string>
-    <string name="voice_listening_slow_part">آہستہ کر کے دوبارہ سن رہا ہے (حصہ %1$d از %2$d)…</string>
     <string name="voice_comparing">جو سنا اسے ملایا جا رہا ہے…</string>
     <string name="voice_careful">غور سے سننا</string>
-    <string name="voice_careful_sub">ہر اردو وائس نوٹ کو دو بار سنتا ہے، عام رفتار پر اور آہستہ کر کے، پھر دونوں کو ملاتا ہے۔ زیادہ درست، مگر دو سے تین گنا وقت لگتا ہے۔</string>
+    <string name="voice_careful_sub">ہر اردو وائس نوٹ کو چار طرح سنتا ہے (عام رفتار، آہستہ، تیز، اور رومن اردو میں)، سب کو ملاتا ہے، پھر انگریزی کو واپس اردو میں ترجمہ کر کے جانچتا ہے۔ بہت زیادہ درست، مگر کئی گنا وقت لگتا ہے۔</string>
+    <string name="voice_listening_pass">سن رہا ہے، مرتبہ %1$d از %2$d…</string>
+    <string name="voice_listening_part_pass">سن رہا ہے، حصہ %1$d از %2$d، مرتبہ %3$d از %4$d…</string>
+    <string name="voice_checking">انگریزی کی دوبارہ جانچ ہو رہی ہے…</string>
+    <string name="voice_unsure">یہ انگریزی غلط ہو سکتی ہے۔ اوپر کا اردو متن دیکھیں، یا وائس نوٹ دوبارہ سنیں۔</string>
 </resources>

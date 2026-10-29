@@ -34,6 +34,16 @@ class StretchTest {
         assertTrue("length ratio $ratio", ratio in 1.20..1.30)
     }
 
+    @Test fun fasterGetsShorterByTheFactorAndKeepsPitch() {
+        val s = tone(4.0, 300.0)
+        val out = Stretch.faster(s, 0.85)
+        val ratio = out.size.toDouble() / s.size
+        assertTrue("length ratio $ratio", ratio in 0.80..0.92)
+        val before = crossings(s) / (s.size / 16000.0)
+        val after = crossings(out) / (out.size / 16000.0)
+        assertTrue("crossings per second $before -> $after", after in before * 0.93..before * 1.07)
+    }
+
     @Test fun pitchIsKept() {
         // a 300 Hz tone still has about 300 cycles a second: crossings per second stay the same
         val s = tone(3.0, 300.0)

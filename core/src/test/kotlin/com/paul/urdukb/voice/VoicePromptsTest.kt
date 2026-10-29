@@ -27,10 +27,15 @@ class VoicePromptsTest {
         assertTrue(VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES.contains("AJ Tower"))
     }
 
-    @Test fun reconcilingBuildsOneMessageWithBothTranscripts() {
-        val m = VoicePrompts.reconcileInput("a b", "a c")
-        assertTrue(m.contains("normal speed): a b") && m.contains("slowed down): a c"))
+    @Test fun reconcilingBuildsOneLabelledMessage() {
+        val m = VoicePrompts.reconcileInput(listOf("normal speed" to "a b", "slowed down" to "a c", "faster" to "", "Roman Urdu" to "a b"))
+        assertEquals("Transcript 1 (normal speed): a b\nTranscript 2 (slowed down): a c\nTranscript 3 (Roman Urdu): a b", m)
         assertTrue(VoicePrompts.RECONCILE_RULES.contains("most likely correct transcript"))
+    }
+
+    @Test fun romanPromptAsksForRomanUrdu() {
+        assertTrue(VoicePrompts.TRANSCRIBE_ROMAN.contains("Roman Urdu"))
+        assertFalse(VoicePrompts.TRANSCRIBE_ROMAN.contains("Urdu script"))
     }
 
     @Test fun sameTextIgnoresPunctuationAndSpacing() {

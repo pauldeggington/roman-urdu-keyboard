@@ -375,9 +375,11 @@
     <string name="voice_help">Share an Urdu voice note from WhatsApp to this app (Share, then Roman Urdu Keyboard) to read it in English. Or speak English and get an Urdu voice message to send. Works on the phone, no internet.</string>
     <string name="voice_speak_button">Speak English → Urdu voice</string>
     <string name="voice_writing_english">Translating to English…</string>
-    <string name="voice_listening_slow">Listening again, slower…</string>
-    <string name="voice_listening_slow_part">Listening again, slower (part %1$d of %2$d)…</string>
     <string name="voice_comparing">Comparing what was heard…</string>
     <string name="voice_careful">Careful listening</string>
-    <string name="voice_careful_sub">Listens to each Urdu voice note twice, at normal speed and slowed down, then combines them. More accurate, but takes two to three times longer.</string>
+    <string name="voice_careful_sub">Listens to each Urdu voice note four ways (normal speed, slower, faster, and as Roman Urdu), combines them, then double-checks the English by translating it back. Much more accurate, but takes several times longer.</string>
+    <string name="voice_listening_pass">Listening, pass %1$d of %2$d…</string>
+    <string name="voice_listening_part_pass">Listening, part %1$d of %2$d, pass %3$d of %4$d…</string>
+    <string name="voice_checking">Double-checking the English…</string>
+    <string name="voice_unsure">This English may be off. Check the Urdu text above, or play the voice note again.</string>
 </resources>

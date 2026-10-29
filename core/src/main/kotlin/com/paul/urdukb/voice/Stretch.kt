@@ -16,8 +16,14 @@ object Stretch {
     private const val SEARCH = 128         // how far a piece may move to line up (8 ms)
 
     /** [factor] above 1 makes the audio longer (slower): 1.25 is 25% slower. */
-    fun slower(samples: ShortArray, factor: Double): ShortArray {
-        if (factor <= 1.0001 || samples.size < FRAME * 2) return samples
+    fun slower(samples: ShortArray, factor: Double): ShortArray = change(samples, factor)
+
+    /** [factor] below 1 makes the audio shorter (faster): 0.85 is 15% faster. */
+    fun faster(samples: ShortArray, factor: Double): ShortArray = change(samples, factor)
+
+    /** Changes the speed by [factor] (length after = length before times factor), keeping the pitch. */
+    fun change(samples: ShortArray, factor: Double): ShortArray {
+        if (abs(factor - 1.0) < 0.0001 || factor < 0.4 || factor > 3.0 || samples.size < FRAME * 2) return samples
         val n = samples.size
         val outLen = (n * factor).roundToInt() + FRAME
         val out = FloatArray(outLen)

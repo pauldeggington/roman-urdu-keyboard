@@ -18,7 +18,10 @@ import com.paul.urdukb.voice.AudioDecoder
 import com.paul.urdukb.voice.M4a
 import com.paul.urdukb.voice.Pcm
 import com.paul.urdukb.voice.Recorder
+import com.paul.urdukb.voice.Similarity
 import com.paul.urdukb.voice.Stretch
+import com.paul.urdukb.voice.TranslationCheck
+import com.paul.urdukb.voice.Vote
 import com.paul.urdukb.ime.KbSettings
 import com.paul.urdukb.voice.UrduSpeech
 import com.paul.urdukb.voice.VoicePrompts
@@ -38,15 +41,15 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
         data object Idle : UiState
         data object NoModel : UiState
         data object Decoding : UiState
-        data class Listening(val part: Int, val of: Int) : UiState
+        data class Listening(val part: Int, val of: Int, val pass: Int = 1, val passes: Int = 1) : UiState
         data object WritingUrdu : UiState
         data object WritingEnglish : UiState
-        data class ListeningSlow(val part: Int, val of: Int) : UiState
+        data object Checking : UiState
         data object Comparing : UiState
         data class Recording(val level: Float, val seconds: Int) : UiState
         data object TooQuiet : UiState
         data object Failed : UiState
-        data class Done(val urdu: String, val english: String, val roman: String, val truncated: Boolean) : UiState
+        data class Done(val urdu: String, val english: String, val roman: String, val truncated: Boolean, val unsure: Boolean = false) : UiState
     }
 
     /** The audio file for English to Urdu: made after the text is shown. */
@@ -93,37 +96,58 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
             try {
                 val decoded = AudioDecoder.decode(ctx, uri)
                 if (Pcm.isSilent(decoded.samples)) { post { state = UiState.TooQuiet }; return@execute }
-                // careful listening hears every piece twice, the second time slowed down by a quarter; pieces are cut shorter so the
-                // slowed copy still fits in the model's 30 seconds
+                // careful listening hears every piece in four ways: normal speed, slowed by a quarter, faster by a sixth, and written
+                // as Roman Urdu. Pieces are cut at 21 s so the slowed copy (x1.25) still fits in the model's 30 seconds.
                 val careful = KbSettings.of(ctx)[KbSettings.CAREFUL_VOICE]
+                val passes = if (careful) 4 else 1
                 val pieces = Pcm.split(decoded.samples, maxSeconds = if (careful) 21 else Pcm.MAX_PIECE_SECONDS)
                 // step one: only write down what is said
                 val parts = ArrayList<String>()
                 pieces.forEachIndexed { i, piece ->
-                    post { state = UiState.Listening(i + 1, pieces.size) }
-                    val normal = VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, piece, VoicePrompts.TRANSCRIBE_URDU))
-                    if (!careful) { parts += normal; return@forEachIndexed }
-                    post { state = UiState.ListeningSlow(i + 1, pieces.size) }
-                    val slow = VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, Stretch.slower(piece, 1.25), VoicePrompts.TRANSCRIBE_URDU))
-                    parts += when {
-                        slow.isEmpty() -> normal
-                        normal.isEmpty() || VoicePrompts.sameText(normal, slow) -> if (normal.isEmpty()) slow else normal
-                        else -> {
-                            // the two disagree: one more call picks the most likely words from both
-                            post { state = UiState.Comparing }
-                            val merged = VoicePrompts.cleanTranscript(
-                                LlmEngine.askText(ctx, VoicePrompts.RECONCILE_RULES, VoicePrompts.reconcileInput(normal, slow), temperature = 0.1),
-                            )
-                            if (merged.isEmpty()) normal else merged
-                        }
+                    fun hear(pass: Int, audio: ShortArray, prompt: String): String {
+                        post { state = UiState.Listening(i + 1, pieces.size, pass, passes) }
+                        return VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, audio, prompt))
                     }
+                    val normal = hear(1, piece, VoicePrompts.TRANSCRIBE_URDU)
+                    if (!careful) { parts += normal; return@forEachIndexed }
+                    val slow = hear(2, Stretch.change(piece, 1.25), VoicePrompts.TRANSCRIBE_URDU)
+                    val fast = hear(3, Stretch.change(piece, 0.85), VoicePrompts.TRANSCRIBE_URDU)
+                    // two of the three passes agreeing settles it, with no extra work
+                    val agreed = Vote.majority(listOf(normal, slow, fast))
+                    if (agreed != null) { parts += agreed; return@forEachIndexed }
+                    val roman = hear(4, piece, VoicePrompts.TRANSCRIBE_ROMAN)
+                    post { state = UiState.Comparing }
+                    val merged = VoicePrompts.cleanTranscript(
+                        LlmEngine.askText(
+                            ctx, VoicePrompts.RECONCILE_RULES,
+                            VoicePrompts.reconcileInput(listOf("normal speed" to normal, "slowed down" to slow, "faster" to fast, "Roman Urdu spelling" to roman)),
+                            temperature = 0.1,
+                        ),
+                    )
+                    parts += merged.ifEmpty { listOf(normal, slow, fast).firstOrNull { it.isNotEmpty() }.orEmpty() }
                 }
                 val urdu = VoicePrompts.join(parts)
                 if (urdu.isEmpty()) { post { state = UiState.TooQuiet }; return@execute }
                 // step two: the transcript is translated by the text model
                 post { state = UiState.WritingEnglish }
-                val english = LlmEngine.askText(ctx, VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES, urdu, VoicePrompts.TRANSLATE_EXAMPLES, temperature = 0.1)
-                post { state = UiState.Done(urdu, english, "", decoded.truncated) }
+                var english = LlmEngine.askText(ctx, VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES, urdu, VoicePrompts.TRANSLATE_EXAMPLES, temperature = 0.1)
+                var unsure = false
+                if (careful && english.isNotBlank()) {
+                    // step three: turn the English back into Urdu and compare it with what was heard; a translation that lost the
+                    // meaning does not come back alike. If it does not, translate once more, closer to the Urdu, and keep the better one.
+                    post { state = UiState.Checking }
+                    fun score(en: String) = Similarity.dice(urdu, LlmEngine.askText(ctx, VoicePrompts.URDU_SCRIPT_RULES, en, temperature = 0.1))
+                    var best = score(english)
+                    if (best < TranslationCheck.TRY_AGAIN_BELOW) {
+                        val second = LlmEngine.askText(ctx, VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES + VoicePrompts.LITERAL_RETRY, urdu, VoicePrompts.TRANSLATE_EXAMPLES, temperature = 0.3)
+                        if (second.isNotBlank()) {
+                            val s2 = score(second)
+                            if (s2 > best) { english = second; best = s2 }
+                        }
+                    }
+                    unsure = best < TranslationCheck.UNSURE_BELOW
+                }
+                post { state = UiState.Done(urdu, english, "", decoded.truncated, unsure) }
             } catch (t: Throwable) {
                 LlmEngine.saveError(ctx, t)
                 post { state = UiState.Failed }
@@ -145,7 +169,7 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
     /** The record button: starts recording, or stops it and translates. The caller has checked the microphone permission. */
     fun toggleRecording() {
         if (state is UiState.Recording) { stopAndTranslate(); return }
-        if (state is UiState.NoModel || state is UiState.Decoding || state is UiState.Listening || state is UiState.ListeningSlow || state is UiState.Comparing || state is UiState.WritingUrdu || state is UiState.WritingEnglish) return
+        if (state is UiState.NoModel || state is UiState.Decoding || state is UiState.Listening || state is UiState.Comparing || state is UiState.Checking || state is UiState.WritingUrdu || state is UiState.WritingEnglish) return
         speech?.stopSpeaking()
         audio = AudioState.None
         copied = ""
