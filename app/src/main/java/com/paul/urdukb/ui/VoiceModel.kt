@@ -18,6 +18,8 @@ import com.paul.urdukb.voice.AudioDecoder
 import com.paul.urdukb.voice.M4a
 import com.paul.urdukb.voice.Pcm
 import com.paul.urdukb.voice.Recorder
+import com.paul.urdukb.voice.Stretch
+import com.paul.urdukb.ime.KbSettings
 import com.paul.urdukb.voice.UrduSpeech
 import com.paul.urdukb.voice.VoicePrompts
 import java.io.File
@@ -39,6 +41,8 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
         data class Listening(val part: Int, val of: Int) : UiState
         data object WritingUrdu : UiState
         data object WritingEnglish : UiState
+        data class ListeningSlow(val part: Int, val of: Int) : UiState
+        data object Comparing : UiState
         data class Recording(val level: Float, val seconds: Int) : UiState
         data object TooQuiet : UiState
         data object Failed : UiState
@@ -89,18 +93,36 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
             try {
                 val decoded = AudioDecoder.decode(ctx, uri)
                 if (Pcm.isSilent(decoded.samples)) { post { state = UiState.TooQuiet }; return@execute }
-                val pieces = Pcm.split(decoded.samples)
+                // careful listening hears every piece twice, the second time slowed down by a quarter; pieces are cut shorter so the
+                // slowed copy still fits in the model's 30 seconds
+                val careful = KbSettings.of(ctx)[KbSettings.CAREFUL_VOICE]
+                val pieces = Pcm.split(decoded.samples, maxSeconds = if (careful) 21 else Pcm.MAX_PIECE_SECONDS)
                 // step one: only write down what is said
                 val parts = ArrayList<String>()
                 pieces.forEachIndexed { i, piece ->
                     post { state = UiState.Listening(i + 1, pieces.size) }
-                    parts += VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, piece, VoicePrompts.TRANSCRIBE_URDU))
+                    val normal = VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, piece, VoicePrompts.TRANSCRIBE_URDU))
+                    if (!careful) { parts += normal; return@forEachIndexed }
+                    post { state = UiState.ListeningSlow(i + 1, pieces.size) }
+                    val slow = VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, Stretch.slower(piece, 1.25), VoicePrompts.TRANSCRIBE_URDU))
+                    parts += when {
+                        slow.isEmpty() -> normal
+                        normal.isEmpty() || VoicePrompts.sameText(normal, slow) -> if (normal.isEmpty()) slow else normal
+                        else -> {
+                            // the two disagree: one more call picks the most likely words from both
+                            post { state = UiState.Comparing }
+                            val merged = VoicePrompts.cleanTranscript(
+                                LlmEngine.askText(ctx, VoicePrompts.RECONCILE_RULES, VoicePrompts.reconcileInput(normal, slow), temperature = 0.1),
+                            )
+                            if (merged.isEmpty()) normal else merged
+                        }
+                    }
                 }
                 val urdu = VoicePrompts.join(parts)
                 if (urdu.isEmpty()) { post { state = UiState.TooQuiet }; return@execute }
                 // step two: the transcript is translated by the text model
                 post { state = UiState.WritingEnglish }
-                val english = LlmEngine.askText(ctx, VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES, urdu)
+                val english = LlmEngine.askText(ctx, VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES, urdu, VoicePrompts.TRANSLATE_EXAMPLES, temperature = 0.1)
                 post { state = UiState.Done(urdu, english, "", decoded.truncated) }
             } catch (t: Throwable) {
                 LlmEngine.saveError(ctx, t)
@@ -123,7 +145,7 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
     /** The record button: starts recording, or stops it and translates. The caller has checked the microphone permission. */
     fun toggleRecording() {
         if (state is UiState.Recording) { stopAndTranslate(); return }
-        if (state is UiState.NoModel || state is UiState.Decoding || state is UiState.Listening || state is UiState.WritingUrdu || state is UiState.WritingEnglish) return
+        if (state is UiState.NoModel || state is UiState.Decoding || state is UiState.Listening || state is UiState.ListeningSlow || state is UiState.Comparing || state is UiState.WritingUrdu || state is UiState.WritingEnglish) return
         speech?.stopSpeaking()
         audio = AudioState.None
         copied = ""

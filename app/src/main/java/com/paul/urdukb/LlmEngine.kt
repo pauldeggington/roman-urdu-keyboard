@@ -191,11 +191,12 @@ object LlmEngine {
 
     /** One text-in, text-out call with its own instructions (used for English to Urdu script). Blocking. */
     @Synchronized
-    fun askText(ctx: Context, system: String, user: String): String {
+    fun askText(ctx: Context, system: String, user: String, examples: List<Pair<String, String>> = emptyList(), temperature: Double = 0.2): String {
         val eng = getEngine(ctx)
         val config = ConversationConfig(
             systemInstruction = Contents.of(system),
-            samplerConfig = SamplerConfig(topK = 40, topP = 0.95, temperature = 0.2),
+            initialMessages = examples.flatMap { (a, b) -> listOf(Message.user(a), Message.model(b)) },
+            samplerConfig = SamplerConfig(topK = 40, topP = 0.95, temperature = temperature),
         )
         val out = eng.createConversation(config).use { conversation ->
             runBlocking { conversation.sendMessage(user) }.toString()

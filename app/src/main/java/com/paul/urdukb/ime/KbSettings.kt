@@ -80,6 +80,8 @@ class KbSettings private constructor(private val sp: SharedPreferences) {
         val CLIPBOARD_HISTORY = Flag("clipboard_history", false)
         /** In Auto tone, let the on-device model judge tone, listener and situation when the words alone do not settle it. */
         val SMART_TONE = Flag("smart_tone", true)
+        /** Urdu voice notes: listen twice (normal speed and slowed down) and combine, for better accuracy at the cost of time. */
+        val CAREFUL_VOICE = Flag("careful_voice", true)
 
         val CLIP_KEEP_CHOICES = listOf(1, 24, 168)
 

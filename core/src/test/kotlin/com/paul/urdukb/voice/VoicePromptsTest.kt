@@ -26,4 +26,25 @@ class VoicePromptsTest {
         assertFalse(VoicePrompts.TRANSCRIBE_URDU.contains("English:"))
         assertTrue(VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES.contains("AJ Tower"))
     }
+
+    @Test fun reconcilingBuildsOneMessageWithBothTranscripts() {
+        val m = VoicePrompts.reconcileInput("a b", "a c")
+        assertTrue(m.contains("normal speed): a b") && m.contains("slowed down): a c"))
+        assertTrue(VoicePrompts.RECONCILE_RULES.contains("most likely correct transcript"))
+    }
+
+    @Test fun sameTextIgnoresPunctuationAndSpacing() {
+        assertTrue(VoicePrompts.sameText("Parcel  reception!", "parcel reception"))
+        assertFalse(VoicePrompts.sameText("parcel reception", "parcel reception ok"))
+        assertTrue(VoicePrompts.sameText("", " "))
+    }
+
+    @Test fun translationExamplesMixUrduAndEnglish() {
+        assertTrue(VoicePrompts.TRANSLATE_EXAMPLES.size >= 3)
+        for ((urdu, english) in VoicePrompts.TRANSLATE_EXAMPLES) {
+            assertTrue("urdu side has Urdu letters", VoicePrompts.isUrduScript(urdu))
+            assertTrue("urdu side keeps an English word", Regex("[A-Za-z]{3,}").containsMatchIn(urdu))
+            assertFalse("english side is English", VoicePrompts.isUrduScript(english))
+        }
+    }
 }

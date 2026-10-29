@@ -356,6 +356,7 @@ private fun VoiceCard(model: MainModel) {
     AppCard {
         CardTitle(stringResource(R.string.card_voice))
         Muted(stringResource(R.string.voice_help), Modifier.padding(top = 4.dp))
+        PrefSwitch(stringResource(R.string.voice_careful), stringResource(R.string.voice_careful_sub), KbSettings.CAREFUL_VOICE)
         PillButton(
             stringResource(R.string.voice_speak_button), Modifier.fillMaxWidth().padding(top = 12.dp), filled = true,
             enabled = !model.busy,
