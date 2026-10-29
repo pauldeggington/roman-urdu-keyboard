@@ -89,10 +89,6 @@ fun VoiceScreen(
                     VoiceModel.UiState.Comparing -> Body(stringResource(R.string.voice_comparing))
                     VoiceModel.UiState.Checking -> Body(stringResource(R.string.voice_checking))
                     VoiceModel.UiState.WritingUrdu -> Body(stringResource(R.string.voice_writing_urdu))
-                    is VoiceModel.UiState.ListeningSlow -> Body(
-                        if (state.of > 1) stringResource(R.string.voice_listening_slow_part, state.part, state.of) else stringResource(R.string.voice_listening_slow),
-                    )
-                    VoiceModel.UiState.Comparing -> Body(stringResource(R.string.voice_comparing))
                     VoiceModel.UiState.WritingEnglish -> Body(stringResource(R.string.voice_writing_english))
                     is VoiceModel.UiState.Recording -> {
                         Body(stringResource(R.string.voice_recording, state.seconds))
