@@ -6,7 +6,7 @@ A native Android app in Kotlin. The AI runs on the phone through LiteRT-LM. Ther
 flowchart LR
   subgraph app[":app (Android)"]
     IME["ime/ — the keyboard<br/>UrduImeService, KeyboardView,<br/>ToolbarView, EmojiPanel, ClipboardPanel"]
-    UI["Setup guide and settings<br/>SetupActivity, MainActivity"]
+    UI["App screens (Jetpack Compose)<br/>ui/MainScreen + MainModel<br/>ui/SetupScreen + SetupModel"]
     ENG["LlmEngine, Prefs, ModelDownloader"]
   end
   subgraph core[":core (plain Kotlin, no Android)"]
@@ -25,7 +25,7 @@ flowchart LR
 | Module | Contains | Rule |
 |---|---|---|
 | `:core` | Word suggestions and autocorrect, glide decoding, emoji search, language detection, who-is-speaking tagging, the glossary and example bank | **No Android imports.** Tests run with `./gradlew :core:test` in seconds. |
-| `:app` | The input method service and its views, the setup guide and settings screens, model download, the Gemma engine, GIPHY, clipboard history, voice input | Everything that needs Android. |
+| `:app` | The input method service and its views, the setup guide and settings screens (Compose), model download, the Gemma engine, GIPHY, clipboard history, voice input | Everything that needs Android. |
 
 New logic that can be written without Android goes in `:core` first.
 
@@ -51,9 +51,20 @@ New logic that can be written without Android goes in `:core` first.
 3. `LlmEngine` loads the Gemma model (`.litertlm` file in app storage), builds the prompt, runs it and returns text. The engine is loaded when needed and unloaded after a while to free memory.
 4. The result replaces the selection. Tapping Translate again restores the original.
 
-## The app screens
+## The app screens (Jetpack Compose)
 
-`SetupActivity` (the six-step guide) and `MainActivity` (settings, try-it box, updates) build their views in code today. `TranslateTextActivity` is the "Translate to English" sheet in the text selection menu.
+The keyboard stays on Canvas views; the app screens are Compose. Each screen is split in two:
+
+| Screen | What it shows | What it does |
+|---|---|---|
+| Settings (`MainActivity`) | `ui/MainScreen.kt`: a list of cards | `ui/MainModel.kt`: model download and check, update check, Try it, style editor |
+| Setup guide (`SetupActivity`) | `ui/SetupScreen.kt`: one composable per step | `ui/SetupModel.kt`: which step, download and file check, keyboard on or not |
+| Translate to English sheet (`TranslateTextActivity`) | one composable in the same file | calls the engine directly |
+
+- `ui/AppTheme.kt` builds the Material theme from the same `Palette` the keyboard settings use (wallpaper colours, or the chosen swatch, light or dark).
+- `ui/Components.kt` has the shared pieces: `AppCard`, `PillButton`, `Segmented`, `TextBox`, `SwitchRow`. Use them for new screens.
+- The activities only start the model and the screen. To change how something looks, edit the screen file; to change what it does, edit the model.
+- All text is in `res/values/strings.xml`, so a translation is one new `values-xx/strings.xml`.
 
 ## Data and privacy
 

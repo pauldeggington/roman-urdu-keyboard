@@ -24,7 +24,8 @@ It has hooks that let CI drive the keyboard and take screenshots (see `scripts/s
 |---|---|
 | `core/` | Plain Kotlin with **no Android calls**: word suggestions, autocorrect, glide decoding, language detection, translation prompt logic. Anything new that can be written without Android belongs here, because its tests run in seconds. |
 | `app/src/main/java/com/paul/urdukb/ime/` | The keyboard: input service, key view, toolbar, emoji, GIFs, clipboard, voice. |
-| `app/src/main/java/com/paul/urdukb/` | The app: setup guide, settings, model download, the engine that talks to Gemma. |
+| `app/src/main/java/com/paul/urdukb/ui/` | The app screens in Jetpack Compose. Each screen is a `...Screen.kt` (what it shows) and a `...Model.kt` (what it does). Shared pieces are in `Components.kt`. |
+| `app/src/main/java/com/paul/urdukb/` | The rest of the app: model download, the engine that talks to Gemma, preferences, the activities that start the screens. |
 | `app/src/main/assets/` | Word lists, emoji data and spelling data (see [CREDITS.md](CREDITS.md)). |
 | `app/src/main/res/values/strings.xml` | Text shown to people. New text goes here, not in the code, so it can be translated. |
 | `scripts/` | CI screenshots, README images and the showcase films. |
@@ -39,6 +40,7 @@ It has hooks that let CI drive the keyboard and take screenshots (see `scripts/s
 
 ## Style
 
+- A new app screen is a composable in `ui/` plus a model class for its logic. The keyboard itself stays on Canvas views.
 - Kotlin, 4-space indent, no wildcard imports (`.editorconfig` sets this up in most editors).
 - Prefer small files. If a file passes about 500 lines, ask whether part of it should be its own class.
 - User-visible text lives in `strings.xml`.

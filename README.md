@@ -232,8 +232,10 @@ Every change is built as a pre-release first (for example `v2.0.112-test`). Inst
 
 | Path | What it is |
 |---|---|
-| `app/src/main/java/com/paul/urdukb/` | The app: setup guide, model engine and download, translate and tone logic, glossary, example bank, updater |
-| `app/src/main/java/com/paul/urdukb/ime/` | The keyboard: input service, key view, toolbar, emoji screen, colours |
+| `core/` | Plain Kotlin with no Android calls: suggestions, autocorrect, glide decoding, language detection, translation prompt logic (tests run in seconds) |
+| `app/src/main/java/com/paul/urdukb/ui/` | The app screens (Jetpack Compose): settings, setup guide, each as a screen plus a model |
+| `app/src/main/java/com/paul/urdukb/` | The rest of the app: model engine and download, translate and tone logic, preferences, updater |
+| `app/src/main/java/com/paul/urdukb/ime/` | The keyboard (Canvas views): input service, key view, toolbar, emoji, GIFs, clipboard, voice |
 | `app/src/main/assets/roman_urdu/` | Spelling variant data (see [CREDITS.md](CREDITS.md)) |
 | `tools/convert_ruwv.py` | Converts the spelling data into the file the app reads |
 | `scripts/shots.sh`, `.github/workflows/preview.yml` | Boots the keyboard on an emulator in CI and takes screenshots |
@@ -241,6 +243,10 @@ Every change is built as a pre-release first (for example `v2.0.112-test`). Inst
 | `scripts/film/` | The showcase and setup films: each is one HTML page drawn in code (`index.html`, `setup.html`), rendered to frames with `render.py` and joined with ffmpeg |
 
 </details>
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to build, where things live and how to make a change, and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the picture of how it fits together.
 
 ## Status
 
