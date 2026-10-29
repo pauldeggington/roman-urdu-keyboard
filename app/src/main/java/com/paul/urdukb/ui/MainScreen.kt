@@ -7,6 +7,10 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -247,7 +251,7 @@ private fun TryCard(model: MainModel) {
 private fun StyleCard(model: MainModel) {
     val cs = MaterialTheme.colorScheme
     AppCard {
-        Row(Modifier.fillMaxWidth().clickable { model.styleOpen = !model.styleOpen }, verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable(role = Role.Button) { model.styleOpen = !model.styleOpen }, verticalAlignment = Alignment.CenterVertically) {
             CardTitle(stringResource(R.string.card_style), Modifier.weight(1f))
             Text(stringResource(if (model.styleOpen) R.string.hide else R.string.edit), color = cs.primary, fontSize = Type.body)
         }
@@ -290,18 +294,20 @@ private fun ColourCard(recreateScreen: () -> Unit) {
             Row(Modifier.fillMaxWidth().padding(top = 6.dp)) {
                 rowSwatches.forEach { sw ->
                     val selected = sw.id == current
-                    Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        Modifier.weight(1f).selectable(selected = selected, role = Role.RadioButton) {
+                            KeyboardLook.apply(ctx, sw.id, KeyboardLook.mode(ctx))
+                            Toast.makeText(ctx, Words.colour(), Toast.LENGTH_SHORT).show()
+                            recreateScreen()
+                        },
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
                         val fill = if (sw.id == KeyboardLook.WALLPAPER) Brush.linearGradient(listOf(Color(0xFFC27BA0), Color(0xFF6C7CE8), Color(0xFF2FB5A8))) else Brush.linearGradient(listOf(Color(sw.color), Color(sw.color)))
                         Box(
-                            Modifier.size(46.dp).clip(CircleShape).background(fill).then(if (selected) Modifier.border(3.dp, outline, CircleShape) else Modifier)
-                                .clickable {
-                                    KeyboardLook.apply(ctx, sw.id, KeyboardLook.mode(ctx))
-                                    Toast.makeText(ctx, Words.colour(), Toast.LENGTH_SHORT).show()
-                                    recreateScreen()
-                                },
+                            Modifier.size(46.dp).clip(CircleShape).background(fill).then(if (selected) Modifier.border(3.dp, outline, CircleShape) else Modifier),
                             contentAlignment = Alignment.Center,
-                        ) { if (selected) Text("✓", color = Color.White, fontSize = Type.bodyLarge, fontWeight = FontWeight.Bold) }
-                        Muted(sw.name, Modifier.padding(top = 3.dp), size = 11.sp)
+                        ) { if (selected) Text("✓", Modifier.clearAndSetSemantics {}, color = Color.White, fontSize = Type.bodyLarge, fontWeight = FontWeight.Bold) }
+                        Muted(sw.name, Modifier.padding(top = 3.dp), size = Type.caption)
                     }
                 }
             }
@@ -432,7 +438,7 @@ private fun CreditsCard() {
     AppCard {
         CardTitle(stringResource(R.string.card_credits))
         SelectionContainer {
-            Text(linkify(text, cs.primary), Modifier.padding(top = 8.dp), color = cs.onSurfaceVariant, fontSize = Type.caption, lineHeight = 17.sp)
+            Text(linkify(text, cs.primary), Modifier.padding(top = 8.dp), color = cs.onSurfaceVariant, fontSize = Type.caption, lineHeight = Type.caption * 1.35f)
         }
     }
 }

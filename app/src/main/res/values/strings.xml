@@ -331,4 +331,7 @@
     <string name="ttl_hour">an hour</string>
     <string name="ttl_day">a day</string>
     <string name="ttl_week">a week</string>
+    <string name="a11y_back">Back</string>
+    <string name="a11y_step">Step %1$d of %2$d</string>
+    <string name="a11y_selected_colour">%1$s colour</string>
 </resources>

@@ -34,6 +34,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 
 // Small building blocks shared by the app screens, so a screen reads as a list of what it shows, not how it is drawn.
 
@@ -51,7 +55,7 @@ fun AppCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -
 
 @Composable
 fun CardTitle(text: String, modifier: Modifier = Modifier, color: Color = MaterialTheme.colorScheme.onSurface) {
-    Text(text, modifier = modifier, color = color, fontSize = Type.bodyLarge, fontWeight = FontWeight.Medium)
+    Text(text, modifier = modifier.semantics { heading() }, color = color, fontSize = Type.bodyLarge, fontWeight = FontWeight.Medium)
 }
 
 @Composable
@@ -86,7 +90,7 @@ fun PillButton(
             disabledContentColor = (if (filled) c.onPrimary else c.onSecondaryContainer).copy(alpha = 0.7f),
         ),
     ) {
-        Text(label, fontSize = Type.body, maxLines = 2, textAlign = TextAlign.Center, lineHeight = 17.sp)
+        Text(label, fontSize = Type.body, maxLines = 2, textAlign = TextAlign.Center, lineHeight = Type.body * 1.25f)
     }
 }
 
@@ -151,11 +155,16 @@ fun TextBox(
 /** A setting with a switch on the right, and an optional line under the label. */
 @Composable
 fun SwitchRow(label: String, sub: String, checked: Boolean, onChecked: (Boolean) -> Unit) {
-    Row(Modifier.fillMaxWidth().padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+    // the whole row is the switch, so a screen reader reads the label with "on / off" and any part of the row can be tapped
+    Row(
+        Modifier.fillMaxWidth().padding(top = 12.dp).heightIn(min = 48.dp)
+            .toggleable(value = checked, role = Role.Switch, onValueChange = onChecked),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Column(Modifier.weight(1f).padding(end = 12.dp)) {
             Text(label, color = MaterialTheme.colorScheme.onSurface, fontSize = Type.body)
             if (sub.isNotEmpty()) Muted(sub, size = Type.caption)
         }
-        Switch(checked = checked, onCheckedChange = onChecked)
+        Switch(checked = checked, onCheckedChange = null)
     }
 }

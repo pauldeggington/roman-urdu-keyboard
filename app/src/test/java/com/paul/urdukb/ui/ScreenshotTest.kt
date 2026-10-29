@@ -70,7 +70,7 @@ class ScreenshotTest {
                     LocalDensity provides Density(d.density, fontScale),
                     LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LayoutDirection.Ltr,
                 ) {
-                    RomanUrduTheme {
+                    RomanUrduTheme(urdu = rtl) {
                         Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) { content() }
                     }
                 }

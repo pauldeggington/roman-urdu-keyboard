@@ -322,4 +322,7 @@
     <string name="ttl_hour">ایک گھنٹہ</string>
     <string name="ttl_day">ایک دن</string>
     <string name="ttl_week">ایک ہفتہ</string>
+    <string name="a11y_back">واپس</string>
+    <string name="a11y_step">مرحلہ %1$d از %2$d</string>
+    <string name="a11y_selected_colour">%1$s رنگ</string>
 </resources>

@@ -66,6 +66,15 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -100,8 +109,8 @@ fun SetupScreen(model: SetupModel, pickModelFile: () -> Unit, recreateScreen: ()
         if (live.chip.isNotEmpty()) {
             Text(
                 live.chip,
-                Modifier.padding(start = 24.dp, top = 4.dp).clip(RoundedCornerShape(50)).background(cs.secondaryContainer)
-                    .clickable { model.show(Step.MODEL) }.padding(horizontal = 12.dp, vertical = 6.dp),
+                Modifier.padding(start = 24.dp, top = 4.dp).minimumInteractiveComponentSize().clip(RoundedCornerShape(50)).background(cs.secondaryContainer)
+                    .clickable(role = Role.Button) { model.show(Step.MODEL) }.padding(horizontal = 12.dp, vertical = 6.dp),
                 color = cs.onSecondaryContainer, fontSize = Type.caption,
             )
         }
@@ -147,22 +156,31 @@ private fun TopBar(model: SetupModel) {
     val step = model.step
     Row(Modifier.fillMaxWidth().padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
         val backVisible = step.ordinal > 0 && step != Step.DONE
-        Text(
-            "‹",
-            Modifier.alpha(if (backVisible) 1f else 0f).clickable(enabled = backVisible) { model.back() }.padding(start = 14.dp, end = 14.dp, bottom = 4.dp)
-                .semantics { contentDescription = "Back" },
-            color = cs.primary, fontSize = Type.display, fontWeight = FontWeight.Medium,
-        )
+        val back = stringResource(R.string.a11y_back)
+        if (backVisible) {
+            Box(
+                Modifier.size(48.dp).clickable(role = Role.Button, onClickLabel = back) { model.back() }.semantics { contentDescription = back },
+                contentAlignment = Alignment.Center,
+            ) {
+                // the arrow points the way "back" is: right to left in English, left to right in Urdu
+                Text(
+                    if (LocalLayoutDirection.current == LayoutDirection.Rtl) "›" else "‹",
+                    Modifier.padding(bottom = 4.dp).clearAndSetSemantics {},
+                    color = cs.primary, fontSize = Type.display, fontWeight = FontWeight.Medium,
+                )
+            }
+        } else Spacer(Modifier.size(48.dp))
         val n = Step.entries.size
+        val stepText = stringResource(R.string.a11y_step, step.ordinal + 1, n)
         Row(
-            Modifier.weight(1f).height(6.dp).semantics { contentDescription = "Step ${step.ordinal + 1} of $n" },
+            Modifier.weight(1f).height(6.dp).semantics(mergeDescendants = true) { contentDescription = stepText },
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             for (i in 0 until n) Box(Modifier.weight(1f).fillMaxSize().clip(RoundedCornerShape(3.dp)).background(if (i <= step.ordinal) cs.primary else cs.secondaryContainer))
         }
         Text(
             stringResource(R.string.setup_skip),
-            Modifier.alpha(if (step == Step.DONE) 0f else 1f).clickable(enabled = step != Step.DONE) { model.finish(openApp = true) }.padding(start = 16.dp, end = 12.dp, top = 10.dp, bottom = 10.dp),
+            Modifier.alpha(if (step == Step.DONE) 0f else 1f).minimumInteractiveComponentSize().clickable(enabled = step != Step.DONE, role = Role.Button) { model.finish(openApp = true) }.padding(start = 16.dp, end = 12.dp, top = 10.dp, bottom = 10.dp),
             color = cs.primary, fontSize = Type.body, fontWeight = FontWeight.Medium,
         )
     }
@@ -217,7 +235,7 @@ private fun BottomBar(model: SetupModel, pickModelFile: () -> Unit) {
         if (secondaryLabel != null) {
             Text(
                 secondaryLabel,
-                Modifier.fillMaxWidth().clickable { secondaryClick() }.padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 6.dp),
+                Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable(role = Role.Button) { secondaryClick() }.padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 6.dp),
                 color = cs.primary, fontSize = Type.body, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center,
             )
         }
@@ -259,7 +277,7 @@ private fun ModelStep(model: SetupModel, pickModelFile: () -> Unit) {
                 Modifier.fillMaxWidth().padding(top = 10.dp).clip(RoundedCornerShape(20.dp))
                     .background(if (selected) cs.secondaryContainer else cs.surface)
                     .border(BorderStroke(if (selected) 2.dp else 1.dp, if (selected) cs.primary else cs.secondaryContainer), RoundedCornerShape(20.dp))
-                    .clickable { model.chooseModel(m) }.padding(horizontal = 16.dp, vertical = 12.dp),
+                    .selectable(selected = selected, role = Role.RadioButton) { model.chooseModel(m) }.padding(horizontal = 16.dp, vertical = 12.dp),
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text((if (selected) "● " else "○ ") + m.tagline, Modifier.weight(1f), color = cs.onSurface, fontSize = Type.body, fontWeight = FontWeight.Medium)
@@ -369,14 +387,17 @@ private fun PersonalStep(recreateScreen: () -> Unit) {
         Row(Modifier.fillMaxWidth().padding(top = 6.dp)) {
             rowSw.forEach { sw ->
                 val selected = sw.id == current
-                Box(Modifier.weight(1f).height(52.dp), contentAlignment = Alignment.Center) {
+                Box(
+                    Modifier.weight(1f).height(52.dp)
+                        .selectable(selected = selected, role = Role.RadioButton) { KeyboardLook.apply(ctx, sw.id, KeyboardLook.mode(ctx)); recreateScreen() }
+                        .semantics { contentDescription = sw.name },
+                    contentAlignment = Alignment.Center,
+                ) {
                     val fill = if (sw.id == KeyboardLook.WALLPAPER) Brush.linearGradient(listOf(Color(0xFFC27BA0), Color(0xFF6C7CE8), Color(0xFF2FB5A8))) else Brush.linearGradient(listOf(Color(sw.color), Color(sw.color)))
                     Box(
-                        Modifier.size(44.dp).clip(CircleShape).background(fill).then(if (selected) Modifier.border(3.dp, outline, CircleShape) else Modifier)
-                            .clickable { KeyboardLook.apply(ctx, sw.id, KeyboardLook.mode(ctx)); recreateScreen() }
-                            .semantics { contentDescription = sw.name },
+                        Modifier.size(44.dp).clip(CircleShape).background(fill).then(if (selected) Modifier.border(3.dp, outline, CircleShape) else Modifier),
                         contentAlignment = Alignment.Center,
-                    ) { if (selected) Text("✓", color = Color.White, fontSize = Type.bodyLarge) }
+                    ) { if (selected) Text("✓", Modifier.clearAndSetSemantics {}, color = Color.White, fontSize = Type.bodyLarge) }
                 }
             }
         }
@@ -404,7 +425,7 @@ private fun PracticeStep(model: SetupModel) {
         text, { text = it }, stringResource(R.string.setup_practice_hint),
         modifier = Modifier.padding(top = 16.dp).focusRequester(focus), minLines = 3, sentences = true, fontSize = Type.bodyLarge,
     )
-    Text(live.practiceText, Modifier.padding(top = 8.dp), color = if (live.practiceDone) okColor else cs.onSurfaceVariant, fontSize = Type.caption, lineHeight = 17.sp)
+    Text(live.practiceText, Modifier.padding(top = 8.dp), color = if (live.practiceDone) okColor else cs.onSurfaceVariant, fontSize = Type.caption, lineHeight = Type.caption * 1.35f)
 }
 
 @Composable
@@ -424,8 +445,8 @@ private fun DoneStep() {
 @Composable
 private fun Heading(text: String, modifier: Modifier = Modifier, center: Boolean = false) {
     Text(
-        text, modifier.fillMaxWidth().padding(top = 16.dp), color = MaterialTheme.colorScheme.onBackground,
-        fontSize = Type.headline, lineHeight = 31.sp, fontWeight = FontWeight.Medium, textAlign = if (center) TextAlign.Center else TextAlign.Start,
+        text, modifier.fillMaxWidth().padding(top = 16.dp).semantics { heading() }, color = MaterialTheme.colorScheme.onBackground,
+        fontSize = Type.headline, lineHeight = Type.headline * 1.25f, fontWeight = FontWeight.Medium, textAlign = if (center) TextAlign.Center else TextAlign.Start,
     )
 }
 
@@ -433,14 +454,14 @@ private fun Heading(text: String, modifier: Modifier = Modifier, center: Boolean
 private fun Body(text: String, modifier: Modifier = Modifier, center: Boolean = false) {
     Text(
         text, modifier.fillMaxWidth().padding(top = 10.dp), color = MaterialTheme.colorScheme.onSurfaceVariant,
-        fontSize = Type.bodyLarge, lineHeight = 19.sp, textAlign = if (center) TextAlign.Center else TextAlign.Start,
+        fontSize = Type.bodyLarge, lineHeight = Type.bodyLarge * 1.35f, textAlign = if (center) TextAlign.Center else TextAlign.Start,
     )
 }
 
 @Composable
 private fun Small(text: String, modifier: Modifier = Modifier, center: Boolean = false) {
     Text(
-        text, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Type.caption, lineHeight = 15.5.sp,
+        text, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Type.caption, lineHeight = Type.caption * 1.35f,
         textAlign = if (center) TextAlign.Center else TextAlign.Start,
     )
 }
@@ -487,7 +508,7 @@ private fun Numbered(n: Int, text: String) {
         Box(Modifier.size(30.dp).clip(CircleShape).background(cs.primary), contentAlignment = Alignment.Center) {
             Text("$n", color = cs.onPrimary, fontSize = Type.body, fontWeight = FontWeight.Bold)
         }
-        Text(text, Modifier.weight(1f).padding(start = 14.dp), color = cs.onSurface, fontSize = Type.bodyLarge, lineHeight = 20.sp)
+        Text(text, Modifier.weight(1f).padding(start = 14.dp), color = cs.onSurface, fontSize = Type.bodyLarge, lineHeight = Type.bodyLarge * 1.3f)
     }
 }
 
@@ -522,7 +543,7 @@ private fun ToggleIllustration() {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(stringResource(R.string.app_name), Modifier.weight(1f), color = cs.onSurface, fontSize = Type.body)
-        Box(Modifier.width(52.dp).height(32.dp).clip(RoundedCornerShape(16.dp)).background(if (on) cs.primary else cs.secondaryContainer)) {
+        Box(Modifier.width(52.dp).height(32.dp).clearAndSetSemantics {}.clip(RoundedCornerShape(16.dp)).background(if (on) cs.primary else cs.secondaryContainer)) {
             Box(
                 Modifier.padding(start = 5.dp).align(Alignment.CenterStart).offset(x = (20f * x).dp).size(22.dp).clip(CircleShape)
                     .background(if (on) cs.onPrimary else cs.onSurfaceVariant),
