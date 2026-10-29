@@ -49,7 +49,7 @@ jobs:
           chmod +x gradlew
           ./gradlew :core:test :app:testDebugUnitTest --no-daemon --stacktrace > test.log 2>&1 && rc=0 || rc=$?
           grep -E "careful glides|sloppy glides" test.log || true
-          grep -E "CONTRAST" test.log | cut -c1-300 | while read -r l; do echo "::notice title=Contrast::$l"; done
+          grep -E "CONTRAST" test.log | sed 's/; /\n/g' | cut -c1-120 | paste -sd'|' | fold -w 900 | while read -r l; do echo "::notice title=Contrast::$l"; done
           grep -E "AUTOCORRECT" test.log | cut -c1-900 | while read -r l; do echo "::notice title=Autocorrect::$l"; done
           if [ "$rc" -ne 0 ]; then
             { grep -E -A6 '^e: |FAILED|AssertionError|What went wrong|Could not|error:' test.log | head -60 || true; } > terrs.txt
