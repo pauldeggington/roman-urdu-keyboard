@@ -59,8 +59,6 @@ class ScreenshotTest {
     }
 
     private fun shoot(name: String, rtl: Boolean = false, fontScale: Float = 1f, content: @androidx.compose.runtime.Composable () -> Unit) {
-        // frames are stepped by hand, so a blinking cursor or other endless animation cannot keep the test waiting
-        rule.mainClock.autoAdvance = false
         try {
             rule.setContent {
                 val d = LocalDensity.current
@@ -69,7 +67,7 @@ class ScreenshotTest {
                     LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LayoutDirection.Ltr,
                 ) { RomanUrduTheme(content) }
             }
-            rule.mainClock.advanceTimeBy(1000)
+            rule.waitForIdle()
             check(name, rule.onRoot().captureToImage().asAndroidBitmap())
         } catch (e: Throwable) {
             println("SCREENSHOTFAIL $name: ${e.javaClass.simpleName}: ${e.message?.take(400)?.replace('\n', ' ')}")
@@ -104,4 +102,11 @@ class ScreenshotTest {
     @Test fun galleryLemonLight() { look("light", "lemon"); shoot("gallery-lemon-light") { ComponentGallery() } }
     @Test fun galleryUrduRtl() { look("light", "blue"); shoot("gallery-urdu-rtl", rtl = true) { ComponentGallery(urduGallery) } }
     @Test fun galleryLargeText() { look("light", "blue"); shoot("gallery-large-text", fontScale = 1.6f) { ComponentGallery() } }
+
+    // TEMPORARY: find which building block keeps the test from going idle
+    @Test fun probeText() { look("light", "blue"); shoot("probe-text") { androidx.compose.material3.Text("hello") } }
+    @Test fun probeCard() { look("light", "blue"); shoot("probe-card") { AppCard { CardTitle("t"); Muted("m") } } }
+    @Test fun probeButton() { look("light", "blue"); shoot("probe-button") { PillButton("go", filled = true) {} } }
+    @Test fun probeSwitch() { look("light", "blue"); shoot("probe-switch") { SwitchRow("a", "b", true) {} } }
+    @Test fun probeField() { look("light", "blue"); shoot("probe-field") { TextBox("", {}, "hint") } }
 }
