@@ -366,8 +366,4 @@
     <string name="voice_help">واٹس ایپ سے اردو وائس نوٹ اس ایپ کو شیئر کریں (شیئر، پھر رومن اردو کی بورڈ) تاکہ انگریزی میں پڑھ سکیں۔ یا انگریزی بولیں اور بھیجنے کے لیے اردو آواز کا پیغام پائیں۔ فون پر چلتا ہے، انٹرنیٹ نہیں چاہیے۔</string>
     <string name="voice_speak_button">انگریزی بولیں ← اردو آواز</string>
     <string name="voice_writing_english">انگریزی میں ترجمہ ہو رہا ہے…</string>
-    <string name="voice_names_label">متوقع نام اور جگہیں</string>
-    <string name="voice_names_hint">Paul
-AJ Tower</string>
-    <string name="voice_names_help">ہر لائن میں ایک۔ ماڈل ان کے لیے کان لگاتا ہے، تاکہ Paul جیسا نام کسی اور لفظ کی طرح نہ سنا جائے۔</string>
 </resources>

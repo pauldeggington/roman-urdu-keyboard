@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import com.paul.urdukb.LlmEngine
-import com.paul.urdukb.Prefs
 import com.paul.urdukb.R
 import com.paul.urdukb.RomanUrdu
 import com.paul.urdukb.voice.AudioDecoder
@@ -91,20 +90,17 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
                 val decoded = AudioDecoder.decode(ctx, uri)
                 if (Pcm.isSilent(decoded.samples)) { post { state = UiState.TooQuiet }; return@execute }
                 val pieces = Pcm.split(decoded.samples)
-                val names = VoicePrompts.parseNames(Prefs.voiceNames(ctx))
-                val prompt = VoicePrompts.withNames(VoicePrompts.TRANSCRIBE_URDU, names)
                 // step one: only write down what is said
                 val parts = ArrayList<String>()
                 pieces.forEachIndexed { i, piece ->
                     post { state = UiState.Listening(i + 1, pieces.size) }
-                    parts += VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, piece, prompt))
+                    parts += VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, piece, VoicePrompts.TRANSCRIBE_URDU))
                 }
                 val urdu = VoicePrompts.join(parts)
                 if (urdu.isEmpty()) { post { state = UiState.TooQuiet }; return@execute }
-                // step two: the transcript is translated by the text model, with the names as a hint
+                // step two: the transcript is translated by the text model
                 post { state = UiState.WritingEnglish }
-                val rules = VoicePrompts.withNames(VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES, names).replace(" Names and places that may be said:", "\n- Names and places that may appear:")
-                val english = LlmEngine.askText(ctx, rules, urdu)
+                val english = LlmEngine.askText(ctx, VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES, urdu)
                 post { state = UiState.Done(urdu, english, "", decoded.truncated) }
             } catch (t: Throwable) {
                 LlmEngine.saveError(ctx, t)
@@ -159,7 +155,7 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
                 val parts = ArrayList<String>()
                 pieces.forEachIndexed { i, piece ->
                     post { state = UiState.Listening(i + 1, pieces.size) }
-                    parts += VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, piece, VoicePrompts.withNames(VoicePrompts.ENGLISH_TRANSCRIPT, VoicePrompts.parseNames(Prefs.voiceNames(ctx)))))
+                    parts += VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, piece, VoicePrompts.ENGLISH_TRANSCRIPT))
                 }
                 val english = VoicePrompts.join(parts)
                 if (english.isEmpty()) { post { state = UiState.TooQuiet }; return@execute }

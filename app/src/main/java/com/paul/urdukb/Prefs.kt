@@ -159,10 +159,6 @@ Rules:
         }
     }
 
-    // ---- names and places the voice features should expect (one per line) ----
-    fun voiceNames(ctx: Context): String = sp(ctx).getString("voice_names", "") ?: ""
-    fun setVoiceNames(ctx: Context, v: String) = sp(ctx).edit().putString("voice_names", v.trim()).apply()
-
     // ---- spelling glossary (shared by all styles) ----
     fun glossary(ctx: Context): String = sp(ctx).getString("glossary", null) ?: DefaultBank.GLOSSARY
     fun setGlossary(ctx: Context, v: String) = sp(ctx).edit().putString("glossary", v.trim()).apply()

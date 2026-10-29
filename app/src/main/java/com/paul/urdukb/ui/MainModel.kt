@@ -137,7 +137,6 @@ class MainModel(app: Application) : AndroidViewModel(app) {
         private set
     var examples by mutableStateOf("")
     var glossary by mutableStateOf(Prefs.glossary(ctx))
-    var voiceNames by mutableStateOf(Prefs.voiceNames(ctx))
 
     init {
         paintUpdate()
@@ -574,11 +573,6 @@ class MainModel(app: Application) : AndroidViewModel(app) {
     fun showStyle(style: Style) {
         styleSel = style
         examples = Prefs.examples(ctx, style)
-    }
-
-    fun saveVoiceNames() {
-        Prefs.setVoiceNames(ctx, voiceNames)
-        toast(str(R.string.saved))
     }
 
     fun saveStyle() {

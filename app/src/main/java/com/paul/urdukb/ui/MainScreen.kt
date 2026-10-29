@@ -356,10 +356,6 @@ private fun VoiceCard(model: MainModel) {
     AppCard {
         CardTitle(stringResource(R.string.card_voice))
         Muted(stringResource(R.string.voice_help), Modifier.padding(top = 4.dp))
-        FieldLabel(stringResource(R.string.voice_names_label))
-        TextBox(model.voiceNames, { model.voiceNames = it }, stringResource(R.string.voice_names_hint), minLines = 3)
-        Muted(stringResource(R.string.voice_names_help), Modifier.padding(top = 6.dp))
-        PillButton(stringResource(R.string.save), Modifier.fillMaxWidth().padding(top = 8.dp)) { model.saveVoiceNames() }
         PillButton(
             stringResource(R.string.voice_speak_button), Modifier.fillMaxWidth().padding(top = 12.dp), filled = true,
             enabled = !model.busy,
