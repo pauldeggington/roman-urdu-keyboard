@@ -59,15 +59,22 @@ class ScreenshotTest {
     }
 
     private fun shoot(name: String, rtl: Boolean = false, fontScale: Float = 1f, content: @androidx.compose.runtime.Composable () -> Unit) {
-        rule.setContent {
-            val d = LocalDensity.current
-            CompositionLocalProvider(
-                LocalDensity provides Density(d.density, fontScale),
-                LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LayoutDirection.Ltr,
-            ) { RomanUrduTheme(content) }
+        // frames are stepped by hand, so a blinking cursor or other endless animation cannot keep the test waiting
+        rule.mainClock.autoAdvance = false
+        try {
+            rule.setContent {
+                val d = LocalDensity.current
+                CompositionLocalProvider(
+                    LocalDensity provides Density(d.density, fontScale),
+                    LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LayoutDirection.Ltr,
+                ) { RomanUrduTheme(content) }
+            }
+            rule.mainClock.advanceTimeBy(1000)
+            check(name, rule.onRoot().captureToImage().asAndroidBitmap())
+        } catch (e: Throwable) {
+            println("SCREENSHOTFAIL $name: ${e.javaClass.simpleName}: ${e.message?.take(400)?.replace('\n', ' ')}")
+            throw e
         }
-        rule.waitForIdle()
-        check(name, rule.onRoot().captureToImage().asAndroidBitmap())
     }
 
     private fun check(name: String, bmp: Bitmap) {
