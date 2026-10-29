@@ -42,6 +42,24 @@ class ToneBankTest {
         assertTrue("use -tay: $bad", bad.isEmpty())
     }
 
+    @Test fun banksKeepTheirSpellingConsistent() {
+        // "mere/tumhare/humare" must be "meray/tumharay/humaray", "achi" must be "achhi", and "aram" must be "aaram"
+        val bad = Regex("\\b(mere|tumhare|humare|aapke|achi|achay|aram|araam|mazaaqiya)\\b", RegexOption.IGNORE_CASE)
+        val found = ArrayList<String>()
+        for (style in Style.entries.filter { it.isExtraTone }) {
+            for ((_, ur) in Bank.parse(ToneBank.forStyle(style)!!)) bad.find(ur)?.let { found += "$style: ${it.value} in $ur" }
+        }
+        assertTrue("inconsistent spellings: $found", found.isEmpty())
+    }
+
+    @Test fun savedBanksGetTheCorrectedLines() {
+        // every line the review corrected is a replacement for banks saved on a phone before
+        for ((old, new) in DefaultBank.REPLACED) {
+            assertTrue("replacement keeps the English side: $old", old.substringBefore("|") == new.substringBefore("|"))
+        }
+        assertTrue(DefaultBank.REPLACED.size >= 11 + 10)
+    }
+
     @Test fun existingBanksReport() {
         // not an assertion: shows how many Hindi-style spellings the older banks carry, so they can be cleaned up
         val mistakes = SpellingRules.PAIRS.associate { it.first.lowercase() to it.second }

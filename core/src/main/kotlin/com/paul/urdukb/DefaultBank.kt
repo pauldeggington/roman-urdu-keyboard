@@ -248,6 +248,18 @@ vichar -> khayal"""
 
     /** Lines of the earlier default bank that read as "you"; replaced in banks saved before. */
     val REPLACED = mapOf(
+        // corrections from the native-speaker style review of the tone banks
+        "I still wait for you at the end of every day. | Har din ke aakhir mein main aaj bhi tumhara intezar karta hoon." to "I still wait for you at the end of every day. | Har din ke aakhir mein main ab bhi tumhara intezar karta hoon.",
+        "My heart has found its home in you. | Mere dil ko tum mein apna ghar mil gaya hai." to "My heart has found its home in you. | Meray dil ko tum mein apna ghar mil gaya hai.",
+        "Sleep well, I'll see you in my dreams. | Aram se sona, khwabon mein miltay hain." to "Sleep well, I'll see you in my dreams. | Aaram se sona, khwabon mein milen gay.",
+        "I can't wait to see you. | Mujh se tumhein dekhnay ka intezar nahi ho raha." to "I can't wait to see you. | Tumhein dekhnay ka bohat intezar hai.",
+        "You're the best thing that ever happened to me. | Tum meri zindagi ki sab se achi cheez ho." to "You're the best thing that ever happened to me. | Tum meri zindagi ki sab se achhi cheez ho.",
+        "You think you're funny? Well, you are. | Tumhein lagta hai tum mazaaqiya ho? Chalo, ho bhi." to "You think you're funny? Well, you are. | Tumhein lagta hai tum mazahiya ho? Chalo, ho bhi.",
+        "Don't touch my food, I'm warning you. | Mere khanay ko haath mat lagana, main warning de raha hoon." to "Don't touch my food, I'm warning you. | Meray khanay ko haath mat lagana, main warning de raha hoon.",
+        "Relax, I'm just joking. | Araam se, main to mazaaq kar raha hoon." to "Relax, I'm just joking. | Aaram se, main to mazaaq kar raha hoon.",
+        "My boss thinks I'm working. Don't tell him. | Mere boss ko lagta hai main kaam kar raha hoon. Usay mat batana." to "My boss thinks I'm working. Don't tell him. | Meray boss ko lagta hai main kaam kar raha hoon. Usay mat batana.",
+        "Please rest, you must be tired. | Aap aaraam farmayen, aap thak gaye hon gay." to "Please rest, you must be tired. | Aap aaram farmaiye, aap thak gaye hon gay.",
+        "Please do visit us soon. | Kabhi tashreef layen." to "Please do visit us soon. | Jaldi hamaray ghar tashreef layiye ga.",
         "Where are you? I've been waiting for an hour. | Tum kahan ho? Ek ghantay se wait kar rahay hain." to "Where are you? I've been waiting for an hour. | Tum kahan ho? Main ek ghantay se wait kar raha hoon.",
         "I'll call you later, I'm in a meeting. | Baad mein call kartay hain, abhi meeting mein hain." to "I'll call you later, I'm in a meeting. | Main baad mein call karta hoon, abhi meeting mein hoon.",
         "I was going to tell you. | Tumhe batanay walay thay." to "I was going to tell you. | Main tumhe batanay wala tha.",

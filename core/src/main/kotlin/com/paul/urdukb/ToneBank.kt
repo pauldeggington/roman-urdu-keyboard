@@ -11,10 +11,10 @@ object ToneBank {
     val POETIC = """# longing
 I miss you more with every passing night. | Har guzarti raat ke saath tumhari yaad aur gehri ho jati hai.
 Your memory visits me like the evening breeze. | Tumhari yaad shaam ki hawa ki tarah mujh tak chali aati hai.
-I still wait for you at the end of every day. | Har din ke aakhir mein main aaj bhi tumhara intezar karta hoon.
+I still wait for you at the end of every day. | Har din ke aakhir mein main ab bhi tumhara intezar karta hoon.
 # devotion
 You are the dream my eyes never want to wake from. | Tum woh khwab ho jis se meri aankhein kabhi jagna nahi chahtin.
-My heart has found its home in you. | Mere dil ko tum mein apna ghar mil gaya hai.
+My heart has found its home in you. | Meray dil ko tum mein apna ghar mil gaya hai.
 Even the moon feels incomplete without you. | Tumharay bina chand bhi adhoora lagta hai.
 # night
 The moon is awake tonight, and so am I. | Aaj chand bhi jaag raha hai, aur main bhi.
@@ -35,13 +35,13 @@ Wherever you go, my prayers go with you. | Tum jahan bhi jao, meri duayein tumha
 # tender: good morning and good night
 Good morning, my love. | Subah bakhair, meri jaan.
 Good night, sweet dreams. | Shab bakhair, meethay khwab.
-Sleep well, I'll see you in my dreams. | Aram se sona, khwabon mein miltay hain.
+Sleep well, I'll see you in my dreams. | Aaram se sona, khwabon mein milen gay.
 # tender: words of affection
 I love you more than words can say. | Mujhe tum se itna pyaar hai ke lafz kam par jatay hain.
 You mean everything to me. | Tum meray liye sab kuch ho.
 You make me so happy. | Tum mujhe bohat khush rakhtay ho.
 # tender: missing someone
-I can't wait to see you. | Mujh se tumhein dekhnay ka intezar nahi ho raha.
+I can't wait to see you. | Tumhein dekhnay ka bohat intezar hai.
 Come home soon, I miss you. | Jaldi ghar aa jao, mujhe tumhari bohat yaad aa rahi hai.
 # tender: care
 Did you eat? Please don't skip meals. | Khana khaya? Please khana skip mat kiya karo.
@@ -51,7 +51,7 @@ Are you feeling better, sweetheart? | Ab tabiyat behtar hai, meri jaan?
 I'm always here for you. | Main hamesha tumharay saath hoon.
 Don't cry, everything will be okay. | Ro mat, sab theek ho jayega.
 # tender: appreciation
-You're the best thing that ever happened to me. | Tum meri zindagi ki sab se achi cheez ho.
+You're the best thing that ever happened to me. | Tum meri zindagi ki sab se achhi cheez ho.
 Thank you for always understanding me. | Mujhe hamesha samajhnay ka shukriya.
 I'm so proud of you. | Mujhe tum par bohat fakhar hai.
 # plain things stay plain
@@ -62,20 +62,20 @@ I'll be there at five. | Main paanch baje wahan hoon ga."""
 You're late again, what a surprise! | Phir late? Hairat hai, bilkul expect nahi tha!
 Did you forget I exist? | Kya tum bhool gaye ke main bhi zinda hoon?
 Wow, you actually replied. Miracles do happen. | Wah, tum ne reply kar diya. Mojizay waqai hotay hain.
-You think you're funny? Well, you are. | Tumhein lagta hai tum mazaaqiya ho? Chalo, ho bhi.
+You think you're funny? Well, you are. | Tumhein lagta hai tum mazahiya ho? Chalo, ho bhi.
 # food
-Don't touch my food, I'm warning you. | Mere khanay ko haath mat lagana, main warning de raha hoon.
+Don't touch my food, I'm warning you. | Meray khanay ko haath mat lagana, main warning de raha hoon.
 I only came for the biryani. | Main to sirf biryani ke liye aaya hoon.
 I'm on a diet. I'll start tomorrow. | Main diet par hoon. Kal se shuru karoon ga.
 # lazy
 I'm not lazy, I'm in energy-saving mode. | Main sust nahi hoon, bas energy-saving mode mein hoon.
 Five more minutes, then five more. | Bas paanch minute aur, phir paanch minute aur.
 # teasing
-Relax, I'm just joking. | Araam se, main to mazaaq kar raha hoon.
+Relax, I'm just joking. | Aaram se, main to mazaaq kar raha hoon.
 Don't be so dramatic. | Itna drama mat karo.
 You snore like a train! | Tum to train ki tarah kharratay letay ho!
 # work
-My boss thinks I'm working. Don't tell him. | Mere boss ko lagta hai main kaam kar raha hoon. Usay mat batana.
+My boss thinks I'm working. Don't tell him. | Meray boss ko lagta hai main kaam kar raha hoon. Usay mat batana.
 It's Monday again. Send help. | Phir peer aa gaya. Madad bhejo.
 # money
 My wallet is crying right now. | Mera wallet is waqt ro raha hai.
@@ -97,10 +97,10 @@ We are grateful for your blessings. | Hum aap ki duaon ke shukar guzaar hain.
 # care
 Please take care of your health, Father. | Abbu jaan, apni sehat ka khayal rakhiye ga.
 Have you taken your medicine? | Kya aap ne apni dawai li?
-Please rest, you must be tired. | Aap aaraam farmayen, aap thak gaye hon gay.
+Please rest, you must be tired. | Aap aaram farmaiye, aap thak gaye hon gay.
 # invitation
 You are most welcome in our home. | Aap ka hamaray ghar mein dil se istaqbal hai.
-Please do visit us soon. | Kabhi tashreef layen.
+Please do visit us soon. | Jaldi hamaray ghar tashreef layiye ga.
 # occasions
 Eid Mubarak to you and your family. | Aap aur aap ke ghar walon ko Eid Mubarak.
 May Allah give you a long and healthy life. | Allah aap ko lambi aur sehatmand zindagi ata farmaye.
