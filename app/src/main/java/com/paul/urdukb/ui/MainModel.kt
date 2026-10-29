@@ -288,10 +288,10 @@ class MainModel(private val act: ComponentActivity) {
             barProgress = bar, checks = checks, stats = stats, gpu = Prefs.gpu(act), error = Prefs.lastError(act),
             formal = RomanUrdu.isFormal(act), direction = RomanUrdu.direction(act),
         )
-        setBusy(busy)
+        updateBusy(busy)
     }
 
-    private fun setBusy(b: Boolean) {
+    private fun updateBusy(b: Boolean) {
         busy = b
         if (b) act.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         else act.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -337,13 +337,13 @@ class MainModel(private val act: ComponentActivity) {
         speed = 0.0
         transferProgress = 0f
         transferText = message
-        setBusy(true)
+        updateBusy(true)
     }
 
     private fun endTransfer(error: Throwable?) {
         phase = ""
         transferText = null
-        setBusy(false)
+        updateBusy(false)
         if (error is ModelDownloader.CancelledException) toast(str(R.string.transfer_stopped))
         else if (error != null) Prefs.setLastError(act, "${error.javaClass.simpleName}: ${error.message}")
         refresh()
@@ -509,7 +509,7 @@ class MainModel(private val act: ComponentActivity) {
         tryOutput = Words.thinking()
         thinkingNow = true
         main.postDelayed(thinkRunnable, 1600)
-        setBusy(true)
+        updateBusy(true)
         io.execute {
             var out: String? = null
             var err: Throwable? = null
@@ -532,7 +532,7 @@ class MainModel(private val act: ComponentActivity) {
                     lastInput = text
                     tryNote = direction + "  ·  " + Words.done()
                 }
-                setBusy(false)
+                updateBusy(false)
                 refresh()
             }
         }
@@ -540,7 +540,7 @@ class MainModel(private val act: ComponentActivity) {
 
     // ================================================================ style editor
 
-    fun setSpeaker(v: String) {
+    fun chooseSpeaker(v: String) {
         Speaker.set(act, v)
         speaker = v
         toast(if (v == Speaker.MALE) "Main kar raha hoon" else "Main kar rahi hoon")

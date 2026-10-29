@@ -255,7 +255,7 @@ private fun StyleCard(model: MainModel) {
         Muted(stringResource(R.string.style_help))
         // who "I" is, so "I'm tired" becomes "Main thak gaya hoon" and never reads as "you"
         FieldLabel(stringResource(R.string.style_i_am))
-        Segmented(listOf(stringResource(R.string.male) to Speaker.MALE, stringResource(R.string.female) to Speaker.FEMALE), selected = model.speaker) { model.setSpeaker(it) }
+        Segmented(listOf(stringResource(R.string.male) to Speaker.MALE, stringResource(R.string.female) to Speaker.FEMALE), selected = model.speaker) { model.chooseSpeaker(it) }
         Muted(stringResource(R.string.style_i_am_help), Modifier.padding(top = 6.dp))
         if (model.styleOpen) {
             Segmented(
