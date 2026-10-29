@@ -77,6 +77,19 @@ The keyboard stays on Canvas views; the app screens are Compose. Each screen is 
 Accessibility rules for new screens: 48dp touch targets, a label (text or `contentDescription`) on everything tappable, `selectable` / `toggleable` for choices so the state is read out, headings marked with `heading()`, and start/end instead of left/right so Urdu mirrors.
 - All text is in `res/values/strings.xml`, so a translation is one new `values-xx/strings.xml`.
 
+## Voice
+
+Two features share one sheet (`VoiceActivity`, `ui/VoiceScreen.kt`, `ui/VoiceModel.kt`):
+
+| Direction | Steps |
+|---|---|
+| Urdu voice note in (shared from another app) | `voice/AudioDecoder` (Android's decoders, to 16 kHz mono) → `core voice/Pcm.split` (pieces under 30 s, cut at quiet moments) → `LlmEngine.listen` (Gemma hears each piece: Urdu text plus English) → `VoicePrompts.parseHeard` |
+| English speech in (recorded in the app) | `voice/Recorder` → `LlmEngine.listen` (English transcript) → `LlmEngine.askText` (Urdu script) and the usual tone-aware Roman Urdu translation → `voice/UrduSpeech` (the phone's Urdu voice writes a WAV) → `voice/M4a` (AAC) → shared through the `FileProvider` |
+
+- The audio parts that need no Android (resampling, cutting, WAV header, prompts, reading the model's reply) are in `core` with tests. The decoder, recorder, speech and encoder are Android calls and are checked on a phone.
+- The engine only loads the audio encoder (`audioBackend`) when voice is used; text-only use is unchanged.
+- Audio is sent to the model as a 16 kHz mono WAV; if that is rejected, as raw samples (`LlmEngine.lastAudioFormat` records which).
+
 ## Data and privacy
 
 - Settings are SharedPreferences (`Prefs` for the model, `KbSettings` for the keyboard). They are not DataStore on purpose: DataStore reads are asynchronous and the keyboard reads a few flags on every key press. Learned words, clipboard history and recent GIFs are kept there too, on the phone only. The GIPHY key is stored encrypted with the Android Keystore (`Secrets`).
