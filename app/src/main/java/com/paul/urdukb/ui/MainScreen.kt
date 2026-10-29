@@ -58,7 +58,6 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.edit
 import com.paul.urdukb.BuildConfig
 import com.paul.urdukb.KeyboardLook
 import com.paul.urdukb.ModelChoice
@@ -70,7 +69,7 @@ import com.paul.urdukb.Style
 import com.paul.urdukb.VariantMap
 import com.paul.urdukb.Words
 import com.paul.urdukb.ime.ClipStore
-import com.paul.urdukb.ime.Kb
+import com.paul.urdukb.ime.KbSettings
 import com.paul.urdukb.ime.PersonalWords
 
 /** The settings screen: a list of cards. What each card does lives in [MainModel]. */
@@ -341,20 +340,20 @@ private fun SpeedCard(model: MainModel) {
 // ------------------------------------------------------------------ keyboard settings, GIFs, credits, errors
 
 @Composable
-private fun PrefSwitch(label: String, sub: String, key: String, default: Boolean) {
+private fun PrefSwitch(label: String, sub: String, flag: KbSettings.Flag) {
     val ctx = LocalContext.current
-    var on by remember { mutableStateOf(Kb.bool(ctx, key, default)) }
+    var on by remember { mutableStateOf(KbSettings.of(ctx)[flag]) }
     SwitchRow(label, sub, on) { v ->
         on = v
         // turning clipboard history off also deletes what was kept
-        if (key == Kb.PREF_CLIP) ClipStore.setEnabled(ctx, v) else Kb.prefs(ctx).edit { putBoolean(key, v) }
+        if (flag == KbSettings.CLIPBOARD_HISTORY) ClipStore.setEnabled(ctx, v) else KbSettings.of(ctx)[flag] = v
     }
 }
 
 @Composable
 private fun KeyboardCard(model: MainModel) {
     val ctx = LocalContext.current
-    var keepHours by remember { mutableStateOf(ClipStore.ttlHours(ctx)) }
+    var keepHours by remember { mutableStateOf(KbSettings.of(ctx).clipKeepHours) }
     AppCard {
         CardTitle(stringResource(R.string.card_keyboard))
         Muted(stringResource(R.string.kb_help), Modifier.padding(top = 6.dp))
@@ -362,27 +361,27 @@ private fun KeyboardCard(model: MainModel) {
             PillButton(stringResource(R.string.kb_turn_on), Modifier.weight(1f).fillMaxHeight(), filled = true, enabled = !model.busy) { model.openKeyboardSettings() }
             PillButton(stringResource(R.string.kb_switch), Modifier.weight(1f).fillMaxHeight(), enabled = !model.busy) { model.showPicker() }
         }
-        PrefSwitch(stringResource(R.string.kb_vibrate), "", Kb.PREF_VIBRATE, true)
-        PrefSwitch(stringResource(R.string.kb_sound), "", Kb.PREF_SOUND, false)
-        PrefSwitch(stringResource(R.string.kb_popup), stringResource(R.string.kb_popup_sub), Kb.PREF_PREVIEW, true)
-        PrefSwitch(stringResource(R.string.kb_autocap), stringResource(R.string.kb_autocap_sub), Kb.PREF_AUTOCAP, true)
-        PrefSwitch(stringResource(R.string.kb_warm), stringResource(R.string.kb_warm_sub), Kb.PREF_WARM, true)
-        PrefSwitch(stringResource(R.string.kb_suggest), stringResource(R.string.kb_suggest_sub), Kb.PREF_SUGGEST, true)
-        PrefSwitch(stringResource(R.string.kb_autocorrect), stringResource(R.string.kb_autocorrect_sub), Kb.PREF_AUTOCORRECT, true)
+        PrefSwitch(stringResource(R.string.kb_vibrate), "", KbSettings.VIBRATE)
+        PrefSwitch(stringResource(R.string.kb_sound), "", KbSettings.SOUND)
+        PrefSwitch(stringResource(R.string.kb_popup), stringResource(R.string.kb_popup_sub), KbSettings.KEY_PREVIEW)
+        PrefSwitch(stringResource(R.string.kb_autocap), stringResource(R.string.kb_autocap_sub), KbSettings.AUTOCAP)
+        PrefSwitch(stringResource(R.string.kb_warm), stringResource(R.string.kb_warm_sub), KbSettings.WARM_TRANSLATOR)
+        PrefSwitch(stringResource(R.string.kb_suggest), stringResource(R.string.kb_suggest_sub), KbSettings.SUGGEST)
+        PrefSwitch(stringResource(R.string.kb_autocorrect), stringResource(R.string.kb_autocorrect_sub), KbSettings.AUTOCORRECT)
         PillButton(stringResource(R.string.kb_forget_words), Modifier.fillMaxWidth().padding(top = 10.dp)) {
             PersonalWords.clear(ctx)
             Toast.makeText(ctx, ctx.getString(R.string.kb_words_cleared), Toast.LENGTH_SHORT).show()
         }
-        PrefSwitch(stringResource(R.string.kb_glide), stringResource(R.string.kb_glide_sub), Kb.PREF_GLIDE, true)
-        PrefSwitch(stringResource(R.string.kb_double_space), "", Kb.PREF_DOUBLE_SPACE, true)
-        PrefSwitch(stringResource(R.string.kb_clipboard), stringResource(R.string.kb_clipboard_sub), Kb.PREF_CLIP, false)
+        PrefSwitch(stringResource(R.string.kb_glide), stringResource(R.string.kb_glide_sub), KbSettings.GLIDE)
+        PrefSwitch(stringResource(R.string.kb_double_space), "", KbSettings.DOUBLE_SPACE)
+        PrefSwitch(stringResource(R.string.kb_clipboard), stringResource(R.string.kb_clipboard_sub), KbSettings.CLIPBOARD_HISTORY)
         PillButton(stringResource(R.string.kb_clip_keep, ClipStore.ttlWords(keepHours)), Modifier.fillMaxWidth().padding(top = 10.dp)) {
-            val choices = ClipStore.TTL_CHOICES
+            val choices = KbSettings.CLIP_KEEP_CHOICES
             val next = choices[(choices.indexOf(keepHours) + 1) % choices.size]
-            ClipStore.setTtlHours(ctx, next)
+            KbSettings.of(ctx).clipKeepHours = next
             keepHours = next
         }
-        PrefSwitch(stringResource(R.string.kb_hints), stringResource(R.string.kb_hints_sub), Kb.PREF_HINTS, true)
+        PrefSwitch(stringResource(R.string.kb_hints), stringResource(R.string.kb_hints_sub), KbSettings.NUMBER_HINTS)
         PillButton(stringResource(R.string.kb_run_setup), Modifier.fillMaxWidth().padding(top = 16.dp)) {
             SetupActivity.reset(ctx)
             ctx.startActivity(Intent(ctx, SetupActivity::class.java))
@@ -393,8 +392,8 @@ private fun KeyboardCard(model: MainModel) {
 @Composable
 private fun GiphyCard() {
     val ctx = LocalContext.current
-    var key by remember { mutableStateOf(Kb.ownGiphyKey(ctx)) }
-    var has by remember { mutableStateOf(Kb.giphyKey(ctx).isNotEmpty()) }
+    var key by remember { mutableStateOf(KbSettings.of(ctx).ownGiphyKey) }
+    var has by remember { mutableStateOf(KbSettings.of(ctx).giphyKey.isNotEmpty()) }
     val builtIn = BuildConfig.GIPHY_KEY.isNotEmpty()
     AppCard {
         CardTitle(stringResource(R.string.card_giphy))
@@ -408,8 +407,8 @@ private fun GiphyCard() {
                 runCatching { ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://developers.giphy.com/dashboard/"))) }
             }
             PillButton(stringResource(R.string.save), Modifier.weight(1f).fillMaxHeight(), filled = true) {
-                Kb.setGiphyKey(ctx, key)
-                has = Kb.giphyKey(ctx).isNotEmpty()
+                KbSettings.of(ctx).setGiphyKey(key)
+                has = KbSettings.of(ctx).giphyKey.isNotEmpty()
                 Toast.makeText(ctx, ctx.getString(R.string.saved), Toast.LENGTH_SHORT).show()
             }
         }

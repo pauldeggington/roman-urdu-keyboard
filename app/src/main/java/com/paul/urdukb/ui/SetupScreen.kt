@@ -81,7 +81,7 @@ import com.paul.urdukb.R
 import com.paul.urdukb.RomanUrdu
 import com.paul.urdukb.SetupActivity.Step
 import com.paul.urdukb.Speaker
-import com.paul.urdukb.ime.Kb
+import com.paul.urdukb.ime.KbSettings
 
 /** The first-run guide: one task per screen, a progress bar on top, one big button below. What it does is in [SetupModel]. */
 @Composable
@@ -352,7 +352,7 @@ private fun PersonalStep(recreateScreen: () -> Unit) {
     Label(stringResource(R.string.setup_how_talk))
     Segmented(listOf(stringResource(R.string.tone_casual) to false, stringResource(R.string.tone_formal) to true), formal) {
         formal = it
-        Kb.prefs(ctx).edit { putBoolean(RomanUrdu.PREF_TONE, it) }
+        KbSettings.of(ctx).formalTone = it
     }
     Small(stringResource(R.string.setup_personal_tone_help), Modifier.padding(top = 6.dp))
 

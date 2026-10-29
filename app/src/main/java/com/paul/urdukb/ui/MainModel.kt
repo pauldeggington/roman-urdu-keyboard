@@ -27,7 +27,7 @@ import com.paul.urdukb.Speaker
 import com.paul.urdukb.Style
 import com.paul.urdukb.Updater
 import com.paul.urdukb.Words
-import com.paul.urdukb.ime.Kb
+import com.paul.urdukb.ime.KbSettings
 import java.io.File
 import java.util.Locale
 import java.util.concurrent.Executors
@@ -461,12 +461,12 @@ class MainModel(private val act: ComponentActivity) {
     // ================================================================ Try it
 
     fun setTone(formal: Boolean) {
-        Kb.prefs(act).edit { putBoolean(RomanUrdu.PREF_TONE, formal) }
+        KbSettings.of(act).formalTone = formal
         refresh()
     }
 
     fun setDirection(dir: String) {
-        Kb.prefs(act).edit { putString(RomanUrdu.PREF_DIRECTION, dir) }
+        KbSettings.of(act).direction = dir
         refresh()
     }
 

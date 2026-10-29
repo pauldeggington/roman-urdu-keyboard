@@ -12,11 +12,6 @@ object ClipStore {
     class Clip(val text: String, var pinned: Boolean, val time: Long)
 
     private const val KEY = "clipboard_clips"
-    /** How long unpinned clips are kept, in hours: an hour, a day or a week. */
-    val TTL_CHOICES = listOf(1, 24, 168)
-
-    fun ttlHours(ctx: Context): Int = Kb.prefs(ctx).getInt(Kb.PREF_CLIP_TTL, 1).takeIf { it in TTL_CHOICES } ?: 1
-    fun setTtlHours(ctx: Context, hours: Int) = Kb.prefs(ctx).edit().putInt(Kb.PREF_CLIP_TTL, hours).apply()
     fun ttlWords(hours: Int) = when (hours) { 24 -> "a day"; 168 -> "a week"; else -> "an hour" }
 
     /** "just now", "5 min ago", "3 h ago", "2 d ago". */
@@ -32,10 +27,10 @@ object ClipStore {
     private const val MAX_UNPINNED = 25
     private const val MAX_LENGTH = 20_000
 
-    fun enabled(ctx: Context) = Kb.bool(ctx, Kb.PREF_CLIP, false)
+    fun enabled(ctx: Context) = KbSettings.of(ctx).clipboardHistory
 
     fun setEnabled(ctx: Context, on: Boolean) {
-        Kb.prefs(ctx).edit().putBoolean(Kb.PREF_CLIP, on).apply()
+        KbSettings.of(ctx)[KbSettings.CLIPBOARD_HISTORY] = on
         if (!on) Kb.prefs(ctx).edit().remove(KEY).apply()
     }
 
@@ -64,7 +59,7 @@ object ClipStore {
         if (!enabled(ctx)) return emptyList()
         val now = System.currentTimeMillis()
         val clips = read(ctx)
-        val ttl = ttlHours(ctx) * 60L * 60L * 1000L
+        val ttl = KbSettings.of(ctx).clipKeepHours * 60L * 60L * 1000L
         val kept = clips.filter { it.pinned || now - it.time < ttl }
         if (kept.size != clips.size) write(ctx, kept)
         return kept.sortedWith(compareByDescending<Clip> { it.pinned }.thenByDescending { it.time })
@@ -97,7 +92,7 @@ object ClipStore {
 
     /** Emulator preview builds only: a few made-up clips to take a screenshot. */
     fun seedForPreview(ctx: Context) {
-        Kb.prefs(ctx).edit().putBoolean(Kb.PREF_CLIP, true).apply()
+        KbSettings.of(ctx)[KbSettings.CLIPBOARD_HISTORY] = true
         val now = System.currentTimeMillis()
         write(ctx, listOf(
             Clip("Main kal subah 9 baje aaunga, tum ready rehna", true, now - 1000),

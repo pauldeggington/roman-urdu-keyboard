@@ -197,7 +197,7 @@ class ClipboardPanel(context: Context) : FrameLayout(context) {
     }
 
     private fun hintText() =
-        context.getString(R.string.clipboard_hint, ClipStore.ttlWords(ClipStore.ttlHours(context)))
+        context.getString(R.string.clipboard_hint, ClipStore.ttlWords(KbSettings.of(context).clipKeepHours))
 
     /** Reload the cards. Called each time the panel opens. */
     fun refresh() {

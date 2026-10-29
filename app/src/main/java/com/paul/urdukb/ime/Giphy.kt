@@ -52,11 +52,11 @@ object GiphyApi {
         }
     }
 
-    fun hasKey(ctx: Context) = Kb.giphyKey(ctx).isNotEmpty() || BuildConfig.PREVIEW
+    fun hasKey(ctx: Context) = KbSettings.of(ctx).giphyKey.isNotEmpty() || BuildConfig.PREVIEW
 
     /** Blocking: call from a background thread. [query] null or empty means trending. */
     fun fetch(ctx: Context, sticker: Boolean, query: String?, offset: Int = 0): List<GifItem> {
-        val key = Kb.giphyKey(ctx)
+        val key = KbSettings.of(ctx).giphyKey
         if (key.isEmpty()) {
             if (BuildConfig.PREVIEW) return if (offset == 0) previewFake(sticker) else emptyList()
             throw GiphyException(GiphyException.Kind.NO_KEY, "No key")

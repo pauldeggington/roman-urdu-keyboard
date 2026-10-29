@@ -40,20 +40,20 @@ import com.paul.urdukb.RomanUrdu
  */
 class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.Listener, EmojiPanel.Listener {
 
-    private val handler = Handler(Looper.getMainLooper())
+    internal val handler = Handler(Looper.getMainLooper())
     private lateinit var frame: FrameLayout
     private lateinit var container: LinearLayout
     private lateinit var typing: LinearLayout
-    private lateinit var keyboard: KeyboardView
-    private lateinit var toolbar: ToolbarView
-    private lateinit var emoji: EmojiPanel
+    internal lateinit var keyboard: KeyboardView
+    internal lateinit var toolbar: ToolbarView
+    internal lateinit var emoji: EmojiPanel
     private lateinit var clipboardPanel: ClipboardPanel
     private lateinit var popup: PopupLayer
     private lateinit var spacer: View
 
     private var lastShiftTap = 0L
     private var lastSpace = 0L
-    private var viewReady = false
+    internal var viewReady = false
     private var emojiOpen = false
     private var clipOpen = false
 
@@ -68,25 +68,25 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     private var glideCommit: GlideCommit? = null
     private var inputSession = 0      // changes whenever a text field gets focus, so late results can be dropped
 
-    // word suggestions while typing
+    // the strip above the keys shows either glide results or typing help
     private enum class Strip { NONE, GLIDE, TYPING }
     private var strip = Strip.NONE
-    private var typingCandidates: List<String> = emptyList()
-    private var typingWord = ""                 // the word under the cursor, as it is written in the field
-    private val wordBuf = StringBuilder()       // letters typed since the last space, for learning words
-    private var suggestOn = true
-    private var autocorrectOn = true
-    private class AutoFix(val original: String, val replacement: String, val delimiter: String)
-    private var pasteOffer: String? = null            // what was just copied, offered as a Paste chip in an empty field
-    private var pasteOfferAt = 0L
-    private var pasteText: String? = null             // set while the strip shows that chip
-    private var prevWord = ""                      // the word before the one being typed, for learning word pairs
-    private var autoFix: AutoFix? = null           // the last automatic correction, so Backspace can undo it
-    private var suggestionsAllowed = true
-    private var learningAllowed = true
-    private var suggestSeq = 0
-    private val suggestThread = java.util.concurrent.Executors.newSingleThreadExecutor()
-    private val suggestRunnable = Runnable { computeSuggestions() }
+    private val typingHost = object : TypingHost {
+        override val context: Context get() = this@UrduImeService
+        override val handler: Handler get() = this@UrduImeService.handler
+        override fun connection() = currentInputConnection
+        override fun showStrip(items: List<String>) {
+            if (!viewReady || strip == Strip.GLIDE) return
+            strip = Strip.TYPING
+            toolbar.suggestions = items
+            toolbar.suggestionIndex = -1
+        }
+        override fun clearStrip() {
+            if (viewReady && strip == Strip.TYPING) { strip = Strip.NONE; toolbar.suggestions = emptyList() }
+        }
+        override fun textChanged() { lastSpace = 0; updateShift() }
+    }
+    internal val assist = TypingAssist(typingHost)
     private var typedChars = 0
     private val hideSuggestions = Runnable { clearGlide() }
     private var clipListener: android.content.ClipboardManager.OnPrimaryClipChangedListener? = null
@@ -95,7 +95,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
 
     // only a changed setting redraws the keyboard; saving recent emoji, clips or a key must not
     private val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        if (key == null || key in Kb.LIVE_KEYS) handler.post { refreshAll() }
+        if (key == null || key in KbSettings.LIVE_KEYS) handler.post { refreshAll() }
     }
     private val lookListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ -> handler.post { refreshAll() } }
     private val deleteRepeat = object : Runnable {
@@ -123,10 +123,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
                     if (!sensitive && clip.itemCount > 0) {
                         clip.getItemAt(0).coerceToText(this)?.toString()?.let {
                             ClipStore.add(this, it)
-                            if (ClipStore.enabled(this) && it.isNotBlank() && it.length <= 2000) {
-                                pasteOffer = it.trim(); pasteOfferAt = SystemClock.uptimeMillis()
-                                handler.post { scheduleSuggest() }
-                            }
+                            if (ClipStore.enabled(this) && it.isNotBlank() && it.length <= 2000) assist.offerPaste(it)
                         }
                     }
                 } catch (_: Exception) {
@@ -136,61 +133,12 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         }
     }
 
-    /** Only in emulator preview builds: lets CI switch screens and read key positions to take screenshots. */
-    private fun registerPreviewHooks() {
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(c: Context, intent: Intent) {
-                handler.post {
-                    if (!viewReady) return@post
-                    when (intent.getStringExtra("do")) {
-                        "letters" -> { showEmoji(false); keyboard.page = Page.LETTERS }
-                        "symbols1" -> { showEmoji(false); keyboard.page = Page.SYMBOLS1 }
-                        "symbols2" -> { showEmoji(false); keyboard.page = Page.SYMBOLS2 }
-                        "emoji" -> { showEmoji(true); emoji.showMode("emoji") }
-                        "emoticons" -> { showEmoji(true); emoji.showMode("emoticon") }
-                        "clipboard" -> { ClipStore.seedForPreview(this@UrduImeService); showClipboard(true) }
-                        "clipboard_off" -> { ClipStore.setEnabled(this@UrduImeService, false); showClipboard(true) }
-                        "gif" -> { showEmoji(true); emoji.showMode("gif") }
-                        "stickers" -> { showEmoji(true); emoji.showMode("sticker") }
-                        "search_emoji" -> { showEmoji(true); emoji.showMode("emoji"); emoji.openSearchFromHook(); emoji.searchType(intent.getStringExtra("q") ?: "heart") }
-                        "search_gif" -> { showEmoji(true); emoji.showMode("gif"); emoji.openSearchFromHook(); emoji.searchType("thanks") }
-                        "tools" -> toolbar.toolsOpen = true
-                        "notools" -> toolbar.toolsOpen = false
-                        "shift" -> keyboard.shift = KeyboardView.SHIFT_ON
-                        "space" -> { typeSpace(); scheduleSuggest() }
-                        "back" -> deleteOne()
-                        "paste_offer" -> {
-                            ClipStore.seedForPreview(this@UrduImeService)
-                            pasteOffer = "Meeting moved to Thursday 3 pm"; pasteOfferAt = SystemClock.uptimeMillis()
-                            showEmoji(false); keyboard.page = Page.LETTERS; scheduleSuggest()
-                        }
-                        "gif_recent" -> {
-                            for ((i, c) in listOf("e57373", "4fc3f7", "aed581").withIndex())
-                                RecentMedia.add(this@UrduImeService, GifItem("pv$i", "Sample", "preview:$c", "preview:$c", "https://giphy.com", 200, 150 + 40 * i, false))
-                            showEmoji(true); emoji.showMode("gif")
-                        }
-                        "mic_on" -> toolbar.listening = true
-                        "mic_off" -> toolbar.listening = false
-                        "dump" -> {
-                            keyboard.keyCenters().forEach { Log.i("PREVIEW", "KEY ${it.first} ${it.second.toInt()} ${it.third.toInt()}") }
-                            val loc = IntArray(2)
-                            toolbar.getLocationOnScreen(loc)
-                            Log.i("PREVIEW", "TOOLBAR ${loc[0]} ${loc[1]} ${toolbar.width} ${toolbar.height}")
-                        }
-                    }
-                }
-            }
-        }
-        val filter = IntentFilter("com.paul.urdukb.PREVIEW")
-        androidx.core.content.ContextCompat.registerReceiver(this, receiver, filter, androidx.core.content.ContextCompat.RECEIVER_EXPORTED)
-    }
-
     override fun onDestroy() {
         clipListener?.let { getSystemService(android.content.ClipboardManager::class.java)?.removePrimaryClipChangedListener(it) }
         Kb.prefs(this).unregisterOnSharedPreferenceChangeListener(prefListener)
         applicationContext.getSharedPreferences("look", Context.MODE_PRIVATE).unregisterOnSharedPreferenceChangeListener(lookListener)
         RomanUrdu.onStateChanged = null
-        voice?.stop()
+        voiceController.stop()
         super.onDestroy()
     }
 
@@ -313,18 +261,19 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         // the keyboard window is see-through, so the background must always be painted (an app that rebuilt the
         // keyboard's views once left it transparent when this only ran after a colour change)
         container.setBackgroundColor(colors.bg)
-        keyboard.showHints = Kb.hints(this)
-        keyboard.showPreview = Kb.preview(this)
-        keyboard.glideEnabled = Kb.glide(this)
+        val settings = KbSettings.of(this)
+        keyboard.showHints = settings.numberHints
+        keyboard.showPreview = settings.keyPreview
+        keyboard.glideEnabled = settings.glide
         // read once here instead of on every key press
-        vibrateOn = Kb.vibrate(this)
-        soundOn = Kb.sound(this)
-        autoCapOn = Kb.autoCap(this)
-        doubleSpaceOn = Kb.doubleSpace(this)
-        warmOn = Kb.warm(this)
-        suggestOn = Kb.suggest(this)
-        autocorrectOn = Kb.autocorrect(this)
-        if (!suggestOn) clearTyping()
+        vibrateOn = settings.vibrate
+        soundOn = settings.sound
+        autoCapOn = settings.autoCap
+        doubleSpaceOn = settings.doubleSpace
+        warmOn = settings.warmTranslator
+        assist.suggestOn = settings.suggest
+        assist.autocorrectOn = settings.autocorrect
+        if (!assist.suggestOn) assist.clear()
         refreshToolbar()
     }
 
@@ -359,16 +308,15 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         inputSession++
         typedChars = 0
         clearGlide()
-        clearTyping()
-        wordBuf.setLength(0)
+        assist.newField()
         // no suggestions or learning in password, email or address fields, or where the app asks for none
         val variation = info.inputType and InputType.TYPE_MASK_VARIATION
-        suggestionsAllowed = (info.inputType and InputType.TYPE_MASK_CLASS) == InputType.TYPE_CLASS_TEXT &&
+        assist.suggestionsAllowed = (info.inputType and InputType.TYPE_MASK_CLASS) == InputType.TYPE_CLASS_TEXT &&
             variation != InputType.TYPE_TEXT_VARIATION_PASSWORD && variation != InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD &&
             variation != InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD && variation != InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS &&
             variation != InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS && variation != InputType.TYPE_TEXT_VARIATION_URI &&
             (info.inputType and InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS) == 0
-        learningAllowed = suggestionsAllowed && (info.imeOptions and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING) == 0
+        assist.learningAllowed = assist.suggestionsAllowed && (info.imeOptions and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING) == 0
         frame.post { applyBottomPadding(frame.rootWindowInsets); frame.requestApplyInsets() }
         val cls = info.inputType and InputType.TYPE_MASK_CLASS
         keyboard.page = if (cls == InputType.TYPE_CLASS_NUMBER || cls == InputType.TYPE_CLASS_PHONE || cls == InputType.TYPE_CLASS_DATETIME)
@@ -388,14 +336,14 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         keyboard.enterKind = baseEnterKind
         refreshAll()
         updateShift()
-        scheduleSuggest()
+        assist.schedule()
     }
 
     override fun onFinishInputView(finishingInput: Boolean) {
         super.onFinishInputView(finishingInput)
         handler.removeCallbacks(deleteRepeat)
-        voice?.stop()
-        clearTyping()
+        voiceController.stop()
+        assist.clear()
         PersonalWords.save(this)
     }
 
@@ -407,7 +355,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
                 if (currentInputConnection?.getTextBeforeCursor(tail.length, 0)?.toString() != tail) clearGlide()
             }
             updateShift()
-            scheduleSuggest()
+            assist.schedule()
         }
     }
 
@@ -440,8 +388,8 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
     override fun onKey(key: KeyDef, text: String?) {
         if (BuildConfig.PREVIEW) Log.i("PREVIEW", "ONKEY ${key.type} $text ic=${currentInputConnection != null}")
         RomanUrdu.onOtherKey(this)
-        if (key.type != KeyType.DELETE) { clearGlide(); autoFix = null }
-        voice?.let { if (it.listening) it.stop() }
+        if (key.type != KeyType.DELETE) { clearGlide(); assist.forgetCorrection() }
+        if (voiceController.listening) voiceController.stop()
         when (key.type) {
             KeyType.CHAR -> typeText(text ?: key.label)
             KeyType.SHIFT -> toggleShift()
@@ -461,9 +409,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
             return
         }
         val ic = currentInputConnection ?: return
-        val endsWord = !(s[0].isLetter() || s[0] == '\'')
-        if (endsWord && s[0] != ' ' && maybeAutocorrect(ic, s)) { wordBuf.setLength(0); clearTyping() }
-        else trackWord(s)
+        assist.beforeText(ic, s)
         ic.commitText(s, 1)
         noteTyped(s.length)
         lastSpace = 0
@@ -478,11 +424,10 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         if (typedChars >= WARM_AFTER && warmOn) LlmEngine.warmUp(applicationContext)
     }
 
-    private fun typeSpace() {
+    internal fun typeSpace() {
         if (searching) { emoji.searchType(" "); return }
         val ic = currentInputConnection ?: return
-        if (maybeAutocorrect(ic, " ")) wordBuf.setLength(0) else trackWord(" ")
-        clearTyping()
+        assist.beforeSpace(ic)
         val now = SystemClock.uptimeMillis()
         if (doubleSpaceOn && now - lastSpace < 500) {
             val before = ic.getTextBeforeCursor(2, 0)
@@ -501,27 +446,11 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         updateShift()
     }
 
-    private fun deleteOne() {
+    internal fun deleteOne() {
         if (searching) { emoji.searchBackspace(); return }
         val ic = currentInputConnection ?: return
-        autoFix?.let { f ->
-            // Backspace right after an automatic correction puts back what was typed (and stops correcting that word)
-            val tail = f.replacement + f.delimiter
-            autoFix = null
-            if (ic.getTextBeforeCursor(tail.length, 0)?.toString() == tail) {
-                ic.beginBatchEdit()
-                ic.deleteSurroundingText(tail.length, 0)
-                ic.commitText(f.original, 1)
-                ic.endBatchEdit()
-                if (learningAllowed) { PersonalWords.learn(this, f.original); PersonalWords.learn(this, f.original) }
-                wordBuf.setLength(0); wordBuf.append(f.original)
-                lastSpace = 0
-                updateShift()
-                scheduleSuggest()
-                return
-            }
-        }
-        if (wordBuf.isNotEmpty()) wordBuf.setLength(wordBuf.length - 1)
+        if (assist.undoCorrection(ic)) return
+        assist.deletedLetter()
         glideCommit?.let { g ->
             // backspace right after a glide removes the whole word, like Gboard
             val tail = g.tail()
@@ -538,14 +467,13 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         else sendDownUpKeyEvents(KeyEvent.KEYCODE_DEL)
         lastSpace = 0
         updateShift()
-        scheduleSuggest()
+        assist.schedule()
     }
 
     private fun pressEnter() {
         if (searching) { emoji.searchSubmit(); return }
         val ic = currentInputConnection ?: return
-        trackWord("\n")
-        clearTyping()
+        assist.beforeEnter()
         val info = currentInputEditorInfo
         val options = info?.imeOptions ?: 0
         val action = options and EditorInfo.IME_MASK_ACTION
@@ -644,205 +572,20 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         if (viewReady && strip == Strip.GLIDE) { strip = Strip.NONE; toolbar.suggestions = emptyList() }
     }
 
-    // ------------------------------------------------------------------ word suggestions
-
-    /** Keeps the word being typed, and learns it when it is finished (a space or punctuation). */
-    private fun trackWord(typed: String) {
-        for (ch in typed) {
-            if (ch.isLetter() || ch == '\'') wordBuf.append(ch)
-            else {
-                val w = wordBuf.toString()
-                wordBuf.setLength(0)
-                if (w.isNotEmpty()) {
-                    if (learningAllowed && prevWord.isNotEmpty()) PersonalWords.learnPair(this, prevWord, w)
-                    prevWord = if (ch in ".!?\n") "" else w.lowercase()
-                } else if (ch in ".!?\n") prevWord = ""
-                // only words the built-in list does not know (names, slang, Roman Urdu) are remembered
-                if (learningAllowed && w.length >= 3 && GlideDict.suggester?.isWord(w) == false) PersonalWords.learn(this, w)
-            }
-        }
-        if (wordBuf.length > 40) wordBuf.setLength(0)
-    }
-
-    /**
-     * When a space or punctuation mark is about to be typed: replaces a clear typo with the right word.
-     * Returns true if it changed something. Names, capitals-only words, Roman Urdu and words the person uses are left alone.
-     */
-    private fun maybeAutocorrect(ic: android.view.inputmethod.InputConnection, delimiter: String): Boolean {
-        if (!autocorrectOn || !suggestOn || !suggestionsAllowed || searching) return false
-        val suggester = GlideDict.suggester ?: return false
-        val before = ic.getTextBeforeCursor(80, 0)?.toString() ?: return false
-        var start = before.length
-        while (start > 0 && (before[start - 1].isLetter() || before[start - 1] == '\'')) start--
-        val word = before.substring(start)
-        if (word.length < 2 || word[0] == '\'' || word.any { it == '\'' }) return false
-        val lead = before.substring(0, start).trimEnd(' ')
-        val sentenceStart = lead.isEmpty() || lead.last() in ".!?\n"
-        if (word[0].isUpperCase() && !sentenceStart) return false          // probably a name
-        if (word.length > 1 && word.all { it.isUpperCase() }) return false  // an abbreviation
-        // this app is for Roman Urdu: when the text around looks like it, or the spelling is a known Roman Urdu one, hands off
-        if (VariantMap.isKnownVariant(this, word.lowercase()) || Detect.guess(before) { VariantMap.isKnownVariant(this, it) } == Detect.Language.ROMAN_URDU) return false
-        val fix = suggester.autocorrect(word, PersonalWords.snapshot(this)) ?: return false
-        val replacement = WordSuggester.matchCase(word, fix)
-        ic.beginBatchEdit()
-        ic.deleteSurroundingText(word.length, 0)
-        ic.commitText(replacement, 1)
-        ic.endBatchEdit()
-        autoFix = AutoFix(word, replacement, delimiter)
-        if (learningAllowed && prevWord.isNotEmpty()) PersonalWords.learnPair(this, prevWord, fix.lowercase())
-        prevWord = if (delimiter[0] in ".!?\n") "" else fix.lowercase()
-        return true
-    }
-
-    /** Looks at the word under the cursor a moment after typing stops changing it (also off the main thread). */
-    private fun scheduleSuggest() {
-        handler.removeCallbacks(suggestRunnable)
-        if (!suggestOn || !suggestionsAllowed || searching || emojiOpen || clipOpen) { clearTyping(); return }
-        handler.postDelayed(suggestRunnable, 30)
-    }
-
-    private fun computeSuggestions() {
-        val ic = currentInputConnection ?: return
-        val suggester = GlideDict.suggester ?: return
-        val before = ic.getTextBeforeCursor(32, 0)?.toString().orEmpty()
-        val after = ic.getTextAfterCursor(1, 0)?.toString().orEmpty()
-        // only when the cursor is at the end of a word
-        if (after.isNotEmpty() && (after[0].isLetter() || after[0] == '\'')) { clearTyping(); return }
-        // an empty field and something was copied a moment ago: offer to paste it
-        val offer = pasteOffer
-        if (before.isEmpty() && after.isEmpty() && offer != null && SystemClock.uptimeMillis() - pasteOfferAt < 120_000) {
-            showPaste(offer); return
-        }
-        var start = before.length
-        while (start > 0 && (before[start - 1].isLetter() || before[start - 1] == '\'')) start--
-        val word = before.substring(start).trimStart('\'')
-        if (word.isEmpty() && before.endsWith(" ")) { computeNextWord(before); return }
-        if (word.length < 2) { clearTyping(); return }
-        val seq = ++suggestSeq
-        val app = applicationContext
-        suggestThread.execute {
-            val found = suggester.suggest(word, PersonalWords.snapshot(app), 3)
-            handler.post { if (seq == suggestSeq) showTyping(word, found) }
-        }
-    }
-
-    /** After a word and a space: offers what usually comes next. Not for Roman Urdu text, and not in an empty field. */
-    private fun computeNextWord(before: String) {
-        val trimmed = before.trimEnd(' ')
-        if (trimmed.isEmpty()) { clearTyping(); return }
-        var start = trimmed.length
-        while (start > 0 && (trimmed[start - 1].isLetter() || trimmed[start - 1] == '\'')) start--
-        val prev = trimmed.substring(start).trimStart('\'').lowercase()
-        val key = if (prev.isEmpty()) (if (trimmed.last() in ".!?") "<s>" else "") else prev
-        if (key.isEmpty()) { clearTyping(); return }
-        val sentenceStart = key == "<s>"
-        val seq = ++suggestSeq
-        val app = applicationContext
-        suggestThread.execute {
-            val roman = Detect.guess(before) { VariantMap.isKnownVariant(app, it) } == Detect.Language.ROMAN_URDU
-            val found = if (roman) emptyList() else NextWord.predict(app, key).map {
-                when {
-                    it == "i" || it.startsWith("i'") -> "I" + it.drop(1)
-                    sentenceStart -> it.replaceFirstChar { c -> c.uppercase() }
-                    else -> it
-                }
-            }
-            handler.post { if (seq == suggestSeq) showNext(found) }
-        }
-    }
-
-    private fun showPaste(text: String) {
-        if (!viewReady || strip == Strip.GLIDE) return
-        pasteText = text
-        typingWord = ""
-        val oneLine = text.replace('\n', ' ')
-        typingCandidates = listOf("\uD83D\uDCCB " + if (oneLine.length > 12) oneLine.take(11).trimEnd() + "…" else oneLine)
-        strip = Strip.TYPING
-        toolbar.suggestions = typingCandidates
-        toolbar.suggestionIndex = -1
-    }
-
-    private fun showNext(found: List<String>) {
-        if (!viewReady || strip == Strip.GLIDE) return
-        if (found.isEmpty()) { clearTyping(); return }
-        typingWord = ""
-        typingCandidates = found
-        strip = Strip.TYPING
-        toolbar.suggestions = found
-        toolbar.suggestionIndex = -1
-    }
-
-    private fun showTyping(word: String, found: List<String>) {
-        if (!viewReady || strip == Strip.GLIDE) return
-        if (found.isEmpty()) { clearTyping(); return }
-        typingWord = word
-        typingCandidates = found.map { WordSuggester.matchCase(word, it) }
-        strip = Strip.TYPING
-        toolbar.suggestions = typingCandidates
-        toolbar.suggestionIndex = -1
-    }
-
-    private fun clearTyping() {
-        suggestSeq++
-        handler.removeCallbacks(suggestRunnable)
-        typingCandidates = emptyList()
-        typingWord = ""
-        pasteText = null
-        if (viewReady && strip == Strip.TYPING) { strip = Strip.NONE; toolbar.suggestions = emptyList() }
-    }
-
-    /** A suggested word was tapped: it replaces the word being typed, and a space follows. */
-    private fun chooseTyping(i: Int) {
-        val word = typingCandidates.getOrNull(i) ?: return
-        val ic = currentInputConnection ?: return
-        pasteText?.let { t ->
-            ic.commitText(t, 1)
-            pasteOffer = null
-            lastSpace = 0
-            clearTyping()
-            updateShift()
-            return
-        }
-        val typed = typingWord
-        if (typed.isEmpty()) {
-            // a next-word suggestion: it goes in after the space that is already there
-            if (ic.getTextBeforeCursor(1, 0)?.toString() != " ") { clearTyping(); return }
-            if (learningAllowed && prevWord.isNotEmpty()) PersonalWords.learnPair(this, prevWord, word)
-            ic.commitText("$word ", 1)
-            prevWord = word.lowercase()
-            wordBuf.setLength(0)
-            lastSpace = 0
-            updateShift()
-            scheduleSuggest()
-            return
-        }
-        if (ic.getTextBeforeCursor(typed.length, 0)?.toString() != typed) { clearTyping(); return }
-        ic.beginBatchEdit()
-        ic.deleteSurroundingText(typed.length, 0)
-        ic.commitText("$word ", 1)
-        ic.endBatchEdit()
-        wordBuf.setLength(0)
-        prevWord = word.lowercase()
-        lastSpace = 0
-        clearTyping()
-        updateShift()
-        scheduleSuggest()
-    }
-
     // ------------------------------------------------------------------ toolbar
 
     override fun onTool(tool: ToolbarView.Tool) {
         feedback()
         val ic = currentInputConnection
         when (tool) {
-            ToolbarView.Tool.SUGGESTION_1 -> if (strip == Strip.TYPING) chooseTyping(0) else chooseGlide(0)
-            ToolbarView.Tool.SUGGESTION_2 -> if (strip == Strip.TYPING) chooseTyping(1) else chooseGlide(1)
-            ToolbarView.Tool.SUGGESTION_3 -> if (strip == Strip.TYPING) chooseTyping(2) else chooseGlide(2)
+            ToolbarView.Tool.SUGGESTION_1 -> if (strip == Strip.TYPING) assist.choose(0) else chooseGlide(0)
+            ToolbarView.Tool.SUGGESTION_2 -> if (strip == Strip.TYPING) assist.choose(1) else chooseGlide(1)
+            ToolbarView.Tool.SUGGESTION_3 -> if (strip == Strip.TYPING) assist.choose(2) else chooseGlide(2)
             ToolbarView.Tool.GRID -> toolbar.toolsOpen = !toolbar.toolsOpen
             ToolbarView.Tool.TRANSLATE -> RomanUrdu.translateOrRevert(this) { currentInputConnection?.finishComposingText() }
             ToolbarView.Tool.TONE -> RomanUrdu.toggleTone(this)
             ToolbarView.Tool.DIRECTION -> RomanUrdu.cycleDirection(this)
-            ToolbarView.Tool.MIC -> toggleVoice()
+            ToolbarView.Tool.MIC -> voiceController.toggle()
             ToolbarView.Tool.EMOJI -> showEmoji(true)
             ToolbarView.Tool.SELECT_ALL -> ic?.performContextMenuAction(android.R.id.selectAll)
             ToolbarView.Tool.COPY -> ic?.performContextMenuAction(android.R.id.copy)
@@ -852,64 +595,15 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         }
     }
 
-    private var voice: VoiceInput? = null
-
-    /** The mic button: listens inside the keyboard (the keys stay visible), or taps again to stop. */
-    private fun toggleVoice() {
-        val v = voice ?: VoiceInput(
-            this, { currentInputConnection },
-            { on -> handler.post { toolbar.listening = on } },
-            { msg -> handler.post { voiceProblem(msg) } },
-        ).also { voice = it }
-        if (v.listening) { v.stop(); return }
-        if (!VoiceInput.available(this)) { startVoice(); return }
-        if (!VoiceInput.hasPermission(this)) { askMicPermission(); return }
-        clearTyping(); wordBuf.setLength(0)
-        v.start()
-    }
-
-    private fun askMicPermission() {
-        MicPermissionActivity.onResult = { ok ->
-            MicPermissionActivity.onResult = null
-            if (ok) handler.post { voice?.start() }
-            else handler.post { Toast.makeText(this, getString(R.string.mic_off), Toast.LENGTH_LONG).show() }
-        }
-        startActivity(Intent(this, MicPermissionActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-    }
-
-    private fun voiceProblem(msg: String) {
-        if (msg == "NEEDS_PERMISSION") { askMicPermission(); return }
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
-    }
-
-    /**
-     * Fallback voice typing: hands over to the phone's voice typing keyboard (Google's), which switches back here when
-     * you stop talking. The app itself never touches the microphone, so it needs no microphone permission.
-     */
-    private fun startVoice() {
-        val imm = getSystemService(InputMethodManager::class.java) ?: return
-        for (info in imm.enabledInputMethodList) {
-            if (info.packageName == packageName) continue
-            for (st in imm.getEnabledInputMethodSubtypeList(info, true)) {
-                if (st.mode.equals("voice", ignoreCase = true)) {
-                    try {
-                        switchInputMethod(info.id, st)
-                        return
-                    } catch (_: Exception) {
-                    }
-                }
-            }
-        }
-        Toast.makeText(
-            this,
-            getString(R.string.voice_not_on),
-            Toast.LENGTH_LONG,
-        ).show()
-    }
+    private val voiceController = VoiceController(
+        this, handler,
+        onListening = { on -> toolbar.listening = on },
+        beforeStart = { assist.newField() },
+    )
 
     // ------------------------------------------------------------------ emoji
 
-    private fun showEmoji(on: Boolean) {
+    internal fun showEmoji(on: Boolean) {
         if (!viewReady) return
         if (!on && searching) emoji.closeSearch()
         clipOpen = false
@@ -919,7 +613,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         popup.hide()
     }
 
-    private fun showClipboard(on: Boolean) {
+    internal fun showClipboard(on: Boolean) {
         if (!viewReady) return
         if (on && searching) emoji.closeSearch()
         emojiOpen = false
@@ -931,6 +625,7 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
 
     /** The emoji screen replaces the keys, except while searching: then it sits above the letters. */
     private fun layoutPanels() {
+        assist.blocked = searching || emojiOpen || clipOpen
         typing.visibility = if ((!emojiOpen && !clipOpen) || searching) View.VISIBLE else View.GONE
         toolbar.visibility = if (searching) View.GONE else View.VISIBLE
         emoji.visibility = if (emojiOpen) View.VISIBLE else View.GONE
@@ -949,41 +644,14 @@ class UrduImeService : InputMethodService(), KeyboardView.Listener, ToolbarView.
         if (!active) updateShift()
     }
 
-    /** A GIF or sticker: sent as an image where the app accepts one, otherwise as a link. */
+    private val mediaSender = MediaSender(this, handler)
+
+    /** A GIF or sticker was tapped. */
     override fun onMedia(item: GifItem) {
-        val info = currentInputEditorInfo
-        val ic = currentInputConnection
-        if (info == null || ic == null) return
+        if (currentInputEditorInfo == null || currentInputConnection == null) return
         clearGlide()
         RomanUrdu.onOtherKey(this)
-        val accepts = androidx.core.view.inputmethod.EditorInfoCompat.getContentMimeTypes(info)
-            .any { android.content.ClipDescription.compareMimeTypes("image/gif", it) }
-        if (!accepts) {
-            ic.commitText(item.pageUrl + " ", 1)
-            Toast.makeText(this, getString(R.string.gif_link_typed), Toast.LENGTH_SHORT).show()
-            return
-        }
-        Thread {
-            val file = MediaCache.download(this, item)
-            handler.post {
-                val ic2 = currentInputConnection
-                val info2 = currentInputEditorInfo
-                var sent = false
-                if (file != null && ic2 != null && info2 != null) {
-                    val uri = androidx.core.content.FileProvider.getUriForFile(this, "$packageName.fileprovider", file)
-                    val content = androidx.core.view.inputmethod.InputContentInfoCompat(
-                        uri, android.content.ClipDescription(item.title.ifEmpty { "GIF" }, arrayOf("image/gif")), android.net.Uri.parse(item.pageUrl),
-                    )
-                    sent = androidx.core.view.inputmethod.InputConnectionCompat.commitContent(
-                        ic2, info2, content, androidx.core.view.inputmethod.InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION, null,
-                    )
-                }
-                if (!sent) {
-                    ic2?.commitText(item.pageUrl + " ", 1)
-                    Toast.makeText(this, getString(R.string.gif_send_failed), Toast.LENGTH_SHORT).show()
-                }
-            }
-        }.start()
+        mediaSender.send(item)
     }
 
     override fun onOpenApp() {

@@ -9,7 +9,7 @@ import android.os.Looper
 import android.os.UserManager
 import android.view.inputmethod.InputConnection
 import android.widget.Toast
-import com.paul.urdukb.ime.Kb
+import com.paul.urdukb.ime.KbSettings
 import java.util.concurrent.Executors
 
 /**
@@ -18,9 +18,6 @@ import java.util.concurrent.Executors
  * puts the English back. Tone: switches between Casual (tum) and Formal (aap).
  */
 object RomanUrdu {
-
-    const val PREF_TONE = Kb.PREF_TONE
-    const val PREF_DIRECTION = Kb.PREF_DIRECTION
 
     /** The keyboard sets this so its toolbar redraws when translating starts, ends or can be undone. */
     @Volatile var onStateChanged: (() -> Unit)? = null
@@ -40,9 +37,9 @@ object RomanUrdu {
     private val worker = Executors.newSingleThreadExecutor()
     private val main = Handler(Looper.getMainLooper())
 
-    fun isFormal(ctx: Context): Boolean = Kb.prefs(ctx).getBoolean(PREF_TONE, false)
+    fun isFormal(ctx: Context): Boolean = KbSettings.of(ctx).formalTone
 
-    fun direction(ctx: Context): String = Kb.prefs(ctx).getString(PREF_DIRECTION, DIR_AUTO) ?: DIR_AUTO
+    fun direction(ctx: Context): String = KbSettings.of(ctx).direction
 
     /** Level for the toolbar icon: 0 = auto, 1 = English to Roman Urdu, 2 = Roman Urdu to English. */
     fun directionLevel(ctx: Context): Int = when (direction(ctx)) {
@@ -91,7 +88,7 @@ object RomanUrdu {
 
     fun toggleTone(ime: Context) {
         val formal = !isFormal(ime)
-        Kb.prefs(ime).edit().putBoolean(PREF_TONE, formal).apply()
+        KbSettings.of(ime).formalTone = formal
         refreshToolbar(ime)
         toast(
             ime,
@@ -106,7 +103,7 @@ object RomanUrdu {
             DIR_TO_RU -> DIR_TO_EN
             else -> DIR_AUTO
         }
-        Kb.prefs(ime).edit().putString(PREF_DIRECTION, next).apply()
+        KbSettings.of(ime).direction = next
         refreshToolbar(ime)
         toast(
             ime,
