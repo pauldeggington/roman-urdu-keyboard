@@ -29,8 +29,6 @@ class PanelsTest {
         assertEquals("5 min ago", ClipStore.ago(now, now - 5 * 60_000))
         assertEquals("3 h ago", ClipStore.ago(now, now - 3 * 3_600_000L))
         assertEquals("2 d ago", ClipStore.ago(now, now - 2 * 86_400_000L))
-        assertEquals("a week", ClipStore.ttlWords(168))
-        assertEquals("an hour", ClipStore.ttlWords(1))
     }
 
     @Test

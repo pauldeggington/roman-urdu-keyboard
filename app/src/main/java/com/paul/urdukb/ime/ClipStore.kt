@@ -1,6 +1,7 @@
 package com.paul.urdukb.ime
 
 import android.content.Context
+import com.paul.urdukb.R
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -12,7 +13,7 @@ object ClipStore {
     class Clip(val text: String, var pinned: Boolean, val time: Long)
 
     private const val KEY = "clipboard_clips"
-    fun ttlWords(hours: Int) = when (hours) { 24 -> "a day"; 168 -> "a week"; else -> "an hour" }
+    fun ttlWords(ctx: Context, hours: Int): String = ctx.getString(when (hours) { 24 -> R.string.ttl_day; 168 -> R.string.ttl_week; else -> R.string.ttl_hour })
 
     /** "just now", "5 min ago", "3 h ago", "2 d ago". */
     fun ago(now: Long, then: Long): String {

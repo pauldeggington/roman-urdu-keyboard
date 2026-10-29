@@ -375,7 +375,7 @@ private fun KeyboardCard(model: MainModel) {
         PrefSwitch(stringResource(R.string.kb_glide), stringResource(R.string.kb_glide_sub), KbSettings.GLIDE)
         PrefSwitch(stringResource(R.string.kb_double_space), "", KbSettings.DOUBLE_SPACE)
         PrefSwitch(stringResource(R.string.kb_clipboard), stringResource(R.string.kb_clipboard_sub), KbSettings.CLIPBOARD_HISTORY)
-        PillButton(stringResource(R.string.kb_clip_keep, ClipStore.ttlWords(keepHours)), Modifier.fillMaxWidth().padding(top = 10.dp)) {
+        PillButton(stringResource(R.string.kb_clip_keep, ClipStore.ttlWords(ctx, keepHours)), Modifier.fillMaxWidth().padding(top = 10.dp)) {
             val choices = KbSettings.CLIP_KEEP_CHOICES
             val next = choices[(choices.indexOf(keepHours) + 1) % choices.size]
             KbSettings.of(ctx).clipKeepHours = next
