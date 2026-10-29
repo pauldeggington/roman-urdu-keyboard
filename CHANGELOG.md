@@ -4,7 +4,7 @@ Every release on `main` has a version: **major.minor.build**. The major and mino
 a set of changes is merged to `main`; the build number is the CI build, so a newer build always installs over an older one.
 The app shows it as, for example, "Version 2.1 (build 121)". Work-in-progress builds are not published as releases; they are only kept as a download on the CI run.
 
-## 2.4 (in progress)
+## 2.4
 
 - **Voice, Urdu to English:** share an Urdu voice note from WhatsApp (Share, then Roman Urdu Keyboard) and the on-device model listens and shows Urdu text and English, both copyable. Long notes are cut into pieces at quiet moments (the model hears 30 seconds at a time).
 - **Voice, English to Urdu:** speak English in the app (Voice card, Speak) and get the Urdu in script and Roman Urdu, read aloud by the phone's own Urdu voice, saved as an audio message you can send. Needs the Urdu voice installed in the phone's Text-to-speech settings.
