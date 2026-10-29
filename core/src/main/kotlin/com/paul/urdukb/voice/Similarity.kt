@@ -22,7 +22,7 @@ object Similarity {
                 // anything else (Latin words, digits, marks) is skipped
             }
         }
-        sb.append(' ')
+        if (sb.last() != ' ') sb.append(' ')
         val t = sb.toString()
         if (t.length < 3) return emptySet()
         return (0..t.length - 3).map { t.substring(it, it + 3) }.toSet()
