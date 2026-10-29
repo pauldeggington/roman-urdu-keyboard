@@ -230,8 +230,9 @@ class KeyboardView(context: Context) : View(context) {
                         c.drawCircle(cx, cy, 24f * d, fill)
                     }
                     drawText(c, cased(def.label), cx, cy, 27f, col.keyText)
-                    if (page == Page.LETTERS && showHints && def.hint != null) {
-                        drawText(c, def.hint, r.right - 5.7f * d, r.top + 14.1f * d, 11f, ColorUtils.setAlphaComponent(col.hint, 200))
+                    val hintText = def.hint
+                    if (page == Page.LETTERS && showHints && hintText != null) {
+                        drawText(c, hintText, r.right - 5.7f * d, r.top + 14.1f * d, 11f, ColorUtils.setAlphaComponent(col.hint, 200))
                     }
                 }
                 KeyType.SYMBOLS -> {
