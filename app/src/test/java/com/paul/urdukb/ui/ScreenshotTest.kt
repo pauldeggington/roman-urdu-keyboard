@@ -19,6 +19,12 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.content.edit
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.isSelectable
+import androidx.compose.ui.test.isToggleable
+import androidx.lifecycle.SavedStateHandle
+import com.paul.urdukb.SetupActivity
 import androidx.test.core.app.ApplicationProvider
 import com.paul.urdukb.KeyboardLook
 import org.junit.Assert.assertTrue
@@ -121,4 +127,36 @@ class ScreenshotTest {
     @Test fun galleryLemonLight() { look("light", "lemon"); shoot("gallery-lemon-light") { ComponentGallery() } }
     @Test fun galleryUrduRtl() { look("light", "blue"); shoot("gallery-urdu-rtl", rtl = true) { ComponentGallery(urduGallery) } }
     @Test fun galleryLargeText() { look("light", "blue"); shoot("gallery-large-text", fontScale = 1.6f) { ComponentGallery() } }
+
+    // ---- the real setup guide, driven by its real ViewModel
+
+    private fun setupModel() = SetupModel(ctx as Application, SavedStateHandle())
+
+    @Test fun setupGuideLight() { look("light", "blue"); val m = setupModel(); shoot("setup-welcome-light") { SetupScreen(m, {}, {}, {}) } }
+    @Test fun setupGuideUrdu() { look("light", "blue"); val m = setupModel(); shoot("setup-welcome-urdu-rtl", rtl = true) { SetupScreen(m, {}, {}, {}) } }
+    @Test fun setupGuideLargeText() { look("light", "blue"); val m = setupModel(); shoot("setup-welcome-large-text", fontScale = 1.6f) { SetupScreen(m, {}, {}, {}) } }
+
+    /** Every tappable thing is at least 48dp each way and says what it is, on the first three steps of the guide. */
+    @Test fun setupGuideIsAccessible() {
+        look("light", "blue")
+        val m = setupModel()
+        rule.setContent { RomanUrduTheme { SetupScreen(m, {}, {}, {}) } }
+        val problems = ArrayList<String>()
+        for (step in listOf(SetupActivity.Step.WELCOME, SetupActivity.Step.MODEL, SetupActivity.Step.PERSONAL)) {
+            rule.runOnUiThread { m.show(step) }
+            rule.waitForIdle()
+            val clickable = rule.onAllNodes(hasClickAction() or isToggleable() or isSelectable())
+            clickable.fetchSemanticsNodes().forEachIndexed { i, node ->
+                val cfg = node.config
+                val named = cfg.contains(SemanticsProperties.ContentDescription) || cfg.contains(SemanticsProperties.Text)
+                if (!named) problems += "$step #$i has no label"
+                val density = ctx.resources.displayMetrics.density
+                val w = node.size.width / density
+                val h = node.size.height / density
+                if (w < 48f - 0.5f || h < 48f - 0.5f) problems += "$step #$i is %.0fx%.0fdp".format(w, h)
+            }
+        }
+        println("ACCESSIBILITY problems: $problems")
+        assertTrue("Tap targets or labels missing: $problems", problems.isEmpty())
+    }
 }
