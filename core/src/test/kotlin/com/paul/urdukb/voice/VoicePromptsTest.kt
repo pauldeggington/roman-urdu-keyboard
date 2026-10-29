@@ -2,36 +2,28 @@ package com.paul.urdukb.voice
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class VoicePromptsTest {
 
-    @Test fun readsTheTwoLineReply() {
-        val h = VoicePrompts.parseHeard("Urdu: میں ٹھیک ہوں\nEnglish: I am fine")!!
-        assertEquals("میں ٹھیک ہوں", h.urdu)
-        assertEquals("I am fine", h.english)
+    @Test fun namesAreAddedToTheListeningPrompt() {
+        val p = VoicePrompts.withNames(VoicePrompts.TRANSCRIBE_URDU, listOf("Paul", " AJ Tower ", "", "Paul"))
+        assertTrue(p.startsWith(VoicePrompts.TRANSCRIBE_URDU))
+        assertTrue(p.endsWith("Names and places that may be said: Paul, AJ Tower."))
+        assertEquals(VoicePrompts.TRANSCRIBE_URDU, VoicePrompts.withNames(VoicePrompts.TRANSCRIBE_URDU, emptyList()))
+        assertEquals(VoicePrompts.TRANSCRIBE_URDU, VoicePrompts.withNames(VoicePrompts.TRANSCRIBE_URDU, listOf("  ", "")))
     }
 
-    @Test fun readsAMessyReply() {
-        val h = VoicePrompts.parseHeard("  urdu : \"آپ کیسے ہیں\"  \n\nENGLISH:   How are you?\n")!!
-        assertEquals("How are you?", h.english)
-        assertTrue(VoicePrompts.isUrduScript(h.urdu))
+    @Test fun theNameListIsReadFromWhatThePersonTyped() {
+        assertEquals(listOf("Paul", "AJ Tower", "Gulberg"), VoicePrompts.parseNames("Paul\nAJ Tower, Gulberg\n\n"))
+        assertTrue(VoicePrompts.parseNames("  \n ").isEmpty())
     }
 
-    @Test fun readsARepliesWithoutMarkers() {
-        assertEquals("Hello there", VoicePrompts.parseHeard("Hello there")!!.english)
-        val onlyUrdu = VoicePrompts.parseHeard("آپ کیسے ہیں")!!
-        assertEquals("", onlyUrdu.english)
-        assertTrue(onlyUrdu.urdu.isNotEmpty())
-    }
-
-    @Test fun emptyRepliesAreRejected() {
-        assertNull(VoicePrompts.parseHeard(""))
-        assertNull(VoicePrompts.parseHeard("   \n"))
-        assertNotNull(VoicePrompts.parseHeard("ok"))
+    @Test fun neverMoreThanThirtyNames() {
+        val many = (1..50).map { "Name$it" }
+        val p = VoicePrompts.withNames("x", many)
+        assertTrue(p.contains("Name30") && !p.contains("Name31"))
     }
 
     @Test fun transcriptsAreCleaned() {
@@ -48,10 +40,9 @@ class VoicePromptsTest {
         assertFalse(VoicePrompts.isUrduScript(""))
     }
 
-    @Test fun promptsAskForTheFormatTheParserReads() {
-        assertTrue(VoicePrompts.URDU_TO_ENGLISH.contains("Urdu:") && VoicePrompts.URDU_TO_ENGLISH.contains("English:"))
-        // the format in the prompt, filled in, is read back correctly
-        val h = VoicePrompts.parseHeard("Urdu: ا\nEnglish: a")!!
-        assertEquals("a", h.english)
+    @Test fun theTwoStepsAreSeparate() {
+        // hearing only transcribes; translating is a different call with its own rules
+        assertFalse(VoicePrompts.TRANSCRIBE_URDU.contains("English:"))
+        assertTrue(VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES.contains("AJ Tower"))
     }
 }

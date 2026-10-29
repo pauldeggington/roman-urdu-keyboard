@@ -374,4 +374,9 @@
     <string name="card_voice">Voice</string>
     <string name="voice_help">Share an Urdu voice note from WhatsApp to this app (Share, then Roman Urdu Keyboard) to read it in English. Or speak English and get an Urdu voice message to send. Works on the phone, no internet.</string>
     <string name="voice_speak_button">Speak English → Urdu voice</string>
+    <string name="voice_writing_english">Translating to English…</string>
+    <string name="voice_names_label">Names and places to expect</string>
+    <string name="voice_names_hint">Paul
+AJ Tower</string>
+    <string name="voice_names_help">One per line. The model listens for these, so a name like Paul is not heard as another word.</string>
 </resources>

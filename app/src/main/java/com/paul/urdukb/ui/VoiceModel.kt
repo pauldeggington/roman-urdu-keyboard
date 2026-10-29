@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import com.paul.urdukb.LlmEngine
+import com.paul.urdukb.Prefs
 import com.paul.urdukb.R
 import com.paul.urdukb.RomanUrdu
 import com.paul.urdukb.voice.AudioDecoder
@@ -38,6 +39,7 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
         data object Decoding : UiState
         data class Listening(val part: Int, val of: Int) : UiState
         data object WritingUrdu : UiState
+        data object WritingEnglish : UiState
         data class Recording(val level: Float, val seconds: Int) : UiState
         data object TooQuiet : UiState
         data object Failed : UiState
@@ -89,16 +91,21 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
                 val decoded = AudioDecoder.decode(ctx, uri)
                 if (Pcm.isSilent(decoded.samples)) { post { state = UiState.TooQuiet }; return@execute }
                 val pieces = Pcm.split(decoded.samples)
-                val urdu = ArrayList<String>()
-                val english = ArrayList<String>()
+                val names = VoicePrompts.parseNames(Prefs.voiceNames(ctx))
+                val prompt = VoicePrompts.withNames(VoicePrompts.TRANSCRIBE_URDU, names)
+                // step one: only write down what is said
+                val parts = ArrayList<String>()
                 pieces.forEachIndexed { i, piece ->
                     post { state = UiState.Listening(i + 1, pieces.size) }
-                    val heard = VoicePrompts.parseHeard(LlmEngine.listen(ctx, piece, VoicePrompts.URDU_TO_ENGLISH))
-                    if (heard != null) { urdu += heard.urdu; english += heard.english }
+                    parts += VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, piece, prompt))
                 }
-                val u = VoicePrompts.join(urdu)
-                val e = VoicePrompts.join(english)
-                post { state = if (u.isEmpty() && e.isEmpty()) UiState.TooQuiet else UiState.Done(u, e, "", decoded.truncated) }
+                val urdu = VoicePrompts.join(parts)
+                if (urdu.isEmpty()) { post { state = UiState.TooQuiet }; return@execute }
+                // step two: the transcript is translated by the text model, with the names as a hint
+                post { state = UiState.WritingEnglish }
+                val rules = VoicePrompts.withNames(VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES, names).replace(" Names and places that may be said:", "\n- Names and places that may appear:")
+                val english = LlmEngine.askText(ctx, rules, urdu)
+                post { state = UiState.Done(urdu, english, "", decoded.truncated) }
             } catch (t: Throwable) {
                 LlmEngine.saveError(ctx, t)
                 post { state = UiState.Failed }
@@ -120,7 +127,7 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
     /** The record button: starts recording, or stops it and translates. The caller has checked the microphone permission. */
     fun toggleRecording() {
         if (state is UiState.Recording) { stopAndTranslate(); return }
-        if (state is UiState.NoModel || state is UiState.Decoding || state is UiState.Listening || state is UiState.WritingUrdu) return
+        if (state is UiState.NoModel || state is UiState.Decoding || state is UiState.Listening || state is UiState.WritingUrdu || state is UiState.WritingEnglish) return
         speech?.stopSpeaking()
         audio = AudioState.None
         copied = ""
@@ -152,7 +159,7 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
                 val parts = ArrayList<String>()
                 pieces.forEachIndexed { i, piece ->
                     post { state = UiState.Listening(i + 1, pieces.size) }
-                    parts += VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, piece, VoicePrompts.ENGLISH_TRANSCRIPT))
+                    parts += VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, piece, VoicePrompts.withNames(VoicePrompts.ENGLISH_TRANSCRIPT, VoicePrompts.parseNames(Prefs.voiceNames(ctx)))))
                 }
                 val english = VoicePrompts.join(parts)
                 if (english.isEmpty()) { post { state = UiState.TooQuiet }; return@execute }

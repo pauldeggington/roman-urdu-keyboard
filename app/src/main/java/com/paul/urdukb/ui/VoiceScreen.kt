@@ -83,6 +83,7 @@ fun VoiceScreen(
                         Muted(thinking, Modifier.padding(top = 6.dp))
                     }
                     VoiceModel.UiState.WritingUrdu -> Body(stringResource(R.string.voice_writing_urdu))
+                    VoiceModel.UiState.WritingEnglish -> Body(stringResource(R.string.voice_writing_english))
                     is VoiceModel.UiState.Recording -> {
                         Body(stringResource(R.string.voice_recording, state.seconds))
                         Box(
@@ -96,7 +97,7 @@ fun VoiceScreen(
             }
             Row(Modifier.padding(top = 18.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (speak && state !is VoiceModel.UiState.NoModel) {
-                    val busy = state is VoiceModel.UiState.Listening || state is VoiceModel.UiState.WritingUrdu
+                    val busy = state is VoiceModel.UiState.Listening || state is VoiceModel.UiState.WritingUrdu || state is VoiceModel.UiState.WritingEnglish
                     PillButton(
                         if (state is VoiceModel.UiState.Recording) stringResource(R.string.voice_stop)
                         else if (state is VoiceModel.UiState.Done) stringResource(R.string.voice_record_again)
