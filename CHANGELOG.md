@@ -7,6 +7,8 @@ The app shows it as, for example, "Version 2.1 (build 121)". Work-in-progress bu
 ## 2.4
 
 - **Careful listening (switch in the Voice card):** each Urdu voice note is heard four ways: normal speed, slowed by a quarter, faster by a sixth, and written as Roman Urdu. If two of the first three agree, that wins; if not, the model compares all four and picks the most likely words. Then the English is turned back into Urdu and compared with what was heard; if it does not match, it is translated once more, closer to the Urdu, and if it still does not match the screen says the English may be off. More accurate, several times slower.
+- **Cleaner audio:** before listening, low rumble is removed, silence at the start and end is trimmed, and a quiet recording is raised (never more than 8 times).
+- **Also heard as:** when the listening passes disagree, the other readings are listed, and tapping Use this translates that reading instead.
 - **Mixed Urdu and English:** the translation step keeps English words, names and places as they are and translates the Urdu around them, with worked examples.
 
 - **Better Urdu voice notes:** the model now writes down what it hears first, then a separate step translates that transcript, which gave far better English than doing both at once. English names and places in the note are kept in Latin letters.
