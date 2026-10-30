@@ -127,6 +127,7 @@ jobs:
           LIBS=$(unzip -l "$APK" | grep -o 'lib/[^ ]*\.so' | sed 's#.*/##' | sort | tr '\n' ' ' | cut -c1-400)
           echo "::notice title=APK::size $SIZE | $PKG"
           echo "::notice title=Native libs::$LIBS"
+          if unzip -l "$APK" | grep -q 'assets/adi-registration.properties'; then echo "::notice title=Developer verification::adi-registration.properties is inside the APK"; else echo "::warning title=Developer verification::adi-registration.properties is missing from the APK"; fi
 
       - uses: actions/upload-artifact@v4
         with:
