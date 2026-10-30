@@ -90,4 +90,40 @@ class PcmTest {
         val r = Pcm.raw(shortArrayOf(1, -2))
         assertEquals(listOf<Byte>(1, 0, -2, -1), r.toList())
     }
+
+    @Test fun cleanTrimsSilenceAndKeepsRoomAroundSpeech() {
+        val body = tone(1.0, 16000)
+        val s = ShortArray(16000) + body + ShortArray(16000)
+        val out = Pcm.clean(s)
+        val seconds = out.size / 16000.0
+        assertTrue("trimmed to $seconds s", seconds in 1.3..1.7)
+    }
+
+    @Test fun cleanRaisesAQuietRecordingButNotTooMuch() {
+        val quiet = tone(2.0, 16000, amp = 500.0)
+        val out = Pcm.clean(quiet)
+        val peak = Pcm.peak(out) * 32768f
+        assertTrue("peak $peak", peak in 3000f..4500f)    // about 8 times, not more
+    }
+
+    @Test fun cleanLeavesALoudRecordingAlone() {
+        val loud = tone(2.0, 16000, amp = 24000.0)
+        val out = Pcm.clean(loud)
+        assertTrue(Pcm.peak(out) * 32768f in 20000f..27000f)
+    }
+
+    @Test fun cleanRemovesAConstantOffset() {
+        val s = tone(2.0, 16000, amp = 6000.0)
+        for (i in s.indices) s[i] = (s[i] + 4000).coerceIn(-32768, 32767).toShort()
+        val out = Pcm.clean(s)
+        val mean = out.drop(4000).take(16000).map { it.toDouble() }.average()
+        assertTrue("mean $mean", kotlin.math.abs(mean) < 300.0)
+    }
+
+    @Test fun cleanLeavesSilenceAndTinyClipsAlone() {
+        val silent = ShortArray(32000)
+        assertTrue(Pcm.clean(silent) === silent)
+        val tiny = ShortArray(100) { 5 }
+        assertTrue(Pcm.clean(tiny) === tiny)
+    }
 }

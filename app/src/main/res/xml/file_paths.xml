@@ -4,4 +4,6 @@
     <cache-path name="gifs" path="gifs/" />
     <!-- the Urdu voice message is made here for a moment so another app can read it -->
     <cache-path name="voice" path="voice/" />
+    <!-- the saved voice corrections, shared only when the person taps Share -->
+    <files-path name="voicedata" path="voice-data/" />
 </paths>

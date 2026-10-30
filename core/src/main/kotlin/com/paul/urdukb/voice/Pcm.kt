@@ -133,6 +133,49 @@ object Pcm {
         return out
     }
 
+    /**
+     * Gets a recording ready for the model: removes low rumble and any constant offset (a high-pass filter at about 80 Hz),
+     * trims the silence from the start and end (keeping a quarter second of room), and raises a quiet recording, by at most
+     * 8 times so background noise is not blown up. A recording with nothing in it comes back unchanged.
+     */
+    fun clean(samples: ShortArray): ShortArray {
+        if (samples.size < RATE / 2) return samples
+        // one-pole high-pass: y[n] = a * (y[n-1] + x[n] - x[n-1])
+        val a = 0.9695
+        val y = FloatArray(samples.size)
+        var prevX = samples[0].toDouble()
+        var prevY = 0.0
+        for (i in samples.indices) {
+            val x = samples[i].toDouble()
+            prevY = a * (prevY + x - prevX)
+            prevX = x
+            y[i] = prevY.toFloat()
+        }
+        // where the speech is: frames of 20 ms louder than a small share of the loudest frame
+        val frame = RATE / 50
+        val frames = y.size / frame
+        if (frames < 3) return samples
+        val level = DoubleArray(frames) { f ->
+            var acc = 0.0
+            for (i in f * frame until (f + 1) * frame) acc += y[i].toDouble() * y[i]
+            sqrt(acc / frame)
+        }
+        val loud = level.max()
+        val threshold = maxOf(30.0, 0.06 * loud)
+        val first = level.indexOfFirst { it > threshold }
+        val last = level.indexOfLast { it > threshold }
+        if (first < 0 || loud < SILENCE_RMS) return samples
+        val pad = RATE / 4
+        val from = maxOf(0, first * frame - pad)
+        val to = minOf(y.size, (last + 1) * frame + pad)
+        var peak = 0f
+        for (i in from until to) peak = maxOf(peak, abs(y[i]))
+        val target = 0.85f * 32767f
+        val gain = if (peak > 1f && peak < target) minOf(8f, target / peak) else 1f
+        val applied = if (gain > 1.2f) gain else 1f
+        return ShortArray(to - from) { (y[from + it] * applied).toInt().coerceIn(-32768, 32767).toShort() }
+    }
+
     /** Peak level, 0 to 1: for a level meter while recording. */
     fun peak(samples: ShortArray, from: Int = 0, to: Int = samples.size): Float {
         var p = 0

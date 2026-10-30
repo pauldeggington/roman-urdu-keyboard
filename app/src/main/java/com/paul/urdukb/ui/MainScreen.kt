@@ -357,6 +357,19 @@ private fun VoiceCard(model: MainModel) {
         CardTitle(stringResource(R.string.card_voice))
         Muted(stringResource(R.string.voice_help), Modifier.padding(top = 4.dp))
         PrefSwitch(stringResource(R.string.voice_careful), stringResource(R.string.voice_careful_sub), KbSettings.CAREFUL_VOICE)
+        val saved = remember { com.paul.urdukb.voice.Corrections.count(ctx) }
+        if (saved > 0) {
+            Muted(stringResource(R.string.voice_corrections_note, saved), Modifier.padding(top = 8.dp))
+            PillButton(stringResource(R.string.voice_share_corrections), Modifier.fillMaxWidth().padding(top = 6.dp)) {
+                val uri = androidx.core.content.FileProvider.getUriForFile(ctx, "${ctx.packageName}.fileprovider", com.paul.urdukb.voice.Corrections.file(ctx))
+                val send = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                ctx.startActivity(Intent.createChooser(send, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            }
+        }
         PillButton(
             stringResource(R.string.voice_speak_button), Modifier.fillMaxWidth().padding(top = 12.dp), filled = true,
             enabled = !model.busy,

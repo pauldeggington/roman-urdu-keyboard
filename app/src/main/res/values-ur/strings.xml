@@ -373,4 +373,11 @@
     <string name="voice_listening_part_pass">سن رہا ہے، حصہ %1$d از %2$d، مرتبہ %3$d از %4$d…</string>
     <string name="voice_checking">انگریزی کی دوبارہ جانچ ہو رہی ہے…</string>
     <string name="voice_unsure">یہ انگریزی غلط ہو سکتی ہے۔ اوپر کا اردو متن دیکھیں، یا وائس نوٹ دوبارہ سنیں۔</string>
+    <string name="voice_urdu_edit">اردو (کوئی لفظ ٹھیک کرنے کے لیے دبائیں)</string>
+    <string name="voice_edit_hint">جو اردو سنی گئی</string>
+    <string name="voice_translate_again">دوبارہ ترجمہ</string>
+    <string name="voice_also_heard">یہ بھی سنا گیا</string>
+    <string name="voice_use_this">یہ استعمال کریں</string>
+    <string name="voice_corrections_note">اس فون پر %1$d اصلاحات محفوظ ہیں۔ یہ کبھی اپ لوڈ نہیں ہوتیں۔</string>
+    <string name="voice_share_corrections">محفوظ اصلاحات شیئر کریں</string>
 </resources>

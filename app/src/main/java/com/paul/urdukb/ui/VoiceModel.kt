@@ -15,6 +15,7 @@ import com.paul.urdukb.LlmEngine
 import com.paul.urdukb.R
 import com.paul.urdukb.RomanUrdu
 import com.paul.urdukb.voice.AudioDecoder
+import com.paul.urdukb.voice.Corrections
 import com.paul.urdukb.voice.M4a
 import com.paul.urdukb.voice.Pcm
 import com.paul.urdukb.voice.Recorder
@@ -49,7 +50,7 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
         data class Recording(val level: Float, val seconds: Int) : UiState
         data object TooQuiet : UiState
         data object Failed : UiState
-        data class Done(val urdu: String, val english: String, val roman: String, val truncated: Boolean, val unsure: Boolean = false) : UiState
+        data class Done(val urdu: String, val english: String, val roman: String, val truncated: Boolean, val unsure: Boolean = false, val alternates: List<String> = emptyList()) : UiState
     }
 
     /** The audio file for English to Urdu: made after the text is shown. */
@@ -75,6 +76,11 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
         private set
     val firstLoad = !LlmEngine.isLoaded()
 
+    /** The Urdu text in the edit box. Starts as what was heard; the person can fix words and translate again. */
+    var urduEdit by mutableStateOf("")
+
+    private var heardUrdu = ""
+    private var heardTruncated = false
     private var recorder: Recorder? = null
     private var speech: UrduSpeech? = null
     private var started = false
@@ -96,13 +102,16 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
             try {
                 val decoded = AudioDecoder.decode(ctx, uri)
                 if (Pcm.isSilent(decoded.samples)) { post { state = UiState.TooQuiet }; return@execute }
+                // rumble out, silence trimmed, a quiet recording raised; if that leaves too little, the original is used
+                val samples = Pcm.clean(decoded.samples).takeIf { it.size >= Pcm.RATE / 3 } ?: decoded.samples
                 // careful listening hears every piece in four ways: normal speed, slowed by a quarter, faster by a sixth, and written
                 // as Roman Urdu. Pieces are cut at 21 s so the slowed copy (x1.25) still fits in the model's 30 seconds.
                 val careful = KbSettings.of(ctx)[KbSettings.CAREFUL_VOICE]
                 val passes = if (careful) 4 else 1
-                val pieces = Pcm.split(decoded.samples, maxSeconds = if (careful) 21 else Pcm.MAX_PIECE_SECONDS)
+                val pieces = Pcm.split(samples, maxSeconds = if (careful) 21 else Pcm.MAX_PIECE_SECONDS)
                 // step one: only write down what is said
                 val parts = ArrayList<String>()
+                val alternates = ArrayList<String>()
                 pieces.forEachIndexed { i, piece ->
                     fun hear(pass: Int, audio: ShortArray, prompt: String): String {
                         post { state = UiState.Listening(i + 1, pieces.size, pass, passes) }
@@ -124,35 +133,74 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
                             temperature = 0.1,
                         ),
                     )
-                    parts += merged.ifEmpty { listOf(normal, slow, fast).firstOrNull { it.isNotEmpty() }.orEmpty() }
+                    val chosen = merged.ifEmpty { listOf(normal, slow, fast).firstOrNull { it.isNotEmpty() }.orEmpty() }
+                    parts += chosen
+                    // what else the passes heard here, so the person can pick a reading that is better than the chosen one
+                    val others = Vote.alternatives(chosen, listOf(normal, slow, fast, roman).filter { VoicePrompts.isUrduScript(it) })
+                    alternates += if (pieces.size > 1) others.map { "(${i + 1}) $it" } else others
                 }
                 val urdu = VoicePrompts.join(parts)
                 if (urdu.isEmpty()) { post { state = UiState.TooQuiet }; return@execute }
-                // step two: the transcript is translated by the text model
-                post { state = UiState.WritingEnglish }
-                var english = LlmEngine.askText(ctx, VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES, urdu, VoicePrompts.TRANSLATE_EXAMPLES, temperature = 0.1)
-                var unsure = false
-                if (careful && english.isNotBlank()) {
-                    // step three: turn the English back into Urdu and compare it with what was heard; a translation that lost the
-                    // meaning does not come back alike. If it does not, translate once more, closer to the Urdu, and keep the better one.
-                    post { state = UiState.Checking }
-                    fun score(en: String) = Similarity.dice(urdu, LlmEngine.askText(ctx, VoicePrompts.URDU_SCRIPT_RULES, en, temperature = 0.1))
-                    var best = score(english)
-                    if (best < TranslationCheck.TRY_AGAIN_BELOW) {
-                        val second = LlmEngine.askText(ctx, VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES + VoicePrompts.LITERAL_RETRY, urdu, VoicePrompts.TRANSLATE_EXAMPLES, temperature = 0.3)
-                        if (second.isNotBlank()) {
-                            val s2 = score(second)
-                            if (s2 > best) { english = second; best = s2 }
-                        }
-                    }
-                    unsure = best < TranslationCheck.UNSURE_BELOW
-                }
-                post { state = UiState.Done(urdu, english, "", decoded.truncated, unsure) }
+                heardUrdu = urdu
+                heardTruncated = decoded.truncated
+                post { urduEdit = urdu }
+                val (english, unsure) = translateUrdu(urdu, careful)
+                post { state = UiState.Done(urdu, english, "", decoded.truncated, unsure, alternates.take(4)) }
             } catch (t: Throwable) {
                 LlmEngine.saveError(ctx, t)
                 post { state = UiState.Failed }
             }
         }
+    }
+
+    /**
+     * Steps two and three: the transcript is translated, and in careful mode the English is turned back into Urdu and compared
+     * with what was heard; a translation that lost the meaning does not come back alike. If it does not, translate once more,
+     * closer to the Urdu, and keep the better one. Returns the English and whether it is still doubtful. Blocking.
+     */
+    private fun translateUrdu(urdu: String, careful: Boolean): Pair<String, Boolean> {
+        post { state = UiState.WritingEnglish }
+        var english = LlmEngine.askText(ctx, VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES, urdu, VoicePrompts.TRANSLATE_EXAMPLES, temperature = 0.1)
+        var unsure = false
+        if (careful && english.isNotBlank()) {
+            post { state = UiState.Checking }
+            fun score(en: String) = Similarity.dice(urdu, LlmEngine.askText(ctx, VoicePrompts.URDU_SCRIPT_RULES, en, temperature = 0.1))
+            var best = score(english)
+            if (best < TranslationCheck.TRY_AGAIN_BELOW) {
+                val second = LlmEngine.askText(ctx, VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES + VoicePrompts.LITERAL_RETRY, urdu, VoicePrompts.TRANSLATE_EXAMPLES, temperature = 0.3)
+                if (second.isNotBlank()) {
+                    val s2 = score(second)
+                    if (s2 > best) { english = second; best = s2 }
+                }
+            }
+            unsure = best < TranslationCheck.UNSURE_BELOW
+        }
+        return english to unsure
+    }
+
+    /** Translates the edit box again (after the person fixed a word, or picked another reading). */
+    fun translateAgain() {
+        val text = urduEdit.trim()
+        if (text.isEmpty() || mode != Mode.URDU_TO_ENGLISH) return
+        val busy = state
+        if (busy is UiState.Listening || busy is UiState.Comparing || busy is UiState.Checking || busy is UiState.WritingEnglish || busy is UiState.Decoding) return
+        val careful = KbSettings.of(ctx)[KbSettings.CAREFUL_VOICE]
+        io.execute {
+            try {
+                if (text != heardUrdu) Corrections.save(ctx, heardUrdu, text)
+                val (english, unsure) = translateUrdu(text, careful)
+                post { state = UiState.Done(text, english, "", heardTruncated, unsure, emptyList()) }
+            } catch (t: Throwable) {
+                LlmEngine.saveError(ctx, t)
+                post { state = UiState.Failed }
+            }
+        }
+    }
+
+    /** Uses one of the other readings as the transcript and translates it. */
+    fun useReading(text: String) {
+        urduEdit = text.replace(Regex("^\\(\\d+\\)\\s*"), "")
+        translateAgain()
     }
 
     // ---------------------------------------------------------------- English speech in
@@ -192,7 +240,7 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
     private fun stopAndTranslate() {
         val rec = recorder ?: return
         recorder = null
-        val samples = rec.stop()
+        val samples = rec.stop().let { raw -> Pcm.clean(raw).takeIf { it.size >= Pcm.RATE / 3 } ?: raw }
         if (samples.size < Pcm.RATE / 2 || Pcm.isSilent(samples)) { state = UiState.TooQuiet; return }
         state = UiState.Listening(1, 1)
         io.execute {

@@ -53,4 +53,11 @@ class VoteSimilarityTest {
         assertEquals(1.0, Similarity.dice("hello there", heard), 0.0)
         assertEquals(1.0, Similarity.dice("\u067E\u0627\u0644", "\u0622\u062C"), 0.0)
     }
+
+    @Test fun alternativesAreTheOtherDistinctReadings() {
+        assertEquals(listOf("a c", "d"), Vote.alternatives("a b", listOf("a b", "a c", "A  C!", "", "d")))
+        assertEquals(listOf("x"), Vote.alternatives("a", listOf("x", "x"), max = 3))
+        assertTrue(Vote.alternatives("a", listOf("a", " A ")).isEmpty())
+        assertEquals(2, Vote.alternatives("z", listOf("a", "b", "c"), max = 2).size)
+    }
 }

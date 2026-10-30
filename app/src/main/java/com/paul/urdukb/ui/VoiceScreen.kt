@@ -131,7 +131,23 @@ private fun DoneBody(
         Muted(stringResource(R.string.voice_english))
         SelectionContainer { Text(s.english, style = content, color = cs.onSurface, fontSize = Type.title, lineHeight = Type.title * 1.3f) }
     }
-    if (s.urdu.isNotEmpty()) {
+    if (s.urdu.isNotEmpty() && !speak) {
+        // the Urdu that was heard can be fixed here, and the English made again from it
+        Muted(stringResource(R.string.voice_urdu_edit), Modifier.padding(top = 14.dp))
+        TextBox(model.urduEdit, { model.urduEdit = it }, stringResource(R.string.voice_edit_hint), minLines = 2, sentences = true, fontSize = Type.title)
+        ButtonRow {
+            PillButton(stringResource(R.string.voice_translate_again), Modifier.weight(1f).fillMaxHeight(), filled = true, enabled = model.urduEdit.trim().isNotEmpty() && model.urduEdit.trim() != s.urdu.trim()) { model.translateAgain() }
+        }
+        if (s.alternates.isNotEmpty()) {
+            Muted(stringResource(R.string.voice_also_heard), Modifier.padding(top = 14.dp))
+            s.alternates.forEach { alt ->
+                Row(Modifier.fillMaxWidth().padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(alt, Modifier.weight(1f).padding(end = 8.dp), style = content, color = cs.onSurface, fontSize = Type.bodyLarge, lineHeight = Type.bodyLarge * 1.5f)
+                    PillButton(stringResource(R.string.voice_use_this), Modifier.heightIn(min = 48.dp)) { model.useReading(alt) }
+                }
+            }
+        }
+    } else if (s.urdu.isNotEmpty()) {
         Muted(stringResource(R.string.voice_urdu), Modifier.padding(top = 14.dp))
         SelectionContainer { Text(s.urdu, style = content, color = cs.onSurface, fontSize = Type.title, lineHeight = Type.title * 1.5f) }
     }
@@ -144,7 +160,7 @@ private fun DoneBody(
 
     ButtonRow {
         if (s.english.isNotEmpty()) PillButton(stringResource(R.string.voice_copy_english), Modifier.weight(1f).fillMaxHeight()) { model.copy("English", s.english) }
-        if (s.urdu.isNotEmpty()) PillButton(stringResource(R.string.voice_copy_urdu), Modifier.weight(1f).fillMaxHeight()) { model.copy("Urdu", s.urdu) }
+        if (s.urdu.isNotEmpty()) PillButton(stringResource(R.string.voice_copy_urdu), Modifier.weight(1f).fillMaxHeight()) { model.copy("Urdu", if (speak) s.urdu else model.urduEdit.ifBlank { s.urdu }) }
     }
     if (speak && s.urdu.isNotEmpty()) {
         when (val a = model.audio) {

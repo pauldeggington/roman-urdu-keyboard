@@ -11,4 +11,17 @@ object Vote {
         val top = groups.values.maxByOrNull { it.size } ?: return null
         return if (top.size >= 2) top.first() else null
     }
+
+    /** The other readings that differ from [chosen], one of each, at most [max]: what else the passes heard. */
+    fun alternatives(chosen: String, candidates: List<String>, max: Int = 3): List<String> {
+        val seen = hashSetOf(key(chosen))
+        val out = ArrayList<String>()
+        for (c in candidates) {
+            val k = key(c)
+            if (k.isEmpty() || !seen.add(k)) continue
+            out += c.trim()
+            if (out.size >= max) break
+        }
+        return out
+    }
 }
