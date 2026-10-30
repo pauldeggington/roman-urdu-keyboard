@@ -37,6 +37,40 @@ object Similarity {
         else -> c
     }
 
+    /**
+     * The sound skeleton of Roman Urdu: letters only, vowels and y dropped, v read as w, doubled letters merged. Roman Urdu is
+     * spelled many ways (kaisay, kese, kaisy), but the consonants stay: "kaisay" and "kese" both become "ks".
+     */
+    private fun skeleton(word: String): String {
+        val sb = StringBuilder()
+        for (ch in word.lowercase()) {
+            if (!ch.isLetter() || ch.code > 127) continue
+            val c = if (ch == 'v') 'w' else ch
+            if (c in "aeiouy") continue
+            if (sb.isNotEmpty() && sb.last() == c) continue
+            sb.append(c)
+        }
+        return sb.toString()
+    }
+
+    private val WORD = Regex("[A-Za-z']+")
+
+    private fun romanGroups(text: String): Set<String> {
+        val words = WORD.findAll(text).map { skeleton(it.value) }.filter { it.isNotEmpty() }.toList()
+        if (words.isEmpty()) return emptySet()
+        val t = " " + words.joinToString(" ") + " "
+        if (t.length < 3) return emptySet()
+        return (0..t.length - 3).map { t.substring(it, it + 3) }.toSet()
+    }
+
+    /** Like [dice], for Roman Urdu or English-letter text. 1.0 when there is too little to judge. */
+    fun diceRoman(a: String, b: String): Double {
+        val ga = romanGroups(a)
+        val gb = romanGroups(b)
+        if (ga.size < MIN_GROUPS || gb.size < MIN_GROUPS) return 1.0
+        return 2.0 * ga.count { it in gb } / (ga.size + gb.size)
+    }
+
     /** 0 to 1; 1.0 when there is too little Urdu to judge (so a check never fails on that account). */
     fun dice(a: String, b: String): Double {
         val ga = groups(a)
@@ -50,8 +84,11 @@ object Similarity {
 /** How much to trust the English, judged by [Similarity] of its back-translation. The numbers are starting points to tune on real notes. */
 object TranslationCheck {
     /** Below this, translate once more, closer to the Urdu, and keep whichever comes back more alike. */
-    const val TRY_AGAIN_BELOW = 0.35
+    const val TRY_AGAIN_BELOW = 0.30
 
     /** Below this even after the second try, the screen says the English may be off. */
-    const val UNSURE_BELOW = 0.25
+    const val UNSURE_BELOW = 0.20
+
+    /** Two Roman Urdu readings with at least this [Similarity.diceRoman] are the same words, spelled differently. */
+    const val ROMAN_SAME = 0.60
 }

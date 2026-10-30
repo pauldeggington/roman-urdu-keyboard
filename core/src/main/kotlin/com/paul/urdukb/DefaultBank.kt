@@ -100,6 +100,20 @@ My name | Mera naam"""
         "formal" to WORDS_COMMON + "\nYour friend | Aap ka dost\nYour name | Aap ka naam\nYour family | Aap ke ghar walay",
     )
 
+    /**
+     * Roman Urdu to English examples in the way a speech recognizer writes a voice note down: phonetic, unpunctuated, with English
+     * words mixed in. Added to the Roman Urdu to English bank once, also on phones that already saved one.
+     */
+    val ADDED_VOICE = mapOf(
+        "english" to """# voice notes
+yeh paul ke naam par parcel tha reception par de diya hai AJ Tower | This parcel was in Paul's name. I left it at reception at AJ Tower.
+main aadhe ghantay mein office pohanch jaon ga aap meeting room mein intezar karein | I'll reach the office in half an hour. Please wait in the meeting room.
+kal sham ko meray ammi abbu ka call aaya tha woh theek hain | My parents called yesterday evening. They are fine.
+delivery wala bahar khara hai gate khol do | The delivery man is standing outside. Open the gate.
+paisay maine transfer kar diye hain check kar lein | I've transferred the money. Please check.
+main raaste mein hoon das minute mein pohanch raha hoon | I'm on my way. I'll be there in ten minutes.""",
+    )
+
     val CASUAL = """How are you? | Tum kaisay ho?
 What are you doing? | Kya kar rahay ho?
 What do you want to eat? | Kya khana chahtay ho?
@@ -214,7 +228,7 @@ kal ka kia plan hai | What's the plan for tomorrow?
 acha thk hai | Okay, that's fine.
 yar bht thak gya hn | I'm really tired.
 abhi busy hn baad mein baat krta hn | I'm busy right now, I'll talk later.
-ghar pohanch gye | I reached home.""" + "\n" + ADDED_QUESTIONS.getValue("english")
+ghar pohanch gye | I reached home.""" + "\n" + ADDED_QUESTIONS.getValue("english") + "\n" + ADDED_VOICE.getValue("english")
 
     /** word -> preferred spelling. Fixes Hindi-sounding spellings and applies the "ay" rule. */
     val GLOSSARY = """# one per line: word -> the spelling to use instead

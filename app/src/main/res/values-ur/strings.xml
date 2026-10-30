@@ -368,11 +368,12 @@
     <string name="voice_writing_english">انگریزی میں ترجمہ ہو رہا ہے…</string>
     <string name="voice_comparing">جو سنا اسے ملایا جا رہا ہے…</string>
     <string name="voice_careful">غور سے سننا</string>
-    <string name="voice_careful_sub">ہر اردو وائس نوٹ کو چار طرح سنتا ہے (عام رفتار، آہستہ، تیز، اور رومن اردو میں)، سب کو ملاتا ہے، پھر انگریزی کو واپس اردو میں ترجمہ کر کے جانچتا ہے۔ بہت زیادہ درست، مگر کئی گنا وقت لگتا ہے۔</string>
+    <string name="voice_careful_sub">ہر اردو وائس نوٹ کو تین طرح سنتا ہے (عام رفتار، آہستہ اور تیز)، اسے رومن اردو میں لکھتا ہے، سب کو ملاتا ہے، پھر انگریزی کو واپس ترجمہ کر کے جانچتا ہے۔ زیادہ درست، مگر کئی گنا وقت لگتا ہے۔</string>
     <string name="voice_listening_pass">سن رہا ہے، مرتبہ %1$d از %2$d…</string>
     <string name="voice_listening_part_pass">سن رہا ہے، حصہ %1$d از %2$d، مرتبہ %3$d از %4$d…</string>
     <string name="voice_checking">انگریزی کی دوبارہ جانچ ہو رہی ہے…</string>
     <string name="voice_unsure">یہ انگریزی غلط ہو سکتی ہے۔ اوپر کا اردو متن دیکھیں، یا وائس نوٹ دوبارہ سنیں۔</string>
     <string name="voice_also_heard">یہ بھی سنا گیا</string>
     <string name="voice_use_this">یہ استعمال کریں</string>
+    <string name="voice_copy_roman">رومن اردو کاپی</string>
 </resources>

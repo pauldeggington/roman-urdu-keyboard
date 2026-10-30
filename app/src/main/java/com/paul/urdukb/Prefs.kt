@@ -142,7 +142,7 @@ Rules:
         // banks saved before the speaker fix: swap the old lines that read as "you"
         var v = p.getString("examples_${style.key}", null)?.lines()?.joinToString("\n") { DefaultBank.REPLACED[it.trim()] ?: it }
         // once each: add the "question to the listener" examples and the bare words and phrases to banks saved before they existed
-        for ((flag, added) in listOf("added_questions" to DefaultBank.ADDED_QUESTIONS, "added_words" to DefaultBank.ADDED_WORDS)) {
+        for ((flag, added) in listOf("added_questions" to DefaultBank.ADDED_QUESTIONS, "added_words" to DefaultBank.ADDED_WORDS, "added_voice" to DefaultBank.ADDED_VOICE)) {
             val key = "${flag}_${style.key}"
             if (v != null && !p.getBoolean(key, false)) {
                 val have = v.lines().map { it.substringBefore("|").trim().lowercase() }.toSet()

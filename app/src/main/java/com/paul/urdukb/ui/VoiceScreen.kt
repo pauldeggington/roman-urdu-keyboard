@@ -135,6 +135,10 @@ private fun DoneBody(
         Muted(stringResource(R.string.voice_urdu), Modifier.padding(top = 14.dp))
         SelectionContainer { Text(s.urdu, style = content, color = cs.onSurface, fontSize = Type.title, lineHeight = Type.title * 1.5f) }
     }
+    if (s.roman.isNotEmpty()) {
+        Muted(stringResource(R.string.voice_roman), Modifier.padding(top = 14.dp))
+        SelectionContainer { Text(s.roman, style = content, color = cs.onSurface, fontSize = Type.bodyLarge, lineHeight = Type.bodyLarge * 1.4f) }
+    }
     if (!speak && s.alternates.isNotEmpty()) {
         // what else the listening passes heard: tapping Use this translates that reading instead
         Muted(stringResource(R.string.voice_also_heard), Modifier.padding(top = 14.dp))
@@ -145,16 +149,13 @@ private fun DoneBody(
             }
         }
     }
-    if (s.roman.isNotEmpty()) {
-        Muted(stringResource(R.string.voice_roman), Modifier.padding(top = 14.dp))
-        SelectionContainer { Text(s.roman, style = content, color = cs.onSurface, fontSize = Type.bodyLarge, lineHeight = Type.bodyLarge * 1.4f) }
-    }
     if (s.unsure) Muted(stringResource(R.string.voice_unsure), Modifier.padding(top = 10.dp))
     if (s.truncated) Muted(stringResource(R.string.voice_truncated), Modifier.padding(top = 10.dp))
 
     ButtonRow {
         if (s.english.isNotEmpty()) PillButton(stringResource(R.string.voice_copy_english), Modifier.weight(1f).fillMaxHeight()) { model.copy("English", s.english) }
         if (s.urdu.isNotEmpty()) PillButton(stringResource(R.string.voice_copy_urdu), Modifier.weight(1f).fillMaxHeight()) { model.copy("Urdu", s.urdu) }
+        if (!speak && s.roman.isNotEmpty()) PillButton(stringResource(R.string.voice_copy_roman), Modifier.weight(1f).fillMaxHeight()) { model.copy("Roman Urdu", s.roman) }
     }
     if (speak && s.urdu.isNotEmpty()) {
         when (val a = model.audio) {

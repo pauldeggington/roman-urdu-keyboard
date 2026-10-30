@@ -21,16 +21,15 @@ class VoicePromptsTest {
         assertFalse(VoicePrompts.isUrduScript(""))
     }
 
-    @Test fun theTwoStepsAreSeparate() {
-        // hearing only transcribes; translating is a different call with its own rules
-        assertFalse(VoicePrompts.TRANSCRIBE_URDU.contains("English:"))
-        assertTrue(VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES.contains("AJ Tower"))
-    }
-
     @Test fun reconcilingBuildsOneLabelledMessage() {
         val m = VoicePrompts.reconcileInput(listOf("normal speed" to "a b", "slowed down" to "a c", "faster" to "", "Roman Urdu" to "a b"))
         assertEquals("Transcript 1 (normal speed): a b\nTranscript 2 (slowed down): a c\nTranscript 3 (Roman Urdu): a b", m)
         assertTrue(VoicePrompts.RECONCILE_RULES.contains("most likely correct transcript"))
+    }
+
+    @Test fun theVoiceRulesCoverNamesAndMixedLanguage() {
+        assertTrue(VoicePrompts.ROMAN_VOICE_RULES.contains("AJ Tower"))
+        assertTrue(VoicePrompts.ROMAN_VOICE_RULES.contains("misheard"))
     }
 
     @Test fun romanPromptAsksForRomanUrdu() {
@@ -44,12 +43,4 @@ class VoicePromptsTest {
         assertTrue(VoicePrompts.sameText("", " "))
     }
 
-    @Test fun translationExamplesMixUrduAndEnglish() {
-        assertTrue(VoicePrompts.TRANSLATE_EXAMPLES.size >= 3)
-        for ((urdu, english) in VoicePrompts.TRANSLATE_EXAMPLES) {
-            assertTrue("urdu side has Urdu letters", urdu.any { it.code in 0x0600..0x06FF })
-            assertTrue("urdu side keeps an English word", Regex("[A-Za-z]{3,}").containsMatchIn(urdu))
-            assertFalse("english side is English", VoicePrompts.isUrduScript(english))
-        }
-    }
 }

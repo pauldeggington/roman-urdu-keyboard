@@ -291,9 +291,9 @@ object LlmEngine {
 
     /** Blocking. Call from a background thread. */
     @Synchronized
-    fun translate(ctx: Context, rawText: String, styleIn: Style, auto: Boolean = false): String {
+    fun translate(ctx: Context, rawText: String, styleIn: Style, auto: Boolean = false, extra: String = ""): String {
         exactMatch(ctx, rawText, styleIn)?.let { return it }
-        val cacheKey = recentKey(ctx, styleIn, rawText) + if (auto) "|auto" else ""
+        val cacheKey = recentKey(ctx, styleIn, rawText) + (if (auto) "|auto" else "") + (if (extra.isEmpty()) "" else "|x${extra.hashCode()}")
         recent[cacheKey]?.let { return it }
         val eng = getEngine(ctx)
         // Auto tone: the keywords decide the clear cases; when they cannot, the model reads the sentence first
@@ -319,12 +319,12 @@ object LlmEngine {
         val examples = examples(ctx, style, text, situation)
         val tagged = Person.tag(text, style)
 
-        var out = ask(eng, systemPrompt(ctx, style, glossary), examples, tagged, 0.3f)
+        var out = ask(eng, systemPrompt(ctx, style, glossary, extra), examples, tagged, 0.3f)
         // "I am well" must not come back as a sentence about "you", nor "How are you?" as an answer:
         // if the answer talks about the wrong person, try once more, stricter and with less randomness
         val who = Person.overall(text, style)
         if (who != null && !Person.consistent(out, who, style)) {
-            val again = ask(eng, systemPrompt(ctx, style, glossary, Person.retryNote(who, style)), examples, tagged, 0.1f)
+            val again = ask(eng, systemPrompt(ctx, style, glossary, extra + Person.retryNote(who, style)), examples, tagged, 0.1f)
             if (Person.consistent(again, who, style)) out = again
         }
         // a word or short phrase must not come back as a question or a long answer: one stricter try

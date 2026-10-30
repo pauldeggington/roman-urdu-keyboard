@@ -98,45 +98,49 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
                 if (Pcm.isSilent(decoded.samples)) { post { state = UiState.TooQuiet }; return@execute }
                 // rumble out, silence trimmed, a quiet recording raised; if that leaves too little, the original is used
                 val samples = Pcm.clean(decoded.samples).takeIf { it.size >= Pcm.RATE / 3 } ?: decoded.samples
-                // careful listening hears every piece in four ways: normal speed, slowed by a quarter, faster by a sixth, and written
-                // as Roman Urdu. Pieces are cut at 21 s so the slowed copy (x1.25) still fits in the model's 30 seconds.
+                // Everything is written as Roman Urdu, which the keyboard's Urdu to English translation is tuned for. Careful listening hears
+                // every piece three ways: normal speed, slowed by a quarter and faster by a sixth. Pieces are cut at 21 s so the slowed copy
+                // (x1.25) still fits in the model's 30 seconds.
                 val careful = KbSettings.of(ctx)[KbSettings.CAREFUL_VOICE]
-                val passes = if (careful) 4 else 1
+                val passes = if (careful) 3 else 1
                 val pieces = Pcm.split(samples, maxSeconds = if (careful) 21 else Pcm.MAX_PIECE_SECONDS)
-                // step one: only write down what is said
+                val same: (String, String) -> Boolean = { x, y -> Similarity.diceRoman(x, y) >= TranslationCheck.ROMAN_SAME }
                 val parts = ArrayList<String>()
                 val alternates = ArrayList<String>()
                 pieces.forEachIndexed { i, piece ->
-                    fun hear(pass: Int, audio: ShortArray, prompt: String): String {
+                    fun hear(pass: Int, audio: ShortArray): String {
                         post { state = UiState.Listening(i + 1, pieces.size, pass, passes) }
-                        return VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, audio, prompt))
+                        return VoicePrompts.cleanTranscript(LlmEngine.listen(ctx, audio, VoicePrompts.TRANSCRIBE_ROMAN))
                     }
-                    val normal = hear(1, piece, VoicePrompts.TRANSCRIBE_URDU)
+                    val normal = hear(1, piece)
                     if (!careful) { parts += normal; return@forEachIndexed }
-                    val slow = hear(2, Stretch.change(piece, 1.25), VoicePrompts.TRANSCRIBE_URDU)
-                    val fast = hear(3, Stretch.change(piece, 0.85), VoicePrompts.TRANSCRIBE_URDU)
-                    // two of the three passes agreeing settles it, with no extra work
-                    val agreed = Vote.majority(listOf(normal, slow, fast))
-                    if (agreed != null) { parts += agreed; return@forEachIndexed }
-                    val roman = hear(4, piece, VoicePrompts.TRANSCRIBE_ROMAN)
-                    post { state = UiState.Comparing }
-                    val merged = VoicePrompts.cleanTranscript(
-                        LlmEngine.askText(
-                            ctx, VoicePrompts.RECONCILE_RULES,
-                            VoicePrompts.reconcileInput(listOf("normal speed" to normal, "slowed down" to slow, "faster" to fast, "Roman Urdu spelling" to roman)),
-                            temperature = 0.1,
-                        ),
-                    )
-                    val chosen = merged.ifEmpty { listOf(normal, slow, fast).firstOrNull { it.isNotEmpty() }.orEmpty() }
+                    val slow = hear(2, Stretch.change(piece, 1.25))
+                    val fast = hear(3, Stretch.change(piece, 0.85))
+                    val heard = listOf(normal, slow, fast)
+                    // the passes agree when they say the same words, however each is spelled
+                    val agreed = Vote.majorityFuzzy(heard, same)
+                    val chosen = if (agreed != null && heard.count { it.isNotEmpty() && same(agreed, it) } >= 3) {
+                        agreed
+                    } else {
+                        post { state = UiState.Comparing }
+                        val merged = VoicePrompts.cleanTranscript(
+                            LlmEngine.askText(
+                                ctx, VoicePrompts.RECONCILE_RULES,
+                                VoicePrompts.reconcileInput(listOf("normal speed" to normal, "slowed down" to slow, "faster" to fast)),
+                                temperature = 0.1,
+                            ),
+                        )
+                        merged.ifEmpty { agreed ?: heard.firstOrNull { it.isNotEmpty() }.orEmpty() }
+                    }
                     parts += chosen
                     // what else the passes heard here, so the person can pick a reading that is better than the chosen one
-                    val others = Vote.alternatives(chosen, listOf(normal, slow, fast, roman).filter { VoicePrompts.isUrduScript(it) })
+                    val others = Vote.alternativesFuzzy(chosen, heard, same)
                     alternates += if (pieces.size > 1) others.map { "(${i + 1}) $it" } else others
                 }
-                val urdu = VoicePrompts.join(parts)
-                if (urdu.isEmpty()) { post { state = UiState.TooQuiet }; return@execute }
-                val (english, unsure) = translateUrdu(urdu, careful)
-                post { state = UiState.Done(urdu, english, "", decoded.truncated, unsure, alternates.take(4)) }
+                val roman = VoicePrompts.join(parts)
+                if (roman.isEmpty()) { post { state = UiState.TooQuiet }; return@execute }
+                val (english, unsure) = translateRoman(roman, careful)
+                post { state = UiState.Done("", english, roman, decoded.truncated, unsure, alternates.take(4)) }
             } catch (t: Throwable) {
                 LlmEngine.saveError(ctx, t)
                 post { state = UiState.Failed }
@@ -145,21 +149,22 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
     }
 
     /**
-     * Steps two and three: the transcript is translated, and in careful mode the English is turned back into Urdu and compared
-     * with what was heard; a translation that lost the meaning does not come back alike. If it does not, translate once more,
-     * closer to the Urdu, and keep the better one. Returns the English and whether it is still doubtful. Blocking.
+     * Steps two and three: the Roman Urdu transcript goes through the keyboard's Roman Urdu to English translation (with a few extra
+     * rules for text that was heard, not typed). In careful mode the English is then turned back into Roman Urdu and compared with the
+     * transcript; a translation that lost the meaning does not come back alike. If it does not, translate once more, closer to the
+     * Urdu, and keep the better one. Returns the English and whether it is still doubtful. Blocking.
      */
-    private fun translateUrdu(urdu: String, careful: Boolean): Pair<String, Boolean> {
+    private fun translateRoman(roman: String, careful: Boolean): Pair<String, Boolean> {
         post { state = UiState.WritingEnglish }
-        var english = LlmEngine.askText(ctx, VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES, urdu, VoicePrompts.TRANSLATE_EXAMPLES, temperature = 0.1)
+        var english = LlmEngine.translate(ctx, roman, Style.TO_ENGLISH, extra = VoicePrompts.ROMAN_VOICE_RULES)
         var unsure = false
         if (careful && english.isNotBlank()) {
             post { state = UiState.Checking }
-            fun score(en: String) = Similarity.dice(urdu, LlmEngine.askText(ctx, VoicePrompts.URDU_SCRIPT_RULES, en, temperature = 0.1))
+            fun score(en: String) = Similarity.diceRoman(roman, LlmEngine.translate(ctx, en, Style.CASUAL))
             var best = score(english)
             if (best < TranslationCheck.TRY_AGAIN_BELOW) {
-                val second = LlmEngine.askText(ctx, VoicePrompts.URDU_TEXT_TO_ENGLISH_RULES + VoicePrompts.LITERAL_RETRY, urdu, VoicePrompts.TRANSLATE_EXAMPLES, temperature = 0.3)
-                if (second.isNotBlank()) {
+                val second = LlmEngine.translate(ctx, roman, Style.TO_ENGLISH, extra = VoicePrompts.ROMAN_VOICE_RULES + VoicePrompts.LITERAL_RETRY)
+                if (second.isNotBlank() && second != english) {
                     val s2 = score(second)
                     if (s2 > best) { english = second; best = s2 }
                 }
@@ -176,11 +181,11 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
         val chosen = text.replace(Regex("^\\(\\d+\\)\\s*"), "").trim()
         if (chosen.isEmpty()) return
         val careful = KbSettings.of(ctx)[KbSettings.CAREFUL_VOICE]
-        val others = (current.alternates + current.urdu).filter { it.replace(Regex("^\\(\\d+\\)\\s*"), "").trim() != chosen }
+        val others = (current.alternates + current.roman).filter { it.replace(Regex("^\\(\\d+\\)\\s*"), "").trim() != chosen }
         io.execute {
             try {
-                val (english, unsure) = translateUrdu(chosen, careful)
-                post { state = UiState.Done(chosen, english, "", current.truncated, unsure, others.take(4)) }
+                val (english, unsure) = translateRoman(chosen, careful)
+                post { state = UiState.Done("", english, chosen, current.truncated, unsure, others.take(4)) }
             } catch (t: Throwable) {
                 LlmEngine.saveError(ctx, t)
                 post { state = UiState.Failed }

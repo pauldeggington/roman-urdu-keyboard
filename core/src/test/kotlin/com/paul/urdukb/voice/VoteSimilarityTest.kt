@@ -60,4 +60,40 @@ class VoteSimilarityTest {
         assertTrue(Vote.alternatives("a", listOf("a", " A ")).isEmpty())
         assertEquals(2, Vote.alternatives("z", listOf("a", "b", "c"), max = 2).size)
     }
+
+    private val SAME = TranslationCheck.ROMAN_SAME
+    private val same: (String, String) -> Boolean = { a, b -> Similarity.diceRoman(a, b) >= SAME }
+
+    @Test fun romanSpellingsOfTheSameWordsMatch() {
+        val a = "yeh paul ke naam par parcel tha reception par de diya hai AJ tower"
+        val b = "ye pol k nam pe parcel tha reception pe de diya hai AJ tower"
+        assertTrue("score ${Similarity.diceRoman(a, b)}", Similarity.diceRoman(a, b) >= SAME)
+        assertEquals(1.0, Similarity.diceRoman(a, a), 0.0001)
+    }
+
+    @Test fun romanDifferentMessagesDoNotMatch() {
+        val a = "yeh paul ke naam par parcel tha reception par de diya hai AJ tower"
+        val c = "kal sham ko meray ammi abbu ka call aaya tha woh theek hain"
+        assertTrue("score ${Similarity.diceRoman(a, c)}", Similarity.diceRoman(a, c) < 0.35)
+    }
+
+    @Test fun romanTooShortCannotFail() {
+        assertEquals(1.0, Similarity.diceRoman("ok", "theek hai"), 0.0)
+    }
+
+    @Test fun fuzzyMajorityPicksTheReadingMostAgreeWith() {
+        val a = "yeh paul ke naam par parcel tha reception par de diya hai"
+        val b = "ye pol k nam pe parcel tha reception pe de diya hai"
+        val c = "yeh bol ke naam se parsal ka reception par dediya hai agent hour"
+        val winner = Vote.majorityFuzzy(listOf(c, a, b), same)
+        assertTrue("winner $winner", winner == a || winner == b)
+        assertNull(Vote.majorityFuzzy(listOf("kal sham ko meray ammi abbu ka call aaya tha", "main aadhe ghantay mein office pohanch jaon ga", c), same))
+    }
+
+    @Test fun fuzzyAlternativesLeaveOutRespellings() {
+        val a = "yeh paul ke naam par parcel tha reception par de diya hai"
+        val b = "ye pol k nam pe parcel tha reception pe de diya hai"
+        val c = "kal sham ko meray ammi abbu ka call aaya tha woh theek hain"
+        assertEquals(listOf(c), Vote.alternativesFuzzy(a, listOf(a, b, c, c), same))
+    }
 }
