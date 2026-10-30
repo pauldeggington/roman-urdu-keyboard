@@ -382,11 +382,6 @@
     <string name="voice_listening_part_pass">Listening, part %1$d of %2$d, pass %3$d of %4$d…</string>
     <string name="voice_checking">Double-checking the English…</string>
     <string name="voice_unsure">This English may be off. Check the Urdu text above, or play the voice note again.</string>
-    <string name="voice_urdu_edit">Urdu (tap to fix a word)</string>
-    <string name="voice_edit_hint">The Urdu that was heard</string>
-    <string name="voice_translate_again">Translate again</string>
     <string name="voice_also_heard">Also heard as</string>
     <string name="voice_use_this">Use this</string>
-    <string name="voice_corrections_note">%1$d fixes saved on this phone. They are never uploaded.</string>
-    <string name="voice_share_corrections">Share saved fixes</string>
 </resources>

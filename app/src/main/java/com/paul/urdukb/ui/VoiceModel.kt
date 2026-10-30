@@ -15,7 +15,6 @@ import com.paul.urdukb.LlmEngine
 import com.paul.urdukb.R
 import com.paul.urdukb.RomanUrdu
 import com.paul.urdukb.voice.AudioDecoder
-import com.paul.urdukb.voice.Corrections
 import com.paul.urdukb.voice.M4a
 import com.paul.urdukb.voice.Pcm
 import com.paul.urdukb.voice.Recorder
@@ -76,11 +75,6 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
         private set
     val firstLoad = !LlmEngine.isLoaded()
 
-    /** The Urdu text in the edit box. Starts as what was heard; the person can fix words and translate again. */
-    var urduEdit by mutableStateOf("")
-
-    private var heardUrdu = ""
-    private var heardTruncated = false
     private var recorder: Recorder? = null
     private var speech: UrduSpeech? = null
     private var started = false
@@ -141,9 +135,6 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
                 }
                 val urdu = VoicePrompts.join(parts)
                 if (urdu.isEmpty()) { post { state = UiState.TooQuiet }; return@execute }
-                heardUrdu = urdu
-                heardTruncated = decoded.truncated
-                post { urduEdit = urdu }
                 val (english, unsure) = translateUrdu(urdu, careful)
                 post { state = UiState.Done(urdu, english, "", decoded.truncated, unsure, alternates.take(4)) }
             } catch (t: Throwable) {
@@ -178,29 +169,23 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
         return english to unsure
     }
 
-    /** Translates the edit box again (after the person fixed a word, or picked another reading). */
-    fun translateAgain() {
-        val text = urduEdit.trim()
-        if (text.isEmpty() || mode != Mode.URDU_TO_ENGLISH) return
-        val busy = state
-        if (busy is UiState.Listening || busy is UiState.Comparing || busy is UiState.Checking || busy is UiState.WritingEnglish || busy is UiState.Decoding) return
+    /** Uses one of the other readings as the transcript and translates it. The reading it replaces becomes one of the others. */
+    fun useReading(text: String) {
+        val current = state as? UiState.Done ?: return
+        if (mode != Mode.URDU_TO_ENGLISH) return
+        val chosen = text.replace(Regex("^\\(\\d+\\)\\s*"), "").trim()
+        if (chosen.isEmpty()) return
         val careful = KbSettings.of(ctx)[KbSettings.CAREFUL_VOICE]
+        val others = (current.alternates + current.urdu).filter { it.replace(Regex("^\\(\\d+\\)\\s*"), "").trim() != chosen }
         io.execute {
             try {
-                if (text != heardUrdu) Corrections.save(ctx, heardUrdu, text)
-                val (english, unsure) = translateUrdu(text, careful)
-                post { state = UiState.Done(text, english, "", heardTruncated, unsure, emptyList()) }
+                val (english, unsure) = translateUrdu(chosen, careful)
+                post { state = UiState.Done(chosen, english, "", current.truncated, unsure, others.take(4)) }
             } catch (t: Throwable) {
                 LlmEngine.saveError(ctx, t)
                 post { state = UiState.Failed }
             }
         }
-    }
-
-    /** Uses one of the other readings as the transcript and translates it. */
-    fun useReading(text: String) {
-        urduEdit = text.replace(Regex("^\\(\\d+\\)\\s*"), "")
-        translateAgain()
     }
 
     // ---------------------------------------------------------------- English speech in
