@@ -114,6 +114,22 @@ paisay maine transfer kar diye hain check kar lein | I've transferred the money.
 main raaste mein hoon das minute mein pohanch raha hoon | I'm on my way. I'll be there in ten minutes.""",
     )
 
+    /**
+     * Roman Urdu to English examples where the Urdu order (subject, object, verb) must become natural English, not a word-for-word
+     * copy. Added to the Roman Urdu to English bank once, also on phones that already saved one.
+     */
+    val ADDED_ORDER = mapOf(
+        "english" to """# meaning, not word order
+mujhe kal subah office jana hai | I have to go to the office tomorrow morning.
+yeh kitab maine kal bazaar se kharidi | I bought this book from the market yesterday.
+us ne mujhe chai pilayi | He gave me tea.
+aap ka kaam ho gaya hai | Your work is done.
+main ne usay kitni dafa samjhaya hai | How many times have I explained it to him.
+mujhe bhook lagi hai | I'm hungry.
+ghar mein koi nahi hai | There is nobody at home.
+usko sab kuch pata hai | He knows everything.""",
+    )
+
     val CASUAL = """How are you? | Tum kaisay ho?
 What are you doing? | Kya kar rahay ho?
 What do you want to eat? | Kya khana chahtay ho?
@@ -228,7 +244,7 @@ kal ka kia plan hai | What's the plan for tomorrow?
 acha thk hai | Okay, that's fine.
 yar bht thak gya hn | I'm really tired.
 abhi busy hn baad mein baat krta hn | I'm busy right now, I'll talk later.
-ghar pohanch gye | I reached home.""" + "\n" + ADDED_QUESTIONS.getValue("english") + "\n" + ADDED_VOICE.getValue("english")
+ghar pohanch gye | I reached home.""" + "\n" + ADDED_QUESTIONS.getValue("english") + "\n" + ADDED_VOICE.getValue("english") + "\n" + ADDED_ORDER.getValue("english")
 
     /** word -> preferred spelling. Fixes Hindi-sounding spellings and applies the "ay" rule. */
     val GLOSSARY = """# one per line: word -> the spelling to use instead

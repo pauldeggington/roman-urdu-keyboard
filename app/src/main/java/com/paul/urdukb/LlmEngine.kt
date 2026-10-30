@@ -286,8 +286,8 @@ object LlmEngine {
     }
 
     private fun systemPrompt(ctx: Context, style: Style, glossary: List<Pair<String, String>>, extra: String = ""): String =
-        (if (style == Style.TO_ENGLISH) Prefs.rules(ctx, style) + Person.tagRules(style)
-        else Speaker.stripOldRules(Prefs.rules(ctx, style)) + SpellingRules.PROMPT + ShortInput.PROMPT + Speaker.rules(ctx) + Person.tagRules(style)) + extra   // the glossary is applied to the answer afterwards, so it is not repeated in the prompt (it made every translation slower)
+        (if (style == Style.TO_ENGLISH) Prefs.rules(ctx, style) + MeaningRules.TO_ENGLISH + Person.tagRules(style)
+        else Speaker.stripOldRules(Prefs.rules(ctx, style)) + SpellingRules.PROMPT + MeaningRules.TO_URDU + ShortInput.PROMPT + Speaker.rules(ctx) + Person.tagRules(style)) + extra   // the glossary is applied to the answer afterwards, so it is not repeated in the prompt (it made every translation slower)
 
     /** Blocking. Call from a background thread. */
     @Synchronized
