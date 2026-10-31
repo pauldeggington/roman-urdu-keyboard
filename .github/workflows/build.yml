@@ -112,6 +112,21 @@ jobs:
             echo "::warning title=R8 build failed, shipping the standard APK::$(tr '\n' ' ' < r8err.txt | cut -c1-300)"
           fi
 
+      - name: Build the Google Play bundle
+        if: github.event_name == 'push'
+        continue-on-error: true
+        run: |
+          ./gradlew :app:bundleDebug -Pminify -Pplay --no-daemon > aab.log 2>&1 && rc=0 || rc=$?
+          if [ "$rc" -eq 0 ]; then
+            AAB=$(ls app/build/outputs/bundle/debug/*.aab | head -n 1)
+            cp "$AAB" "out/RomanUrduKeyboard-${VERSION_NAME}.aab"
+            FP=$(keytool -printcert -jarfile "$AAB" 2>/dev/null | grep -i "SHA256" | head -n 1 || true)
+            echo "::notice title=Play bundle::$(du -h "$AAB" | cut -f1) | signed: $FP"
+          else
+            { grep -E -A4 '^e: |What went wrong|ERROR' aab.log | head -20 || true; } > aaberr.txt
+            echo "::warning title=Play bundle failed::$(tr '\n' ' ' < aaberr.txt | cut -c1-300)"
+          fi
+
       - name: Show signing fingerprint
         run: |
           APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -n 1)
@@ -157,6 +172,11 @@ jobs:
             git log -1 --pretty=format:'%s%n%n%b' | grep -v -E '^(Co-Authored-By|Claude-Session):' | sed '/^$/N;/^\n$/D'
           } > notes.md
           ASSETS="out/RomanUrduKeyboard-${VERSION_NAME}.apk"
+          if [ -f "out/RomanUrduKeyboard-${VERSION_NAME}.aab" ]; then
+            ASSETS="$ASSETS out/RomanUrduKeyboard-${VERSION_NAME}.aab"
+            echo "" >> notes.md
+            echo "\`RomanUrduKeyboard-${VERSION_NAME}.aab\` is the file for uploading to Google Play, not for installing on a phone." >> notes.md
+          fi
           if [ -f out/roman-urdu-keyboard-standard.apk ]; then
             cp out/roman-urdu-keyboard-standard.apk "out/RomanUrduKeyboard-${VERSION_NAME}-standard.apk"
             ASSETS="$ASSETS out/RomanUrduKeyboard-${VERSION_NAME}-standard.apk"

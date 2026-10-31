@@ -6,6 +6,8 @@ The app shows it as, for example, "Version 2.1 (build 121)". Work-in-progress bu
 
 ## 2.5
 
+- **Google Play bundle:** every release also carries a `.aab` file, the format Google Play takes. The Play version has no in-app updater, because Play updates the app itself and does not allow an app to update itself another way.
+
 - **New app ID: `com.lanternkeys.urdukb`.** The app's ID on the phone changes (the name you see, Roman Urdu Keyboard, stays). This is needed to publish on Google Play, and it means 2.5 installs **beside** the old app, not over it. After installing it, go through the short setup again (the translator is downloaded again, about 2.6 GB), switch to the new keyboard, then uninstall the old one. The old app keeps working but will not receive updates.
 
 ## 2.4

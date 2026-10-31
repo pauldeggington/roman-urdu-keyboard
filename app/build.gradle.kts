@@ -17,6 +17,9 @@ android {
         versionName = System.getenv("VERSION_NAME") ?: "2.0-dev"
         // emulator preview builds (-PnoNative) carry test hooks so CI can drive the keyboard for screenshots
         buildConfigField("boolean", "PREVIEW", project.hasProperty("noNative").toString())
+        // the Google Play build (-Pplay): Play updates the app itself, and its rules do not allow an app to update itself another way,
+        // so this build has no in-app updater
+        buildConfigField("boolean", "PLAY", project.hasProperty("play").toString())
         // optional GIPHY key baked into the release by CI (secret GIPHY_API_KEY); people can also paste their own in the app
         buildConfigField("String", "GIPHY_KEY", "\"" + (System.getenv("GIPHY_API_KEY") ?: "").trim() + "\"")
         manifestPlaceholders["previewExported"] = project.hasProperty("noNative").toString()

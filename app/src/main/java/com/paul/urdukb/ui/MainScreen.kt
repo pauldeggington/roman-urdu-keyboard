@@ -96,7 +96,7 @@ fun MainScreen(model: MainModel, pickModelFile: () -> Unit, recreateScreen: () -
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 40.dp),
         ) {
             item { Header() }
-            item { UpdateCard(model) }
+            if (!BuildConfig.PLAY) item { UpdateCard(model) }
             item { ChecklistCard(model) }
             item { ModelCard(model, pickModelFile) }
             item { TryCard(model) }

@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 import com.paul.urdukb.BackgroundDownload
+import com.paul.urdukb.BuildConfig
 import com.paul.urdukb.LlmEngine
 import com.paul.urdukb.ModelChoice
 import com.paul.urdukb.ModelDownloader
@@ -141,7 +142,7 @@ class MainModel(app: Application) : AndroidViewModel(app) {
     init {
         paintUpdate()
         showStyle(Style.CASUAL)
-        checkForUpdate(quiet = true)
+        if (!BuildConfig.PLAY) checkForUpdate(quiet = true)
         refresh()
     }
 
@@ -172,7 +173,7 @@ class MainModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun checkForUpdate(quiet: Boolean) {
-        if (checking) return
+        if (BuildConfig.PLAY || checking) return
         checking = true
         if (!quiet) updateText = str(R.string.update_checking)
         io.execute {
@@ -191,6 +192,7 @@ class MainModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun onUpdateClick() {
+        if (BuildConfig.PLAY) return
         val rel = latestRelease
         if (rel == null || !Updater.isNewer(ctx, rel)) { checkForUpdate(quiet = false); return }
         // the browser downloads the APK; Android then asks to install it, like any downloaded app
