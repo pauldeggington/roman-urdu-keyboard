@@ -100,8 +100,11 @@ Rules:
     }
     fun setToken(ctx: Context, v: String) = sp(ctx).edit().putString("hf_token", Secrets.seal(v.trim())).apply()
 
-    fun modelChoice(ctx: Context): ModelChoice =
-        ModelChoice.entries.firstOrNull { it.key == sp(ctx).getString("model_choice", ModelChoice.GEMMA4.key) } ?: ModelChoice.GEMMA4
+    /** Gemma 4 unless the build carries Gemma 3 1B inside it, which then needs no download. */
+    fun modelChoice(ctx: Context): ModelChoice {
+        val default = if (BundledModel.available(ctx)) ModelChoice.GEMMA3 else ModelChoice.GEMMA4
+        return ModelChoice.entries.firstOrNull { it.key == sp(ctx).getString("model_choice", default.key) } ?: default
+    }
     fun setModelChoice(ctx: Context, c: ModelChoice) = sp(ctx).edit().putString("model_choice", c.key).apply()
 
     fun url(ctx: Context) = modelChoice(ctx).url

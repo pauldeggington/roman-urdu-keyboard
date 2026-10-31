@@ -15,3 +15,5 @@ tools/*.txt
 *.patch
 *.diff
 *.sh
+model-assets/
+gemma3pack/src/main/assets/

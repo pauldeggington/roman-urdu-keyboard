@@ -9,8 +9,9 @@ Written from scratch for this app (`app/src/main/java/com/paul/urdukb`). The loo
 
 ## Translation
 
-**Gemma 4** by Google, running on the phone through **LiteRT-LM** (Apache 2.0). https://github.com/google-ai-edge/LiteRT-LM
-The model file is downloaded by the user from Hugging Face and is not part of this repository.
+**Gemma 3 1B** and **Gemma 4** by Google, running on the phone through **LiteRT-LM** (Apache 2.0). https://github.com/google-ai-edge/LiteRT-LM
+
+Gemma is provided under and subject to the Gemma Terms of Use, https://ai.google.dev/gemma/terms, and the Gemma Prohibited Use Policy, https://ai.google.dev/gemma/prohibited_use_policy. The Gemma 3 1B model ships inside the app; the larger Gemma 4 is downloaded by the user from Hugging Face and is not part of this repository.
 
 ## Data
 

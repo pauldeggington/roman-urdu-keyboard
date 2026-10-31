@@ -80,6 +80,20 @@ android {
         unitTests.isIncludeAndroidResources = true
     }
 
+    // Gemma 3 1B can ship inside the app. CI puts the file in model-assets/models/ (never in git).
+    //  - GitHub APK (-PbundleModel): added to the app's assets, stored uncompressed.
+    //  - Google Play (-Pplay): an install-time asset pack, because Play limits the base module to 200 MB.
+    val modelAssets = rootProject.file("model-assets")
+    if (project.hasProperty("bundleModel") && !project.hasProperty("play") && modelAssets.resolve("models").isDirectory) {
+        sourceSets.getByName("main").assets.srcDir(modelAssets)
+    }
+    if (project.hasProperty("play") && rootProject.file("gemma3pack/src/main/assets/models").isDirectory) {
+        assetPacks += listOf(":gemma3pack")
+    }
+    androidResources {
+        noCompress += "litertlm"
+    }
+
     packaging {
         jniLibs {
             useLegacyPackaging = true

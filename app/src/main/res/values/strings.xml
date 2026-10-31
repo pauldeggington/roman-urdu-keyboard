@@ -385,4 +385,5 @@
     <string name="voice_also_heard">Also heard as</string>
     <string name="voice_use_this">Use this</string>
     <string name="voice_copy_roman">Copy Roman Urdu</string>
+    <string name="setup_builtin_copying">Setting up the built-in translator…</string>
 </resources>

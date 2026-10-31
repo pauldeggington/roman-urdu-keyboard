@@ -20,6 +20,7 @@ import androidx.core.content.edit
 import com.paul.urdukb.BackgroundDownload
 import com.paul.urdukb.BuildConfig
 import com.paul.urdukb.LlmEngine
+import com.paul.urdukb.BundledModel
 import com.paul.urdukb.ModelChoice
 import com.paul.urdukb.ModelDownloader
 import com.paul.urdukb.Prefs
@@ -398,6 +399,23 @@ class MainModel(app: Application) : AndroidViewModel(app) {
         Prefs.setModelChoice(ctx, m)
         LlmEngine.reset()
         refresh()
+        if (BundledModel.wanted(ctx)) installBuiltIn()
+    }
+
+    /** Copies the model that ships inside the app (see BundledModel). */
+    fun installBuiltIn() {
+        Prefs.setLastError(ctx, "")
+        beginTransfer(str(R.string.setup_builtin_copying))
+        io.execute {
+            var err: Throwable? = null
+            try {
+                LlmEngine.reset()
+                BundledModel.install(ctx, LlmEngine.modelFile(ctx)) { d, tot -> onProgress(d, tot) }
+            } catch (e: Throwable) {
+                err = e
+            }
+            main.post { endTransfer(err) }
+        }
     }
 
     fun startDownload() {

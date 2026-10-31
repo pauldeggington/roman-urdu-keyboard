@@ -376,4 +376,5 @@
     <string name="voice_also_heard">یہ بھی سنا گیا</string>
     <string name="voice_use_this">یہ استعمال کریں</string>
     <string name="voice_copy_roman">رومن اردو کاپی</string>
+    <string name="setup_builtin_copying">بلٹ اِن ترجمہ ساز تیار ہو رہا ہے…</string>
 </resources>

@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 import com.paul.urdukb.BackgroundDownload
 import com.paul.urdukb.BuildConfig
+import com.paul.urdukb.BundledModel
 import com.paul.urdukb.LlmEngine
 import com.paul.urdukb.ModelChoice
 import com.paul.urdukb.ModelDownloader
@@ -80,6 +81,7 @@ class SetupModel(app: Application, private val saved: SavedStateHandle) : Androi
     var token by mutableStateOf(Prefs.token(ctx))
 
     @Volatile private var verifying = false
+    @Volatile private var installingBuiltIn = false
     private var verifyDone = 0L
     private var verifyTotal = 0L
     private var lastBytes = 0L
@@ -103,7 +105,27 @@ class SetupModel(app: Application, private val saved: SavedStateHandle) : Androi
             saved.get<String>("step")?.let { n -> runCatching { Step.valueOf(n) }.getOrNull()?.let { step = it } }
         }
         if (step == Step.PRACTICE) practiceStartCount = Prefs.count(ctx)
+        installBuiltIn()
         tick()
+    }
+
+    /** Copies the model that ships inside the app, when this build has one and it is the chosen model. */
+    private fun installBuiltIn() {
+        if (installingBuiltIn || verifying || !BundledModel.wanted(ctx)) return
+        installingBuiltIn = true; verifying = true
+        verifyDone = 0; verifyTotal = 0
+        io.execute {
+            try {
+                LlmEngine.reset()
+                BundledModel.install(ctx, LlmEngine.modelFile(ctx)) { d, t -> verifyDone = d; verifyTotal = t }
+            } catch (t: Throwable) {
+                Prefs.setLastError(ctx, "${t.javaClass.simpleName}: ${t.message}")
+                ui.post { toast(str(R.string.setup_copy_failed)) }
+            } finally {
+                installingBuiltIn = false; verifying = false
+                ui.post { tick() }
+            }
+        }
     }
 
     private fun sp() = Prefs.store(ctx).getSharedPreferences("settings", Context.MODE_PRIVATE)
@@ -163,6 +185,7 @@ class SetupModel(app: Application, private val saved: SavedStateHandle) : Androi
         if (BackgroundDownload.state(ctx).active || verifying) { toast(str(R.string.setup_cancel_first)); return }
         Prefs.setModelChoice(ctx, m)
         LlmEngine.reset()
+        installBuiltIn()
         tick()
     }
 
@@ -287,7 +310,7 @@ class SetupModel(app: Application, private val saved: SavedStateHandle) : Androi
         var secondary = Secondary.NONE; var secondaryLabel = ""
         when {
             verifying -> {
-                line = str(R.string.verify_checking)
+                line = str(if (installingBuiltIn) R.string.setup_builtin_copying else R.string.verify_checking)
                 bar = if (verifyTotal > 0) verifyDone.toFloat() / verifyTotal else 0f
                 note = str(R.string.setup_almost); primary = str(R.string.next)
             }
