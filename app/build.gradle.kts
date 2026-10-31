@@ -8,7 +8,8 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.paul.urdukb"
+        // the app's ID on phones, in the stores and in the developer console. The code keeps its own package name (namespace above).
+        applicationId = "com.lanternkeys.urdukb"
         minSdk = 31
         targetSdk = 37
         // CI sets these so every release installs over the last one

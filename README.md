@@ -68,6 +68,8 @@ the other way. Tap Translate again to get your original text back.
 New versions show up on the Releases page and install over the old one, keeping your settings and the translator.
 The app has an **Update** button that opens the download for you.
 
+> **Moving from version 2.4 or earlier.** Version 2.5 has a new app ID (`com.lanternkeys.urdukb`, needed to publish on Google Play), so it installs **next to** the old app instead of over it. Install it, run the short setup (the translator downloads again, about 2.6 GB), switch to the new keyboard, then uninstall the old one. Your settings do not carry over.
+
 > **Smaller download.** The main APK is shrunk with R8, so it is about a third of the unshrunk size. Every release also has a `-standard.apk` (the same app unshrunk). If something misbehaves, install that one over the top.
 
 > **Play Protect warning?** The app is new and not from the Play Store, so Google may show a "harmful app" prompt. Tap
@@ -225,9 +227,9 @@ Ideas are welcome as [issues](https://github.com/pauldeggington/roman-urdu-keybo
 
 Every release on `main` has a version number (for example **2.1**, build 121) shown in the app, in the release title and in the [changelog](CHANGELOG.md).
 
-## Test builds
+## Work in progress
 
-Every change is built as a pre-release first (for example `v2.0.112-test`). Install one over the normal app if you want to try things early; the in-app Update button ignores them and your settings stay.
+Releases on this page are the finished versions. Work in progress is built on every change but not published as a release; if you want to try one, ask in an issue.
 
 <details>
 <summary><b>Project layout</b></summary>
