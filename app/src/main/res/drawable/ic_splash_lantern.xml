@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Splash icon (animated by ic_splash_animated): a gold lantern with the Urdu letter beh glowing inside -->
+<!-- Splash icon (animated by ic_splash_animated): a gold lantern with the Urdu word baat glowing inside -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp" android:height="108dp"
@@ -18,9 +18,9 @@
         </group>
         <group android:name="lantern" android:pivotX="256" android:pivotY="70">
             <path android:strokeColor="#E9B73A" android:strokeWidth="9" android:pathData="M256,66 a22,22 0 1,0 0.01,0 Z" />
-            <path android:fillColor="#E9B73A" android:pathData="M206,128 H306 L332,160 H180 Z" />
+            <path android:fillColor="#E9B73A" android:pathData="M200,128 H312 L342,160 H170 Z" />
             <path android:strokeColor="#E9B73A" android:strokeWidth="9" android:strokeLineJoin="round"
-                android:pathData="M190,160 H322 Q338,250 322,340 H190 Q174,250 190,160 Z">
+                android:pathData="M176,160 H336 Q354,250 336,340 H176 Q158,250 176,160 Z">
                 <aapt:attr name="android:fillColor">
                     <gradient android:type="radial" android:centerX="256" android:centerY="250" android:gradientRadius="120">
                         <item android:offset="0" android:color="#FFFFF3C4" />
@@ -29,12 +29,9 @@
                     </gradient>
                 </aapt:attr>
             </path>
-            <path android:fillColor="#E9B73A" android:pathData="M196,340 H316 L332,372 H180 Z" />
-            <path android:fillColor="#E9B73A" android:pathData="M218,372 H294 A6,6 0 0 1 300,378 V382 A6,6 0 0 1 294,388 H218 A6,6 0 0 1 212,382 V378 A6,6 0 0 1 218,372 Z" />
-            <!-- the Urdu letter beh -->
-            <path android:strokeColor="#FF0B3A2C" android:strokeWidth="22" android:strokeLineCap="round" android:strokeLineJoin="round"
-                android:pathData="M206,238 Q206,288 256,288 Q306,288 306,232" />
-            <path android:fillColor="#FF0B3A2C" android:pathData="M256,307 a13,13 0 1,0 0.01,0 Z" />
+            <path android:fillColor="#E9B73A" android:pathData="M182,340 H330 L346,372 H166 Z" />
+            <path android:fillColor="#E9B73A" android:pathData="M212,372 H300 A6,6 0 0 1 306,378 V382 A6,6 0 0 1 300,388 H212 A6,6 0 0 1 206,382 V378 A6,6 0 0 1 212,372 Z" />
+            <group android:translateX="189.99" android:translateY="279.50" android:scaleX="0.09" android:scaleY="0.09"><path android:fillColor="#FF0B3A2C" android:pathData="M1294 73 1375 118 1325 200 1244 155ZM1412 -116Q1412 -79 1356 -39.5Q1300 0 1256 0H1114Q1094 0 1094 -105H1253Q1313 -105 1338 -138Q1313 -199 1278 -240L1364 -359Q1390 -301 1401 -245.5Q1412 -190 1412 -116ZM1057 -449Q1067 -351 1067 -227Q1067 -198 1068 -181.5Q1069 -165 1073 -144.5Q1077 -124 1087.5 -114.5Q1098 -105 1114 -105H1134Q1134 0 1114 0Q1035 0 1007 -41Q979 -82 979 -177Q979 -204 983.5 -255Q988 -306 988 -335Q988 -364 974 -476Q960 -588 959 -601L1026 -700Q1028 -662 1041 -568Q1054 -474 1057 -449ZM361 -466 442 -421 392 -339 311 -384ZM503 -489 584 -444 534 -362 453 -407ZM887 -105Q887 0 867 0Q834 0 812.5 -12Q791 -24 772 -52Q752 -29 720 -14.5Q688 0 662 0H196Q136 0 95.5 -30Q55 -60 55 -119Q55 -205 80 -273L112 -266Q103 -218 103 -180Q103 -145 139 -125Q175 -105 246 -105H680Q715 -105 728 -132Q706 -179 683 -260L760 -360Q764 -348 777.5 -308Q791 -268 801 -239Q811 -210 824.5 -176Q838 -142 849 -123.5Q860 -105 867 -105Z" /></group>
         </group>
     </group>
 </vector>
