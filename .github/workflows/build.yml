@@ -85,7 +85,7 @@ jobs:
           git push -f origin "$COMMIT:refs/heads/ci-ui-shots"
 
       - name: Fetch Gemma 3 1B to build into the app (from the draft release gemma3-1b-model)
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -127,7 +127,7 @@ jobs:
           fi
 
       - name: Build the Google Play bundle
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         continue-on-error: true
         run: |
           ./gradlew :app:bundleDebug -Pminify -Pplay --no-daemon > aab.log 2>&1 && rc=0 || rc=$?
