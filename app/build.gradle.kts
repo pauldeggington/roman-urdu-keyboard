@@ -26,6 +26,8 @@ android {
         ndk {
             abiFilters.clear()
             abiFilters.addAll(listOf("arm64-v8a"))
+            // put the native symbols into the Play bundle so crash and ANR reports are readable
+            debugSymbolLevel = "SYMBOL_TABLE"
         }
     }
 
