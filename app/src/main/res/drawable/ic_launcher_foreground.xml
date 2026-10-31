@@ -1,20 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Roman Urdu Keyboard logo: an English bubble and an Urdu bubble -->
+<!-- Lantern Keys logo: a gold lantern with the Urdu letter beh glowing inside -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
-    <!-- back bubble (Urdu side) -->
-    <path android:fillColor="#FFFFE6F1"
-        android:pathData="M55,46 H75 A9,9 0 0 1 84,55 V71 L86,84 L72,78 H55 A9,9 0 0 1 46,69 V55 A9,9 0 0 1 55,46 Z" />
-    <path android:strokeColor="#FF7B2F63" android:strokeWidth="3.4"
-        android:strokeLineCap="round" android:strokeLineJoin="round"
-        android:pathData="M55,62 Q58,69 66,69 H74 Q80,69 80,59" />
-    <path android:fillColor="#FF7B2F63"
-        android:pathData="M68,72.3 A2.3,2.3 0 1 1 68,76.9 A2.3,2.3 0 1 1 68,72.3 Z" />
-    <!-- front bubble (English side) -->
-    <path android:fillColor="#FFFFFFFF" android:strokeColor="#FFB05AC4" android:strokeWidth="2.4"
-        android:strokeLineJoin="round"
-        android:pathData="M33,26 H53 A9,9 0 0 1 62,35 V49 A9,9 0 0 1 53,58 H40 L28,66 L31,58 H33 A9,9 0 0 1 24,49 V35 A9,9 0 0 1 33,26 Z" />
-    <path android:fillColor="#FF7B2F63" android:fillType="evenOdd"
-        android:pathData="M43,32 L50.4,52 H46.9 L45.5,47.8 H40.5 L39.1,52 H35.6 Z M41,44.8 H44.8 L43,39.2 Z" />
+    <group android:name="all" android:scaleX="0.19" android:scaleY="0.19" android:translateX="5.36" android:translateY="10.30">
+        <!-- glow -->
+        <group android:name="glow">
+            <path android:pathData="M256,250 m-170,0 a170,170 0 1,0 340,0 a170,170 0 1,0 -340,0">
+                <aapt:attr name="android:fillColor">
+                    <gradient android:type="radial" android:centerX="256" android:centerY="250" android:gradientRadius="170">
+                        <item android:offset="0" android:color="#66FFD76A" />
+                        <item android:offset="1" android:color="#00FFD76A" />
+                    </gradient>
+                </aapt:attr>
+            </path>
+        </group>
+        <group android:name="lantern" android:pivotX="256" android:pivotY="70">
+            <path android:strokeColor="#E9B73A" android:strokeWidth="9" android:pathData="M256,66 a22,22 0 1,0 0.01,0 Z" />
+            <path android:fillColor="#E9B73A" android:pathData="M206,128 H306 L332,160 H180 Z" />
+            <path android:strokeColor="#E9B73A" android:strokeWidth="9" android:strokeLineJoin="round"
+                android:pathData="M190,160 H322 Q338,250 322,340 H190 Q174,250 190,160 Z">
+                <aapt:attr name="android:fillColor">
+                    <gradient android:type="radial" android:centerX="256" android:centerY="250" android:gradientRadius="120">
+                        <item android:offset="0" android:color="#FFFFF3C4" />
+                        <item android:offset="0.6" android:color="#FFFFD76A" />
+                        <item android:offset="1" android:color="#FFE9A82C" />
+                    </gradient>
+                </aapt:attr>
+            </path>
+            <path android:fillColor="#E9B73A" android:pathData="M196,340 H316 L332,372 H180 Z" />
+            <path android:fillColor="#E9B73A" android:pathData="M218,372 H294 A6,6 0 0 1 300,378 V382 A6,6 0 0 1 294,388 H218 A6,6 0 0 1 212,382 V378 A6,6 0 0 1 218,372 Z" />
+            <!-- the Urdu letter beh -->
+            <path android:strokeColor="#FF0B3A2C" android:strokeWidth="22" android:strokeLineCap="round" android:strokeLineJoin="round"
+                android:pathData="M206,238 Q206,288 256,288 Q306,288 306,232" />
+            <path android:fillColor="#FF0B3A2C" android:pathData="M256,307 a13,13 0 1,0 0.01,0 Z" />
+        </group>
+    </group>
 </vector>
