@@ -1,0 +1,12 @@
+-keep class androidx.core.app.CoreComponentFactory { <init>(); }
+-keep class androidx.core.content.FileProvider { <init>(); }
+-keep class androidx.profileinstaller.ProfileInstallReceiver { <init>(); }
+-keep class androidx.startup.InitializationProvider { <init>(); }
+-keep class com.paul.urdukb.MainActivity { <init>(); }
+-keep class com.paul.urdukb.MicPermissionActivity { <init>(); }
+-keep class com.paul.urdukb.PreviewActivity { <init>(); }
+-keep class com.paul.urdukb.SetupActivity { <init>(); }
+-keep class com.paul.urdukb.TranslateTextActivity { <init>(); }
+-keep class com.paul.urdukb.UrduApp { <init>(); }
+-keep class com.paul.urdukb.VoiceActivity { <init>(); }
+-keep class com.paul.urdukb.ime.UrduImeService { <init>(); }

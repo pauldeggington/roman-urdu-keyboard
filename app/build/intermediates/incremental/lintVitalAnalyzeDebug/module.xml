@@ -1,0 +1,18 @@
+<lint-module
+    format="1"
+    dir="/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app"
+    name=":app"
+    type="APP"
+    maven="roman-urdu-keyboard:app:unspecified"
+    agpVersion="9.1.1"
+    buildFolder="build"
+    bootClassPath="/usr/local/lib/android/sdk/platforms/android-37.0/android.jar:/usr/local/lib/android/sdk/build-tools/36.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-37.0"
+    highlightGradualR8Api="false">
+  <lintOptions
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="debug"/>
+</lint-module>

@@ -1,0 +1,142 @@
+--------- beginning of system
+10-31 08:24:37.579   633  4495 E SettingsToPropertiesMapper: invalid flag name: default_qr_code_scanner
+10-31 08:24:37.579   633  4495 E SettingsToPropertiesMapper: invalid flag name: enable_screenshot_corner_flow
+10-31 08:24:37.595   633  4495 E SettingsToPropertiesMapper: invalid flag name: enable_screenshot_scrolling
+10-31 08:24:37.595   633  4495 E SettingsToPropertiesMapper: invalid flag name: exp_flag_release
+10-31 08:24:37.595   633  4495 E SettingsToPropertiesMapper: invalid flag name: home_button_long_press_duration_ms
+10-31 08:24:37.595   633  4495 E SettingsToPropertiesMapper: invalid flag name: nas_generate_actions
+10-31 08:24:37.595   633  4495 E SettingsToPropertiesMapper: invalid flag name: nas_generate_replies
+10-31 08:24:37.595   633  4495 E SettingsToPropertiesMapper: invalid flag name: nas_max_messages_to_extract
+10-31 08:24:37.596   633  4495 E SettingsToPropertiesMapper: invalid flag name: nas_max_suggestions
+10-31 08:24:37.596   633  4495 E SettingsToPropertiesMapper: invalid flag name: notification_memory_logging_enabled
+10-31 08:24:37.596   633  4495 E SettingsToPropertiesMapper: invalid flag name: predict_using_people_service_share
+10-31 08:24:37.596   633  4495 E SettingsToPropertiesMapper: invalid flag name: share_sheet_direct_share_timeout
+10-31 08:24:37.596   633  4495 E SettingsToPropertiesMapper: invalid flag name: shortcut_appsearch_integration
+10-31 08:24:37.596   633  4495 E SettingsToPropertiesMapper: invalid flag name: ssin_edit_choices_before_sending
+10-31 08:24:37.596   633  4495 E SettingsToPropertiesMapper: invalid flag name: ssin_enabled
+10-31 08:24:37.596   633  4495 E SettingsToPropertiesMapper: invalid flag name: ssin_max_num_actions
+10-31 08:24:37.596   633  4495 E SettingsToPropertiesMapper: invalid flag name: ssin_max_squeeze_remeasure_attempts
+10-31 08:24:37.604   633  4495 E SettingsToPropertiesMapper: invalid flag name: ssin_min_num_system_generated_replies
+10-31 08:24:37.604   633  4495 E SettingsToPropertiesMapper: invalid flag name: ssin_requires_targeting_p
+10-31 08:24:37.604   633  4495 E SettingsToPropertiesMapper: invalid flag name: ssin_show_in_heads_up
+10-31 08:24:37.604   633  4495 E SettingsToPropertiesMapper: invalid flag name: use_back_gesture_ml_model
+10-31 08:24:37.604   633  4495 E SettingsToPropertiesMapper: invalid flag name: adas_settings_allowlist
+10-31 08:24:37.605   633  4495 E SettingsToPropertiesMapper: invalid flag name: ignore_settings_allowlist
+10-31 08:24:37.605   633  4495 E SettingsToPropertiesMapper: invalid flag name: nearby_enable_presence_broadcast_legacy
+10-31 08:24:37.605   633  4495 E SettingsToPropertiesMapper: invalid flag name: nearby_nano_app_min_version
+10-31 08:24:37.605   633  4495 E SettingsToPropertiesMapper: invalid flag name: nearby_support_test_app
+10-31 08:24:37.605   633  4495 E SettingsToPropertiesMapper: invalid flag name: auto_revoke_check_frequency_millis
+10-31 08:24:37.605   633  4495 E SettingsToPropertiesMapper: invalid flag name: auto_revoke_unused_threshold_millis2
+10-31 08:24:37.626   633  4495 E SettingsToPropertiesMapper: invalid flag name: abnormal_connection_failure_bugreport_enabled
+10-31 08:24:37.626   633  4495 E SettingsToPropertiesMapper: invalid flag name: abnormal_disconnection_bugreport_enabled
+10-31 08:24:37.626   633  4495 E SettingsToPropertiesMapper: invalid flag name: application_qos_policy_api_enabled
+10-31 08:24:37.628   633  4495 E SettingsToPropertiesMapper: invalid flag name: assoc_rejection_count_min
+10-31 08:24:37.632   633  4495 E SettingsToPropertiesMapper: invalid flag name: assoc_rejection_high_thr_percent
+10-31 08:24:37.636   633  4495 E SettingsToPropertiesMapper: invalid flag name: assoc_timeout_count_min
+10-31 08:24:37.636   633  4495 E SettingsToPropertiesMapper: invalid flag name: assoc_timeout_high_thr_percent
+10-31 08:24:37.636   633  4495 E SettingsToPropertiesMapper: invalid flag name: auth_failure_count_min
+10-31 08:24:37.636   633  4495 E SettingsToPropertiesMapper: invalid flag name: auth_failure_high_thr_percent
+10-31 08:24:37.636   633  4495 E SettingsToPropertiesMapper: invalid flag name: aware_suspension_enabled
+10-31 08:24:37.636   633  4495 E SettingsToPropertiesMapper: invalid flag name: bug_report_min_window_ms
+10-31 08:24:37.636   633  4495 E SettingsToPropertiesMapper: invalid flag name: connection_failure_count_min
+10-31 08:24:37.637   633  4495 E SettingsToPropertiesMapper: invalid flag name: connection_failure_disconnection_count_min
+10-31 08:24:37.637   633  4495 E SettingsToPropertiesMapper: invalid flag name: connection_failure_disconnection_high_thr_percent
+10-31 08:24:37.637   633  4495 E SettingsToPropertiesMapper: invalid flag name: connection_failure_high_thr_percent
+10-31 08:24:37.637   633  4495 E SettingsToPropertiesMapper: invalid flag name: disconnection_nonlocal_count_min
+10-31 08:24:37.637   633  4495 E SettingsToPropertiesMapper: invalid flag name: disconnection_nonlocal_high_thr_percent
+10-31 08:24:37.638   633  4495 E SettingsToPropertiesMapper: invalid flag name: dry_run_scorer_pkg_name
+10-31 08:24:37.646   633  4495 E SettingsToPropertiesMapper: invalid flag name: health_monitor_fw_alert_valid_time_ms
+10-31 08:24:37.655   633  4495 E SettingsToPropertiesMapper: invalid flag name: health_monitor_min_num_connection_attempt
+10-31 08:24:37.655   633  4495 E SettingsToPropertiesMapper: invalid flag name: health_monitor_min_rssi_thr_dbm
+10-31 08:24:37.661   633  4495 E SettingsToPropertiesMapper: invalid flag name: health_monitor_ratio_thr_numerator
+10-31 08:24:37.661   633  4495 E SettingsToPropertiesMapper: invalid flag name: health_monitor_rssi_poll_valid_time_ms
+10-31 08:24:37.661   633  4495 E SettingsToPropertiesMapper: invalid flag name: health_monitor_short_connection_duration_thr_ms
+10-31 08:24:37.662   633  4495 E SettingsToPropertiesMapper: invalid flag name: high_perf_lock_deprecated
+10-31 08:24:37.662   633  4495 E SettingsToPropertiesMapper: invalid flag name: include_passpoint_ssids_in_pno_scans
+10-31 08:24:37.670   633  4495 E SettingsToPropertiesMapper: invalid flag name: interface_failure_bugreport_enabled
+10-31 08:24:37.670   633  4495 E SettingsToPropertiesMapper: invalid flag name: nonstationary_scan_rssi_valid_time_ms
+10-31 08:24:37.670   633  4495 E SettingsToPropertiesMapper: invalid flag name: oob_pseudonym_enabled
+10-31 08:24:37.670   633  4495 E SettingsToPropertiesMapper: invalid flag name: p2p_failure_bugreport_enabled
+10-31 08:24:37.670   633  4495 E SettingsToPropertiesMapper: invalid flag name: report_bug_report_threshold_extra_ratio
+10-31 08:24:37.670   633  4495 E SettingsToPropertiesMapper: invalid flag name: short_connection_nonlocal_count_min
+10-31 08:24:37.675   633  4495 E SettingsToPropertiesMapper: invalid flag name: short_connection_nonlocal_high_thr_percent
+10-31 08:24:37.676   633  4495 E SettingsToPropertiesMapper: invalid flag name: software_pno_enabled
+10-31 08:24:37.676   633  4495 E SettingsToPropertiesMapper: invalid flag name: stationary_scan_rssi_valid_time_ms
+--------- beginning of main
+10-31 08:24:37.678  2838  2998 E DialerRestVvmCarrierService: com.android.dialer.voicemail.service.impl.vvmclients.rest.RestVvmCarrierService.getMsisdn:420 Retrieved phone number in an unexpected format: +15551234567 [CONTEXT disable_client_error_logging=true ]
+10-31 08:24:37.678  2838  2998 E DialerRestVvmCarrierService: zxo: MEDIUM
+10-31 08:24:37.678  2838  2998 E DialerRestVvmCarrierService: 	at a.cN(PG:15)
+10-31 08:24:37.678  2838  2998 E DialerRestVvmCarrierService: 	at pxq.apply(PG:489)
+10-31 08:24:37.678  2838  2998 E DialerRestVvmCarrierService: 	at zcp.apply(PG:13)
+10-31 08:24:37.678  2838  2998 E DialerRestVvmCarrierService: 	at aaka.d(PG:3)
+10-31 08:24:37.678  2838  2998 E DialerRestVvmCarrierService: 	at aakb.run(PG:38)
+10-31 08:24:37.678  2838  2998 E DialerRestVvmCarrierService: 	at umz.run(PG:7)
+10-31 08:24:37.678  2838  2998 E DialerRestVvmCarrierService: 	at aadu.run(PG:44)
+10-31 08:24:37.678  2838  2998 E DialerRestVvmCarrierService: 	at tdt.run(PG:78)
+10-31 08:24:37.678  2838  2998 E DialerRestVvmCarrierService: 	at cp.run(PG:143)
+10-31 08:24:37.678  2838  2998 E DialerRestVvmCarrierService: 	at java.lang.Thread.run(Thread.java:1119)
+10-31 08:24:37.678  2838  2998 E DialerRestVvmCarrierService: 	at uoe.run(PG:61)
+10-31 08:24:37.772  2838  2958 E DialerRestVvmCarrierService: com.android.dialer.voicemail.service.impl.vvmclients.rest.RestVvmCarrierService.getMsisdn:420 Retrieved phone number in an unexpected format: +15551234567 [CONTEXT disable_client_error_logging=true ]
+10-31 08:24:37.772  2838  2958 E DialerRestVvmCarrierService: zxo: MEDIUM
+10-31 08:24:37.772  2838  2958 E DialerRestVvmCarrierService: 	at a.cN(PG:15)
+10-31 08:24:37.772  2838  2958 E DialerRestVvmCarrierService: 	at pxq.apply(PG:489)
+10-31 08:24:37.772  2838  2958 E DialerRestVvmCarrierService: 	at zcp.apply(PG:13)
+10-31 08:24:37.772  2838  2958 E DialerRestVvmCarrierService: 	at aaka.d(PG:3)
+10-31 08:24:37.772  2838  2958 E DialerRestVvmCarrierService: 	at aakb.run(PG:38)
+10-31 08:24:37.772  2838  2958 E DialerRestVvmCarrierService: 	at umz.run(PG:7)
+10-31 08:24:37.772  2838  2958 E DialerRestVvmCarrierService: 	at aadu.run(PG:44)
+10-31 08:24:37.772  2838  2958 E DialerRestVvmCarrierService: 	at tdt.run(PG:78)
+10-31 08:24:37.772  2838  2958 E DialerRestVvmCarrierService: 	at cp.run(PG:143)
+10-31 08:24:37.772  2838  2958 E DialerRestVvmCarrierService: 	at java.lang.Thread.run(Thread.java:1119)
+10-31 08:24:37.772  2838  2958 E DialerRestVvmCarrierService: 	at uoe.run(PG:61)
+10-31 08:24:37.781  2838  6573 E IPCThreadState: Binder transaction failure. id: 364026, BR_*: 29202, error: 0 (Success)
+10-31 08:24:37.781  2838  6573 E JavaBinder: !!! FAILED BINDER TRANSACTION !!!  (parcel size = 84)
+10-31 08:24:37.785   633  2004 E IPCThreadState: Binder transaction failure. id: 364052, BR_*: 29202, error: 0 (Success)
+10-31 08:24:37.805  2838  2958 E aakf    : Got more than one input Future failure. Logging failures after the first
+10-31 08:24:37.805  2838  2958 E aakf    : yke: android.os.DeadObjectException: Transaction failed on small parcel; remote process probably died, but this could also be caused by running out of binder buffer space
+10-31 08:24:37.805  2838  2958 E aakf    : 	at wts.ai(PG:70)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at wts.u(PG:20)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at ylx.a(PG:19)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at xkr.d(PG:6)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at xkt.run(PG:74)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at zcr.run(PG:21)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at umz.run(PG:7)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1156)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:651)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at tdt.run(PG:78)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at ubo.run(PG:476)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at java.lang.Thread.run(Thread.java:1119)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at uoe.run(PG:61)
+10-31 08:24:37.805  2838  2958 E aakf    : Caused by: android.os.DeadObjectException: Transaction failed on small parcel; remote process probably died, but this could also be caused by running out of binder buffer space
+10-31 08:24:37.805  2838  2958 E aakf    : 	at android.os.BinderProxy.transactNative(Native Method)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at android.os.BinderProxy.transact(BinderProxy.java:592)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at android.content.ContentProviderProxy.createCancellationSignal(ContentProviderNative.java:832)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at android.content.ContentProviderClient.query(ContentProviderClient.java:193)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at android.content.ContentProviderClient.query(ContentProviderClient.java:178)
+10-31 08:24:37.805  2838  2958 E aakf    : 	at wts.ai(PG:23)
+10-31 08:24:37.805  2838  2958 E aakf    : 	... 12 more
+10-31 08:24:37.852   633  4495 E SettingsToPropertiesMapper: invalid flag name: credential_manager_service_search_uri
+10-31 08:24:37.854   633  4495 E SettingsToPropertiesMapper: invalid flag name: enable_credential_manager
+10-31 08:24:37.866   633  4495 E SettingsToPropertiesMapper: invalid flag name: ENABLE_SETTINGS_OSE_CUSTOMIZATIONS
+10-31 08:24:37.867   633  4495 E SettingsToPropertiesMapper: invalid flag name: ENABLE_SMARTSPACE_ENHANCED
+10-31 08:24:37.867   633  4495 E SettingsToPropertiesMapper: invalid flag name: INJECT_FALLBACK_APP_CORPUS_RESULTS
+10-31 08:24:37.867   633  4495 E SettingsToPropertiesMapper: invalid flag name: LAUNCHER_TEAMFOOD
+10-31 08:24:37.867   633  4495 E SettingsToPropertiesMapper: invalid flag name: medium_suggestion_cnt
+10-31 08:24:37.868   633  4495 E SettingsToPropertiesMapper: invalid flag name: short_suggestion_cnt
+10-31 08:24:37.890   633  4495 E SettingsToPropertiesMapper: invalid flag name: selinux_audit_job_enabled
+10-31 08:24:37.936   633   633 E DeviceConfig: Parsing int failed for location_mode
+10-31 08:24:37.945   633  4495 E SettingsToPropertiesMapper: invalid flag name: INIT_gd_hal_snoop_logger_filtering
+10-31 08:24:37.947   633  4495 E SettingsToPropertiesMapper: invalid flag name: INIT_gd_hal_snoop_logger_socket
+10-31 08:24:37.947   633  4495 E SettingsToPropertiesMapper: invalid flag name: audio_policy_ag_enabled
+10-31 08:24:37.947   633  4495 E SettingsToPropertiesMapper: invalid flag name: audio_policy_hf_enabled
+10-31 08:24:37.947   633  4495 E SettingsToPropertiesMapper: invalid flag name: le_audio_enabled_by_default
+10-31 08:24:37.961   633  4495 E SettingsToPropertiesMapper: invalid flag name: location_denylist_advertising_data
+10-31 08:24:37.980   633  4495 E SettingsToPropertiesMapper: invalid flag name: location_denylist_mac
+10-31 08:24:37.982   633  4495 E SettingsToPropertiesMapper: invalid flag name: location_denylist_name
+10-31 08:24:37.982   633  4495 E SettingsToPropertiesMapper: invalid flag name: scan_timeout_millis
+10-31 08:24:38.077   525   549 E HwcComposer: getLuts failed Status(-8, EX_SERVICE_SPECIFIC): '8: '
+10-31 08:24:38.077   525   549 E HWComposer: getLuts: getLuts failed for display 4619827259835644672: UNSUPPORTED (8)
+10-31 08:24:38.382   525   549 E HwcComposer: getLuts failed Status(-8, EX_SERVICE_SPECIFIC): '8: '
+10-31 08:24:38.382   525   549 E HWComposer: getLuts: getLuts failed for display 4619827259835644672: UNSUPPORTED (8)
+10-31 08:24:39.546   525   549 E HwcComposer: getLuts failed Status(-8, EX_SERVICE_SPECIFIC): '8: '
+10-31 08:24:39.546   525   549 E HWComposer: getLuts: getLuts failed for display 4619827259835644672: UNSUPPORTED (8)

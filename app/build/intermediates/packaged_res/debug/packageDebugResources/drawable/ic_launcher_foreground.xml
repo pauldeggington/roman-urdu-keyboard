@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Roman Urdu Keyboard logo: an English bubble and an Urdu bubble -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- back bubble (Urdu side) -->
+    <path android:fillColor="#FFFFE6F1"
+        android:pathData="M55,46 H75 A9,9 0 0 1 84,55 V71 L86,84 L72,78 H55 A9,9 0 0 1 46,69 V55 A9,9 0 0 1 55,46 Z" />
+    <path android:strokeColor="#FF7B2F63" android:strokeWidth="3.4"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M55,62 Q58,69 66,69 H74 Q80,69 80,59" />
+    <path android:fillColor="#FF7B2F63"
+        android:pathData="M68,72.3 A2.3,2.3 0 1 1 68,76.9 A2.3,2.3 0 1 1 68,72.3 Z" />
+    <!-- front bubble (English side) -->
+    <path android:fillColor="#FFFFFFFF" android:strokeColor="#FFB05AC4" android:strokeWidth="2.4"
+        android:strokeLineJoin="round"
+        android:pathData="M33,26 H53 A9,9 0 0 1 62,35 V49 A9,9 0 0 1 53,58 H40 L28,66 L31,58 H33 A9,9 0 0 1 24,49 V35 A9,9 0 0 1 33,26 Z" />
+    <path android:fillColor="#FF7B2F63" android:fillType="evenOdd"
+        android:pathData="M43,32 L50.4,52 H46.9 L45.5,47.8 H40.5 L39.1,52 H35.6 Z M41,44.8 H44.8 L43,39.2 Z" />
+</vector>

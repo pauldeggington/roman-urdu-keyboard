@@ -1,0 +1,222 @@
+[
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_select_all.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_select_all.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_cut.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_cut.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_go.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_go.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_undo.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_undo.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_setup_keyboard.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_setup_keyboard.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_sticker.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_sticker.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_paste.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_paste.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_cat_recent.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_cat_recent.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_setup_mood.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_setup_mood.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_settings.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_settings.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_enter.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_enter.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_close.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_close.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_setup_celebration.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_setup_celebration.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_cat_travel.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_cat_travel.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_setup_person.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_setup_person.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_send.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_send.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/mipmap-anydpi_ic_launcher.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/mipmap-anydpi/ic_launcher.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/xml_method.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/xml/method.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_mic.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_mic.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_cat_objects.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_cat_objects.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_done.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_done.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_back.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_back.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_caps.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_caps.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_cat_activities.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_cat_activities.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_search.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_search.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_cat_symbols.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_cat_symbols.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_setup_wifi.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_setup_wifi.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_cat_flags.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_cat_flags.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_setup_swap.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_setup_swap.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_cat_food.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_cat_food.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_translate.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_translate.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_setup_touch.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_setup_touch.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_cat_people.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_cat_people.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_launcher_monochrome.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_launcher_monochrome.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/mipmap-anydpi_ic_launcher_round.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/mipmap-anydpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/xml_file_paths.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/xml/file_paths.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_setup_palette.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_setup_palette.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_cat_nature.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_cat_nature.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_setup_check.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_setup_check.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_copy.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_copy.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_grid.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_grid.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_setup_offline.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_setup_offline.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_setup_translate.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_setup_translate.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_setup_download.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_setup_download.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_emoji.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_emoji.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_pin.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_pin.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_setup_lock.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_setup_lock.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_shift_on.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_shift_on.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_ic_rurdu_progress.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/ic_rurdu_progress.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_shift.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_shift.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_delete.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_delete.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/drawable_kb_cat_smileys.xml.flat",
+        "source": "com.paul.urdukb.app-main-33:/drawable/kb_cat_smileys.xml"
+    },
+    {
+        "merged": "com.paul.urdukb.app-debug-31:/font_google_sans_text.ttf.flat",
+        "source": "com.paul.urdukb.app-main-33:/font/google_sans_text.ttf"
+    }
+]

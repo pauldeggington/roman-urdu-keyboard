@@ -1,0 +1,2 @@
+10-31 08:24:37.559   633  4495 E SettingsToPropertiesMapper: invalid flag name: MinInstallableTargetSdkStrictMode__install_block_strict_mode_enabled
+10-31 08:24:37.559   633  4495 E SettingsToPropertiesMapper: invalid flag name: MinInstallableTargetSdkStrictMode__strict_mode_target_sdk

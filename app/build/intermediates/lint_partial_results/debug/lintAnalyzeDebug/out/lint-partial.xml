@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 9.1.1" type="partial_results">
+    <map id="UnsafeImplicitIntentLaunch">
+            <map id="actionsSent">
+                    <map id="android.intent.action.VIEW (used to start an activity)">
+                        <location id="0"
+                            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/MainModel.kt"
+                            line="199"
+                            column="41"
+                            startOffset="7404"
+                            endLine="199"
+                            endColumn="90"
+                            endOffset="7453"/>
+                        <location id="1"
+                            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/MainScreen.kt"
+                            line="448"
+                            column="49"
+                            startOffset="23422"
+                            endLine="448"
+                            endColumn="129"
+                            endOffset="23502"/>
+                        <location id="2"
+                            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/SetupModel.kt"
+                            line="155"
+                            column="64"
+                            startOffset="5809"
+                            endLine="155"
+                            endColumn="106"
+                            endOffset="5851"/>
+                    </map>
+                    <map id="android.settings.INPUT_METHOD_SETTINGS (used to start an activity)">
+                        <location id="0"
+                            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/MainModel.kt"
+                            line="316"
+                            column="52"
+                            startOffset="13406"
+                            endLine="316"
+                            endColumn="97"
+                            endOffset="13451"/>
+                        <location id="1"
+                            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/SetupModel.kt"
+                            line="153"
+                            column="52"
+                            startOffset="5556"
+                            endLine="153"
+                            endColumn="97"
+                            endOffset="5601"/>
+                    </map>
+                    <map id="android.settings.SETTINGS (used to start an activity)">
+                        <location id="0"
+                            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/VoiceActivity.kt"
+                            line="77"
+                            column="33"
+                            startOffset="2973"
+                            endLine="77"
+                            endColumn="65"
+                            endOffset="3005"/>
+                    </map>
+                    <map id="com.android.settings.TTS_SETTINGS (used to start an activity)">
+                        <location id="0"
+                            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/VoiceActivity.kt"
+                            line="75"
+                            column="19"
+                            startOffset="2839"
+                            endLine="75"
+                            endColumn="62"
+                            endOffset="2882"/>
+                    </map>
+            </map>
+    </map>
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="com.paul.urdukb.MainActivity"
+                    boolean="true"/>
+                <entry
+                    name="com.paul.urdukb.TranslateTextActivity"
+                    boolean="true"/>
+                <entry
+                    name="com.paul.urdukb.VoiceActivity"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="UnusedResources">
+        <location id="R.drawable.ic_setup_wifi"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/ic_setup_wifi.xml"
+            line="3"
+            column="1"
+            startOffset="101"
+            endLine="8"
+            endColumn="10"
+            endOffset="885"/>
+        <location id="R.string.a11y_selected_colour"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="335"
+            column="13"
+            startOffset="26836"
+            endLine="335"
+            endColumn="40"
+            endOffset="26863"/>
+        <entry
+            name="model"
+            string="drawable[ic_launcher_background(U),ic_launcher_background_1(R),ic_launcher_foreground(U),ic_launcher_monochrome(U),ic_rurdu_progress(U),ic_setup_celebration(U),ic_setup_check(U),ic_setup_download(U),ic_setup_keyboard(U),ic_setup_lock(U),ic_setup_mood(U),ic_setup_offline(U),ic_setup_palette(U),ic_setup_person(U),ic_setup_swap(U),ic_setup_touch(U),ic_setup_translate(U),ic_setup_wifi(D),kb_back(U),kb_caps(U),kb_cat_activities(U),kb_cat_flags(U),kb_cat_food(U),kb_cat_nature(U),kb_cat_objects(U),kb_cat_people(U),kb_cat_recent(U),kb_cat_smileys(U),kb_cat_symbols(U),kb_cat_travel(U),kb_close(U),kb_copy(U),kb_cut(U),kb_delete(U),kb_done(U),kb_emoji(U),kb_enter(U),kb_go(U),kb_grid(U),kb_mic(U),kb_paste(U),kb_pin(U),kb_search(U),kb_select_all(U),kb_send(U),kb_settings(U),kb_shift(U),kb_shift_on(U),kb_sticker(U),kb_translate(U),kb_undo(U)],font[google_sans_text(R)],id[media_url(U)],mipmap[ic_launcher(U),ic_launcher_round(U)],string[app_name(U),cd_back(U),cd_clear_search(U),cd_close_search(U),cd_stickers(U),clear_all(U),clipboard_empty(U),clipboard_hint(U),clipboard_off_msg(U),clipboard_paste_now(U),clipboard_title(U),clipboard_turn_on(U),delete(U),emoji_emoticons(U),emoji_recent(U),gif_link_typed(U),gif_send_failed(U),giphy_bad_key(U),giphy_limit(U),giphy_need_key(U),giphy_network(U),giphy_powered(U),loading(U),media_recent_empty(U),mic_off(U),model_nothing(U),no_emoji_for(U),no_model(U),no_results(U),open_app(U),pin(U),search_emoji_hint(U),search_gifs_hint(U),search_stickers_hint(U),translation_failed(U),type_first(U),type_then_search(U),type_to_find_emoji(U),unlock_first(U),unpin(U),voice_network(U),voice_none(U),voice_not_on(U),voice_stopped(U),sheet_direction(U),sheet_loading_first(U),sheet_copied(U),sheet_copy(U),sheet_close(U),sheet_no_model(U),sheet_failed(U),update_ready(U),update_downloads_in_browser(U),update_download(U),update_check(U),update_checking(U),update_latest(U),update_failed(U),update_version(U),update_up_to_date(U),update_browser_failed(U),model_damaged(U),model_damaged_detail(U),model_ready(U),model_ready_verified(U),model_checksum_ok(U),model_not_checked(U),model_incomplete(U),model_incomplete_detail(U),model_expected(U),model_remove_redownload(U),model_partial(U),model_resume_hint(U),model_none(U),model_none_detail(U),model_downloading(U),model_of_total(U),model_can_leave(U),model_resume_download(U),model_download_again(U),model_download(U),check_model(U),check_model_unchecked(U),check_model_sub(U),check_get(U),check_turn_on(U),check_turn_on_sub(U),check_turn_on_action(U),check_switch(U),check_switch_sub(U),check_switch_action(U),check_translate(U),check_translate_sub(U),check_try(U),stats_file(U),stats_no_file(U),stats_none(U),stats_not_loaded(U),stats_gpu_failed(U),stats_running(U),stats_load(U),stats_last(U),stats_average(U),stats_over_one(U),stats_over_many(U),verify_phase(U),verify_checking(U),verify_damaged(U),verify_unknown(U),import_copying(U),transfer_stopped(U),download_need_token(U),download_need_space(U),download_started(U),try_type_first(U),try_get_model(U),note_to_english(U),note_formal(U),note_casual(U),note_first_load(U),try_failed(U),example_saved(U),saved(U),style_reset(U),glossary_reset(U),gpu_next_time(U),cancel(U),clear(U),copy(U),translate(U),save(U),edit(U),hide(U),male(U),female(U),card_updates(U),card_setup(U),card_model(U),card_try(U),card_style(U),card_colour(U),card_speed(U),card_keyboard(U),card_giphy(U),card_credits(U),card_error(U),header_tagline(U),model_choice_gemma4(U),model_choice_gemma3(U),model_choice_help(U),model_background_note(U),model_token_help(U),model_token_hint(U),model_use_file(U),model_remove(U),model_verify(U),try_direction(U),dir_auto(U),dir_to_ru(U),dir_to_en(U),try_tone(U),tone_casual(U),tone_formal(U),try_tone_help(U),try_input_hint(U),try_output_hint(U),try_save_example(U),style_help(U),style_i_am(U),style_i_am_help(U),style_casual(U),style_formal(U),style_examples_label(U),style_examples_hint(U),style_glossary_label(U),style_reset_tab(U),style_reset_glossary(U),colour_help(U),colour_light_dark(U),mode_follow(U),mode_light(U),mode_dark(U),speed_gpu(U),speed_gpu_help(U),speed_reset(U),kb_help(U),kb_turn_on(U),kb_switch(U),kb_vibrate(U),kb_sound(U),kb_popup(U),kb_popup_sub(U),kb_autocap(U),kb_autocap_sub(U),kb_warm(U),kb_warm_sub(U),kb_suggest(U),kb_suggest_sub(U),kb_autocorrect(U),kb_autocorrect_sub(U),kb_forget_words(U),kb_words_cleared(U),kb_glide(U),kb_glide_sub(U),kb_double_space(U),kb_clipboard(U),kb_clipboard_sub(U),kb_clip_keep(U),kb_hints(U),kb_hints_sub(U),kb_run_setup(U),giphy_help(U),giphy_built_in(U),giphy_need_key_steps(U),giphy_key_hint(U),giphy_get_key(U),giphy_on(U),giphy_off(U),giphy_limits(U),credits_keyboard(U),credits_translation(U),credits_giphy(U),credits_icons(U),credits_data(U),credits_license(U),next(U),setup_skip(U),setup_skip_step(U),setup_copy_details(U),setup_get_started(U),setup_open_settings(U),setup_choose_keyboard(U),setup_skip_for_now(U),setup_finish(U),setup_problem_title(U),setup_problem_body(U),setup_welcome_body(U),setup_feat_translate(U),setup_feat_translate_sub(U),setup_feat_private(U),setup_feat_private_sub(U),setup_feat_gboard(U),setup_feat_gboard_sub(U),setup_welcome_note(U),setup_model_title(U),setup_model_body(U),setup_gemma4_sub(U),setup_gemma3_sub(U),setup_mobile_data(U),setup_token_intro(U),setup_token_step1(U),setup_token_step2(U),setup_model_page(U),setup_make_token(U),setup_token_hint(U),setup_enable_title(U),setup_enable_body(U),setup_enable_1(U),setup_enable_2(U),setup_enable_3(U),setup_enable_note(U),setup_enable_done(U),setup_switch_title(U),setup_switch_body(U),setup_switch_note(U),setup_switch_done(U),setup_personal_title(U),setup_personal_body(U),setup_personal_i_am_help(U),setup_how_talk(U),setup_personal_tone_help(U),setup_theme(U),setup_colour(U),setup_colour_note(U),setup_practice_title(U),setup_practice_body(U),setup_tip_translate(U),setup_tip_tone_title(U),setup_tip_tone(U),setup_tip_auto(U),setup_practice_hint(U),setup_done_title(U),setup_done_body(U),setup_done_tip_translate(U),setup_done_tip_wrong(U),setup_done_tip_wrong_sub(U),setup_done_tip_colours(U),setup_done_tip_colours_sub(U),setup_eta_minute(U),setup_eta_minutes(U),setup_eta_hours(U),setup_cancel_first(U),setup_need_token(U),setup_need_space(U),setup_downloading_toast(U),setup_copy_failed(U),setup_chip_checking(U),setup_chip_paused(U),setup_chip_downloading(U),setup_almost(U),setup_ready(U),setup_downloading(U),setup_left(U),setup_keeps_going(U),setup_cancel_download(U),setup_restart_note(U),setup_try_again(U),setup_have_file(U),setup_one_time(U),setup_takes_few(U),setup_takes_long(U),setup_download_now(U),setup_practice_done(U),setup_practice_not_active(U),setup_practice_downloading(U),setup_practice_no_model(U),setup_practice_wait(U),ttl_hour(U),ttl_day(U),ttl_week(U),a11y_back(U),a11y_step(U),a11y_selected_colour(D),tone_auto(U),tone_poetic(U),tone_funny(U),tone_respectful(U),style_poetic(U),style_funny(U),style_respectful(U),note_poetic(U),note_funny(U),note_respectful(U),kb_smart_tone(U),kb_smart_tone_sub(U),voice_title_share(U),voice_title_speak(U),voice_decoding(U),voice_listening(U),voice_listening_part(U),voice_writing_urdu(U),voice_tap_to_speak(U),voice_recording(U),voice_record(U),voice_stop(U),voice_record_again(U),voice_too_quiet(U),voice_failed(U),voice_english(U),voice_urdu(U),voice_roman(U),voice_truncated(U),voice_copy_english(U),voice_copy_urdu(U),voice_play(U),voice_share_audio(U),voice_making_audio(U),voice_audio_missing(U),voice_open_voice_settings(U),voice_try_again(U),voice_audio_failed(U),card_voice(U),voice_help(U),voice_speak_button(U),voice_writing_english(U),voice_comparing(U),voice_careful(U),voice_careful_sub(U),voice_listening_pass(U),voice_listening_part_pass(U),voice_checking(U),voice_unsure(U),voice_also_heard(U),voice_use_this(U),voice_copy_roman(U)],style[RomanUrduAppTheme(U),RomanUrduSheetTheme(U)],xml[file_paths(U),method(U)];0^1,35^0^2^3,36^0^2^3;;;"/>
+    </map>
+
+</incidents>

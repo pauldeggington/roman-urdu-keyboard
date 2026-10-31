@@ -1,0 +1,30 @@
+<variant
+    name="debug"
+    package="com.paul.urdukb"
+    minSdkVersion="31"
+    targetSdkVersion="37.0"
+    mergedManifest="build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml"
+    partialResultsDir="build/intermediates/unit_test_lint_partial_results/debug/lintAnalyzeDebugUnitTest/out"
+    desugaredMethodsFiles="/home/runner/.gradle/caches/9.7.1/transforms/fd34da58d1b62055628603f990813113/transformed/D8BackportedDesugaredMethods.txt">
+  <buildFeatures/>
+  <sourceProviders>
+  </sourceProviders>
+  <testSourceProviders>
+    <sourceProvider
+        manifests="src/test/AndroidManifest.xml"
+        javaDirectories="src/test/java:src/testDebug/java:src/test/kotlin:src/testDebug/kotlin"
+        assetsDirectories="src/test/assets:src/testDebug/assets"
+        keepRulesDirectories="src/test/keepRules:src/testDebug/keepRules"
+        unitTest="true"/>
+  </testSourceProviders>
+  <testFixturesSourceProviders>
+  </testFixturesSourceProviders>
+  <manifestPlaceholders>
+    <placeholder
+        name="previewExported"
+        value="true" />
+  </manifestPlaceholders>
+  <artifact
+      type="UNIT_TEST">
+  </artifact>
+</variant>

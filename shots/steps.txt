@@ -1,0 +1,50 @@
+36
+total 4688
+drwxr-xr-x 3 runner runner    4096 Oct 31 08:16 .
+drwxr-xr-x 3 runner runner    4096 Oct 31 08:16 ..
+-rw-r--r-- 1 runner runner 4783808 Oct 31 08:16 RomanUrduKeyboard_dev-debug-r8.apk
+drwxr-xr-x 4 runner runner    4096 Oct 31 08:16 baselineProfiles
+-rw-r--r-- 1 runner runner     772 Oct 31 08:16 output-metadata.json
+Performing Streamed Install
+Success
+package:com.lanternkeys.urdukb
+Input method com.lanternkeys.urdukb/com.paul.urdukb.ime.UrduImeService: now enabled for user #0
+Input method com.lanternkeys.urdukb/com.paul.urdukb.ime.UrduImeService selected for user #0
+com.lanternkeys.urdukb/com.paul.urdukb.ime.UrduImeService
+com.lanternkeys.urdukb/com.paul.urdukb.ime.UrduImeService:
+  mId=com.lanternkeys.urdukb/com.paul.urdukb.ime.UrduImeService mSettingsActivityName=com.paul.urdukb.MainActivity mLanguageSettingsActivityName=null mIsVrOnly=false mIsVirtualDeviceOnly=false mSupportsSwitchingToNextInputMethod=true mInlineSuggestionsEnabled=false mSupportsInlineSuggestionsWithTouchExploration=false mSuppressesSpellChecker=false mShowInInputMethodPicker=true mSupportsStylusHandwriting=false mSupportsConnectionlessStylusHandwriting=false mStylusHandwritingSettingsActivityAttr=null
+  mIsDefaultResId=0x0
+  Service:
+    priority=0 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=false
+--
+      packageName=com.lanternkeys.urdukb
+      labelRes=0x7f0a0004 nonLocalizedLabel=null icon=0x0 banner=0x0
+      enabled=true exported=true directBootAware=false
+      permission=android.permission.BIND_INPUT_METHOD
+--
+        packageName=com.lanternkeys.urdukb
+        labelRes=0x7f0a0004 nonLocalizedLabel=null icon=0x7f090000 banner=0x0
+        className=com.paul.urdukb.UrduApp
+        processName=com.lanternkeys.urdukb
+        taskAffinity=com.lanternkeys.urdukb
+        uid=10216 flags=0x30c83e44 privateFlags=0x8c001000 theme=0x0
+        requiresSmallestWidthDp=0 compatibleWidthLimitDp=0 largestWidthLimitDp=0
+        sourceDir=/data/app/~~j2A-yoc42S9LDXJ7nkaamw==/com.lanternkeys.urdukb-VhojTGQapgzYP72xdCoH6w==/base.apk
+        resourceDirs=[/product/overlay/EmulationPixel6/EmulationPixel6Overlay.apk, /product/overlay/NavigationBarModeGestural/NavigationBarModeGesturalOverlay.apk]
+        overlayPaths=[/product/overlay/EmulationPixel6/EmulationPixel6Overlay.apk, /product/overlay/NavigationBarModeGestural/NavigationBarModeGesturalOverlay.apk]
+        seinfo=default:targetSdkVersion=37
+--
+        dataDir=/data/user/0/com.lanternkeys.urdukb
+        deviceProtectedDataDir=/data/user_de/0/com.lanternkeys.urdukb
+        credentialProtectedDataDir=/data/user/0/com.lanternkeys.urdukb
+        enabled=true minSdkVersion=31 targetSdkVersion=37 versionCode=5001 targetSandboxVersion=1
+        supportsRtl=true
+        fullBackupContent=true
+Night mode: yes
+Starting: Intent { cmp=com.lanternkeys.urdukb/com.paul.urdukb.PreviewActivity }
+Status: ok
+LaunchState: WARM
+Activity: com.lanternkeys.urdukb/com.paul.urdukb.PreviewActivity
+TotalTime: 1972
+WaitTime: 2097
+Complete

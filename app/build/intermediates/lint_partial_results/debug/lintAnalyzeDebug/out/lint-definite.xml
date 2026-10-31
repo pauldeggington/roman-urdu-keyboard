@@ -1,0 +1,3585 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 9.1.1" type="incidents">
+
+    <incident
+        id="RedundantLabel"
+        severity="warning"
+        message="Redundant label can be removed">
+        <fix-attribute
+            description="Delete label"
+            namespace="http://schemas.android.com/apk/res/android"
+            attribute="label"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
+            line="33"
+            column="13"
+            startOffset="1560"
+            endLine="33"
+            endColumn="45"
+            endOffset="1592"/>
+    </incident>
+
+    <incident
+        id="AndroidGradlePluginVersion"
+        severity="warning"
+        message="A newer version of Gradle than 9.7.1 is available: 9.8.2">
+        <fix-replace
+            description="Update to 9.8.2"
+            oldString="9.7.1"
+            replacement="9.8.2"
+            priority="0"/>
+        <location
+            file="$HOME/work/roman-urdu-keyboard/roman-urdu-keyboard/gradle/wrapper/gradle-wrapper.properties"
+            line="4"
+            column="17"
+            startOffset="168"
+            endLine="4"
+            endColumn="80"
+            endOffset="231"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of com.google.ai.edge.litertlm:litertlm-android than 0.18.1 is available: 0.19.0">
+        <fix-replace
+            description="Change to 0.19.0"
+            family="Update versions"
+            oldString="0.18.1"
+            replacement="0.19.0"
+            priority="0"/>
+        <location
+            file="$HOME/work/roman-urdu-keyboard/roman-urdu-keyboard/gradle/libs.versions.toml"
+            line="5"
+            column="12"
+            startOffset="119"
+            endLine="5"
+            endColumn="20"
+            endOffset="127"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.core:core-ktx than 1.17.0 is available: 1.19.1">
+        <fix-replace
+            description="Change to 1.19.1"
+            family="Update versions"
+            oldString="1.17.0"
+            replacement="1.19.1"
+            priority="0"/>
+        <location
+            file="$HOME/work/roman-urdu-keyboard/roman-urdu-keyboard/gradle/libs.versions.toml"
+            line="6"
+            column="16"
+            startOffset="143"
+            endLine="6"
+            endColumn="24"
+            endOffset="151"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.compose:compose-bom than 2025.10.01 is available: 2026.09.00">
+        <fix-replace
+            description="Change to 2026.09.00"
+            family="Update versions"
+            oldString="2025.10.01"
+            replacement="2026.09.00"
+            priority="0"/>
+        <location
+            file="$HOME/work/roman-urdu-keyboard/roman-urdu-keyboard/gradle/libs.versions.toml"
+            line="9"
+            column="14"
+            startOffset="205"
+            endLine="9"
+            endColumn="26"
+            endOffset="217"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.activity:activity-compose than 1.11.0 is available: 1.13.0">
+        <fix-replace
+            description="Change to 1.13.0"
+            family="Update versions"
+            oldString="1.11.0"
+            replacement="1.13.0"
+            priority="0"/>
+        <location
+            file="$HOME/work/roman-urdu-keyboard/roman-urdu-keyboard/gradle/libs.versions.toml"
+            line="10"
+            column="19"
+            startOffset="236"
+            endLine="10"
+            endColumn="27"
+            endOffset="244"/>
+    </incident>
+
+    <incident
+        id="NewerVersionAvailable"
+        severity="warning"
+        message="A newer version of org.robolectric:robolectric than 4.16 is available: 4.17">
+        <fix-replace
+            description="Change to 4.17"
+            family="Update versions"
+            oldString="4.16"
+            replacement="4.17"
+            priority="0"/>
+        <location
+            file="$HOME/work/roman-urdu-keyboard/roman-urdu-keyboard/gradle/libs.versions.toml"
+            line="11"
+            column="15"
+            startOffset="259"
+            endLine="11"
+            endColumn="21"
+            endOffset="265"/>
+    </incident>
+
+    <incident
+        id="Typos"
+        severity="warning"
+        message="&quot;teh&quot; is a common misspelling; did you mean &quot;the&quot;?">
+        <fix-replace
+            description="Replace with &quot;the&quot;"
+            oldString="teh"
+            replacement="the"
+            priority="0"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="208"
+            column="79"
+            startOffset="15021"
+            endLine="208"
+            endColumn="82"
+            endOffset="15024"/>
+    </incident>
+
+    <incident
+        id="PluralsCandidate"
+        severity="warning"
+        message="Formatting %d followed by words (&quot;translations&quot;): This should probably be a plural rather than a string">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="113"
+            column="5"
+            startOffset="7907"
+            endLine="113"
+            endColumn="62"
+            endOffset="7964"/>
+    </incident>
+
+    <incident
+        id="PluralsCandidate"
+        severity="warning"
+        message="Formatting %d followed by words (&quot;minutes&quot;): This should probably be a plural rather than a string">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="300"
+            column="5"
+            startOffset="24224"
+            endLine="300"
+            endColumn="59"
+            endOffset="24278"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipboardPanel.kt"
+            line="207"
+            column="13"
+            startOffset="11018"
+            endLine="207"
+            endColumn="43"
+            endOffset="11048"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipboardPanel.kt"
+            line="220"
+            column="9"
+            startOffset="11608"
+            endLine="220"
+            endColumn="39"
+            endOffset="11638"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipboardPanel.kt"
+            line="304"
+            column="9"
+            startOffset="16151"
+            endLine="304"
+            endColumn="39"
+            endOffset="16181"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="542"
+            column="9"
+            startOffset="27773"
+            endLine="542"
+            endColumn="39"
+            endOffset="27803"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="558"
+            column="9"
+            startOffset="28275"
+            endLine="558"
+            endColumn="39"
+            endOffset="28305"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="590"
+            column="13"
+            startOffset="29655"
+            endLine="590"
+            endColumn="48"
+            endOffset="29690"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="619"
+            column="21"
+            startOffset="31331"
+            endLine="619"
+            endColumn="56"
+            endOffset="31366"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="628"
+            column="21"
+            startOffset="31712"
+            endLine="628"
+            endColumn="56"
+            endOffset="31747"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="678"
+            column="9"
+            startOffset="33645"
+            endLine="678"
+            endColumn="44"
+            endOffset="33680"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="684"
+            column="13"
+            startOffset="33884"
+            endLine="684"
+            endColumn="48"
+            endOffset="33919"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="753"
+            column="13"
+            startOffset="36393"
+            endLine="753"
+            endColumn="48"
+            endOffset="36428"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="887"
+            column="9"
+            startOffset="42221"
+            endLine="887"
+            endColumn="39"
+            endOffset="42251"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="888"
+            column="9"
+            startOffset="42260"
+            endLine="888"
+            endColumn="44"
+            endOffset="42295"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="889"
+            column="9"
+            startOffset="42304"
+            endLine="889"
+            endColumn="44"
+            endOffset="42339"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="917"
+            column="21"
+            startOffset="43389"
+            endLine="917"
+            endColumn="51"
+            endOffset="43419"/>
+    </incident>
+
+    <incident
+        id="AutoboxingStateCreation"
+        severity="informational"
+        message="Prefer `mutableFloatStateOf` instead of `mutableStateOf`">
+        <fix-replace
+            description="Replace with mutableFloatStateOf"
+            replacement="androidx.compose.runtime.mutableFloatStateOf"
+            shortenNames="true"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/MainModel.kt"
+                startOffset="3248"
+                endOffset="3262"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/MainModel.kt"
+            line="88"
+            column="29"
+            startOffset="3248"
+            endLine="88"
+            endColumn="43"
+            endOffset="3262"/>
+    </incident>
+
+    <incident
+        id="AutoboxingStateCreation"
+        severity="informational"
+        message="Prefer `mutableIntStateOf` instead of `mutableStateOf`">
+        <fix-replace
+            description="Replace with mutableIntStateOf"
+            replacement="androidx.compose.runtime.mutableIntStateOf"
+            shortenNames="true"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/MainModel.kt"
+                startOffset="3367"
+                endOffset="3381"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/MainModel.kt"
+            line="92"
+            column="24"
+            startOffset="3367"
+            endLine="92"
+            endColumn="38"
+            endOffset="3381"/>
+    </incident>
+
+    <incident
+        id="AutoboxingStateCreation"
+        severity="informational"
+        message="Prefer `mutableIntStateOf` instead of `mutableStateOf`">
+        <fix-replace
+            description="Replace with mutableIntStateOf"
+            replacement="androidx.compose.runtime.mutableIntStateOf"
+            shortenNames="true"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/MainScreen.kt"
+                startOffset="19862"
+                endOffset="19876"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/MainScreen.kt"
+            line="396"
+            column="33"
+            startOffset="19862"
+            endLine="396"
+            endColumn="47"
+            endOffset="19876"/>
+    </incident>
+
+    <incident
+        id="UsableSpace"
+        severity="warning"
+        message="Consider also using `StorageManager#getAllocatableBytes` and `allocateBytes` which will consider clearable cached data">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/MainModel.kt"
+            line="412"
+            column="31"
+            startOffset="17113"
+            endLine="412"
+            endColumn="42"
+            endOffset="17124"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toUri` instead?">
+        <fix-replace
+            description="Replace with the toUri extension function"
+            family="Replace with the toUri extension function"
+            robot="true"
+            independent="true"
+            oldString="Uri.parse(Prefs.url(ctx))"
+            replacement="Prefs.url(ctx).toUri()"
+            reformat="value"
+            imports="androidx.core.net.toUri"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                startOffset="1729"
+                endOffset="1754"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+            line="44"
+            column="43"
+            startOffset="1729"
+            endLine="44"
+            endColumn="68"
+            endOffset="1754"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="2402"
+                    endOffset="2407"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="2407"
+                    endOffset="2408"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="2408"
+                    endOffset="2409"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="2447"
+                    endOffset="2455"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+            line="55"
+            column="9"
+            startOffset="2394"
+            endLine="55"
+            endColumn="23"
+            endOffset="2408"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="2591"
+                    endOffset="2596"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="2596"
+                    endOffset="2597"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="2597"
+                    endOffset="2598"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="2613"
+                    endOffset="2621"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+            line="61"
+            column="9"
+            startOffset="2583"
+            endLine="61"
+            endColumn="23"
+            endOffset="2597"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="3406"
+                    endOffset="3411"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="3411"
+                    endOffset="3412"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="3412"
+                    endOffset="3413"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="3428"
+                    endOffset="3436"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+            line="80"
+            column="9"
+            startOffset="3398"
+            endLine="80"
+            endColumn="23"
+            endOffset="3412"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="4967"
+                    endOffset="4972"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="4972"
+                    endOffset="4973"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="4973"
+                    endOffset="4974"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+                    startOffset="4989"
+                    endOffset="4997"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/BackgroundDownload.kt"
+            line="111"
+            column="9"
+            startOffset="4959"
+            endLine="111"
+            endColumn="23"
+            endOffset="4973"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipStore.kt"
+                    startOffset="1358"
+                    endOffset="1363"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipStore.kt"
+                    startOffset="1363"
+                    endOffset="1364"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipStore.kt"
+                    startOffset="1364"
+                    endOffset="1365"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipStore.kt"
+                    startOffset="1376"
+                    endOffset="1384"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipStore.kt"
+            line="35"
+            column="18"
+            startOffset="1344"
+            endLine="35"
+            endColumn="38"
+            endOffset="1364"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipStore.kt"
+                    startOffset="2072"
+                    endOffset="2077"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipStore.kt"
+                    startOffset="2077"
+                    endOffset="2078"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipStore.kt"
+                    startOffset="2078"
+                    endOffset="2079"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipStore.kt"
+                    startOffset="2109"
+                    endOffset="2117"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipStore.kt"
+            line="55"
+            column="9"
+            startOffset="2058"
+            endLine="55"
+            endColumn="29"
+            endOffset="2078"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiData.kt"
+                    startOffset="971"
+                    endOffset="976"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiData.kt"
+                    startOffset="976"
+                    endOffset="977"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiData.kt"
+                    startOffset="977"
+                    endOffset="978"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiData.kt"
+                    startOffset="1049"
+                    endOffset="1057"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiData.kt"
+            line="30"
+            column="9"
+            startOffset="957"
+            endLine="30"
+            endColumn="29"
+            endOffset="977"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+                    startOffset="24584"
+                    endOffset="24589"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+                    startOffset="24589"
+                    endOffset="24590"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+                    startOffset="24590"
+                    endOffset="24591"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+                    startOffset="24636"
+                    endOffset="24644"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="462"
+            column="9"
+            startOffset="24566"
+            endLine="462"
+            endColumn="33"
+            endOffset="24590"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/Giphy.kt"
+                    startOffset="6539"
+                    endOffset="6544"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/Giphy.kt"
+                    startOffset="6544"
+                    endOffset="6545"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/Giphy.kt"
+                    startOffset="6545"
+                    endOffset="6546"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/Giphy.kt"
+                    startOffset="6599"
+                    endOffset="6607"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/Giphy.kt"
+            line="141"
+            column="9"
+            startOffset="6525"
+            endLine="141"
+            endColumn="29"
+            endOffset="6545"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/Giphy.kt"
+                    startOffset="6659"
+                    endOffset="6664"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/Giphy.kt"
+                    startOffset="6664"
+                    endOffset="6665"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/Giphy.kt"
+                    startOffset="6665"
+                    endOffset="6666"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/Giphy.kt"
+                    startOffset="6677"
+                    endOffset="6685"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/Giphy.kt"
+            line="144"
+            column="31"
+            startOffset="6645"
+            endLine="144"
+            endColumn="51"
+            endOffset="6665"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `Int.toDrawable` instead?">
+        <fix-replace
+            description="Replace with the toDrawable extension function"
+            family="Replace with the toDrawable extension function"
+            robot="true"
+            independent="true"
+            oldString="ColorDrawable(0xFF000000.toInt() or url.removePrefix(&quot;preview:&quot;).toLong(16).toInt())"
+            replacement="(0xFF000000.toInt() or url.removePrefix(&quot;preview:&quot;).toLong(16).toInt()).toDrawable()"
+            reformat="value"
+            imports="androidx.core.graphics.drawable.toDrawable"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/Giphy.kt"
+                startOffset="7728"
+                endOffset="7812"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/Giphy.kt"
+            line="165"
+            column="33"
+            startOffset="7728"
+            endLine="165"
+            endColumn="117"
+            endOffset="7812"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="921"
+                    endOffset="926"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="926"
+                    endOffset="927"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="927"
+                    endOffset="928"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="955"
+                    endOffset="963"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+            line="20"
+            column="52"
+            startOffset="918"
+            endLine="20"
+            endColumn="61"
+            endOffset="927"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="1668"
+                    endOffset="1673"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="1673"
+                    endOffset="1674"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="1674"
+                    endOffset="1675"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="1709"
+                    endOffset="1717"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+            line="38"
+            column="18"
+            startOffset="1665"
+            endLine="38"
+            endColumn="27"
+            endOffset="1674"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="1962"
+                    endOffset="1967"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="1967"
+                    endOffset="1968"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="1968"
+                    endOffset="1969"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="2000"
+                    endOffset="2008"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+            line="43"
+            column="18"
+            startOffset="1959"
+            endLine="43"
+            endColumn="27"
+            endOffset="1968"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="2184"
+                    endOffset="2189"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="2189"
+                    endOffset="2190"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="2190"
+                    endOffset="2191"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="2227"
+                    endOffset="2235"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+            line="48"
+            column="18"
+            startOffset="2181"
+            endLine="48"
+            endColumn="27"
+            endOffset="2190"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="2442"
+                    endOffset="2447"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="2447"
+                    endOffset="2448"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="2448"
+                    endOffset="2449"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="2476"
+                    endOffset="2484"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+            line="53"
+            column="18"
+            startOffset="2439"
+            endLine="53"
+            endColumn="27"
+            endOffset="2448"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="2925"
+                    endOffset="2930"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="2930"
+                    endOffset="2931"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="2931"
+                    endOffset="2932"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+                    startOffset="2980"
+                    endOffset="2988"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/KbSettings.kt"
+            line="64"
+            column="36"
+            startOffset="2922"
+            endLine="64"
+            endColumn="45"
+            endOffset="2931"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toUri` instead?">
+        <fix-replace
+            description="Replace with the toUri extension function"
+            family="Replace with the toUri extension function"
+            robot="true"
+            independent="true"
+            oldString="Uri.parse(rel.apkUrl)"
+            replacement="rel.apkUrl.toUri()"
+            reformat="value"
+            imports="androidx.core.net.toUri"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/MainModel.kt"
+                startOffset="7431"
+                endOffset="7452"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/MainModel.kt"
+            line="199"
+            column="68"
+            startOffset="7431"
+            endLine="199"
+            endColumn="89"
+            endOffset="7452"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toUri` instead?">
+        <fix-replace
+            description="Replace with the toUri extension function"
+            family="Replace with the toUri extension function"
+            robot="true"
+            independent="true"
+            oldString="Uri.parse(&quot;https://developers.giphy.com/dashboard/&quot;)"
+            replacement="&quot;https://developers.giphy.com/dashboard/&quot;.toUri()"
+            reformat="value"
+            imports="androidx.core.net.toUri"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/MainScreen.kt"
+                startOffset="23449"
+                endOffset="23501"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/MainScreen.kt"
+            line="448"
+            column="76"
+            startOffset="23449"
+            endLine="448"
+            endColumn="128"
+            endOffset="23501"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toUri` instead?">
+        <fix-replace
+            description="Replace with the toUri extension function"
+            family="Replace with the toUri extension function"
+            robot="true"
+            independent="true"
+            oldString="Uri.parse(item.pageUrl)"
+            replacement="item.pageUrl.toUri()"
+            reformat="value"
+            imports="androidx.core.net.toUri"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/MediaSender.kt"
+                startOffset="1729"
+                endOffset="1752"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/MediaSender.kt"
+            line="35"
+            column="132"
+            startOffset="1729"
+            endLine="35"
+            endColumn="155"
+            endOffset="1752"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/PersonalWords.kt"
+                    startOffset="3405"
+                    endOffset="3410"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/PersonalWords.kt"
+                    startOffset="3410"
+                    endOffset="3411"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/PersonalWords.kt"
+                    startOffset="3424"
+                    endOffset="3425"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/PersonalWords.kt"
+                    startOffset="3609"
+                    endOffset="3617"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/PersonalWords.kt"
+                    startOffset="3412"
+                    endOffset="3412"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/PersonalWords.kt"
+                    startOffset="3502"
+                    endOffset="3502"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/PersonalWords.kt"
+            line="89"
+            column="9"
+            startOffset="3391"
+            endLine="89"
+            endColumn="29"
+            endOffset="3411"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/PersonalWords.kt"
+                    startOffset="3778"
+                    endOffset="3783"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/PersonalWords.kt"
+                    startOffset="3783"
+                    endOffset="3784"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/PersonalWords.kt"
+                    startOffset="3784"
+                    endOffset="3785"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/PersonalWords.kt"
+                    startOffset="3814"
+                    endOffset="3822"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/PersonalWords.kt"
+            line="101"
+            column="9"
+            startOffset="3764"
+            endLine="101"
+            endColumn="29"
+            endOffset="3784"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="5160"
+                    endOffset="5165"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="5165"
+                    endOffset="5166"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="5166"
+                    endOffset="5167"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="5187"
+                    endOffset="5195"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="92"
+            column="44"
+            startOffset="5152"
+            endLine="92"
+            endColumn="58"
+            endOffset="5166"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="5599"
+                    endOffset="5604"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="5604"
+                    endOffset="5605"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="5605"
+                    endOffset="5606"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="5651"
+                    endOffset="5659"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="101"
+            column="45"
+            startOffset="5591"
+            endLine="101"
+            endColumn="59"
+            endOffset="5605"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="5907"
+                    endOffset="5912"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="5912"
+                    endOffset="5913"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="5913"
+                    endOffset="5914"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="5946"
+                    endOffset="5954"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="105"
+            column="56"
+            startOffset="5899"
+            endLine="105"
+            endColumn="70"
+            endOffset="5913"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="6345"
+                    endOffset="6350"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="6350"
+                    endOffset="6351"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="6351"
+                    endOffset="6352"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="6376"
+                    endOffset="6384"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="113"
+            column="47"
+            startOffset="6337"
+            endLine="113"
+            endColumn="61"
+            endOffset="6351"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="8669"
+                    endOffset="8674"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="8674"
+                    endOffset="8675"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="8675"
+                    endOffset="8676"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="8735"
+                    endOffset="8743"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="151"
+            column="17"
+            startOffset="8667"
+            endLine="151"
+            endColumn="25"
+            endOffset="8675"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9267"
+                    endOffset="9272"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9272"
+                    endOffset="9273"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9273"
+                    endOffset="9274"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9305"
+                    endOffset="9313"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="164"
+            column="48"
+            startOffset="9259"
+            endLine="164"
+            endColumn="62"
+            endOffset="9273"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9360"
+                    endOffset="9365"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9365"
+                    endOffset="9366"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9366"
+                    endOffset="9367"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9385"
+                    endOffset="9393"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="165"
+            column="39"
+            startOffset="9352"
+            endLine="165"
+            endColumn="53"
+            endOffset="9366"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9775"
+                    endOffset="9780"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9780"
+                    endOffset="9781"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9781"
+                    endOffset="9782"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9837"
+                    endOffset="9845"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="173"
+            column="9"
+            startOffset="9767"
+            endLine="173"
+            endColumn="23"
+            endOffset="9781"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9937"
+                    endOffset="9942"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9942"
+                    endOffset="9943"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9943"
+                    endOffset="9944"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="9995"
+                    endOffset="10003"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="177"
+            column="9"
+            startOffset="9929"
+            endLine="177"
+            endColumn="23"
+            endOffset="9943"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10076"
+                    endOffset="10081"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10081"
+                    endOffset="10082"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10082"
+                    endOffset="10083"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10143"
+                    endOffset="10151"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="181"
+            column="9"
+            startOffset="10068"
+            endLine="181"
+            endColumn="23"
+            endOffset="10082"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10403"
+                    endOffset="10408"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10408"
+                    endOffset="10409"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10409"
+                    endOffset="10410"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10440"
+                    endOffset="10448"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="187"
+            column="53"
+            startOffset="10395"
+            endLine="187"
+            endColumn="67"
+            endOffset="10409"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10594"
+                    endOffset="10599"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10599"
+                    endOffset="10600"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10600"
+                    endOffset="10601"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10630"
+                    endOffset="10638"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="189"
+            column="52"
+            startOffset="10586"
+            endLine="189"
+            endColumn="66"
+            endOffset="10600"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10776"
+                    endOffset="10781"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10781"
+                    endOffset="10782"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10782"
+                    endOffset="10783"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="10809"
+                    endOffset="10817"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="192"
+            column="49"
+            startOffset="10768"
+            endLine="192"
+            endColumn="63"
+            endOffset="10782"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="11074"
+                    endOffset="11079"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="11079"
+                    endOffset="11080"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="11080"
+                    endOffset="11081"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="11143"
+                    endOffset="11151"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="198"
+            column="9"
+            startOffset="11066"
+            endLine="198"
+            endColumn="23"
+            endOffset="11080"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="11436"
+                    endOffset="11441"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="11441"
+                    endOffset="11442"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="11442"
+                    endOffset="11443"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="11626"
+                    endOffset="11634"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="11471"
+                    endOffset="11471"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="11539"
+                    endOffset="11539"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="205"
+            column="9"
+            startOffset="11434"
+            endLine="205"
+            endColumn="17"
+            endOffset="11442"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="11692"
+                    endOffset="11697"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="11697"
+                    endOffset="11698"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="11698"
+                    endOffset="11699"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+                    startOffset="11766"
+                    endOffset="11774"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Prefs.kt"
+            line="211"
+            column="9"
+            startOffset="11684"
+            endLine="211"
+            endColumn="23"
+            endOffset="11698"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+                    startOffset="3314"
+                    endOffset="3319"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+                    startOffset="3319"
+                    endOffset="3320"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+                    startOffset="3320"
+                    endOffset="3321"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+                    startOffset="3348"
+                    endOffset="3356"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+            line="85"
+            column="13"
+            startOffset="3242"
+            endLine="85"
+            endColumn="91"
+            endOffset="3320"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+                    startOffset="3588"
+                    endOffset="3593"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+                    startOffset="3593"
+                    endOffset="3594"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+                    startOffset="3611"
+                    endOffset="3612"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+                    startOffset="3679"
+                    endOffset="3687"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+            line="89"
+            column="13"
+            startOffset="3516"
+            endLine="89"
+            endColumn="91"
+            endOffset="3594"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+                    startOffset="3807"
+                    endOffset="3812"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+                    startOffset="3812"
+                    endOffset="3813"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+                    startOffset="3813"
+                    endOffset="3814"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+                    startOffset="3860"
+                    endOffset="3868"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/SetupActivity.kt"
+            line="93"
+            column="13"
+            startOffset="3735"
+            endLine="93"
+            endColumn="91"
+            endOffset="3813"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toUri` instead?">
+        <fix-replace
+            description="Replace with the toUri extension function"
+            family="Replace with the toUri extension function"
+            robot="true"
+            independent="true"
+            oldString="Uri.parse(url)"
+            replacement="url.toUri()"
+            reformat="value"
+            imports="androidx.core.net.toUri"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/SetupModel.kt"
+                startOffset="5836"
+                endOffset="5850"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ui/SetupModel.kt"
+            line="155"
+            column="91"
+            startOffset="5836"
+            endLine="155"
+            endColumn="105"
+            endOffset="5850"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?">
+        <fix-composite
+            description="Replace with the edit extension function"
+            family="Replace with the edit extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with edit"
+                robot="true"
+                independent="true"
+                oldString="edit("
+                replacement="edit"
+                reformat="value"
+                imports="androidx.core.content.edit"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Speaker.kt"
+                    startOffset="768"
+                    endOffset="773"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Speaker.kt"
+                    startOffset="773"
+                    endOffset="774"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;.&quot;"
+                robot="true"
+                independent="true"
+                oldString="."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Speaker.kt"
+                    startOffset="774"
+                    endOffset="775"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString=".apply()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Speaker.kt"
+                    startOffset="798"
+                    endOffset="806"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/Speaker.kt"
+            line="21"
+            column="9"
+            startOffset="696"
+            endLine="21"
+            endColumn="87"
+            endOffset="774"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `Canvas.withSave` instead?">
+        <fix-composite
+            description="Replace with the withSave extension function"
+            family="Replace with the withSave extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with withSave"
+                robot="true"
+                independent="true"
+                oldString="save("
+                replacement="withSave"
+                reformat="value"
+                imports="androidx.core.graphics.withSave"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ToolbarView.kt"
+                    startOffset="5624"
+                    endOffset="5629"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with  {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=" {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ToolbarView.kt"
+                    startOffset="5629"
+                    endOffset="5630"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;c.&quot;"
+                robot="true"
+                independent="true"
+                oldString="c."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ToolbarView.kt"
+                    startOffset="5657"
+                    endOffset="5659"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with this"
+                robot="true"
+                independent="true"
+                oldString="c"
+                replacement="this"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ToolbarView.kt"
+                    startOffset="5698"
+                    endOffset="5699"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString="c.restore()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ToolbarView.kt"
+                    startOffset="5709"
+                    endOffset="5720"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ToolbarView.kt"
+                    startOffset="5631"
+                    endOffset="5631"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ToolbarView.kt"
+                    startOffset="5682"
+                    endOffset="5682"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ToolbarView.kt"
+            line="134"
+            column="9"
+            startOffset="5622"
+            endLine="134"
+            endColumn="17"
+            endOffset="5630"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `Int.toDrawable` instead?">
+        <fix-replace
+            description="Replace with the toDrawable extension function"
+            family="Replace with the toDrawable extension function"
+            robot="true"
+            independent="true"
+            oldString="ColorDrawable(Color.TRANSPARENT)"
+            replacement="Color.TRANSPARENT.toDrawable()"
+            reformat="value"
+            imports="androidx.core.graphics.drawable.toDrawable"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/UrduImeService.kt"
+                startOffset="7030"
+                endOffset="7062"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/UrduImeService.kt"
+            line="152"
+            column="35"
+            startOffset="7030"
+            endLine="152"
+            endColumn="67"
+            endOffset="7062"/>
+    </incident>
+
+    <incident
+        id="ClickableViewAccessibility"
+        severity="warning"
+        message="Custom view ``ImageView`` has `setOnTouchListener` called on it but does not override `performClick`">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipboardPanel.kt"
+            line="184"
+            column="9"
+            startOffset="9792"
+            endLine="184"
+            endColumn="50"
+            endOffset="9833"/>
+    </incident>
+
+    <incident
+        id="ClickableViewAccessibility"
+        severity="warning"
+        message="Custom view ``ImageView`` has `setOnTouchListener` called on it but does not override `performClick`">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="434"
+            column="9"
+            startOffset="23205"
+            endLine="434"
+            endColumn="50"
+            endOffset="23246"/>
+    </incident>
+
+    <incident
+        id="ClickableViewAccessibility"
+        severity="warning"
+        message="`PopupLayer#onTouchEvent` should call `PopupLayer#performClick` when a click is detected">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/PopupLayer.kt"
+            line="47"
+            column="18"
+            startOffset="1455"
+            endLine="47"
+            endColumn="30"
+            endOffset="1467"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/ClipboardPanel.kt"
+            line="174"
+            column="21"
+            startOffset="9225"
+            endLine="174"
+            endColumn="24"
+            endOffset="9228"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="399"
+            column="21"
+            startOffset="21107"
+            endLine="399"
+            endColumn="24"
+            endOffset="21110"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/paul/urdukb/ime/EmojiPanel.kt"
+            line="413"
+            column="25"
+            startOffset="21869"
+            endLine="413"
+            endColumn="28"
+            endOffset="21872"/>
+    </incident>
+
+</incidents>

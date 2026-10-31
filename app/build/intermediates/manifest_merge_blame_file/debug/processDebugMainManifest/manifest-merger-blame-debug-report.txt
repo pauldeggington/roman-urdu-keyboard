@@ -1,0 +1,324 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.lanternkeys.urdukb"
+4    android:versionCode="5001"
+5    android:versionName="2.0-dev" >
+6
+7    <uses-sdk
+7-->INJECTED
+8        android:minSdkVersion="31"
+8-->INJECTED
+9        android:targetSdkVersion="37" />
+9-->INJECTED
+10
+11    <uses-permission android:name="android.permission.VIBRATE" />
+11-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:5:5-66
+11-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:5:22-63
+12    <!-- downloading the translation model, checking for new versions, and GIF and sticker search (GIPHY) -->
+13    <uses-permission android:name="android.permission.INTERNET" />
+13-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:7:5-67
+13-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:7:22-64
+14    <!-- Wi-Fi or mobile data, so the setup guide can offer to wait for Wi-Fi -->
+15    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+15-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:9:5-79
+15-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:9:22-76
+16    <!-- voice typing inside the keyboard; asked for only when the mic button is first used -->
+17    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+17-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:11:5-71
+17-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:11:22-68
+18
+19    <queries>
+19-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:13:5-16:15
+20        <intent>
+20-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:14:9-85
+21            <action android:name="android.speech.RecognitionService" />
+21-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:14:17-76
+21-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:14:25-73
+22        </intent>
+23        <intent>
+23-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:15:9-85
+24            <action android:name="android.intent.action.TTS_SERVICE" />
+24-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:15:17-76
+24-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:15:25-73
+25        </intent>
+26    </queries>
+27
+28    <permission
+28-->[androidx.core:core:1.17.0] /home/runner/.gradle/caches/9.7.1/transforms/9c4f9e7402398e6f1046e652d183df68/transformed/core-1.17.0/AndroidManifest.xml:22:5-24:47
+29        android:name="com.lanternkeys.urdukb.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+29-->[androidx.core:core:1.17.0] /home/runner/.gradle/caches/9.7.1/transforms/9c4f9e7402398e6f1046e652d183df68/transformed/core-1.17.0/AndroidManifest.xml:23:9-81
+30        android:protectionLevel="signature" />
+30-->[androidx.core:core:1.17.0] /home/runner/.gradle/caches/9.7.1/transforms/9c4f9e7402398e6f1046e652d183df68/transformed/core-1.17.0/AndroidManifest.xml:24:9-44
+31
+32    <uses-permission android:name="com.lanternkeys.urdukb.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+32-->[androidx.core:core:1.17.0] /home/runner/.gradle/caches/9.7.1/transforms/9c4f9e7402398e6f1046e652d183df68/transformed/core-1.17.0/AndroidManifest.xml:26:5-97
+32-->[androidx.core:core:1.17.0] /home/runner/.gradle/caches/9.7.1/transforms/9c4f9e7402398e6f1046e652d183df68/transformed/core-1.17.0/AndroidManifest.xml:26:22-94
+33
+34    <application
+34-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:18:5-105:19
+35        android:name="com.paul.urdukb.UrduApp"
+35-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:19:9-32
+36        android:allowBackup="false"
+36-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:24:9-36
+37        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+37-->[androidx.core:core:1.17.0] /home/runner/.gradle/caches/9.7.1/transforms/9c4f9e7402398e6f1046e652d183df68/transformed/core-1.17.0/AndroidManifest.xml:28:18-86
+38        android:enableOnBackInvokedCallback="false"
+38-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:25:9-52
+39        android:extractNativeLibs="true"
+39-->INJECTED
+40        android:icon="@mipmap/ic_launcher"
+40-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:21:9-43
+41        android:label="@string/app_name"
+41-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:20:9-41
+42        android:roundIcon="@mipmap/ic_launcher_round"
+42-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:22:9-54
+43        android:supportsRtl="true" >
+43-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:23:9-35
+44
+45        <!-- Needed by LiteRT-LM's GPU backend -->
+46        <uses-native-library
+46-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:29:9-90
+47            android:name="libvndksupport.so"
+47-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:29:30-62
+48            android:required="false" />
+48-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:29:63-87
+49        <uses-native-library
+49-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:29:9-90
+50            android:name="libOpenCL.so"
+50-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:29:30-62
+51            android:required="false" />
+51-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:29:63-87
+52
+53        <activity
+53-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:32:9-41:20
+54            android:name="com.paul.urdukb.MainActivity"
+54-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:32:19-47
+55            android:exported="true"
+55-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:36:13-36
+56            android:label="@string/app_name"
+56-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:33:13-45
+57            android:theme="@style/RomanUrduAppTheme"
+57-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:34:13-53
+58            android:windowSoftInputMode="adjustResize" >
+58-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:35:13-55
+59            <intent-filter>
+59-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:37:13-40:29
+60                <action android:name="android.intent.action.MAIN" />
+60-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:38:17-69
+60-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:38:25-66
+61
+62                <category android:name="android.intent.category.LAUNCHER" />
+62-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:39:17-77
+62-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:39:27-74
+63            </intent-filter>
+64        </activity>
+65        <activity
+65-->INJECTED
+66            android:name="com.paul.urdukb.SetupActivity"
+66-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:43:19-48
+67            android:exported="true"
+67-->INJECTED
+68            android:label="Set up Roman Urdu Keyboard"
+68-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:44:13-55
+69            android:theme="@style/RomanUrduAppTheme"
+69-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:45:13-53
+70            android:windowSoftInputMode="adjustResize" />
+70-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:46:13-55
+71
+72        <!-- a plain text box, used to look at the keyboard (screenshots in CI) -->
+73        <activity
+73-->INJECTED
+74            android:name="com.paul.urdukb.PreviewActivity"
+74-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:50:19-50
+75            android:exported="true"
+75-->INJECTED
+76            android:label="Keyboard preview"
+76-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:51:13-45
+77            android:theme="@style/RomanUrduAppTheme"
+77-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:52:13-53
+78            android:windowSoftInputMode="adjustResize" />
+78-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:53:13-55
+79
+80        <!-- "Translate to English" in the text selection menu of other apps -->
+81        <activity
+81-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:57:9-60:40
+82            android:name="com.paul.urdukb.MicPermissionActivity"
+82-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:57:19-56
+83            android:excludeFromRecents="true"
+83-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:59:13-46
+84            android:exported="false"
+84-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:60:13-37
+85            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+85-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:58:13-72
+86
+87        <!-- An Urdu voice note shared from WhatsApp (or anywhere) is read out as Urdu text and English -->
+88        <activity
+88-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:63:9-74:20
+89            android:name="com.paul.urdukb.VoiceActivity"
+89-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:63:19-48
+90            android:excludeFromRecents="true"
+90-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:67:13-46
+91            android:exported="true"
+91-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:68:13-36
+92            android:label="Roman Urdu Keyboard"
+92-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:64:13-48
+93            android:taskAffinity=""
+93-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:66:13-36
+94            android:theme="@style/RomanUrduSheetTheme" >
+94-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:65:13-55
+95            <intent-filter>
+95-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:69:13-73:29
+96                <action android:name="android.intent.action.SEND" />
+96-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:70:17-69
+96-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:70:25-66
+97
+98                <category android:name="android.intent.category.DEFAULT" />
+98-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:71:17-76
+98-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:71:27-73
+99
+100                <data android:mimeType="audio/*" />
+100-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:72:17-52
+100-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:72:23-49
+101            </intent-filter>
+102        </activity>
+103        <activity
+103-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:76:9-87:20
+104            android:name="com.paul.urdukb.TranslateTextActivity"
+104-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:76:19-56
+105            android:excludeFromRecents="true"
+105-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:80:13-46
+106            android:exported="true"
+106-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:81:13-36
+107            android:label="Translate to English"
+107-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:77:13-49
+108            android:taskAffinity=""
+108-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:79:13-36
+109            android:theme="@style/RomanUrduSheetTheme" >
+109-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:78:13-55
+110            <intent-filter>
+110-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:82:13-86:29
+111                <action android:name="android.intent.action.PROCESS_TEXT" />
+111-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:83:17-77
+111-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:83:25-74
+112
+113                <category android:name="android.intent.category.DEFAULT" />
+113-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:71:17-76
+113-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:71:27-73
+114
+115                <data android:mimeType="text/plain" />
+115-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:72:17-52
+115-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:72:23-49
+116            </intent-filter>
+117        </activity>
+118
+119        <provider
+119-->INJECTED
+120            android:name="androidx.core.content.FileProvider"
+120-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:89:19-68
+121            android:authorities="com.lanternkeys.urdukb.fileprovider"
+121-->INJECTED
+122            android:exported="false"
+122-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:91:13-37
+123            android:grantUriPermissions="true" >
+123-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:92:13-47
+124            <meta-data
+124-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:93:13-112
+125                android:name="android.support.FILE_PROVIDER_PATHS"
+125-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:93:24-74
+126                android:resource="@xml/file_paths" />
+126-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:93:75-109
+127        </provider>
+128
+129        <service
+129-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:96:9-104:19
+130            android:name="com.paul.urdukb.ime.UrduImeService"
+130-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:96:18-52
+131            android:exported="true"
+131-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:99:13-36
+132            android:label="@string/app_name"
+132-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:97:13-45
+133            android:permission="android.permission.BIND_INPUT_METHOD" >
+133-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:98:13-70
+134            <intent-filter>
+134-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:100:13-102:29
+135                <action android:name="android.view.InputMethod" />
+135-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:101:17-67
+135-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:101:25-64
+136            </intent-filter>
+137
+138            <meta-data
+138-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:103:13-88
+139                android:name="android.view.im"
+139-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:103:24-54
+140                android:resource="@xml/method" />
+140-->/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/src/main/AndroidManifest.xml:103:55-85
+141        </service>
+142
+143        <provider
+143-->[androidx.emoji2:emoji2:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/e13493a8150a0cb9f705539a5a9fc55d/transformed/emoji2-1.4.0/AndroidManifest.xml:24:9-32:20
+144            android:name="androidx.startup.InitializationProvider"
+144-->[androidx.emoji2:emoji2:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/e13493a8150a0cb9f705539a5a9fc55d/transformed/emoji2-1.4.0/AndroidManifest.xml:25:13-67
+145            android:authorities="com.lanternkeys.urdukb.androidx-startup"
+145-->[androidx.emoji2:emoji2:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/e13493a8150a0cb9f705539a5a9fc55d/transformed/emoji2-1.4.0/AndroidManifest.xml:26:13-68
+146            android:exported="false" >
+146-->[androidx.emoji2:emoji2:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/e13493a8150a0cb9f705539a5a9fc55d/transformed/emoji2-1.4.0/AndroidManifest.xml:27:13-37
+147            <meta-data
+147-->[androidx.emoji2:emoji2:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/e13493a8150a0cb9f705539a5a9fc55d/transformed/emoji2-1.4.0/AndroidManifest.xml:29:13-31:52
+148                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+148-->[androidx.emoji2:emoji2:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/e13493a8150a0cb9f705539a5a9fc55d/transformed/emoji2-1.4.0/AndroidManifest.xml:30:17-75
+149                android:value="androidx.startup" />
+149-->[androidx.emoji2:emoji2:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/e13493a8150a0cb9f705539a5a9fc55d/transformed/emoji2-1.4.0/AndroidManifest.xml:31:17-49
+150            <meta-data
+150-->[androidx.lifecycle:lifecycle-process:2.9.4] /home/runner/.gradle/caches/9.7.1/transforms/81a4b458ea88404bbb70cff631d755d7/transformed/lifecycle-process-2.9.4/AndroidManifest.xml:29:13-31:52
+151                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+151-->[androidx.lifecycle:lifecycle-process:2.9.4] /home/runner/.gradle/caches/9.7.1/transforms/81a4b458ea88404bbb70cff631d755d7/transformed/lifecycle-process-2.9.4/AndroidManifest.xml:30:17-78
+152                android:value="androidx.startup" />
+152-->[androidx.lifecycle:lifecycle-process:2.9.4] /home/runner/.gradle/caches/9.7.1/transforms/81a4b458ea88404bbb70cff631d755d7/transformed/lifecycle-process-2.9.4/AndroidManifest.xml:31:17-49
+153            <meta-data
+153-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:29:13-31:52
+154                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+154-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:30:17-85
+155                android:value="androidx.startup" />
+155-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:31:17-49
+156        </provider>
+157
+158        <receiver
+158-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:34:9-52:20
+159            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+159-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:35:13-76
+160            android:directBootAware="false"
+160-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:36:13-44
+161            android:enabled="true"
+161-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:37:13-35
+162            android:exported="true"
+162-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:38:13-36
+163            android:permission="android.permission.DUMP" >
+163-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:39:13-57
+164            <intent-filter>
+164-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:40:13-42:29
+165                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+165-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:17-91
+165-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:25-88
+166            </intent-filter>
+167            <intent-filter>
+167-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:43:13-45:29
+168                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+168-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:17-85
+168-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:25-82
+169            </intent-filter>
+170            <intent-filter>
+170-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:46:13-48:29
+171                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+171-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:17-88
+171-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:25-85
+172            </intent-filter>
+173            <intent-filter>
+173-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:49:13-51:29
+174                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+174-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:17-95
+174-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/runner/.gradle/caches/9.7.1/transforms/3fa71ddf6ff778119213edceb8df1cc0/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:25-92
+175            </intent-filter>
+176        </receiver>
+177    </application>
+178
+179</manifest>

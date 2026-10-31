@@ -1,0 +1,4 @@
+#Sat Oct 31 08:16:55 UTC 2026
+base.0=/home/runner/work/roman-urdu-keyboard/roman-urdu-keyboard/app/build/intermediates/dex/debug/minifyDebugWithR8/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

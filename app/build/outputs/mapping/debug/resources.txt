@@ -1,0 +1,735 @@
+attr:fontProviderFallbackQuery:2130771977 reachable from Field int com.google.ai.edge.litertlm.R$attr.fontProviderFallbackQuery
+string:check_model_unchecked:2131361825 reachable from Field int com.paul.urdukb.R$string.check_model_unchecked
+layout:ime_secondary_split_test_activity:2131230722 reachable from Field int com.google.ai.edge.litertlm.R$layout.ime_secondary_split_test_activity
+string:speed_gpu:2131362144 reachable from Field int com.paul.urdukb.R$string.speed_gpu
+string:model_damaged:2131361998 reachable from Field int com.paul.urdukb.R$string.model_damaged
+string:translate:2131362188 reachable from Field int com.paul.urdukb.R$string.translate
+string:update_check:2131362208 reachable from Field int com.paul.urdukb.R$string.update_check
+string:setup_feat_translate:2131362080 reachable from Field int com.paul.urdukb.R$string.setup_feat_translate
+string:kb_hints:2131361903 reachable from Field int com.paul.urdukb.R$string.kb_hints
+string:unlock_first:2131362205 reachable from Field int com.paul.urdukb.R$string.unlock_first
+id:tag_screen_reader_focusable:2131099725 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_screen_reader_focusable
+string:type_first:2131362202 reachable from Field int com.paul.urdukb.R$string.type_first
+dimen:compat_notification_large_icon_max_width:2130903046 reachable from Field int com.google.ai.edge.litertlm.R$dimen.compat_notification_large_icon_max_width
+dimen:fastscroll_minimum_range:2130903049 reachable from Field int androidx.recyclerview.R$dimen.fastscroll_minimum_range
+string:voice_copy_english:2131362228 reachable from Field int com.paul.urdukb.R$string.voice_copy_english
+string:voice_recording:2131362247 reachable from Field int com.paul.urdukb.R$string.voice_recording
+string:kb_autocorrect_sub:2131361894 reachable from Field int com.paul.urdukb.R$string.kb_autocorrect_sub
+layout:notification_template_part_chronometer:2131230727 reachable from int com.google.ai.edge.litertlm.R$layout.notification_template_part_chronometer
+drawable:ic_launcher_foreground:2130968584 reachable from res/mipmap-anydpi-v21/ic_launcher.xml
+string:setup_choose_keyboard:2131362051 reachable from Field int com.paul.urdukb.R$string.setup_choose_keyboard
+string:setup_tip_auto:2131362125 reachable from Field int com.paul.urdukb.R$string.setup_tip_auto
+string:giphy_key_hint:2131361875 reachable from Field int com.paul.urdukb.R$string.giphy_key_hint
+string:setup_feat_private:2131362078 reachable from Field int com.paul.urdukb.R$string.setup_feat_private
+string:card_colour:2131361806 reachable from Field int com.paul.urdukb.R$string.card_colour
+string:call_notification_answer_video_action:2131361799 reachable from Field int com.google.ai.edge.litertlm.R$string.call_notification_answer_video_action
+string:setup_enable_note:2131362071 reachable from Field int com.paul.urdukb.R$string.setup_enable_note
+drawable:kb_close:2130968612 reachable from Field int com.paul.urdukb.R$drawable.kb_close
+string:setup_make_token:2131362090 reachable from Field int com.paul.urdukb.R$string.setup_make_token
+string:next:2131362023 reachable from Field int com.paul.urdukb.R$string.next
+string:voice_audio_failed:2131362222 reachable from Field int com.paul.urdukb.R$string.voice_audio_failed
+id:action_container:2131099681 reachable from res/layout-v21/notification_action.xml
+drawable:ic_call_decline:2130968581 reachable from Field int com.google.ai.edge.litertlm.R$drawable.ic_call_decline
+string:note_to_english:2131362034 reachable from Field int com.paul.urdukb.R$string.note_to_english
+string:voice_audio_missing:2131362223 reachable from Field int com.paul.urdukb.R$string.voice_audio_missing
+string:clipboard_turn_on:2131361842 reachable from Field int com.paul.urdukb.R$string.clipboard_turn_on
+string:setup_personal_tone_help:2131362102 reachable from Field int com.paul.urdukb.R$string.setup_personal_tone_help
+string:androidx_startup:2131361795 reachable from Field int androidx.startup.R$string.androidx_startup
+id:actions:2131099685 reachable from int com.google.ai.edge.litertlm.R$id.actions
+attr:fontProviderCerts:2130771976 reachable from Field int com.google.ai.edge.litertlm.R$attr.fontProviderCerts
+dimen:fastscroll_margin:2130903048 reachable from Field int androidx.recyclerview.R$dimen.fastscroll_margin
+string:transfer_stopped:2131362187 reachable from Field int com.paul.urdukb.R$string.transfer_stopped
+id:tag_on_receive_content_mime_types:2131099724 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_on_receive_content_mime_types
+string:setup_chip_downloading:2131362049 reachable from Field int com.paul.urdukb.R$string.setup_chip_downloading
+drawable:kb_paste:2130968622 reachable from Field int com.paul.urdukb.R$drawable.kb_paste
+string:style_i_am_help:2131362170 reachable from Field int com.paul.urdukb.R$string.style_i_am_help
+string:stats_gpu_failed:2131362152 reachable from Field int com.paul.urdukb.R$string.stats_gpu_failed
+string:setup_model_page:2131362093 reachable from Field int com.paul.urdukb.R$string.setup_model_page
+string:stats_file:2131362151 reachable from Field int com.paul.urdukb.R$string.stats_file
+string:setup_downloading:2131362064 reachable from Field int com.paul.urdukb.R$string.setup_downloading
+id:tag_window_insets_animation_callback:2131099731 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_window_insets_animation_callback
+attr:font:2130771974 reachable from Field int com.google.ai.edge.litertlm.R$attr.font
+string:setup_keeps_going:2131362088 reachable from Field int com.paul.urdukb.R$string.setup_keeps_going
+string:call_notification_incoming_text:2131361802 reachable from Field int com.google.ai.edge.litertlm.R$string.call_notification_incoming_text
+string:setup_problem_title:2131362112 reachable from Field int com.paul.urdukb.R$string.setup_problem_title
+string:colour_light_dark:2131361846 reachable from Field int com.paul.urdukb.R$string.colour_light_dark
+string:voice_also_heard:2131362221 reachable from Field int com.paul.urdukb.R$string.voice_also_heard
+string:gif_link_typed:2131361869 reachable from Field int com.paul.urdukb.R$string.gif_link_typed
+string:setup_practice_body:2131362103 reachable from Field int com.paul.urdukb.R$string.setup_practice_body
+id:is_pooling_container_tag:2131099703 reachable from Field int androidx.customview.poolingcontainer.R$id.is_pooling_container_tag
+layout:notification_template_part_time:2131230728 reachable from Field int com.google.ai.edge.litertlm.R$layout.notification_template_part_time
+string:try_tone_help:2131362197 reachable from Field int com.paul.urdukb.R$string.try_tone_help
+string:setup_almost:2131362045 reachable from Field int com.paul.urdukb.R$string.setup_almost
+string:verify_checking:2131362217 reachable from Field int com.paul.urdukb.R$string.verify_checking
+xml:file_paths:2131558400 reachable from AndroidManifest.xml
+string:a11y_back:2131361792 reachable from Field int com.paul.urdukb.R$string.a11y_back
+string:call_notification_hang_up_action:2131361801 reachable from Field int com.google.ai.edge.litertlm.R$string.call_notification_hang_up_action
+string:ttl_week:2131362201 reachable from Field int com.paul.urdukb.R$string.ttl_week
+string:indeterminate:2131361890 reachable from Field int androidx.compose.ui.R$string.indeterminate
+string:giphy_off:2131361881 reachable from Field int com.paul.urdukb.R$string.giphy_off
+string:type_to_find_emoji:2131362204 reachable from Field int com.paul.urdukb.R$string.type_to_find_emoji
+string:tone_casual:2131362180 reachable from Field int com.paul.urdukb.R$string.tone_casual
+string:setup_practice_hint:2131362106 reachable from Field int com.paul.urdukb.R$string.setup_practice_hint
+string:voice_try_again:2131362258 reachable from Field int com.paul.urdukb.R$string.voice_try_again
+string:kb_clipboard_sub:2131361897 reachable from Field int com.paul.urdukb.R$string.kb_clipboard_sub
+string:note_formal:2131362030 reachable from Field int com.paul.urdukb.R$string.note_formal
+string:speed_reset:2131362146 reachable from Field int com.paul.urdukb.R$string.speed_reset
+string:voice_network:2131362240 reachable from Field int com.paul.urdukb.R$string.voice_network
+drawable:ic_setup_wifi:2130968599 reachable from Field int com.paul.urdukb.R$drawable.ic_setup_wifi
+drawable:notification_tile_bg:2130968644 reachable from Field int com.google.ai.edge.litertlm.R$drawable.notification_tile_bg
+string:kb_words_cleared:2131361918 reachable from Field int com.paul.urdukb.R$string.kb_words_cleared
+string:kb_smart_tone:2131361908 reachable from Field int com.paul.urdukb.R$string.kb_smart_tone
+attr:alpha:2130771968 reachable from Field int[] com.google.ai.edge.litertlm.R$styleable.ColorStateListItem
+drawable:ic_setup_mood:2130968592 reachable from Field int com.paul.urdukb.R$drawable.ic_setup_mood
+string:no_emoji_for:2131362024 reachable from Field int com.paul.urdukb.R$string.no_emoji_for
+string:dir_to_ru:2131361859 reachable from Field int com.paul.urdukb.R$string.dir_to_ru
+drawable:ic_setup_keyboard:2130968590 reachable from Field int com.paul.urdukb.R$drawable.ic_setup_keyboard
+id:pooling_container_listener_holder_tag:2131099713 reachable from Field int androidx.customview.poolingcontainer.R$id.pooling_container_listener_holder_tag
+string:kb_turn_on:2131361914 reachable from Field int com.paul.urdukb.R$string.kb_turn_on
+style:TextAppearance_Compat_Notification_Info:2131427335 reachable from style:TextAppearance_Compat_Notification_Line2:2131427336
+drawable:notification_bg_low_normal:2130968636 reachable from int com.google.ai.edge.litertlm.R$drawable.notification_bg_low_normal
+string:setup_need_token:2131362096 reachable from Field int com.paul.urdukb.R$string.setup_need_token
+drawable:kb_cat_symbols:2130968610 reachable from Field int com.paul.urdukb.R$drawable.kb_cat_symbols
+string:setup_skip_for_now:2131362116 reachable from Field int com.paul.urdukb.R$string.setup_skip_for_now
+string:setup_switch_title:2131362121 reachable from Field int com.paul.urdukb.R$string.setup_switch_title
+string:setup_skip:2131362115 reachable from Field int com.paul.urdukb.R$string.setup_skip
+string:kb_autocap:2131361891 reachable from Field int com.paul.urdukb.R$string.kb_autocap
+string:check_try:2131361831 reachable from Field int com.paul.urdukb.R$string.check_try
+string:model_choice_gemma4:2131361996 reachable from Field int com.paul.urdukb.R$string.model_choice_gemma4
+string:model_choice_gemma3:2131361995 reachable from Field int com.paul.urdukb.R$string.model_choice_gemma3
+string:sheet_loading_first:2131362141 reachable from Field int com.paul.urdukb.R$string.sheet_loading_first
+string:setup_takes_few:2131362122 reachable from Field int com.paul.urdukb.R$string.setup_takes_few
+drawable:kb_undo:2130968632 reachable from Field int com.paul.urdukb.R$drawable.kb_undo
+string:setup_enable_done:2131362070 reachable from Field int com.paul.urdukb.R$string.setup_enable_done
+string:clipboard_hint:2131361838 reachable from Field int com.paul.urdukb.R$string.clipboard_hint
+xml:method:2131558401 reachable from AndroidManifest.xml
+string:note_respectful:2131362033 reachable from Field int com.paul.urdukb.R$string.note_respectful
+string:giphy_powered:2131361883 reachable from Field int com.paul.urdukb.R$string.giphy_powered
+id:media_url:2131099708 reachable from Field int com.paul.urdukb.R$id.media_url
+string:setup_token_intro:2131362130 reachable from Field int com.paul.urdukb.R$string.setup_token_intro
+layout:custom_dialog:2131230720 reachable from Field int com.google.ai.edge.litertlm.R$layout.custom_dialog
+attr:fastScrollHorizontalTrackDrawable:2130771971 reachable from Field int[] androidx.recyclerview.R$styleable.RecyclerView
+string:setup_problem_body:2131362111 reachable from Field int com.paul.urdukb.R$string.setup_problem_body
+string:edit:2131361864 reachable from Field int com.paul.urdukb.R$string.edit
+drawable:kb_back:2130968600 reachable from Field int com.paul.urdukb.R$drawable.kb_back
+dimen:notification_small_icon_size_as_large:2130903064 reachable from Field int com.google.ai.edge.litertlm.R$dimen.notification_small_icon_size_as_large
+id:view_tree_saved_state_registry_owner:2131099739 reachable from Field int androidx.savedstate.R$id.view_tree_saved_state_registry_owner
+id:action_text:2131099684 reachable from res/layout-v21/notification_action.xml
+string:card_model:2131361811 reachable from Field int com.paul.urdukb.R$string.card_model
+color:androidx_core_secondary_text_default_material_light:2130837505 reachable from color:notification_action_color_filter:2130837508
+drawable:ic_call_decline_low:2130968582 reachable from Field int com.google.ai.edge.litertlm.R$drawable.ic_call_decline_low
+string:voice_copy_roman:2131362229 reachable from Field int com.paul.urdukb.R$string.voice_copy_roman
+drawable:kb_cat_nature:2130968605 reachable from Field int com.paul.urdukb.R$drawable.kb_cat_nature
+string:voice_record_again:2131362246 reachable from Field int com.paul.urdukb.R$string.voice_record_again
+string:model_choice_help:2131361997 reachable from Field int com.paul.urdukb.R$string.model_choice_help
+string:verify_phase:2131362219 reachable from Field int com.paul.urdukb.R$string.verify_phase
+drawable:kb_search:2130968624 reachable from Field int com.paul.urdukb.R$drawable.kb_search
+attr:reverseLayout:2130771991 reachable from Field int[] androidx.recyclerview.R$styleable.RecyclerView
+string:sheet_failed:2131362140 reachable from Field int com.paul.urdukb.R$string.sheet_failed
+string:kb_double_space:2131361898 reachable from Field int com.paul.urdukb.R$string.kb_double_space
+string:stats_over_one:2131362159 reachable from Field int com.paul.urdukb.R$string.stats_over_one
+string:style_reset:2131362172 reachable from Field int com.paul.urdukb.R$string.style_reset
+string:stats_no_file:2131362155 reachable from Field int com.paul.urdukb.R$string.stats_no_file
+drawable:kb_cat_smileys:2130968609 reachable from Field int com.paul.urdukb.R$drawable.kb_cat_smileys
+style:RomanUrduSheetTheme:2131427333 reachable from AndroidManifest.xml
+style:TextAppearance_Compat_Notification:2131427334 reachable from Field int com.google.ai.edge.litertlm.R$style.TextAppearance_Compat_Notification
+dimen:compat_button_padding_vertical_material:2130903043 reachable from Field int com.google.ai.edge.litertlm.R$dimen.compat_button_padding_vertical_material
+string:giphy_get_key:2131361873 reachable from Field int com.paul.urdukb.R$string.giphy_get_key
+string:update_checking:2131362209 reachable from Field int com.paul.urdukb.R$string.update_checking
+color:androidx_core_ripple_material_light:2130837504 reachable from res/drawable-v21/notification_action_background.xml
+string:kb_suggest_sub:2131361912 reachable from Field int com.paul.urdukb.R$string.kb_suggest_sub
+string:credits_translation:2131361853 reachable from Field int com.paul.urdukb.R$string.credits_translation
+attr:fontProviderAuthority:2130771975 reachable from Field int[] com.google.ai.edge.litertlm.R$styleable.FontFamily
+string:kb_glide:2131361900 reachable from Field int com.paul.urdukb.R$string.kb_glide
+string:setup_done_body:2131362056 reachable from Field int com.paul.urdukb.R$string.setup_done_body
+string:setup_tip_tone:2131362126 reachable from Field int com.paul.urdukb.R$string.setup_tip_tone
+string:emoji_emoticons:2131361865 reachable from Field int com.paul.urdukb.R$string.emoji_emoticons
+id:notification_main_column:2131099711 reachable from int com.google.ai.edge.litertlm.R$id.notification_main_column
+string:credits_license:2131361852 reachable from Field int com.paul.urdukb.R$string.credits_license
+string:selected:2131362044 reachable from Field int androidx.compose.ui.R$string.selected
+string:setup_welcome_body:2131362134 reachable from Field int com.paul.urdukb.R$string.setup_welcome_body
+string:credits_data:2131361848 reachable from Field int com.paul.urdukb.R$string.credits_data
+string:try_input_hint:2131362193 reachable from Field int com.paul.urdukb.R$string.try_input_hint
+id:view_tree_on_back_pressed_dispatcher_owner:2131099738 reachable from Field int androidx.activity.R$id.view_tree_on_back_pressed_dispatcher_owner
+dimen:notification_action_icon_size:2130903053 reachable from int com.google.ai.edge.litertlm.R$dimen.notification_action_icon_size
+string:setup_copy_details:2131362054 reachable from Field int com.paul.urdukb.R$string.setup_copy_details
+string:style_respectful:2131362175 reachable from Field int com.paul.urdukb.R$string.style_respectful
+string:voice_not_on:2131362242 reachable from Field int com.paul.urdukb.R$string.voice_not_on
+string:kb_warm:2131361916 reachable from Field int com.paul.urdukb.R$string.kb_warm
+string:setup_eta_hours:2131362073 reachable from Field int com.paul.urdukb.R$string.setup_eta_hours
+string:pin:2131362036 reachable from Field int com.paul.urdukb.R$string.pin
+string:voice_share_audio:2131362249 reachable from Field int com.paul.urdukb.R$string.voice_share_audio
+string:update_downloads_in_browser:2131362211 reachable from Field int com.paul.urdukb.R$string.update_downloads_in_browser
+attr:fontProviderSystemFontFamily:2130771982 reachable from Field int[] com.google.ai.edge.litertlm.R$styleable.FontFamily
+string:voice_careful_sub:2131362225 reachable from Field int com.paul.urdukb.R$string.voice_careful_sub
+drawable:$ic_launcher_background__0:2130968576 reachable from res/drawable/ic_launcher_background.xml
+string:call_notification_ongoing_text:2131361803 reachable from Field int com.google.ai.edge.litertlm.R$string.call_notification_ongoing_text
+dimen:notification_media_narrow_margin:2130903060 reachable from Field int com.google.ai.edge.litertlm.R$dimen.notification_media_narrow_margin
+string:tone_respectful:2131362184 reachable from Field int com.paul.urdukb.R$string.tone_respectful
+string:sheet_copy:2131362138 reachable from Field int com.paul.urdukb.R$string.sheet_copy
+string:kb_clip_keep:2131361895 reachable from Field int com.paul.urdukb.R$string.kb_clip_keep
+string:setup_done_tip_wrong:2131362060 reachable from Field int com.paul.urdukb.R$string.setup_done_tip_wrong
+id:tag_unhandled_key_listeners:2131099730 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_unhandled_key_listeners
+string:note_poetic:2131362032 reachable from Field int com.paul.urdukb.R$string.note_poetic
+string:model_download:2131362000 reachable from Field int com.paul.urdukb.R$string.model_download
+drawable:notification_bg_normal:2130968638 reachable from Field int com.google.ai.edge.litertlm.R$drawable.notification_bg_normal
+string:note_casual:2131362028 reachable from Field int com.paul.urdukb.R$string.note_casual
+drawable:kb_settings:2130968627 reachable from Field int com.paul.urdukb.R$drawable.kb_settings
+drawable:notification_bg_normal_pressed:2130968639 reachable from Field int com.google.ai.edge.litertlm.R$drawable.notification_bg_normal_pressed
+id:tag_on_apply_window_listener:2131099722 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_on_apply_window_listener
+string:setup_practice_title:2131362109 reachable from Field int com.paul.urdukb.R$string.setup_practice_title
+string:not_selected:2131362027 reachable from Field int androidx.compose.ui.R$string.not_selected
+string:voice_roman:2131362248 reachable from Field int com.paul.urdukb.R$string.voice_roman
+string:kb_autocap_sub:2131361892 reachable from Field int com.paul.urdukb.R$string.kb_autocap_sub
+string:setup_practice_no_model:2131362107 reachable from Field int com.paul.urdukb.R$string.setup_practice_no_model
+attr:stackFromEnd:2130771994 reachable from Field int[] androidx.recyclerview.R$styleable.RecyclerView
+string:kb_autocorrect:2131361893 reachable from Field int com.paul.urdukb.R$string.kb_autocorrect
+drawable:kb_delete:2130968615 reachable from Field int com.paul.urdukb.R$drawable.kb_delete
+string:voice_failed:2131362233 reachable from Field int com.paul.urdukb.R$string.voice_failed
+string:setup_personal_i_am_help:2131362100 reachable from Field int com.paul.urdukb.R$string.setup_personal_i_am_help
+string:setup_colour_note:2131362053 reachable from Field int com.paul.urdukb.R$string.setup_colour_note
+string:kb_switch:2131361913 reachable from Field int com.paul.urdukb.R$string.kb_switch
+string:kb_popup_sub:2131361906 reachable from Field int com.paul.urdukb.R$string.kb_popup_sub
+string:style_funny:2131362166 reachable from Field int com.paul.urdukb.R$string.style_funny
+string:setup_chip_paused:2131362050 reachable from Field int com.paul.urdukb.R$string.setup_chip_paused
+string:setup_open_settings:2131362098 reachable from Field int com.paul.urdukb.R$string.setup_open_settings
+id:icon_group:2131099700 reachable from int com.google.ai.edge.litertlm.R$id.icon_group
+string:import_copying:2131361888 reachable from Field int com.paul.urdukb.R$string.import_copying
+drawable:kb_cat_recent:2130968608 reachable from Field int com.paul.urdukb.R$drawable.kb_cat_recent
+id:hide_ime_id:2131099697 reachable from int com.google.ai.edge.litertlm.R$id.hide_ime_id
+string:style_examples_label:2131362164 reachable from Field int com.paul.urdukb.R$string.style_examples_label
+id:report_drawn:2131099714 reachable from Field int androidx.activity.R$id.report_drawn
+string:setup_practice_wait:2131362110 reachable from Field int com.paul.urdukb.R$string.setup_practice_wait
+string:gpu_next_time:2131361885 reachable from Field int com.paul.urdukb.R$string.gpu_next_time
+string:giphy_need_key:2131361878 reachable from Field int com.paul.urdukb.R$string.giphy_need_key
+string:setup_cancel_download:2131362046 reachable from Field int com.paul.urdukb.R$string.setup_cancel_download
+drawable:kb_cat_objects:2130968606 reachable from Field int com.paul.urdukb.R$drawable.kb_cat_objects
+string:switch_role:2131362176 reachable from Field int androidx.compose.ui.R$string.switch_role
+string:card_speed:2131361813 reachable from Field int com.paul.urdukb.R$string.card_speed
+string:stats_average:2131362150 reachable from Field int com.paul.urdukb.R$string.stats_average
+dimen:notification_right_side_padding_top:2130903062 reachable from Field int com.google.ai.edge.litertlm.R$dimen.notification_right_side_padding_top
+dimen:compat_notification_large_icon_max_height:2130903045 reachable from Field int com.google.ai.edge.litertlm.R$dimen.compat_notification_large_icon_max_height
+string:default_popup_window_title:2131361855 reachable from Field int androidx.compose.ui.R$string.default_popup_window_title
+string:try_direction:2131362190 reachable from Field int com.paul.urdukb.R$string.try_direction
+string:dir_auto:2131361857 reachable from Field int com.paul.urdukb.R$string.dir_auto
+string:stats_last:2131362153 reachable from Field int com.paul.urdukb.R$string.stats_last
+string:setup_personal_title:2131362101 reachable from Field int com.paul.urdukb.R$string.setup_personal_title
+string:setup_feat_private_sub:2131362079 reachable from Field int com.paul.urdukb.R$string.setup_feat_private_sub
+string:model_of_total:2131362010 reachable from Field int com.paul.urdukb.R$string.model_of_total
+id:androidx_compose_ui_view_composition_context:2131099686 reachable from Field int androidx.compose.ui.R$id.androidx_compose_ui_view_composition_context
+string:style_casual:2131362162 reachable from Field int com.paul.urdukb.R$string.style_casual
+style:Widget_Compat_NotificationActionText:2131427340 reachable from int com.google.ai.edge.litertlm.R$style.Widget_Compat_NotificationActionText
+layout:ime_base_split_test_activity:2131230721 reachable from Field int com.google.ai.edge.litertlm.R$layout.ime_base_split_test_activity
+string:model_incomplete_detail:2131362005 reachable from Field int com.paul.urdukb.R$string.model_incomplete_detail
+drawable:kb_cat_travel:2130968611 reachable from Field int com.paul.urdukb.R$drawable.kb_cat_travel
+string:setup_need_space:2131362095 reachable from Field int com.paul.urdukb.R$string.setup_need_space
+string:model_remove_redownload:2131362015 reachable from Field int com.paul.urdukb.R$string.model_remove_redownload
+drawable:kb_cat_activities:2130968602 reachable from Field int com.paul.urdukb.R$drawable.kb_cat_activities
+drawable:kb_cat_people:2130968607 reachable from Field int com.paul.urdukb.R$drawable.kb_cat_people
+string:call_notification_decline_action:2131361800 reachable from Field int com.google.ai.edge.litertlm.R$string.call_notification_decline_action
+string:download_started:2131361862 reachable from Field int com.paul.urdukb.R$string.download_started
+string:hide:2131361887 reachable from Field int com.paul.urdukb.R$string.hide
+attr:fontVariationSettings:2130771984 reachable from Field int com.google.ai.edge.litertlm.R$attr.fontVariationSettings
+string:setup_done_tip_wrong_sub:2131362061 reachable from Field int com.paul.urdukb.R$string.setup_done_tip_wrong_sub
+string:model_remove:2131362014 reachable from Field int com.paul.urdukb.R$string.model_remove
+drawable:ic_setup_touch:2130968597 reachable from Field int com.paul.urdukb.R$drawable.ic_setup_touch
+attr:nestedScrollViewStyle:2130771988 reachable from Field int com.google.ai.edge.litertlm.R$attr.nestedScrollViewStyle
+string:voice_open_voice_settings:2131362243 reachable from Field int com.paul.urdukb.R$string.voice_open_voice_settings
+id:text:2131099732 reachable from Field int com.google.ai.edge.litertlm.R$id.text
+string:setup_how_talk:2131362087 reachable from Field int com.paul.urdukb.R$string.setup_how_talk
+drawable:notification_oversize_large_icon_bg:2130968641 reachable from Field int com.google.ai.edge.litertlm.R$drawable.notification_oversize_large_icon_bg
+string:model_download_again:2131362001 reachable from Field int com.paul.urdukb.R$string.model_download_again
+string:model_incomplete:2131362004 reachable from Field int com.paul.urdukb.R$string.model_incomplete
+string:voice_urdu:2131362260 reachable from Field int com.paul.urdukb.R$string.voice_urdu
+string:setup_colour:2131362052 reachable from Field int com.paul.urdukb.R$string.setup_colour
+string:voice_listening_pass:2131362238 reachable from Field int com.paul.urdukb.R$string.voice_listening_pass
+drawable:ic_launcher_background:2130968583 reachable from res/mipmap-anydpi-v21/ic_launcher.xml
+color:call_notification_answer_color:2130837506 reachable from Field int com.google.ai.edge.litertlm.R$color.call_notification_answer_color
+string:setup_enable_3:2131362068 reachable from Field int com.paul.urdukb.R$string.setup_enable_3
+id:blocking:2131099688 reachable from Field int com.google.ai.edge.litertlm.R$id.blocking
+attr:fastScrollEnabled:2130771969 reachable from Field int[] androidx.recyclerview.R$styleable.RecyclerView
+string:setup_enable_1:2131362066 reachable from Field int com.paul.urdukb.R$string.setup_enable_1
+drawable:notification_bg:2130968634 reachable from Field int com.google.ai.edge.litertlm.R$drawable.notification_bg
+string:credits_keyboard:2131361851 reachable from Field int com.paul.urdukb.R$string.credits_keyboard
+string:setup_enable_2:2131362067 reachable from Field int com.paul.urdukb.R$string.setup_enable_2
+drawable:kb_translate:2130968631 reachable from Field int com.paul.urdukb.R$drawable.kb_translate
+drawable:kb_enter:2130968618 reachable from Field int com.paul.urdukb.R$drawable.kb_enter
+string:voice_stop:2131362251 reachable from Field int com.paul.urdukb.R$string.voice_stop
+string:loading:2131361919 reachable from Field int com.paul.urdukb.R$string.loading
+drawable:kb_select_all:2130968625 reachable from Field int com.paul.urdukb.R$drawable.kb_select_all
+string:clipboard_off_msg:2131361839 reachable from Field int com.paul.urdukb.R$string.clipboard_off_msg
+string:download_need_token:2131361861 reachable from Field int com.paul.urdukb.R$string.download_need_token
+string:voice_unsure:2131362259 reachable from Field int com.paul.urdukb.R$string.voice_unsure
+string:voice_listening_part_pass:2131362237 reachable from Field int com.paul.urdukb.R$string.voice_listening_part_pass
+mipmap:ic_launcher_round:2131296257 reachable from AndroidManifest.xml
+id:accessibility_action_clickable_span:2131099648 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_action_clickable_span
+dimen:notification_subtext_size:2130903065 reachable from Field int com.google.ai.edge.litertlm.R$dimen.notification_subtext_size
+drawable:ic_setup_person:2130968595 reachable from Field int com.paul.urdukb.R$drawable.ic_setup_person
+string:voice_listening_part:2131362236 reachable from Field int com.paul.urdukb.R$string.voice_listening_part
+attr:fastScrollVerticalThumbDrawable:2130771972 reachable from Field int[] androidx.recyclerview.R$styleable.RecyclerView
+id:chronometer:2131099689 reachable from res/layout/notification_template_part_chronometer.xml
+string:setup_tip_translate:2131362128 reachable from Field int com.paul.urdukb.R$string.setup_tip_translate
+string:kb_glide_sub:2131361901 reachable from Field int com.paul.urdukb.R$string.kb_glide_sub
+string:update_version:2131362216 reachable from Field int com.paul.urdukb.R$string.update_version
+dimen:notification_top_pad:2130903066 reachable from Field int com.google.ai.edge.litertlm.R$dimen.notification_top_pad
+color:call_notification_decline_color:2130837507 reachable from Field int com.google.ai.edge.litertlm.R$color.call_notification_decline_color
+id:tag_accessibility_pane_title:2131099720 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_accessibility_pane_title
+attr:fontStyle:2130771983 reachable from Field int com.google.ai.edge.litertlm.R$attr.fontStyle
+string:setup_mobile_data:2131362091 reachable from Field int com.paul.urdukb.R$string.setup_mobile_data
+drawable:ic_call_answer_video:2130968579 reachable from Field int com.google.ai.edge.litertlm.R$drawable.ic_call_answer_video
+string:kb_forget_words:2131361899 reachable from Field int com.paul.urdukb.R$string.kb_forget_words
+string:voice_record:2131362245 reachable from Field int com.paul.urdukb.R$string.voice_record
+string:voice_speak_button:2131362250 reachable from Field int com.paul.urdukb.R$string.voice_speak_button
+string:setup_switch_body:2131362118 reachable from Field int com.paul.urdukb.R$string.setup_switch_body
+string:card_keyboard:2131361810 reachable from Field int com.paul.urdukb.R$string.card_keyboard
+drawable:ic_launcher_monochrome:2130968585 reachable from res/mipmap-anydpi-v21/ic_launcher.xml
+string:update_failed:2131362212 reachable from Field int com.paul.urdukb.R$string.update_failed
+string:kb_run_setup:2131361907 reachable from Field int com.paul.urdukb.R$string.kb_run_setup
+drawable:kb_cat_flags:2130968603 reachable from Field int com.paul.urdukb.R$drawable.kb_cat_flags
+string:model_downloading:2131362002 reachable from Field int com.paul.urdukb.R$string.model_downloading
+string:cancel:2131361805 reachable from Field int com.paul.urdukb.R$string.cancel
+id:line1:2131099706 reachable from Field int com.google.ai.edge.litertlm.R$id.line1
+id:forever:2131099695 reachable from Field int com.google.ai.edge.litertlm.R$id.forever
+id:line3:2131099707 reachable from Field int com.google.ai.edge.litertlm.R$id.line3
+id:inspection_slot_table_set:2131099702 reachable from Field int androidx.compose.ui.R$id.inspection_slot_table_set
+string:saved:2131362040 reachable from Field int com.paul.urdukb.R$string.saved
+drawable:kb_cat_food:2130968604 reachable from Field int com.paul.urdukb.R$drawable.kb_cat_food
+string:try_save_example:2131362195 reachable from Field int com.paul.urdukb.R$string.try_save_example
+string:setup_done_tip_translate:2131362059 reachable from Field int com.paul.urdukb.R$string.setup_done_tip_translate
+id:title:2131099735 reachable from Field int com.google.ai.edge.litertlm.R$id.title
+string:clear_all:2131361836 reachable from Field int com.paul.urdukb.R$string.clear_all
+dimen:notification_top_pad_large_text:2130903067 reachable from Field int com.google.ai.edge.litertlm.R$dimen.notification_top_pad_large_text
+string:setup_takes_long:2131362123 reachable from Field int com.paul.urdukb.R$string.setup_takes_long
+dimen:notification_right_icon_size:2130903061 reachable from res/layout-v21/notification_template_icon_group.xml
+dimen:notification_content_margin_start:2130903056 reachable from Field int com.google.ai.edge.litertlm.R$dimen.notification_content_margin_start
+string:setup_chip_checking:2131362048 reachable from Field int com.paul.urdukb.R$string.setup_chip_checking
+string:voice_english:2131362232 reachable from Field int com.paul.urdukb.R$string.voice_english
+string:card_updates:2131361816 reachable from Field int com.paul.urdukb.R$string.card_updates
+dimen:notification_main_column_padding_top:2130903059 reachable from Field int com.google.ai.edge.litertlm.R$dimen.notification_main_column_padding_top
+string:giphy_bad_key:2131361871 reachable from Field int com.paul.urdukb.R$string.giphy_bad_key
+style:TextAppearance_Compat_Notification_Line2:2131427336 reachable from Field int com.google.ai.edge.litertlm.R$style.TextAppearance_Compat_Notification_Line2
+id:action_divider:2131099682 reachable from int com.google.ai.edge.litertlm.R$id.action_divider
+id:italic:2131099704 reachable from Field int com.google.ai.edge.litertlm.R$id.italic
+string:card_style:2131361814 reachable from Field int com.paul.urdukb.R$string.card_style
+string:giphy_help:2131361874 reachable from Field int com.paul.urdukb.R$string.giphy_help
+drawable:ic_setup_swap:2130968596 reachable from Field int com.paul.urdukb.R$drawable.ic_setup_swap
+string:style_formal:2131362165 reachable from Field int com.paul.urdukb.R$string.style_formal
+drawable:kb_emoji:2130968617 reachable from Field int com.paul.urdukb.R$drawable.kb_emoji
+string:mic_off:2131361988 reachable from Field int com.paul.urdukb.R$string.mic_off
+attr:queryPatterns:2130771989 reachable from Field int com.google.ai.edge.litertlm.R$attr.queryPatterns
+string:stats_none:2131362156 reachable from Field int com.paul.urdukb.R$string.stats_none
+string:style_reset_tab:2131362174 reachable from Field int com.paul.urdukb.R$string.style_reset_tab
+string:setup_done_title:2131362062 reachable from Field int com.paul.urdukb.R$string.setup_done_title
+string:card_try:2131361815 reachable from Field int com.paul.urdukb.R$string.card_try
+id:info:2131099701 reachable from int com.google.ai.edge.litertlm.R$id.info
+layout:notification_template_custom_big:2131230725 reachable from Field int com.google.ai.edge.litertlm.R$layout.notification_template_custom_big
+string:sheet_direction:2131362139 reachable from Field int com.paul.urdukb.R$string.sheet_direction
+drawable:kb_grid:2130968620 reachable from Field int com.paul.urdukb.R$drawable.kb_grid
+string:try_output_hint:2131362194 reachable from Field int com.paul.urdukb.R$string.try_output_hint
+string:voice_comparing:2131362227 reachable from Field int com.paul.urdukb.R$string.voice_comparing
+drawable:ic_call_answer:2130968577 reachable from Field int com.google.ai.edge.litertlm.R$drawable.ic_call_answer
+dimen:notification_small_icon_background_padding:2130903063 reachable from Field int com.google.ai.edge.litertlm.R$dimen.notification_small_icon_background_padding
+string:voice_help:2131362234 reachable from Field int com.paul.urdukb.R$string.voice_help
+string:voice_writing_urdu:2131362263 reachable from Field int com.paul.urdukb.R$string.voice_writing_urdu
+id:action_image:2131099683 reachable from Field int com.google.ai.edge.litertlm.R$id.action_image
+string:model_token_hint:2131362019 reachable from Field int com.paul.urdukb.R$string.model_token_hint
+dimen:notification_big_circle_margin:2130903055 reachable from res/layout-v21/notification_template_icon_group.xml
+id:accessibility_custom_action_31:2131099674 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_31
+id:accessibility_custom_action_30:2131099673 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_30
+string:kb_warm_sub:2131361917 reachable from Field int com.paul.urdukb.R$string.kb_warm_sub
+dimen:compat_button_inset_vertical_material:2130903041 reachable from res/drawable-v21/notification_action_background.xml
+string:call_notification_answer_action:2131361798 reachable from Field int com.google.ai.edge.litertlm.R$string.call_notification_answer_action
+string:voice_copy_urdu:2131362230 reachable from Field int com.paul.urdukb.R$string.voice_copy_urdu
+string:setup_left:2131362089 reachable from Field int com.paul.urdukb.R$string.setup_left
+string:check_turn_on_sub:2131361834 reachable from Field int com.paul.urdukb.R$string.check_turn_on_sub
+drawable:notification_action_background:2130968633 reachable from int com.google.ai.edge.litertlm.R$drawable.notification_action_background
+id:icon:2131099699 reachable from res/layout-v21/notification_template_icon_group.xml
+string:emoji_recent:2131361866 reachable from Field int com.paul.urdukb.R$string.emoji_recent
+string:setup_enable_body:2131362069 reachable from Field int com.paul.urdukb.R$string.setup_enable_body
+layout:notification_action_tombstone:2131230724 reachable from Field int com.google.ai.edge.litertlm.R$layout.notification_action_tombstone
+string:verify_damaged:2131362218 reachable from Field int com.paul.urdukb.R$string.verify_damaged
+color:notification_action_color_filter:2130837508 reachable from Field int com.google.ai.edge.litertlm.R$color.notification_action_color_filter
+id:tag_on_receive_content_listener:2131099723 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_on_receive_content_listener
+string:stats_over_many:2131362158 reachable from Field int com.paul.urdukb.R$string.stats_over_many
+id:tag_accessibility_clickable_spans:2131099718 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_accessibility_clickable_spans
+string:update_latest:2131362213 reachable from Field int com.paul.urdukb.R$string.update_latest
+drawable:notification_template_icon_bg:2130968642 reachable from Field int com.google.ai.edge.litertlm.R$drawable.notification_template_icon_bg
+id:accessibility_custom_action_21:2131099663 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_21
+id:accessibility_custom_action_20:2131099662 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_20
+string:setup_personal_body:2131362099 reachable from Field int com.paul.urdukb.R$string.setup_personal_body
+string:gif_send_failed:2131361870 reachable from Field int com.paul.urdukb.R$string.gif_send_failed
+string:setup_gemma4_sub:2131362084 reachable from Field int com.paul.urdukb.R$string.setup_gemma4_sub
+id:accessibility_custom_action_25:2131099667 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_25
+id:accessibility_custom_action_24:2131099666 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_24
+style:RomanUrduAppTheme:2131427332 reachable from AndroidManifest.xml
+string:tone_poetic:2131362183 reachable from Field int com.paul.urdukb.R$string.tone_poetic
+drawable:kb_copy:2130968613 reachable from Field int com.paul.urdukb.R$drawable.kb_copy
+id:accessibility_custom_action_23:2131099665 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_23
+id:accessibility_custom_action_22:2131099664 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_22
+id:accessibility_custom_action_29:2131099671 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_29
+id:accessibility_custom_action_28:2131099670 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_28
+string:note_first_load:2131362029 reachable from Field int com.paul.urdukb.R$string.note_first_load
+id:accessibility_custom_action_27:2131099669 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_27
+id:accessibility_custom_action_26:2131099668 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_26
+id:dialog_button:2131099693 reachable from int com.google.ai.edge.litertlm.R$id.dialog_button
+id:accessibility_custom_action_19:2131099660 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_19
+dimen:notification_action_text_size:2130903054 reachable from int com.google.ai.edge.litertlm.R$dimen.notification_action_text_size
+string:status_bar_notification_info_overflow:2131362161 reachable from Field int com.google.ai.edge.litertlm.R$string.status_bar_notification_info_overflow
+string:a11y_step:2131361794 reachable from Field int com.paul.urdukb.R$string.a11y_step
+string:media_recent_empty:2131361987 reachable from Field int com.paul.urdukb.R$string.media_recent_empty
+string:voice_checking:2131362226 reachable from Field int com.paul.urdukb.R$string.voice_checking
+string:open_app:2131362035 reachable from Field int com.paul.urdukb.R$string.open_app
+drawable:ic_setup_download:2130968589 reachable from Field int com.paul.urdukb.R$drawable.ic_setup_download
+drawable:kb_done:2130968616 reachable from Field int com.paul.urdukb.R$drawable.kb_done
+id:view_tree_lifecycle_owner:2131099737 reachable from Field int com.google.ai.edge.litertlm.R$id.view_tree_lifecycle_owner
+drawable:ic_setup_palette:2130968594 reachable from Field int com.paul.urdukb.R$drawable.ic_setup_palette
+id:accessibility_custom_action_10:2131099651 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_10
+string:giphy_need_key_steps:2131361879 reachable from Field int com.paul.urdukb.R$string.giphy_need_key_steps
+string:style_help:2131362168 reachable from Field int com.paul.urdukb.R$string.style_help
+id:hide_in_inspector_tag:2131099698 reachable from Field int androidx.compose.ui.R$id.hide_in_inspector_tag
+string:mode_follow:2131361990 reachable from Field int com.paul.urdukb.R$string.mode_follow
+id:accessibility_custom_action_14:2131099655 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_14
+id:accessibility_custom_action_13:2131099654 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_13
+drawable:kb_send:2130968626 reachable from Field int com.paul.urdukb.R$drawable.kb_send
+id:accessibility_custom_action_12:2131099653 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_12
+id:accessibility_custom_action_11:2131099652 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_11
+string:ttl_hour:2131362200 reachable from Field int com.paul.urdukb.R$string.ttl_hour
+id:accessibility_custom_action_18:2131099659 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_18
+drawable:notify_panel_notification_icon_bg:2130968645 reachable from int com.google.ai.edge.litertlm.R$drawable.notify_panel_notification_icon_bg
+string:verify_unknown:2131362220 reachable from Field int com.paul.urdukb.R$string.verify_unknown
+id:accessibility_custom_action_17:2131099658 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_17
+layout:notification_action:2131230723 reachable from Field int com.google.ai.edge.litertlm.R$layout.notification_action
+id:accessibility_custom_action_16:2131099657 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_16
+id:accessibility_custom_action_15:2131099656 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_15
+string:credits_icons:2131361850 reachable from Field int com.paul.urdukb.R$string.credits_icons
+id:tag_unhandled_key_event_manager:2131099729 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_unhandled_key_event_manager
+string:try_failed:2131362191 reachable from Field int com.paul.urdukb.R$string.try_failed
+string:model_resume_hint:2131362017 reachable from Field int com.paul.urdukb.R$string.model_resume_hint
+string:setup_model_title:2131362094 reachable from Field int com.paul.urdukb.R$string.setup_model_title
+string:app_name:2131361796 reachable from AndroidManifest.xml
+string:model_damaged_detail:2131361999 reachable from Field int com.paul.urdukb.R$string.model_damaged_detail
+string:model_can_leave:2131361993 reachable from Field int com.paul.urdukb.R$string.model_can_leave
+string:giphy_limit:2131361876 reachable from Field int com.paul.urdukb.R$string.giphy_limit
+string:mode_dark:2131361989 reachable from Field int com.paul.urdukb.R$string.mode_dark
+id:tag_accessibility_actions:2131099717 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_accessibility_actions
+id:async:2131099687 reachable from Field int com.google.ai.edge.litertlm.R$id.async
+string:model_none:2131362006 reachable from Field int com.paul.urdukb.R$string.model_none
+string:template_percent:2131362178 reachable from Field int androidx.compose.ui.R$string.template_percent
+string:style_poetic:2131362171 reachable from Field int com.paul.urdukb.R$string.style_poetic
+attr:fontProviderFetchStrategy:2130771978 reachable from Field int[] com.google.ai.edge.litertlm.R$styleable.FontFamily
+string:state_off:2131362148 reachable from Field int androidx.compose.ui.R$string.state_off
+string:setup_downloading_toast:2131362065 reachable from Field int com.paul.urdukb.R$string.setup_downloading_toast
+drawable:kb_shift:2130968628 reachable from Field int com.paul.urdukb.R$drawable.kb_shift
+string:clipboard_empty:2131361837 reachable from Field int com.paul.urdukb.R$string.clipboard_empty
+id:notification_main_column_container:2131099712 reachable from int com.google.ai.edge.litertlm.R$id.notification_main_column_container
+id:wrapped_composition_tag:2131099741 reachable from Field int androidx.compose.ui.R$id.wrapped_composition_tag
+attr:lStar:2130771986 reachable from Field int[] com.google.ai.edge.litertlm.R$styleable.ColorStateListItem
+string:setup_feat_translate_sub:2131362081 reachable from Field int com.paul.urdukb.R$string.setup_feat_translate_sub
+string:setup_finish:2131362082 reachable from Field int com.paul.urdukb.R$string.setup_finish
+drawable:notification_icon_background:2130968640 reachable from Field int com.google.ai.edge.litertlm.R$drawable.notification_icon_background
+string:check_translate:2131361829 reachable from Field int com.paul.urdukb.R$string.check_translate
+color:notification_icon_bg_color:2130837509 reachable from res/drawable/notification_icon_background.xml
+string:save:2131362039 reachable from Field int com.paul.urdukb.R$string.save
+string:download_need_space:2131361860 reachable from Field int com.paul.urdukb.R$string.download_need_space
+style:TextAppearance_Compat_Notification_Time:2131427337 reachable from res/layout/notification_template_part_time.xml
+drawable:kb_caps:2130968601 reachable from Field int com.paul.urdukb.R$drawable.kb_caps
+drawable:ic_setup_check:2130968588 reachable from Field int com.paul.urdukb.R$drawable.ic_setup_check
+string:check_model_sub:2131361824 reachable from Field int com.paul.urdukb.R$string.check_model_sub
+string:setup_cancel_first:2131362047 reachable from Field int com.paul.urdukb.R$string.setup_cancel_first
+string:try_type_first:2131362198 reachable from Field int com.paul.urdukb.R$string.try_type_first
+string:tone_formal:2131362181 reachable from Field int com.paul.urdukb.R$string.tone_formal
+string:update_download:2131362210 reachable from Field int com.paul.urdukb.R$string.update_download
+layout:notification_template_icon_group:2131230726 reachable from int com.google.ai.edge.litertlm.R$layout.notification_template_icon_group
+string:setup_done_tip_colours:2131362057 reachable from Field int com.paul.urdukb.R$string.setup_done_tip_colours
+id:tag_compat_insets_dispatch:2131099721 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_compat_insets_dispatch
+string:cd_close_search:2131361820 reachable from Field int com.paul.urdukb.R$string.cd_close_search
+string:no_model:2131362025 reachable from Field int com.paul.urdukb.R$string.no_model
+string:delete:2131361856 reachable from Field int com.paul.urdukb.R$string.delete
+string:voice_play:2131362244 reachable from Field int com.paul.urdukb.R$string.voice_play
+id:tag_state_description:2131099726 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_state_description
+string:card_credits:2131361807 reachable from Field int com.paul.urdukb.R$string.card_credits
+string:voice_none:2131362241 reachable from Field int com.paul.urdukb.R$string.voice_none
+string:stats_not_loaded:2131362157 reachable from Field int com.paul.urdukb.R$string.stats_not_loaded
+drawable:ic_setup_lock:2130968591 reachable from Field int com.paul.urdukb.R$drawable.ic_setup_lock
+id:edit_text_id:2131099694 reachable from int com.google.ai.edge.litertlm.R$id.edit_text_id
+drawable:ic_call_answer_video_low:2130968580 reachable from Field int com.google.ai.edge.litertlm.R$drawable.ic_call_answer_video_low
+id:tag_accessibility_heading:2131099719 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_accessibility_heading
+drawable:notification_bg_low_pressed:2130968637 reachable from Field int com.google.ai.edge.litertlm.R$drawable.notification_bg_low_pressed
+string:try_tone:2131362196 reachable from Field int com.paul.urdukb.R$string.try_tone
+string:check_switch:2131361826 reachable from Field int com.paul.urdukb.R$string.check_switch
+string:style_i_am:2131362169 reachable from Field int com.paul.urdukb.R$string.style_i_am
+attr:fontProviderQuery:2130771981 reachable from Field int com.google.ai.edge.litertlm.R$attr.fontProviderQuery
+string:setup_skip_step:2131362117 reachable from Field int com.paul.urdukb.R$string.setup_skip_step
+integer:status_bar_notification_info_maxnum:2131165185 reachable from Field int com.google.ai.edge.litertlm.R$integer.status_bar_notification_info_maxnum
+string:header_tagline:2131361886 reachable from Field int com.paul.urdukb.R$string.header_tagline
+string:model_token_help:2131362018 reachable from Field int com.paul.urdukb.R$string.model_token_help
+drawable:ic_rurdu_progress:2130968586 reachable from Field int com.paul.urdukb.R$drawable.ic_rurdu_progress
+string:check_turn_on_action:2131361833 reachable from Field int com.paul.urdukb.R$string.check_turn_on_action
+string:dir_to_en:2131361858 reachable from Field int com.paul.urdukb.R$string.dir_to_en
+string:kb_sound:2131361910 reachable from Field int com.paul.urdukb.R$string.kb_sound
+string:sheet_copied:2131362137 reachable from Field int com.paul.urdukb.R$string.sheet_copied
+string:model_expected:2131362003 reachable from Field int com.paul.urdukb.R$string.model_expected
+string:kb_help:2131361902 reachable from Field int com.paul.urdukb.R$string.kb_help
+string:card_giphy:2131361809 reachable from Field int com.paul.urdukb.R$string.card_giphy
+string:setup_feat_gboard_sub:2131362077 reachable from Field int com.paul.urdukb.R$string.setup_feat_gboard_sub
+string:voice_careful:2131362224 reachable from Field int com.paul.urdukb.R$string.voice_careful
+string:clear:2131361835 reachable from Field int com.paul.urdukb.R$string.clear
+string:voice_truncated:2131362257 reachable from Field int com.paul.urdukb.R$string.voice_truncated
+string:voice_too_quiet:2131362256 reachable from Field int com.paul.urdukb.R$string.voice_too_quiet
+id:compose_prefetch_scheduler:2131099690 reachable from Field int androidx.compose.foundation.R$id.compose_prefetch_scheduler
+string:voice_tap_to_speak:2131362253 reachable from Field int com.paul.urdukb.R$string.voice_tap_to_speak
+string:voice_writing_english:2131362262 reachable from Field int com.paul.urdukb.R$string.voice_writing_english
+drawable:ic_setup_celebration:2130968587 reachable from Field int com.paul.urdukb.R$drawable.ic_setup_celebration
+string:search_emoji_hint:2131362041 reachable from Field int com.paul.urdukb.R$string.search_emoji_hint
+string:kb_hints_sub:2131361904 reachable from Field int com.paul.urdukb.R$string.kb_hints_sub
+string:sheet_close:2131362136 reachable from Field int com.paul.urdukb.R$string.sheet_close
+attr:layoutManager:2130771987 reachable from Field int[] androidx.recyclerview.R$styleable.RecyclerView
+string:giphy_limits:2131361877 reachable from Field int com.paul.urdukb.R$string.giphy_limits
+drawable:kb_cut:2130968614 reachable from Field int com.paul.urdukb.R$drawable.kb_cut
+string:model_ready:2131362012 reachable from Field int com.paul.urdukb.R$string.model_ready
+id:right_icon:2131099715 reachable from Field int com.google.ai.edge.litertlm.R$id.right_icon
+string:model_ready_verified:2131362013 reachable from Field int com.paul.urdukb.R$string.model_ready_verified
+string:setup_switch_note:2131362120 reachable from Field int com.paul.urdukb.R$string.setup_switch_note
+string:setup_eta_minute:2131362074 reachable from Field int com.paul.urdukb.R$string.setup_eta_minute
+string:giphy_on:2131361882 reachable from Field int com.paul.urdukb.R$string.giphy_on
+string:try_get_model:2131362192 reachable from Field int com.paul.urdukb.R$string.try_get_model
+string:voice_title_share:2131362254 reachable from Field int com.paul.urdukb.R$string.voice_title_share
+string:setup_enable_title:2131362072 reachable from Field int com.paul.urdukb.R$string.setup_enable_title
+string:tab:2131362177 reachable from Field int androidx.compose.ui.R$string.tab
+drawable:notification_template_icon_low_bg:2130968643 reachable from Field int com.google.ai.edge.litertlm.R$drawable.notification_template_icon_low_bg
+string:setup_practice_downloading:2131362105 reachable from Field int com.paul.urdukb.R$string.setup_practice_downloading
+drawable:kb_mic:2130968621 reachable from Field int com.paul.urdukb.R$drawable.kb_mic
+string:female:2131361868 reachable from Field int com.paul.urdukb.R$string.female
+id:accessibility_custom_action_9:2131099680 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_9
+attr:fastScrollVerticalTrackDrawable:2130771973 reachable from Field int[] androidx.recyclerview.R$styleable.RecyclerView
+id:accessibility_custom_action_8:2131099679 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_8
+attr:shortcutMatchRequired:2130771992 reachable from Field int[] com.google.ai.edge.litertlm.R$styleable.Capability
+attr:fontWeight:2130771985 reachable from Field int com.google.ai.edge.litertlm.R$attr.fontWeight
+string:voice_title_speak:2131362255 reachable from Field int com.paul.urdukb.R$string.voice_title_speak
+id:notification_background:2131099710 reachable from res/layout-v21/notification_template_custom_big.xml
+string:setup_have_file:2131362086 reachable from Field int com.paul.urdukb.R$string.setup_have_file
+string:setup_get_started:2131362085 reachable from Field int com.paul.urdukb.R$string.setup_get_started
+id:accessibility_custom_action_1:2131099650 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_1
+string:state_empty:2131362147 reachable from Field int androidx.compose.ui.R$string.state_empty
+id:accessibility_custom_action_0:2131099649 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_0
+string:setup_ready:2131362113 reachable from Field int com.paul.urdukb.R$string.setup_ready
+id:accessibility_custom_action_3:2131099672 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_3
+id:accessibility_custom_action_2:2131099661 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_2
+string:setup_restart_note:2131362114 reachable from Field int com.paul.urdukb.R$string.setup_restart_note
+id:accessibility_custom_action_5:2131099676 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_5
+id:accessibility_custom_action_4:2131099675 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_4
+id:accessibility_custom_action_7:2131099678 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_7
+dimen:notification_large_icon_height:2130903057 reachable from res/layout-v21/notification_template_icon_group.xml
+id:accessibility_custom_action_6:2131099677 reachable from Field int com.google.ai.edge.litertlm.R$id.accessibility_custom_action_6
+string:update_up_to_date:2131362215 reachable from Field int com.paul.urdukb.R$string.update_up_to_date
+string:setup_practice_not_active:2131362108 reachable from Field int com.paul.urdukb.R$string.setup_practice_not_active
+string:model_checksum_ok:2131361994 reachable from Field int com.paul.urdukb.R$string.model_checksum_ok
+string:check_turn_on:2131361832 reachable from Field int com.paul.urdukb.R$string.check_turn_on
+string:card_setup:2131361812 reachable from Field int com.paul.urdukb.R$string.card_setup
+string:voice_listening:2131362235 reachable from Field int com.paul.urdukb.R$string.voice_listening
+string:check_get:2131361822 reachable from Field int com.paul.urdukb.R$string.check_get
+string:clipboard_title:2131361841 reachable from Field int com.paul.urdukb.R$string.clipboard_title
+string:male:2131361986 reachable from Field int com.paul.urdukb.R$string.male
+string:voice_decoding:2131362231 reachable from Field int com.paul.urdukb.R$string.voice_decoding
+string:translation_failed:2131362189 reachable from Field int com.paul.urdukb.R$string.translation_failed
+id:compose_view_saveable_id_tag:2131099691 reachable from Field int androidx.compose.ui.R$id.compose_view_saveable_id_tag
+dimen:notification_large_icon_width:2130903058 reachable from Field int com.google.ai.edge.litertlm.R$dimen.notification_large_icon_width
+string:credits_giphy:2131361849 reachable from Field int com.paul.urdukb.R$string.credits_giphy
+dimen:compat_button_padding_horizontal_material:2130903042 reachable from Field int com.google.ai.edge.litertlm.R$dimen.compat_button_padding_horizontal_material
+string:copy:2131361847 reachable from Field int com.paul.urdukb.R$string.copy
+string:voice_stopped:2131362252 reachable from Field int com.paul.urdukb.R$string.voice_stopped
+style:TextAppearance_Compat_Notification_Title:2131427338 reachable from Field int com.google.ai.edge.litertlm.R$style.TextAppearance_Compat_Notification_Title
+string:kb_smart_tone_sub:2131361909 reachable from Field int com.paul.urdukb.R$string.kb_smart_tone_sub
+drawable:ic_call_answer_low:2130968578 reachable from Field int com.google.ai.edge.litertlm.R$drawable.ic_call_answer_low
+string:type_then_search:2131362203 reachable from Field int com.paul.urdukb.R$string.type_then_search
+string:model_verify:2131362021 reachable from Field int com.paul.urdukb.R$string.model_verify
+string:voice_use_this:2131362261 reachable from Field int com.paul.urdukb.R$string.voice_use_this
+string:card_voice:2131361817 reachable from Field int com.paul.urdukb.R$string.card_voice
+string:setup_model_body:2131362092 reachable from Field int com.paul.urdukb.R$string.setup_model_body
+dimen:fastscroll_default_thickness:2130903047 reachable from Field int androidx.recyclerview.R$dimen.fastscroll_default_thickness
+id:tag_transition_group:2131099728 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_transition_group
+string:setup_tip_tone_title:2131362127 reachable from Field int com.paul.urdukb.R$string.setup_tip_tone_title
+string:mode_light:2131361991 reachable from Field int com.paul.urdukb.R$string.mode_light
+string:setup_theme:2131362124 reachable from Field int com.paul.urdukb.R$string.setup_theme
+drawable:notification_bg_low:2130968635 reachable from Field int com.google.ai.edge.litertlm.R$drawable.notification_bg_low
+string:model_resume_download:2131362016 reachable from Field int com.paul.urdukb.R$string.model_resume_download
+id:view_tree_disjoint_parent:2131099736 reachable from Field int com.google.ai.edge.litertlm.R$id.view_tree_disjoint_parent
+string:clipboard_paste_now:2131361840 reachable from Field int com.paul.urdukb.R$string.clipboard_paste_now
+string:default_error_message:2131361854 reachable from Field int androidx.compose.ui.R$string.default_error_message
+string:kb_popup:2131361905 reachable from Field int com.paul.urdukb.R$string.kb_popup
+string:setup_feat_gboard:2131362076 reachable from Field int com.paul.urdukb.R$string.setup_feat_gboard
+string:setup_welcome_note:2131362135 reachable from Field int com.paul.urdukb.R$string.setup_welcome_note
+string:card_error:2131361808 reachable from Field int com.paul.urdukb.R$string.card_error
+string:check_switch_sub:2131361828 reachable from Field int com.paul.urdukb.R$string.check_switch_sub
+string:voice_making_audio:2131362239 reachable from Field int com.paul.urdukb.R$string.voice_making_audio
+drawable:kb_shift_on:2130968629 reachable from Field int com.paul.urdukb.R$drawable.kb_shift_on
+dimen:compat_control_corner_material:2130903044 reachable from res/drawable-v21/notification_action_background.xml
+string:search_stickers_hint:2131362043 reachable from Field int com.paul.urdukb.R$string.search_stickers_hint
+string:stats_running:2131362160 reachable from Field int com.paul.urdukb.R$string.stats_running
+mipmap:ic_launcher:2131296256 reachable from AndroidManifest.xml
+string:setup_practice_done:2131362104 reachable from Field int com.paul.urdukb.R$string.setup_practice_done
+attr:spanCount:2130771993 reachable from Field int[] androidx.recyclerview.R$styleable.RecyclerView
+string:cd_stickers:2131361821 reachable from Field int com.paul.urdukb.R$string.cd_stickers
+string:glossary_reset:2131361884 reachable from Field int com.paul.urdukb.R$string.glossary_reset
+string:setup_eta_minutes:2131362075 reachable from Field int com.paul.urdukb.R$string.setup_eta_minutes
+string:style_examples_hint:2131362163 reachable from Field int com.paul.urdukb.R$string.style_examples_hint
+string:giphy_network:2131361880 reachable from Field int com.paul.urdukb.R$string.giphy_network
+string:kb_clipboard:2131361896 reachable from Field int com.paul.urdukb.R$string.kb_clipboard
+string:kb_vibrate:2131361915 reachable from Field int com.paul.urdukb.R$string.kb_vibrate
+string:search_gifs_hint:2131362042 reachable from Field int com.paul.urdukb.R$string.search_gifs_hint
+string:model_use_file:2131362020 reachable from Field int com.paul.urdukb.R$string.model_use_file
+string:cd_clear_search:2131361819 reachable from Field int com.paul.urdukb.R$string.cd_clear_search
+id:text2:2131099733 reachable from Field int com.google.ai.edge.litertlm.R$id.text2
+string:setup_token_hint:2131362129 reachable from Field int com.paul.urdukb.R$string.setup_token_hint
+string:setup_token_step1:2131362131 reachable from Field int com.paul.urdukb.R$string.setup_token_step1
+string:setup_token_step2:2131362132 reachable from Field int com.paul.urdukb.R$string.setup_token_step2
+dimen:compat_button_inset_horizontal_material:2130903040 reachable from Field int com.google.ai.edge.litertlm.R$dimen.compat_button_inset_horizontal_material
+string:check_switch_action:2131361827 reachable from Field int com.paul.urdukb.R$string.check_switch_action
+string:stats_load:2131362154 reachable from Field int com.paul.urdukb.R$string.stats_load
+drawable:ic_setup_translate:2130968598 reachable from Field int com.paul.urdukb.R$drawable.ic_setup_translate
+drawable:kb_sticker:2130968630 reachable from Field int com.paul.urdukb.R$drawable.kb_sticker
+string:model_none_detail:2131362007 reachable from Field int com.paul.urdukb.R$string.model_none_detail
+string:model_nothing:2131362009 reachable from Field int com.paul.urdukb.R$string.model_nothing
+attr:fontProviderPackage:2130771980 reachable from Field int com.google.ai.edge.litertlm.R$attr.fontProviderPackage
+string:no_results:2131362026 reachable from Field int com.paul.urdukb.R$string.no_results
+string:speed_gpu_help:2131362145 reachable from Field int com.paul.urdukb.R$string.speed_gpu_help
+id:view_tree_view_model_store_owner:2131099740 reachable from Field int androidx.lifecycle.viewmodel.R$id.view_tree_view_model_store_owner
+string:example_saved:2131361867 reachable from Field int com.paul.urdukb.R$string.example_saved
+string:check_translate_sub:2131361830 reachable from Field int com.paul.urdukb.R$string.check_translate_sub
+string:tone_auto:2131362179 reachable from Field int com.paul.urdukb.R$string.tone_auto
+id:tag_system_bar_state_monitor:2131099727 reachable from Field int com.google.ai.edge.litertlm.R$id.tag_system_bar_state_monitor
+string:setup_try_again:2131362133 reachable from Field int com.paul.urdukb.R$string.setup_try_again
+string:style_reset_glossary:2131362173 reachable from Field int com.paul.urdukb.R$string.style_reset_glossary
+string:update_browser_failed:2131362207 reachable from Field int com.paul.urdukb.R$string.update_browser_failed
+string:setup_switch_done:2131362119 reachable from Field int com.paul.urdukb.R$string.setup_switch_done
+attr:fastScrollHorizontalThumbDrawable:2130771970 reachable from Field int[] androidx.recyclerview.R$styleable.RecyclerView
+string:model_partial:2131362011 reachable from Field int com.paul.urdukb.R$string.model_partial
+string:setup_one_time:2131362097 reachable from Field int com.paul.urdukb.R$string.setup_one_time
+string:call_notification_screening_text:2131361804 reachable from Field int com.google.ai.edge.litertlm.R$string.call_notification_screening_text
+string:setup_done_tip_colours_sub:2131362058 reachable from Field int com.paul.urdukb.R$string.setup_done_tip_colours_sub
+string:style_glossary_label:2131362167 reachable from Field int com.paul.urdukb.R$string.style_glossary_label
+string:model_background_note:2131361992 reachable from Field int com.paul.urdukb.R$string.model_background_note
+attr:fontProviderFetchTimeout:2130771979 reachable from Field int com.google.ai.edge.litertlm.R$attr.fontProviderFetchTimeout
+string:colour_help:2131361845 reachable from Field int com.paul.urdukb.R$string.colour_help
+font:google_sans_text:2131034112 reachable from Field int com.paul.urdukb.R$font.google_sans_text
+string:sheet_no_model:2131362142 reachable from Field int com.paul.urdukb.R$string.sheet_no_model
+string:ttl_day:2131362199 reachable from Field int com.paul.urdukb.R$string.ttl_day
+style:Widget_Compat_NotificationActionContainer:2131427339 reachable from res/layout-v21/notification_action.xml
+string:check_model:2131361823 reachable from Field int com.paul.urdukb.R$string.check_model
+drawable:kb_pin:2130968623 reachable from Field int com.paul.urdukb.R$drawable.kb_pin
+string:setup_download_now:2131362063 reachable from Field int com.paul.urdukb.R$string.setup_download_now
+attr:recyclerViewStyle:2130771990 reachable from Field int androidx.recyclerview.R$attr.recyclerViewStyle
+string:in_progress:2131361889 reachable from Field int androidx.compose.ui.R$string.in_progress
+drawable:ic_setup_offline:2130968593 reachable from Field int com.paul.urdukb.R$drawable.ic_setup_offline
+string:setup_copy_failed:2131362055 reachable from Field int com.paul.urdukb.R$string.setup_copy_failed
+attr:ttcIndex:2130771995 reachable from Field int com.google.ai.edge.litertlm.R$attr.ttcIndex
+id:consume_window_insets_tag:2131099692 reachable from Field int androidx.compose.ui.R$id.consume_window_insets_tag
+string:cd_back:2131361818 reachable from Field int com.paul.urdukb.R$string.cd_back
+string:giphy_built_in:2131361872 reachable from Field int com.paul.urdukb.R$string.giphy_built_in
+string:a11y_selected_colour:2131361793 reachable from Field int com.paul.urdukb.R$string.a11y_selected_colour
+string:state_on:2131362149 reachable from Field int androidx.compose.ui.R$string.state_on
+string:unpin:2131362206 reachable from Field int com.paul.urdukb.R$string.unpin
+string:kb_suggest:2131361911 reachable from Field int com.paul.urdukb.R$string.kb_suggest
+string:note_funny:2131362031 reachable from Field int com.paul.urdukb.R$string.note_funny
+id:time:2131099734 reachable from res/layout/notification_template_part_time.xml
+string:model_not_checked:2131362008 reachable from Field int com.paul.urdukb.R$string.model_not_checked
+id:right_side:2131099716 reachable from Field int com.google.ai.edge.litertlm.R$id.right_side
+id:normal:2131099709 reachable from Field int com.google.ai.edge.litertlm.R$id.normal
+drawable:kb_go:2130968619 reachable from Field int com.paul.urdukb.R$drawable.kb_go
+string:update_ready:2131362214 reachable from Field int com.paul.urdukb.R$string.update_ready
+string:setup_gemma3_sub:2131362083 reachable from Field int com.paul.urdukb.R$string.setup_gemma3_sub
+string:tone_funny:2131362182 reachable from Field int com.paul.urdukb.R$string.tone_funny
+color:vector_tint_color:2130837510 is not reachable.
+color:vector_tint_theme_color:2130837511 is not reachable.
+dimen:item_touch_helper_max_drag_scroll_per_frame:2130903050 is not reachable.
+dimen:item_touch_helper_swipe_escape_max_velocity:2130903051 is not reachable.
+dimen:item_touch_helper_swipe_escape_velocity:2130903052 is not reachable.
+integer:m3c_window_layout_in_display_cutout_mode:2131165184 is not reachable.
+string:autofill:2131361797 is not reachable.
+string:close_drawer:2131361843 is not reachable.
+string:close_sheet:2131361844 is not reachable.
+string:dropdown_menu:2131361863 is not reachable.
+string:m3c_bottom_sheet_collapse_description:2131361920 is not reachable.
+string:m3c_bottom_sheet_dismiss_description:2131361921 is not reachable.
+string:m3c_bottom_sheet_drag_handle_description:2131361922 is not reachable.
+string:m3c_bottom_sheet_expand_description:2131361923 is not reachable.
+string:m3c_bottom_sheet_pane_title:2131361924 is not reachable.
+string:m3c_date_input_headline:2131361925 is not reachable.
+string:m3c_date_input_headline_description:2131361926 is not reachable.
+string:m3c_date_input_invalid_for_pattern:2131361927 is not reachable.
+string:m3c_date_input_invalid_not_allowed:2131361928 is not reachable.
+string:m3c_date_input_invalid_year_range:2131361929 is not reachable.
+string:m3c_date_input_label:2131361930 is not reachable.
+string:m3c_date_input_no_input_description:2131361931 is not reachable.
+string:m3c_date_input_title:2131361932 is not reachable.
+string:m3c_date_picker_headline:2131361933 is not reachable.
+string:m3c_date_picker_headline_description:2131361934 is not reachable.
+string:m3c_date_picker_navigate_to_year_description:2131361935 is not reachable.
+string:m3c_date_picker_no_selection_description:2131361936 is not reachable.
+string:m3c_date_picker_scroll_to_earlier_years:2131361937 is not reachable.
+string:m3c_date_picker_scroll_to_later_years:2131361938 is not reachable.
+string:m3c_date_picker_switch_to_calendar_mode:2131361939 is not reachable.
+string:m3c_date_picker_switch_to_day_selection:2131361940 is not reachable.
+string:m3c_date_picker_switch_to_input_mode:2131361941 is not reachable.
+string:m3c_date_picker_switch_to_next_month:2131361942 is not reachable.
+string:m3c_date_picker_switch_to_previous_month:2131361943 is not reachable.
+string:m3c_date_picker_switch_to_year_selection:2131361944 is not reachable.
+string:m3c_date_picker_title:2131361945 is not reachable.
+string:m3c_date_picker_today_description:2131361946 is not reachable.
+string:m3c_date_picker_year_picker_pane_title:2131361947 is not reachable.
+string:m3c_date_range_input_invalid_range_input:2131361948 is not reachable.
+string:m3c_date_range_input_title:2131361949 is not reachable.
+string:m3c_date_range_picker_day_in_range:2131361950 is not reachable.
+string:m3c_date_range_picker_end_headline:2131361951 is not reachable.
+string:m3c_date_range_picker_scroll_to_next_month:2131361952 is not reachable.
+string:m3c_date_range_picker_scroll_to_previous_month:2131361953 is not reachable.
+string:m3c_date_range_picker_start_headline:2131361954 is not reachable.
+string:m3c_date_range_picker_title:2131361955 is not reachable.
+string:m3c_dialog:2131361956 is not reachable.
+string:m3c_dropdown_menu_collapsed:2131361957 is not reachable.
+string:m3c_dropdown_menu_expanded:2131361958 is not reachable.
+string:m3c_dropdown_menu_toggle:2131361959 is not reachable.
+string:m3c_floating_toolbar_collapse:2131361960 is not reachable.
+string:m3c_floating_toolbar_expand:2131361961 is not reachable.
+string:m3c_search_bar_search:2131361962 is not reachable.
+string:m3c_snackbar_dismiss:2131361963 is not reachable.
+string:m3c_snackbar_pane_title:2131361964 is not reachable.
+string:m3c_suggestions_available:2131361965 is not reachable.
+string:m3c_time_input_dialog_title:2131361966 is not reachable.
+string:m3c_time_picker_am:2131361967 is not reachable.
+string:m3c_time_picker_dialog_title:2131361968 is not reachable.
+string:m3c_time_picker_hour:2131361969 is not reachable.
+string:m3c_time_picker_hour_24h_suffix:2131361970 is not reachable.
+string:m3c_time_picker_hour_selection:2131361971 is not reachable.
+string:m3c_time_picker_hour_suffix:2131361972 is not reachable.
+string:m3c_time_picker_hour_text_field:2131361973 is not reachable.
+string:m3c_time_picker_minute:2131361974 is not reachable.
+string:m3c_time_picker_minute_selection:2131361975 is not reachable.
+string:m3c_time_picker_minute_suffix:2131361976 is not reachable.
+string:m3c_time_picker_minute_text_field:2131361977 is not reachable.
+string:m3c_time_picker_period_toggle_description:2131361978 is not reachable.
+string:m3c_time_picker_pm:2131361979 is not reachable.
+string:m3c_time_picker_toggle_keyboard:2131361980 is not reachable.
+string:m3c_time_picker_toggle_touch:2131361981 is not reachable.
+string:m3c_tooltip_long_press_label:2131361982 is not reachable.
+string:m3c_tooltip_pane_description:2131361983 is not reachable.
+string:m3c_wide_navigation_rail_close_rail:2131361984 is not reachable.
+string:m3c_wide_navigation_rail_pane_title:2131361985 is not reachable.
+string:navigation_menu:2131362022 is not reachable.
+string:range_end:2131362037 is not reachable.
+string:range_start:2131362038 is not reachable.
+string:snackbar_pane_title:2131362143 is not reachable.
+string:tooltip_description:2131362185 is not reachable.
+string:tooltip_label:2131362186 is not reachable.
+style:DialogWindowTheme:2131427328 is not reachable.
+style:EdgeToEdgeFloatingDialogTheme:2131427329 is not reachable.
+style:EdgeToEdgeFloatingDialogWindowTheme:2131427330 is not reachable.
+style:FloatingDialogWindowTheme:2131427331 is not reachable.
+styleable:Capability:2131492864 is not reachable.
+styleable:ColorStateListItem:2131492865 is not reachable.
+styleable:FontFamily:2131492866 is not reachable.
+styleable:FontFamilyFont:2131492867 is not reachable.
+styleable:FontFamilyProviderFallback:2131492868 is not reachable.
+styleable:GradientColor:2131492869 is not reachable.
+styleable:GradientColorItem:2131492870 is not reachable.
+styleable:RecyclerView:2131492871 is not reachable.

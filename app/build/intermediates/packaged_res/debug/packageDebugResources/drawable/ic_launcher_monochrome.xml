@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Themed (monochrome) version: front bubble with the A cut out, back bubble as an outline -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:strokeColor="#FF000000" android:strokeWidth="3" android:strokeLineJoin="round"
+        android:pathData="M55,46 H75 A9,9 0 0 1 84,55 V71 L86,84 L72,78 H55 A9,9 0 0 1 46,69 V55 A9,9 0 0 1 55,46 Z" />
+    <path android:strokeColor="#FF000000" android:strokeWidth="3.4"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M55,62 Q58,69 66,69 H74 Q80,69 80,59" />
+    <path android:fillColor="#FF000000"
+        android:pathData="M68,72.3 A2.3,2.3 0 1 1 68,76.9 A2.3,2.3 0 1 1 68,72.3 Z" />
+    <path android:fillColor="#FF000000" android:fillType="evenOdd"
+        android:pathData="M33,26 H53 A9,9 0 0 1 62,35 V49 A9,9 0 0 1 53,58 H40 L28,66 L31,58 H33 A9,9 0 0 1 24,49 V35 A9,9 0 0 1 33,26 Z M43,32 L50.4,52 H46.9 L45.5,47.8 H40.5 L39.1,52 H35.6 Z M41,44.8 H44.8 L43,39.2 Z" />
+</vector>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- GIFs and stickers are saved here for a moment so another app can read them -->
+    <cache-path name="gifs" path="gifs/" />
+    <!-- the Urdu voice message is made here for a moment so another app can read it -->
+    <cache-path name="voice" path="voice/" />
+</paths>

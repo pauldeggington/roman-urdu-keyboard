@@ -1,0 +1,35 @@
+<variant
+    name="debug"
+    package="com.paul.urdukb"
+    minSdkVersion="31"
+    targetSdkVersion="37.0"
+    mergedManifest="build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml"
+    manifestMergeReport="build/outputs/logs/manifest-merger-debug-report.txt"
+    proguardFiles="build/intermediates/default_proguard_files/global/proguard-android-optimize.txt-9.1.1:proguard-rules.pro"
+    partialResultsDir="build/intermediates/lint_partial_results/debug/lintAnalyzeDebug/out">
+  <buildFeatures/>
+  <sourceProviders>
+    <sourceProvider
+        manifests="src/main/AndroidManifest.xml"
+        javaDirectories="src/main/java:src/debug/java:src/main/kotlin:src/debug/kotlin"
+        resDirectories="src/main/res:src/debug/res"
+        assetsDirectories="src/main/assets:src/debug/assets"
+        keepRulesDirectories="src/main/keepRules:src/debug/keepRules"/>
+  </sourceProviders>
+  <testSourceProviders>
+  </testSourceProviders>
+  <testFixturesSourceProviders>
+  </testFixturesSourceProviders>
+  <manifestPlaceholders>
+    <placeholder
+        name="previewExported"
+        value="true" />
+  </manifestPlaceholders>
+  <artifact
+      classOutputs="build/intermediates/javac/debug/compileDebugJavaWithJavac/classes:build/intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes:build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar"
+      type="MAIN"
+      applicationId="com.lanternkeys.urdukb"
+      generatedSourceFolders="build/generated/ap_generated_sources/debug/out:build/generated/source/buildConfig/debug"
+      desugaredMethodsFiles="/home/runner/.gradle/caches/9.7.1/transforms/fd34da58d1b62055628603f990813113/transformed/D8BackportedDesugaredMethods.txt">
+  </artifact>
+</variant>

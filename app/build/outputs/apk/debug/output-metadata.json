@@ -1,0 +1,37 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.lanternkeys.urdukb",
+  "variantName": "debug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 5001,
+      "versionName": "2.0-dev",
+      "outputFile": "RomanUrduKeyboard_dev-debug-r8.apk"
+    }
+  ],
+  "elementType": "File",
+  "baselineProfiles": [
+    {
+      "minApi": 28,
+      "maxApi": 30,
+      "baselineProfiles": [
+        "baselineProfiles/1/RomanUrduKeyboard_dev-debug-r8.dm"
+      ]
+    },
+    {
+      "minApi": 31,
+      "maxApi": 2147483647,
+      "baselineProfiles": [
+        "baselineProfiles/0/RomanUrduKeyboard_dev-debug-r8.dm"
+      ]
+    }
+  ],
+  "minSdkVersionForDexing": 31
+}
