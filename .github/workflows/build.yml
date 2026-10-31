@@ -68,7 +68,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Publish the drawn screens to the ci-ui-shots branch (to look at without opening Actions)
-        if: always() && github.ref != 'refs/heads/main'
+        if: always()
         continue-on-error: true
         run: |
           ls app/build/screenshots/*.png > /dev/null 2>&1 || exit 0
