@@ -73,6 +73,7 @@ fun VoiceScreen(
                 when (state) {
                     VoiceModel.UiState.Idle -> if (speak) Body(stringResource(R.string.voice_tap_to_speak))
                     VoiceModel.UiState.NoModel -> Body(stringResource(R.string.sheet_no_model))
+                    VoiceModel.UiState.NeedsGemma4 -> Body(stringResource(R.string.voice_needs_gemma4))
                     VoiceModel.UiState.Decoding -> Body(stringResource(R.string.voice_decoding))
                     is VoiceModel.UiState.Listening -> {
                         Body(
@@ -102,7 +103,7 @@ fun VoiceScreen(
                 }
             }
             Row(Modifier.padding(top = 18.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (speak && state !is VoiceModel.UiState.NoModel) {
+                if (speak && state !is VoiceModel.UiState.NoModel && state !is VoiceModel.UiState.NeedsGemma4) {
                     val busy = state is VoiceModel.UiState.Listening || state is VoiceModel.UiState.Comparing || state is VoiceModel.UiState.Checking || state is VoiceModel.UiState.WritingUrdu || state is VoiceModel.UiState.WritingEnglish
                     PillButton(
                         if (state is VoiceModel.UiState.Recording) stringResource(R.string.voice_stop)

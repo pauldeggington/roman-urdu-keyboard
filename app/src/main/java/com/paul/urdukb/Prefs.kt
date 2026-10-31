@@ -107,6 +107,15 @@ Rules:
     }
     fun setModelChoice(ctx: Context, c: ModelChoice) = sp(ctx).edit().putString("model_choice", c.key).apply()
 
+    /** Set once Gemma 4 is installed and checked. Gemma 3 1B is then removed and no longer offered. */
+    fun gemma4Installed(ctx: Context) = sp(ctx).getBoolean("gemma4_installed", false)
+    fun setGemma4Installed(ctx: Context, v: Boolean) = sp(ctx).edit().putBoolean("gemma4_installed", v).apply()
+    fun forgetModelSize(ctx: Context, c: ModelChoice) = sp(ctx).edit().remove(if (c == ModelChoice.GEMMA4) "model_size" else "model_size_${c.key}").apply()
+
+    /** The models the person can pick: only Gemma 4 once it is installed. */
+    fun offeredModels(ctx: Context): List<ModelChoice> =
+        if (gemma4Installed(ctx)) listOf(ModelChoice.GEMMA4) else ModelChoice.entries
+
     fun url(ctx: Context) = modelChoice(ctx).url
 
     private fun sizeKey(ctx: Context) = if (modelChoice(ctx) == ModelChoice.GEMMA4) "model_size" else "model_size_${modelChoice(ctx).key}"

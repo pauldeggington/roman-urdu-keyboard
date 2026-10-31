@@ -210,6 +210,7 @@ class MainModel(app: Application) : AndroidViewModel(app) {
 
     fun refresh() {
         if (!busy) BackgroundDownload.finishIfDone(ctx)?.let { runVerify() }
+        if (!busy) LlmEngine.settleModels(ctx)
         val bg = BackgroundDownload.state(ctx)
         val f = LlmEngine.modelFile(ctx)
         val part = ModelDownloader.partFile(f)
@@ -481,6 +482,7 @@ class MainModel(app: Application) : AndroidViewModel(app) {
 
     fun removeModel() {
         LlmEngine.reset()
+        if (Prefs.modelChoice(ctx) == ModelChoice.GEMMA4) Prefs.setGemma4Installed(ctx, false)
         val f = LlmEngine.modelFile(ctx)
         f.delete()
         ModelDownloader.partFile(f).delete()

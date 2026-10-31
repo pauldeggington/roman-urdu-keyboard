@@ -22,7 +22,7 @@ object BundledModel {
     }.getOrDefault(false).also { found = it }
 
     /** The built-in model is the Gemma 3 1B one, so it only counts when that model is the chosen one. */
-    fun wanted(ctx: Context): Boolean = available(ctx) && Prefs.modelChoice(ctx) == ModelChoice.GEMMA3 && !LlmEngine.modelExists(ctx)
+    fun wanted(ctx: Context): Boolean = available(ctx) && !Prefs.gemma4Installed(ctx) && Prefs.modelChoice(ctx) == ModelChoice.GEMMA3 && !LlmEngine.modelExists(ctx)
 
     /** Copies it to [dest]. Throws if the phone is short of space or the copy is incomplete. */
     fun install(ctx: Context, dest: File, onProgress: (Long, Long) -> Unit) {

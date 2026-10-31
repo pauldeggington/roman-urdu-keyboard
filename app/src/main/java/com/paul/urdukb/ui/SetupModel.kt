@@ -292,6 +292,7 @@ class SetupModel(app: Application, private val saved: SavedStateHandle) : Androi
                 io.execute { runCatching { verifyFile(installed) }; verifying = false }
             }
         }
+        if (!verifying) LlmEngine.settleModels(ctx)
         val s = BackgroundDownload.state(ctx)
         val ready = LlmEngine.modelExists(ctx) && !verifying
         val pct = if (s.total > 0) (s.done * 100 / s.total).toInt() else 0
