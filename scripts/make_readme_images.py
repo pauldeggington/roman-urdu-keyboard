@@ -305,7 +305,7 @@ def banner():
     d.text((150, 480), "Keyboard", font=font(FONTS + "Poppins-Bold.ttf", 132), fill=(255, 255, 255))
     d.text((156, 665), "Type English. Send Roman Urdu.", font=font(INTER + "Inter-SemiBold.otf", 52), fill=(255, 233, 168))
     x = 156
-    for label in ("On-device AI", "Works offline", "Free and open source"):
+    for label in ("On-device AI", "Works offline", "No ads, no account"):
         f = font(INTER + "Inter-Medium.otf", 32)
         w = int(d.textlength(label, font=f)) + 96
         pill(cv, [x, 780, x + w, 856], 38, (255, 255, 255, 28), (255, 255, 255, 70))

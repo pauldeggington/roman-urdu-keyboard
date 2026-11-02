@@ -166,8 +166,17 @@ jobs:
       - name: Publish release (main only)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         env:
-          GH_TOKEN: ${{ github.token }}
+          PUBLIC_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
+          PUBLIC_REPO: pauldeggington/roman-urdu-keyboard
+          OWN_TOKEN: ${{ github.token }}
         run: |
+          # The code repo is private; releases go to the public repo so the website, the updater and downloads keep working.
+          if [ -n "$PUBLIC_TOKEN" ]; then
+            export GH_TOKEN="$PUBLIC_TOKEN"; REPO_ARGS="--repo $PUBLIC_REPO"; TARGET="main"
+          else
+            echo "::warning title=Public releases::PUBLIC_REPO_TOKEN is not set, so the release stays in this private repo."
+            export GH_TOKEN="$OWN_TOKEN"; REPO_ARGS=""; TARGET="$GITHUB_SHA"
+          fi
           TAG="v${VERSION_NAME}"
           cp out/roman-urdu-keyboard.apk "out/RomanUrduKeyboard-${VERSION_NAME}.apk"
           {
@@ -197,10 +206,23 @@ jobs:
             echo "" >> notes.md
             echo "**If something misbehaves:** the main APK is shrunk with R8 (about a third of the size). \`RomanUrduKeyboard-${VERSION_NAME}-standard.apk\` is the same app without shrinking; install it over the top." >> notes.md
           fi
-          gh release create "$TAG" $ASSETS \
+          gh release create "$TAG" $ASSETS $REPO_ARGS \
             --title "Roman Urdu Keyboard $(tr -d '[:space:]' < VERSION) (build ${GITHUB_RUN_NUMBER})" \
             --notes-file notes.md \
-            --target "$GITHUB_SHA" \
+            --target "$TARGET" \
             --latest
-          echo "::notice title=Released::https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
+          echo "::notice title=Released::${TAG}"
+
+      - name: Refresh the public site files (main only)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          PUBLIC_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
+        run: |
+          [ -n "$PUBLIC_TOKEN" ] || { echo "No PUBLIC_REPO_TOKEN; skipping site refresh."; exit 0; }
+          git clone --depth 1 "https://x-access-token:${PUBLIC_TOKEN}@github.com/pauldeggington/roman-urdu-keyboard.git" /tmp/public
+          scripts/export_public.sh /tmp/public
+          cd /tmp/public
+          git config user.name "Paul Eggington"; git config user.email "54344603+pauldeggington@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "Public site already up to date."; else git commit -q -m "Site and notes for ${VERSION_NAME}"; git push origin HEAD:main; fi
 

@@ -225,7 +225,7 @@
     <string name="credits_giphy">GIF اور اسٹکرز: GIPHY (https://giphy.com)۔</string>
     <string name="credits_icons">آئیکنز: گوگل کے Material Symbols (Apache 2.0)۔ کلید کا فونٹ: Google Sans (SIL Open Font License)۔ ایموجی فہرست: unicode-emoji-json (MIT)، یونی کوڈ ڈیٹا سے۔</string>
     <string name="credits_data">املا کا ڈیٹا: RUWV-NSR، Roman Urdu Word Variations and Normalized Sentiment Review Dataset، مدثر احمد کی طرف سے (قائدِ عوام یونیورسٹی آف انجینئرنگ، سائنس اینڈ ٹیکنالوجی)۔ Mendeley Data, V5, doi:10.17632/v5jfhsvtmd.5۔ لائسنس CC BY 4.0۔ تبدیلی: املا کی مختلف شکلوں کی فہرست میں سمیٹا گیا ← سب سے عام املا۔ یہ صرف ایک ہی لفظ کے مختلف املا پہچاننے کے لیے استعمال ہوتا ہے: مثالیں چنتے وقت، زبان پہچانتے وقت، اور آپ کی املا لغت لاگو کرتے وقت۔\nhttps://data.mendeley.com/datasets/v5jfhsvtmd/5</string>
-    <string name="credits_license">یہ ایپ GPL-3.0 کے تحت اوپن سورس ہے۔\nhttps://github.com/pauldeggington/roman-urdu-keyboard</string>
+    <string name="credits_license">© 2026 Paul Eggington۔ جملہ حقوق محفوظ ہیں۔\nhttps://pauldeggington.github.io/roman-urdu-keyboard/</string>
     <string name="next">آگے</string>
     <string name="setup_skip">چھوڑیں</string>
     <string name="setup_skip_step">یہ مرحلہ چھوڑیں</string>

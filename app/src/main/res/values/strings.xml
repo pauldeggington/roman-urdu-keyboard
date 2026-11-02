@@ -230,7 +230,7 @@
     <string name="credits_giphy">GIFs and stickers: GIPHY (https://giphy.com).</string>
     <string name="credits_icons">Icons: Material Symbols by Google (Apache 2.0). Key font: Google Sans (SIL Open Font License). Emoji list: unicode-emoji-json (MIT) from Unicode data.</string>
     <string name="credits_data">Spelling data: RUWV-NSR, Roman Urdu Word Variations and Normalized Sentiment Review Dataset, by Mudasar Ahmed (Quaid-e-Awam University of Engineering, Science and Technology). Mendeley Data, V5, doi:10.17632/v5jfhsvtmd.5. Licence CC BY 4.0. Changes: flattened into a list of spelling variant → most common spelling. It is used only to recognise different spellings of the same word: when picking examples, when detecting the language, and when applying your spelling glossary.\nhttps://data.mendeley.com/datasets/v5jfhsvtmd/5</string>
-    <string name="credits_license">This app is open source under GPL-3.0.\nhttps://github.com/pauldeggington/roman-urdu-keyboard</string>
+    <string name="credits_license">© 2026 Paul Eggington. All rights reserved.\nhttps://pauldeggington.github.io/roman-urdu-keyboard/</string>
 
     <!-- Setup guide -->
     <string name="next">Next</string>
