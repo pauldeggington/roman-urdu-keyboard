@@ -85,7 +85,6 @@ class MainModel(app: Application) : AndroidViewModel(app) {
     var translating by mutableStateOf(false)
     /** Which tab is showing. */
     var tab by mutableStateOf(Tab.TRANSLATE)
-        private set
     /** True while a file is being copied or checked: the screen asks Android to stay awake. */
     var keepScreenOn by mutableStateOf(false)
         private set
