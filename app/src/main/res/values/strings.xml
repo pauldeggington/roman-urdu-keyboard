@@ -289,7 +289,7 @@
     <string name="setup_tip_tone">tum for friends and family, aap for elders and work.</string>
     <string name="setup_tip_auto">Works out the direction. Tap to force English → Roman Urdu or back.</string>
     <string name="setup_practice_hint">e.g. I\'m on my way, see you soon</string>
-    <string name="setup_done_title">Sab tayyar hai!</string>
+    <string name="setup_done_title">You\'re all set</string>
     <string name="setup_done_body">You\'re all set. Roman Urdu Keyboard works in every app: WhatsApp, Messages, email, anywhere you type.</string>
     <string name="setup_done_tip_translate">Tap it after typing. Tap again to get your original back.</string>
     <string name="setup_done_tip_wrong">Sounds wrong?</string>

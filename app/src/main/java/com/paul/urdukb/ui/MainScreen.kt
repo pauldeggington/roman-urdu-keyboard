@@ -78,7 +78,6 @@ import com.paul.urdukb.SetupActivity
 import com.paul.urdukb.Speaker
 import com.paul.urdukb.Style
 import com.paul.urdukb.VariantMap
-import com.paul.urdukb.Words
 import com.paul.urdukb.ime.ClipStore
 import com.paul.urdukb.ime.KbSettings
 import com.paul.urdukb.ime.PersonalWords
@@ -420,7 +419,6 @@ private fun ColourCard(recreateScreen: () -> Unit) {
                     Column(
                         Modifier.weight(1f).selectable(selected = selected, role = Role.RadioButton) {
                             KeyboardLook.apply(ctx, sw.id, KeyboardLook.mode(ctx))
-                            Toast.makeText(ctx, Words.colour(), Toast.LENGTH_SHORT).show()
                             recreateScreen()
                         },
                         horizontalAlignment = Alignment.CenterHorizontally,
