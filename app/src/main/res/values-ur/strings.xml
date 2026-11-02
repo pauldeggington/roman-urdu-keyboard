@@ -150,7 +150,7 @@
     <string name="header_tagline">انگریزی سے رومن اردو اور واپس۔ سب کچھ آپ کے فون پر، انٹرنیٹ کی ضرورت نہیں۔</string>
     <string name="model_choice_gemma4">Gemma 4 · 2.6 GB</string>
     <string name="model_choice_gemma3">Gemma 3 · 0.6 GB</string>
-    <string name="model_choice_help">Gemma 4 رومن اردو کا سب سے اچھا ترجمہ کرتا ہے۔ Gemma 3 منٹوں میں ڈاؤن لوڈ ہوتا ہے اور تیز جواب دیتا ہے، لیکن کم درست ہے۔</string>
+    <string name="model_choice_help">Gemma 4 رومن اردو کا سب سے اچھا ترجمہ کرتا ہے اور صرف وہی آواز (آڈیو) والی خصوصیات چلا سکتا ہے۔ Gemma 3 چھوٹا اور تیز ہے لیکن کم درست۔ Gemma 4 انسٹال ہوتے ہی Gemma 3 ہٹا دیا جاتا ہے۔</string>
     <string name="model_background_note">یہ نوٹیفکیشن کے ساتھ پس منظر میں ڈاؤن لوڈ ہوتا ہے، اس لیے آپ ایپ چھوڑ سکتے ہیں۔</string>
     <string name="model_token_help">Gemma 3 گوگل کے لائسنس کے پیچھے ہے۔ ماڈل کا صفحہ کھولیں اور منظور پر ٹیپ کریں (مفت Hugging Face اکاؤنٹ)، پھر huggingface.co/settings/tokens پر مفت ریڈ ٹوکن بنا کر یہاں پیسٹ کریں۔</string>
     <string name="model_token_hint">Hugging Face ٹوکن (hf_…)</string>
@@ -248,7 +248,7 @@
     <string name="setup_model_title">مترجم ڈاؤن لوڈ کریں</string>
     <string name="setup_model_body">ایک چھوٹا AI ماڈل ترجمہ کرتا ہے۔ یہ آپ کے فون پر رہتا ہے، اس لیے انٹرنیٹ کے بغیر چلتا ہے اور کچھ بھی فون سے باہر نہیں جاتا۔</string>
     <string name="setup_gemma4_sub">Gemma 4 E2B۔ رومن اردو سب سے بہتر سمجھتا ہے۔ اکاؤنٹ کی ضرورت نہیں۔</string>
-    <string name="setup_gemma3_sub">Gemma 3 1B۔ تیزی سے ڈاؤن لوڈ ہوتا ہے اور جلدی جواب دیتا ہے، لیکن ترجمہ کم درست۔ مفت Hugging Face ٹوکن چاہیے۔</string>
+    <string name="setup_gemma3_sub">Gemma 3 1B۔ چھوٹا اور تیز، لیکن ترجمہ کم درست اور آواز (آڈیو) والی خصوصیات نہیں۔ Gemma 4 انسٹال کرنے پر یہ ہٹا دیا جاتا ہے۔</string>
     <string name="setup_mobile_data">آپ موبائل ڈیٹا پر ہیں۔ وائی فائی کا انتظار کریں؟</string>
     <string name="setup_token_intro">گوگل Gemma 3 کو لائسنس کی منظوری کے پیچھے رکھتا ہے۔ اس میں ایک بار تقریباً ایک منٹ لگتا ہے:</string>
     <string name="setup_token_step1">ماڈل کا صفحہ کھولیں، سائن اِن کریں (مفت) اور منظور پر ٹیپ کریں</string>
@@ -376,4 +376,6 @@
     <string name="voice_also_heard">یہ بھی سنا گیا</string>
     <string name="voice_use_this">یہ استعمال کریں</string>
     <string name="voice_copy_roman">رومن اردو کاپی</string>
+    <string name="setup_builtin_copying">بلٹ اِن ترجمہ ساز تیار ہو رہا ہے…</string>
+    <string name="voice_needs_gemma4">جب تک Gemma 4 انسٹال نہ ہو، آواز والی خصوصیات بند ہیں۔ Gemma 3 آڈیو نہیں سن سکتا۔ ایپ کھول کر Gemma 4 پر جائیں۔</string>
 </resources>

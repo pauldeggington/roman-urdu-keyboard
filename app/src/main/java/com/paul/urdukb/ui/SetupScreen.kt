@@ -271,7 +271,7 @@ private fun ModelStep(model: SetupModel, pickModelFile: () -> Unit) {
     Body(stringResource(R.string.setup_model_body))
 
     Column(Modifier.padding(top = 16.dp)) {
-        ModelChoice.entries.forEach { m ->
+        Prefs.offeredModels(LocalContext.current).forEach { m ->
             val selected = m == current
             Column(
                 Modifier.fillMaxWidth().padding(top = 10.dp).clip(RoundedCornerShape(20.dp))

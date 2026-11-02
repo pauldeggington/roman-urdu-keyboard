@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.sp
 import com.paul.urdukb.BuildConfig
 import com.paul.urdukb.KeyboardLook
 import com.paul.urdukb.ModelChoice
+import com.paul.urdukb.Prefs
 import com.paul.urdukb.R
 import com.paul.urdukb.RomanUrdu
 import com.paul.urdukb.SetupActivity
@@ -171,7 +172,8 @@ private fun ModelCard(model: MainModel, pickModelFile: () -> Unit) {
     AppCard {
         CardTitle(stringResource(R.string.card_model))
         Segmented(
-            listOf(stringResource(R.string.model_choice_gemma4) to ModelChoice.GEMMA4, stringResource(R.string.model_choice_gemma3) to ModelChoice.GEMMA3),
+            listOf(stringResource(R.string.model_choice_gemma4) to ModelChoice.GEMMA4, stringResource(R.string.model_choice_gemma3) to ModelChoice.GEMMA3)
+                .filter { it.second in Prefs.offeredModels(LocalContext.current) },
             selected = s.choice,
         ) { model.chooseModel(it) }
         Muted(stringResource(R.string.model_choice_help), Modifier.padding(top = 6.dp), size = Type.caption)
@@ -355,11 +357,13 @@ private fun VoiceCard(model: MainModel) {
     val ctx = LocalContext.current
     AppCard {
         CardTitle(stringResource(R.string.card_voice))
+        val voiceOk = model.snap.choice == ModelChoice.GEMMA4
         Muted(stringResource(R.string.voice_help), Modifier.padding(top = 4.dp))
+        if (!voiceOk) Muted(stringResource(R.string.voice_needs_gemma4), Modifier.padding(top = 8.dp))
         PrefSwitch(stringResource(R.string.voice_careful), stringResource(R.string.voice_careful_sub), KbSettings.CAREFUL_VOICE)
         PillButton(
             stringResource(R.string.voice_speak_button), Modifier.fillMaxWidth().padding(top = 12.dp), filled = true,
-            enabled = !model.busy,
+            enabled = !model.busy && voiceOk,
         ) {
             ctx.startActivity(Intent(ctx, com.paul.urdukb.VoiceActivity::class.java).putExtra(com.paul.urdukb.VoiceActivity.EXTRA_MODE, com.paul.urdukb.VoiceActivity.MODE_SPEAK))
         }

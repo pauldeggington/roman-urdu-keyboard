@@ -1,1 +1,6 @@
 include ':app', ':core'
+
+// the Google Play bundle carries Gemma 3 1B in an install-time asset pack (CI places the file; see app/build.gradle.kts)
+if (gradle.startParameter.projectProperties.containsKey('play') && new File(rootDir, 'gemma3pack/src/main/assets/models').isDirectory()) {
+    include ':gemma3pack'
+}

@@ -24,13 +24,33 @@ object LlmEngine {
      * Where the model lives. Older installs kept it in internal storage; new downloads go to the app's
      * own external folder, because Android's download manager can only write there.
      */
-    fun modelFile(ctx: Context): File {
+    fun modelFile(ctx: Context): File = modelFile(ctx, Prefs.modelChoice(ctx))
+
+    fun modelFile(ctx: Context, choice: ModelChoice): File {
         val app = Prefs.store(ctx)
-        val name = Prefs.modelChoice(ctx).fileName
+        val name = choice.fileName
         val internal = File(app.filesDir, name)
         if (internal.exists()) return internal
         val ext = runCatching { app.getExternalFilesDir(null) }.getOrNull() ?: return internal
         return File(ext, name)
+    }
+
+    /**
+     * Once Gemma 4 is installed and checked, Gemma 3 1B is deleted and only Gemma 4 is used.
+     * (Audio features need Gemma 4, so it is also the only model that can do everything.)
+     */
+    fun settleModels(ctx: Context) {
+        if (Prefs.modelChoice(ctx) != ModelChoice.GEMMA4 || !modelExists(ctx)) return
+        val f = modelFile(ctx, ModelChoice.GEMMA4)
+        if (Prefs.verifiedStamp(ctx) != Prefs.stamp(f)) return
+        if (!Prefs.gemma4Installed(ctx)) Prefs.setGemma4Installed(ctx, true)
+        val g3 = ModelChoice.GEMMA3
+        val app = Prefs.store(ctx)
+        val files = listOfNotNull(
+            File(app.filesDir, g3.fileName), runCatching { app.getExternalFilesDir(null) }.getOrNull()?.let { File(it, g3.fileName) },
+        ).flatMap { listOf(it, File(it.path + ".part"), File(it.path + ".download")) }
+        files.filter { it.exists() }.forEach { it.delete() }
+        Prefs.forgetModelSize(ctx, g3)
     }
 
     fun isLoaded(): Boolean = engine != null

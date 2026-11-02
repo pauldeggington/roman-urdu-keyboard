@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import com.paul.urdukb.LlmEngine
+import com.paul.urdukb.Prefs
 import com.paul.urdukb.R
 import com.paul.urdukb.RomanUrdu
 import com.paul.urdukb.Style
@@ -41,6 +42,8 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
     sealed interface UiState {
         data object Idle : UiState
         data object NoModel : UiState
+        /** Audio features only work with Gemma 4 (Gemma 3 cannot listen). */
+        data object NeedsGemma4 : UiState
         data object Decoding : UiState
         data class Listening(val part: Int, val of: Int, val pass: Int = 1, val passes: Int = 1) : UiState
         data object WritingUrdu : UiState
@@ -91,6 +94,7 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
         if (started) return
         started = true
         mode = Mode.URDU_TO_ENGLISH
+        if (needsGemma4()) { state = UiState.NeedsGemma4; return }
         if (!LlmEngine.modelExists(ctx)) { state = UiState.NoModel; return }
         state = UiState.Decoding
         io.execute {
@@ -200,7 +204,8 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
         if (started) return
         started = true
         mode = Mode.ENGLISH_TO_URDU
-        if (!LlmEngine.modelExists(ctx)) state = UiState.NoModel
+        if (needsGemma4()) state = UiState.NeedsGemma4
+        else if (!LlmEngine.modelExists(ctx)) state = UiState.NoModel
     }
 
     val isRecording: Boolean get() = state is UiState.Recording
@@ -208,7 +213,7 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
     /** The record button: starts recording, or stops it and translates. The caller has checked the microphone permission. */
     fun toggleRecording() {
         if (state is UiState.Recording) { stopAndTranslate(); return }
-        if (state is UiState.NoModel || state is UiState.Decoding || state is UiState.Listening || state is UiState.Comparing || state is UiState.Checking || state is UiState.WritingUrdu || state is UiState.WritingEnglish) return
+        if (state is UiState.NeedsGemma4 || state is UiState.NoModel || state is UiState.Decoding || state is UiState.Listening || state is UiState.Comparing || state is UiState.Checking || state is UiState.WritingUrdu || state is UiState.WritingEnglish) return
         speech?.stopSpeaking()
         audio = AudioState.None
         copied = ""
@@ -311,8 +316,10 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
         speech?.stopSpeaking()
         audio = AudioState.None
         copied = ""
-        state = if (LlmEngine.modelExists(ctx)) UiState.Idle else UiState.NoModel
+        state = if (needsGemma4()) UiState.NeedsGemma4 else if (LlmEngine.modelExists(ctx)) UiState.Idle else UiState.NoModel
     }
+
+    private fun needsGemma4() = Prefs.modelChoice(ctx) != com.paul.urdukb.ModelChoice.GEMMA4
 
     fun message(id: Int, vararg a: Any) = str(id, *a)
 

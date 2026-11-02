@@ -84,6 +84,20 @@ jobs:
           COMMIT=$(git commit-tree "$TREE" -m "Drawn screens for ${GITHUB_SHA}")
           git push -f origin "$COMMIT:refs/heads/ci-ui-shots"
 
+      - name: Fetch Gemma 3 1B to build into the app (from the draft release gemma3-1b-model)
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ID=$(gh api "repos/${GITHUB_REPOSITORY}/releases?per_page=100" --paginate -q '.[] | select(.tag_name=="gemma3-1b-model") | .assets[] | select(.name=="gemma3-1b-it-int4.litertlm") | .id' | head -n 1)
+          if [ -z "$ID" ]; then echo "::warning title=Built-in model::the draft release gemma3-1b-model has no model file, building without it"; exit 0; fi
+          mkdir -p model-assets/models gemma3pack/src/main/assets/models
+          gh api -H "Accept: application/octet-stream" "repos/${GITHUB_REPOSITORY}/releases/assets/${ID}" > model-assets/models/gemma3-1b-it-int4.litertlm
+          SIZE=$(stat -c%s model-assets/models/gemma3-1b-it-int4.litertlm)
+          if [ "$SIZE" -ne 584417280 ]; then echo "::error title=Built-in model::unexpected size $SIZE"; exit 1; fi
+          cp model-assets/models/gemma3-1b-it-int4.litertlm gemma3pack/src/main/assets/models/
+          echo "::notice title=Built-in model::fetched $(du -h model-assets/models/gemma3-1b-it-int4.litertlm | cut -f1)"
+
       - name: Build debug APK
         run: |
           chmod +x gradlew
@@ -101,7 +115,7 @@ jobs:
       - name: Build the R8 (shrunk) copy; it becomes the main APK if it builds, the normal one stays as a fallback
         continue-on-error: true
         run: |
-          ./gradlew :app:assembleDebug -Pminify --no-daemon > r8.log 2>&1 && rc=0 || rc=$?
+          ./gradlew :app:assembleDebug -Pminify -PbundleModel --no-daemon > r8.log 2>&1 && rc=0 || rc=$?
           if [ "$rc" -eq 0 ]; then
             cp app/build/outputs/apk/debug/*-r8.apk out/roman-urdu-keyboard-r8.apk
             mv out/roman-urdu-keyboard.apk out/roman-urdu-keyboard-standard.apk
@@ -113,7 +127,7 @@ jobs:
           fi
 
       - name: Build the Google Play bundle
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         continue-on-error: true
         run: |
           ./gradlew :app:bundleDebug -Pminify -Pplay --no-daemon > aab.log 2>&1 && rc=0 || rc=$?
@@ -161,11 +175,11 @@ jobs:
             echo ""
             echo "1. On your Android phone, download **RomanUrduKeyboard-${VERSION_NAME}.apk** below."
             echo "2. Open it. If Android asks, allow installs from your browser or Files app, then tap **Install**."
-            echo "3. Open **Roman Urdu Keyboard** and follow the setup guide. It downloads the translator (about 2.6 GB, once) and walks you through turning the keyboard on."
+            echo "3. Open **Roman Urdu Keyboard** and follow the setup guide. The Gemma 3 1B translator is built in, so there is nothing to download (you can still switch to the larger Gemma 4, a 2.6 GB download). The guide walks you through turning the keyboard on."
             echo ""
             echo "Already installed? This version installs over it and keeps your settings and the translator."
             echo ""
-            echo "Needs Android 12 or newer on a 64-bit phone with about 3 GB free. Works offline after setup."
+            echo "Needs Android 12 or newer on a 64-bit phone with about 2 GB free (the APK is about 0.6 GB because the translator is inside it). Works offline after setup."
             echo ""
             echo "## Changes"
             echo ""
