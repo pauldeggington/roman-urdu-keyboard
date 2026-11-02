@@ -114,6 +114,12 @@ fun MainScreen(model: MainModel, voice: VoiceModel, actions: VoiceActions, pickM
         model.scrollRequest = null
     }
 
+    // the Voice tab opens on "Speak English" the first time; after that it stays on whichever side was last used
+    var voiceStarted by remember { mutableStateOf(false) }
+    LaunchedEffect(model.tab) {
+        if (model.tab == Tab.VOICE && !voiceStarted) { voiceStarted = true; voice.prepareSpeak() }
+    }
+
     Box(Modifier.fillMaxSize().background(Brand.page)) {
         AnimatedContent(
             targetState = model.tab,
