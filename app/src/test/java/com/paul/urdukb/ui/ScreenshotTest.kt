@@ -121,6 +121,23 @@ class ScreenshotTest {
     @Test fun galleryUrduRtl() { shoot("gallery-urdu-rtl", rtl = true) { ComponentGallery(urduGallery) } }
     @Test fun galleryLargeText() { shoot("gallery-large-text", fontScale = 1.6f) { ComponentGallery() } }
 
+    // ---- the four tabs of the app, driven by their real ViewModels
+
+    private fun tabShot(name: String, tab: Tab, rtl: Boolean = false) {
+        val app = ctx as Application
+        val main = MainModel(app)
+        val voice = VoiceModel(app)
+        main.tab = tab
+        val actions = VoiceActions({}, {}, {}, {})
+        shoot(name, rtl = rtl) { MainScreen(main, voice, actions, {}, {}) }
+    }
+
+    @Test fun tabTranslate() { tabShot("tab-translate", Tab.TRANSLATE) }
+    @Test fun tabVoice() { tabShot("tab-voice", Tab.VOICE) }
+    @Test fun tabLearn() { tabShot("tab-learn", Tab.LEARN) }
+    @Test fun tabSettings() { tabShot("tab-settings", Tab.SETTINGS) }
+    @Test fun tabTranslateUrdu() { tabShot("tab-translate-urdu-rtl", Tab.TRANSLATE, rtl = true) }
+
     // ---- the real setup guide, driven by its real ViewModel
 
     private fun setupModel() = SetupModel(ctx as Application, SavedStateHandle())

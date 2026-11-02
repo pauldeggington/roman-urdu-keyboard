@@ -237,7 +237,7 @@
     <string name="setup_finish">مکمل کریں</string>
     <string name="setup_problem_title">کچھ غلط ہو گیا</string>
     <string name="setup_problem_body">اس مرحلے میں مسئلہ آیا۔ آپ اسے چھوڑ کر آگے بڑھ سکتے ہیں؛ تفصیل ایپ میں “آخری خرابی” کے تحت محفوظ ہے۔</string>
-    <string name="setup_welcome_body">انگریزی میں لکھیں، رومن اردو میں بھیجیں۔ یا اس کے برعکس۔</string>
+    <string name="setup_welcome_body">اپنے فون پر انگریزی کا رومن اردو میں ترجمہ کریں، اور واپس بھی۔ نجی اور آف لائن۔</string>
     <string name="setup_feat_translate">لکھتے لکھتے ترجمہ</string>
     <string name="setup_feat_translate_sub">ترجمہ کی کلید پر ایک ٹیپ آپ کا پیغام رومن اردو میں بدل دیتا ہے، بے تکلف یا رسمی۔</string>
     <string name="setup_feat_private">نجی اور آف لائن</string>

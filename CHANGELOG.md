@@ -4,6 +4,15 @@ Every release on `main` has a version: **major.minor.build**. The major and mino
 a set of changes is merged to `main`; the build number is the CI build, so a newer build always installs over an older one.
 The app shows it as, for example, "Version 2.1 (build 121)". Work-in-progress builds are not published as releases; they are only kept as a download on the CI run.
 
+## 2.6
+
+- **New look.** The app is redesigned in the website's deep green and gold, with Inter type, white pill buttons and dark cards. It is always dark; the keyboard keeps its own light, dark and colour choices.
+- **Four tabs:** Translate (the try box, tone and direction), Voice, Learn and Settings, behind a floating pill of tabs.
+- **Voice tab:** speak English and get an Urdu voice message, or open an Urdu voice note (shared from WhatsApp or picked as a file) and read it in English. Both need Gemma 4; with Gemma 3 the tab says so and offers to set it up.
+- **Learn tab:** how to type, tap and send, the tones, reading Roman Urdu back to English, voice, tips and the questions people ask.
+- **New setup:** the lantern and glow from the website, drawn pictures for each step (the keyboard toggle, Android's keyboard picker, the toolbar), and the model step is now an optional offer of Gemma 4 with a Later button, since Gemma 3 is already inside the app.
+- **The Translate icon turns while the model works,** in the app's Translate button, the translate sheet for selected text and the Voice screens, as the keyboard's own key already did. No more loading circles.
+
 ## 2.5
 
 - **Gemma 3 1B is built in.** The app now carries the small translator inside it, so setup has nothing to download (the GitHub APK is about 0.6 GB). The larger Gemma 4 is still a download you can switch to. On Google Play the model ships as an install-time asset pack.

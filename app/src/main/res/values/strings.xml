@@ -244,7 +244,7 @@
     <string name="setup_finish">Finish</string>
     <string name="setup_problem_title">Something went wrong</string>
     <string name="setup_problem_body">This step hit a problem. You can skip it and carry on; the details are saved under Last error in the app.</string>
-    <string name="setup_welcome_body">Type in English, send it in Roman Urdu. Or the other way round.</string>
+    <string name="setup_welcome_body">Translate English into Roman Urdu on your phone, and back. Private and offline.</string>
     <string name="setup_feat_translate">Translate as you type</string>
     <string name="setup_feat_translate_sub">One tap on the Translate key turns your message into Roman Urdu, casual or formal.</string>
     <string name="setup_feat_private">Private and offline</string>
@@ -254,8 +254,8 @@
     <string name="setup_welcome_note">Setup takes about two minutes. The small translator is already inside the app, so there is nothing to download to start.</string>
     <string name="setup_model_title">Better translations and voice?</string>
     <string name="setup_model_body">Gemma 3 is already inside the app, so you can start right away. Gemma 4 translates better and is the only model that can listen to voice notes. It is a one-time download you can also add later from Settings.</string>
-    <string name="setup_gemma4_sub">Gemma 4 E2B. Understands Roman Urdu best. No account needed.</string>
-    <string name="setup_gemma3_sub">Gemma 3 1B. Smaller and faster, but translates less accurately and has no voice (audio) features. It is removed if you install Gemma 4.</string>
+    <string name="setup_gemma4_sub">Understands Roman Urdu best. No account needed.</string>
+    <string name="setup_gemma3_sub">Smaller and faster, but translates less accurately and has no voice features. It is removed if you install Gemma 4.</string>
     <string name="setup_mobile_data">You\'re on mobile data. Wait for Wi-Fi?</string>
     <string name="setup_token_intro">Google keeps Gemma 3 behind a licence click. It takes about a minute, once:</string>
     <string name="setup_token_step1">Open the model page, sign in (free) and tap Agree</string>
