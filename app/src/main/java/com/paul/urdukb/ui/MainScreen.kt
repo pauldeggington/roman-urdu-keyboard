@@ -176,8 +176,7 @@ private fun androidx.compose.foundation.layout.RowScope.TabItem(tab: Tab, icon: 
             .selectable(selected = on, role = Role.Tab) { onPick(tab) }.semantics { contentDescription = label },
         horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically,
     ) {
-        TintedIcon(icon, if (on) Brand.pillText else Brand.muted, 18.dp)
-        if (on) Text(label, Modifier.padding(start = 7.dp).clearAndSetSemantics {}, color = Brand.pillText, fontSize = Type.caption, fontWeight = FontWeight.Medium, maxLines = 1)
+        TintedIcon(icon, if (on) Brand.pillText else Brand.muted, 22.dp)
     }
 }
 
@@ -198,7 +197,7 @@ fun TabHeader(label: String, title: String, lead: String, mark: Boolean = false)
 // ------------------------------------------------------------------ Translate tab
 
 private fun LazyListScope.translateTab(model: MainModel) {
-    item { TabHeader(stringResource(R.string.tab_translate), remember { Words.greeting() }, stringResource(R.string.header_tagline), mark = true) }
+    item { TabHeader(stringResource(R.string.tab_translate), stringResource(R.string.translate_title), stringResource(R.string.header_tagline), mark = true) }
     item { ReadyStrip(model) }
     item { TryCard(model) }
     item { QuickTipsCard() }

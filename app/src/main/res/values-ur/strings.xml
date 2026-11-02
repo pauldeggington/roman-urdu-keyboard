@@ -456,4 +456,5 @@
     <string name="setup_done_tip_voice">انگریزی بولیں اور اردو آڈیو بھیجیں، یا وائس نوٹ انگریزی میں پڑھیں۔</string>
     <string name="setup_picker_title">ان پٹ طریقہ چنیں</string>
     <string name="setup_picker_other">Gboard</string>
+    <string name="translate_title">ترجمہ</string>
 </resources>

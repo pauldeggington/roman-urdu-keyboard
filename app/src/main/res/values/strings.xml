@@ -465,4 +465,5 @@
     <string name="setup_done_tip_voice">Speak English and send Urdu audio, or read a voice note in English.</string>
     <string name="setup_picker_title">Choose input method</string>
     <string name="setup_picker_other">Gboard</string>
+    <string name="translate_title">Translate</string>
 </resources>
