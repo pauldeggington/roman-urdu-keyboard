@@ -1,41 +1,38 @@
 package com.paul.urdukb.ui
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Density
-import androidx.compose.runtime.CompositionLocalProvider
-import com.paul.urdukb.Palette
+import androidx.compose.material3.LocalTextStyle
 
 /**
- * The look of the app screens. The colours come from [Palette], the same ones the keyboard settings use: wallpaper
- * (Material You) colours by default, or built from the swatch the person picked, light or dark as chosen.
+ * The look of the app screens: always the deep green and gold of the website (see [Brand]), whatever the phone's
+ * light or dark setting. The keyboard's own colours are a separate choice, made in KeyboardLook.
  */
 @Composable
 fun RomanUrduTheme(urdu: Boolean = isUrduScreen(), content: @Composable () -> Unit) {
-    val ctx = LocalContext.current
-    val pal = remember { Palette(ctx) }
-    val c = { v: Int -> Color(v) }
-    val scheme = (if (pal.dark) darkColorScheme() else lightColorScheme()).copy(
-        background = c(pal.appBg), onBackground = c(pal.text),
-        surface = c(pal.card), onSurface = c(pal.text),
-        surfaceVariant = c(pal.field), onSurfaceVariant = c(pal.textMuted),
-        primary = c(pal.primary), onPrimary = c(pal.onPrimary),
-        secondaryContainer = c(pal.tonal), onSecondaryContainer = c(pal.onTonal),
-        error = c(pal.error),
+    val scheme = darkColorScheme(
+        background = Brand.page, onBackground = Brand.text,
+        surface = Brand.card, onSurface = Brand.text,
+        surfaceVariant = Brand.raised, onSurfaceVariant = Brand.muted,
+        primary = Brand.gold, onPrimary = Brand.onGold,
+        secondaryContainer = Brand.raised, onSecondaryContainer = Brand.text,
+        outline = Brand.line, outlineVariant = Brand.line,
+        error = Brand.error, onError = Color(0xFF601410),
     )
     // Urdu script is drawn smaller than Latin at the same size (and its marks need room above and below), so it gets a lift
     val d = LocalDensity.current
     val density = if (urdu) Density(d.density, d.fontScale * URDU_TEXT_LIFT) else d
     CompositionLocalProvider(LocalDensity provides density) {
-        MaterialTheme(colorScheme = scheme, typography = AppTypography, content = content)
+        MaterialTheme(colorScheme = scheme, typography = AppTypography) {
+            CompositionLocalProvider(LocalTextStyle provides TextStyle(fontFamily = AppFont), content = content)
+        }
     }
 }
 
@@ -46,10 +43,6 @@ const val URDU_TEXT_LIFT = 1.15f
 @Composable
 fun isUrduScreen(): Boolean = LocalConfiguration.current.locales.get(0)?.language == "ur"
 
-/** Green for "done", red for problems: not part of the Material scheme, so read from the palette. */
+/** Green for "done", red for problems: not part of the Material scheme. */
 @Composable
-fun statusColors(): Pair<Color, Color> {
-    val ctx = LocalContext.current
-    val pal = remember { Palette(ctx) }
-    return Color(pal.ok) to Color(pal.error)
-}
+fun statusColors(): Pair<Color, Color> = Brand.green2 to Brand.error

@@ -89,11 +89,13 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
 
     // ---------------------------------------------------------------- Urdu voice note in
 
-    /** Starts on a shared voice note. Only the first call does anything (the screen may be recreated). */
-    fun openSharedAudio(uri: Uri) {
-        if (started) return
+    /** Starts on a shared or picked voice note. In the share sheet only the first call does anything (the screen may be recreated). */
+    fun openSharedAudio(uri: Uri, again: Boolean = false) {
+        if (started && !again) return
+        if (isRecording) return
         started = true
         mode = Mode.URDU_TO_ENGLISH
+        speech?.stopSpeaking(); audio = AudioState.None; copied = ""
         if (needsGemma4()) { state = UiState.NeedsGemma4; return }
         if (!LlmEngine.modelExists(ctx)) { state = UiState.NoModel; return }
         state = UiState.Decoding
@@ -201,11 +203,20 @@ class VoiceModel(app: Application) : AndroidViewModel(app) {
     // ---------------------------------------------------------------- English speech in
 
     fun prepareSpeak() {
-        if (started) return
+        if (started && mode == Mode.ENGLISH_TO_URDU) return
+        if (started) { if (isRecording) return; recorder?.stop(); recorder = null }
         started = true
         mode = Mode.ENGLISH_TO_URDU
-        if (needsGemma4()) state = UiState.NeedsGemma4
-        else if (!LlmEngine.modelExists(ctx)) state = UiState.NoModel
+        resetForAnother()
+    }
+
+    /** The Voice tab's other side: wait for an Urdu voice note to be opened or shared. */
+    fun prepareNote() {
+        if (started && mode == Mode.URDU_TO_ENGLISH) return
+        if (isRecording) return
+        started = true
+        mode = Mode.URDU_TO_ENGLISH
+        resetForAnother()
     }
 
     val isRecording: Boolean get() = state is UiState.Recording

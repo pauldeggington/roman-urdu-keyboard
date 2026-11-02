@@ -40,6 +40,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.paul.urdukb.ui.RomanUrduTheme
+import com.paul.urdukb.ui.Working
+import com.paul.urdukb.ui.SectionLabel
+import com.paul.urdukb.ui.PillButton
+import com.paul.urdukb.ui.Brand
+import com.paul.urdukb.ui.AppFont
+import androidx.compose.foundation.border
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -103,60 +109,47 @@ private fun TranslateSheet(source: String, previewResult: String?, onClose: () -
 
     val nothing = remember { MutableInteractionSource() }
     Box(
-        Modifier.fillMaxSize().background(Color(0x66000000)).clickable(interactionSource = nothing, indication = null) { onClose() },
+        Modifier.fillMaxSize().background(Color(0x99000000)).clickable(interactionSource = nothing, indication = null) { onClose() },
     ) {
         Column(
             Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
-                .background(MaterialTheme.colorScheme.surface)
+                .background(Brand.card)
+                .border(1.dp, Brand.line, RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
                 .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { }   // taps on the sheet do not close it
                 .navigationBarsPadding()
-                .padding(start = 22.dp, end = 22.dp, top = 20.dp, bottom = 22.dp),
+                .padding(start = 22.dp, end = 22.dp, top = 12.dp, bottom = 22.dp),
         ) {
-            val muted = MaterialTheme.colorScheme.onSurfaceVariant
-            Text(
+            Box(Modifier.align(Alignment.CenterHorizontally).padding(bottom = 14.dp).fillMaxWidth(0.12f).height(4.dp).clip(RoundedCornerShape(2.dp)).background(Brand.line))
+            SectionLabel(
                 when {
                     copied -> stringResource(R.string.sheet_copied)
                     state == SheetState.Loading && firstLoad -> stringResource(R.string.sheet_loading_first)
                     else -> stringResource(R.string.sheet_direction)
                 },
-                color = muted, fontSize = 13.sp,
             )
-            Text(source, color = muted, fontSize = 14.sp, maxLines = 4, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 8.dp, bottom = 12.dp))
-            SelectionContainer {
-                Text(
-                    when (val s = state) {
-                        SheetState.Loading -> thinking
-                        is SheetState.Done -> s.english
-                        SheetState.NoModel -> stringResource(R.string.sheet_no_model)
-                        SheetState.Failed -> stringResource(R.string.sheet_failed)
-                    },
-                    color = MaterialTheme.colorScheme.onSurface, fontSize = 20.sp, lineHeight = 26.sp,
-                )
+            Text(source, color = Brand.muted, fontSize = 14.sp, maxLines = 4, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 12.dp, bottom = 12.dp))
+            when (val s = state) {
+                SheetState.Loading -> Working(thinking)
+                is SheetState.Done -> SelectionContainer { Text(s.english, color = Brand.text, fontSize = 21.sp, lineHeight = 28.sp, fontFamily = AppFont) }
+                SheetState.NoModel -> Text(stringResource(R.string.sheet_no_model), color = Brand.text, fontSize = 17.sp, lineHeight = 24.sp)
+                SheetState.Failed -> Text(stringResource(R.string.sheet_failed), color = Brand.text, fontSize = 17.sp, lineHeight = 24.sp)
             }
             Row(Modifier.padding(top = 18.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (state != SheetState.NoModel) {
-                    Button(
-                        onClick = {
-                            (state as? SheetState.Done)?.let {
-                                ctx.getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("English", it.english))
-                                copied = true
-                            }
-                        },
-                        enabled = state is SheetState.Done,
-                        modifier = Modifier.weight(1f).height(46.dp),
-                    ) { Text(stringResource(R.string.sheet_copy), fontSize = 15.sp) }
+                    PillButton(
+                        stringResource(R.string.sheet_copy), Modifier.weight(1f), filled = true, enabled = state is SheetState.Done,
+                        icon = R.drawable.kb_copy, loading = state == SheetState.Loading,
+                    ) {
+                        (state as? SheetState.Done)?.let {
+                            ctx.getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("English", it.english))
+                            copied = true
+                        }
+                    }
                 }
-                Button(
-                    onClick = onClose,
-                    modifier = Modifier.weight(1f).height(46.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    ),
-                ) { Text(stringResource(R.string.sheet_close), fontSize = 15.sp) }
+                PillButton(stringResource(R.string.sheet_close), Modifier.weight(1f)) { onClose() }
             }
         }
     }

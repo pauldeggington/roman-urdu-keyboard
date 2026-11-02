@@ -38,6 +38,9 @@ import java.util.concurrent.Executors
 /** The parts of the app screen the person can jump to from the checklist or from another screen. */
 enum class Section { MODEL, TRY, COLOUR, GIPHY }
 
+/** The app's four tabs. */
+enum class Tab { TRANSLATE, VOICE, LEARN, SETTINGS }
+
 /**
  * Everything the main screen shows and does, apart from drawing it: the model download, the file check, the update
  * check, the Try it box and the style editor. The screen ([MainScreen]) only reads these values and calls these
@@ -78,6 +81,10 @@ class MainModel(app: Application) : AndroidViewModel(app) {
     var snap by mutableStateOf(Snapshot())
         private set
     var busy by mutableStateOf(false)
+    /** True while the Try box is translating: the Translate button shows the turning icon. */
+    var translating by mutableStateOf(false)
+    /** Which tab is showing. */
+    var tab by mutableStateOf(Tab.TRANSLATE)
         private set
     /** True while a file is being copied or checked: the screen asks Android to stay awake. */
     var keepScreenOn by mutableStateOf(false)
@@ -543,6 +550,7 @@ class MainModel(app: Application) : AndroidViewModel(app) {
         tryNote = direction + if (firstLoad) str(R.string.note_first_load) else ""
         tryOutput = Words.thinking()
         thinkingNow = true
+        translating = true
         main.postDelayed(thinkRunnable, 1600)
         updateBusy(true)
         io.execute {
@@ -569,6 +577,7 @@ class MainModel(app: Application) : AndroidViewModel(app) {
                     lastInput = text
                     tryNote = noteFor(used) + "  ·  " + Words.done()
                 }
+                translating = false
                 updateBusy(false)
                 refresh()
             }

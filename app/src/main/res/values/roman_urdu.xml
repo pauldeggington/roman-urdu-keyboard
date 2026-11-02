@@ -3,6 +3,8 @@
     <style name="RomanUrduAppTheme" parent="android:Theme.DeviceDefault.DayNight">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
+        <!-- the app is always the website's deep green, so no light flash before Compose draws -->
+        <item name="android:windowBackground">#070F0C</item>
         <!-- Android 12 splash: the lantern swings while the app opens -->
         <item name="android:windowSplashScreenBackground">#06271D</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_splash_animated</item>

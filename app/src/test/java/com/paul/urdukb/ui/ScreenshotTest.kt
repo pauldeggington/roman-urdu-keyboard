@@ -60,12 +60,6 @@ class ScreenshotTest {
     private val rule = createAndroidComposeRule<ComponentActivity>()
     @get:Rule val chain: RuleChain = RuleChain.outerRule(register).around(rule)
 
-    private fun look(mode: String, swatch: String) {
-        ctx.getSharedPreferences("look", Context.MODE_PRIVATE).edit(commit = true) {
-            putString("mode", mode)
-            putString("swatch", swatch)
-        }
-    }
 
     private fun shoot(name: String, rtl: Boolean = false, fontScale: Float = 1f, content: @androidx.compose.runtime.Composable () -> Unit) {
         try {
@@ -122,24 +116,24 @@ class ScreenshotTest {
         assertTrue("$name: ${"%.2f".format(share * 100)}% of pixels changed (limit 0.5%)", share <= 0.005)
     }
 
-    @Test fun galleryLight() { look("light", "blue"); shoot("gallery-light") { ComponentGallery() } }
-    @Test fun galleryDark() { look("dark", "blue"); shoot("gallery-dark") { ComponentGallery() } }
-    @Test fun galleryLemonLight() { look("light", "lemon"); shoot("gallery-lemon-light") { ComponentGallery() } }
-    @Test fun galleryUrduRtl() { look("light", "blue"); shoot("gallery-urdu-rtl", rtl = true) { ComponentGallery(urduGallery) } }
-    @Test fun galleryLargeText() { look("light", "blue"); shoot("gallery-large-text", fontScale = 1.6f) { ComponentGallery() } }
+    // the app is always dark green and gold now, so one gallery, plus Urdu (right to left) and large text
+    @Test fun gallery() { shoot("gallery") { ComponentGallery() } }
+    @Test fun galleryUrduRtl() { shoot("gallery-urdu-rtl", rtl = true) { ComponentGallery(urduGallery) } }
+    @Test fun galleryLargeText() { shoot("gallery-large-text", fontScale = 1.6f) { ComponentGallery() } }
 
     // ---- the real setup guide, driven by its real ViewModel
 
     private fun setupModel() = SetupModel(ctx as Application, SavedStateHandle())
 
-    @Test fun setupGuideLight() { look("light", "blue"); val m = setupModel(); shoot("setup-welcome-light") { SetupScreen(m, {}, {}, {}) } }
-    @Test fun setupGuideUrdu() { look("light", "blue"); val m = setupModel(); shoot("setup-welcome-urdu-rtl", rtl = true) { SetupScreen(m, {}, {}, {}) } }
-    @Test fun setupGuideLargeText() { look("light", "blue"); val m = setupModel(); shoot("setup-welcome-large-text", fontScale = 1.6f) { SetupScreen(m, {}, {}, {}) } }
+    @Test fun setupGuide() { val m = setupModel(); shoot("setup-welcome") { SetupScreen(m, {}, {}, {}) } }
+    @Test fun setupGuideUrdu() { val m = setupModel(); shoot("setup-welcome-urdu-rtl", rtl = true) { SetupScreen(m, {}, {}, {}) } }
+    @Test fun setupGuideLargeText() { val m = setupModel(); shoot("setup-welcome-large-text", fontScale = 1.6f) { SetupScreen(m, {}, {}, {}) } }
+    @Test fun setupModelStep() { val m = setupModel(); rule.runOnUiThread { m.show(SetupActivity.Step.MODEL) }; shoot("setup-model") { SetupScreen(m, {}, {}, {}) } }
+    @Test fun setupPersonalStep() { val m = setupModel(); rule.runOnUiThread { m.show(SetupActivity.Step.PERSONAL) }; shoot("setup-personal") { SetupScreen(m, {}, {}, {}) } }
 
     /** Every tappable thing is at least 48dp each way and says what it is, on the first three steps of the guide. */
     @Config(sdk = [35], qualifiers = "w411dp-h2600dp-xxhdpi") // tall, so nothing is scrolled out of view
     @Test fun setupGuideIsAccessible() {
-        look("light", "blue")
         val m = setupModel()
         rule.setContent { RomanUrduTheme { SetupScreen(m, {}, {}, {}) } }
         val problems = ArrayList<String>()
