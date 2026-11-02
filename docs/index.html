@@ -113,7 +113,7 @@ h3{margin:0;font-size:20px;font-weight:500;letter-spacing:-.02em;color:var(--ink
 .hero-meta{margin:22px 0 0;color:var(--muted);font-size:14px;letter-spacing:-.01em}
 .hero-meta a{color:var(--white);border-bottom:1px solid rgba(255,255,255,.25)}
 .hero-meta a:hover{border-color:#fff}
-.hero-art{position:relative;width:100%;max-width:1180px;margin:56px auto 0;flex:1;min-height:560px}
+.hero-art{position:relative;width:100%;max-width:1180px;margin:56px auto 0;flex:1;min-height:520px;display:flex;flex-direction:column;justify-content:flex-end}
 .glow{position:absolute;inset:-5% -30% -10% -30%;background:
   radial-gradient(40% 55% at 20% 60%,rgba(233,183,58,1),transparent 70%),
   radial-gradient(38% 52% at 80% 52%,rgba(220,104,3,1),transparent 70%),
@@ -123,13 +123,46 @@ h3{margin:0;font-size:20px;font-weight:500;letter-spacing:-.02em;color:var(--ink
   filter:blur(10px);opacity:1}
 .glow::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.35'/></svg>");mix-blend-mode:soft-light;opacity:.5}
 .hero-frame{position:relative;z-index:2;margin:0 auto;width:min(880px,100%);border-radius:28px 28px 0 0;background:rgba(10,22,17,.42);backdrop-filter:blur(34px) saturate(1.2);-webkit-backdrop-filter:blur(34px) saturate(1.2);border:1px solid rgba(255,255,255,.16);border-bottom:0;padding:26px 26px 0;box-shadow:0 -20px 80px rgba(0,0,0,.35)}
-.chat{display:flex;flex-direction:column;gap:10px;align-items:flex-start;text-align:left;margin-bottom:22px}
-.bubble{max-width:72%;padding:12px 16px;border-radius:18px;font-size:16px;line-height:1.4;letter-spacing:-.01em}
+.demo{container-type:inline-size;text-align:left}
+.chat{display:flex;flex-direction:column;gap:10px;align-items:flex-start;min-height:118px;justify-content:flex-end;margin-bottom:14px}
+.bubble{max-width:72%;padding:12px 16px;border-radius:18px;font-size:16px;line-height:1.4;letter-spacing:-.01em;transition:opacity .4s,transform .5s var(--ease)}
 .bubble.in{background:rgba(255,255,255,.1);color:#fff;border-bottom-left-radius:6px}
 .bubble.out{align-self:flex-end;background:var(--gold-2);color:#1b1a14;border-bottom-right-radius:6px;font-weight:500}
 .bubble.out .was{display:block;font-size:12px;color:rgba(27,26,20,.6);font-weight:500;margin-bottom:2px;letter-spacing:0}
-.hero-kb{display:block;width:100%;border-radius:14px 14px 0 0;overflow:hidden}
-.hero-kb img{width:100%}
+.bubble.enter{opacity:0;transform:translateY(14px)}
+.composer{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.field{flex:1;position:relative;min-height:46px;display:flex;align-items:center;padding:10px 16px;border-radius:23px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:#fff;font-size:16px;letter-spacing:-.01em;line-height:1.35}
+.field #typed{white-space:pre-wrap;transition:opacity .25s}
+.field .ph{position:absolute;left:16px;color:var(--muted);opacity:0;transition:opacity .3s}
+.field.empty .ph{opacity:1}
+.caret{display:inline-block;width:2px;height:1.1em;background:var(--gold-2);margin-left:1px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.send{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.08);color:var(--muted);flex:none;transition:background .3s,color .3s,transform .2s}
+.send svg{width:20px;height:20px}
+.send.hot{background:var(--gold-2);color:#1b1a14}
+.send.go{transform:scale(.88)}
+.kb{background:#1b1f27;border-radius:14px 14px 0 0;padding:1.6cqw 1.2cqw 0;user-select:none;color:#e9eaee}
+.toolbar{display:flex;align-items:center;gap:1.2cqw;height:5.6cqw;margin:.4cqw .8cqw 1.4cqw}
+.tk{display:inline-flex;align-items:center;justify-content:center;height:4.6cqw;border-radius:50px;color:#c7c9cf;font-size:1.7cqw;font-weight:500;letter-spacing:-.01em}
+.tk.ic{width:4.6cqw}.tk.ic svg{width:2.4cqw;height:2.4cqw}
+.tk.tc{padding:0 1.6cqw;background:rgba(255,255,255,.06)}
+.tk.mic{background:rgba(255,255,255,.08);color:#fff}
+.tk.tr{transition:background .3s,color .3s}
+.tk.tr.on{background:var(--gold-2);color:#1b1a14}
+.tk.tr.spin svg{animation:spin 1.1s var(--ease) infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.grow{flex:1}
+.kb .row{display:flex;justify-content:center;gap:1.1cqw;margin-bottom:1.1cqw}
+.kb .row.r2{padding:0 4.4cqw}
+.kb b{display:flex;align-items:center;justify-content:center;width:8.5cqw;height:6.4cqw;border-radius:50px;font-weight:400;font-size:3.1cqw;line-height:1;transition:background .12s,transform .12s;position:relative}
+.kb b.fn{background:#2a2f3a;width:9.6cqw;font-size:1.9cqw;font-weight:500;color:#dfe1e6}
+.kb b.fn svg{width:2.6cqw;height:2.6cqw}
+.kb b.w2{width:12.4cqw}
+.kb b.space{flex:1;max-width:46cqw;background:#2a2f3a}
+.kb b.enter{background:#2a2f3a}
+.kb b.hit{background:rgba(255,255,255,.22);transform:translateY(-.4cqw)}
+.kb b.space.hit,.kb b.fn.hit{background:#3a4150}
+.kb .row.bot{margin-bottom:0;padding-bottom:1.6cqw}
 .pill{position:absolute;z-index:3;left:50%;transform:translateX(-50%);bottom:40px;display:flex;align-items:center;gap:0;height:66px;padding:0 10px;border-radius:var(--r-pill);background:rgba(16,14,12,.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.14);box-shadow:0 20px 60px rgba(0,0,0,.45);color:#fff;white-space:nowrap}
 .pill .seg{display:flex;align-items:center;gap:12px;padding:0 20px;height:50px;border-radius:var(--r-pill)}
 .pill .seg+.seg{border-left:1px solid rgba(255,255,255,.1)}
@@ -139,9 +172,12 @@ h3{margin:0;font-size:20px;font-weight:500;letter-spacing:-.02em;color:var(--ink
 .pill .dot{width:10px;height:10px;border-radius:50%;background:var(--green)}
 @media (max-width:760px){
   .hero-card{padding-top:120px;min-height:auto}
-  .pill{display:none}
-  .hero-frame{padding:16px 16px 0}
+  .hero-art{min-height:0;margin-top:40px}
+  .hero-frame{padding:14px 14px 0}
   .bubble{font-size:14px;max-width:84%}
+  .field{font-size:14px;min-height:40px;padding:8px 14px}
+  .send{width:40px;height:40px}
+  .chat{min-height:100px}
 }
 
 /* ---------- steps ---------- */
@@ -213,6 +249,25 @@ h3{margin:0;font-size:20px;font-weight:500;letter-spacing:-.02em;color:var(--ink
 .wave i{display:block;width:3px;border-radius:2px;background:var(--gold-2);animation:w 1.3s ease-in-out infinite}
 @keyframes w{0%,100%{height:6px}50%{height:24px}}
 .varr{color:var(--muted);flex:none}
+
+
+/* GIF panel: live GIPHY tiles when a key is set, the screenshot otherwise */
+.gifpanel{background:#1b1f27;color:#e9eaee;border-radius:12px;overflow:hidden;font-size:13px}
+.gifpanel.live .gif-fallback{display:none}
+.gifpanel:not(.live) .gif-top,.gifpanel:not(.live) .gif-chips,.gifpanel:not(.live) .gif-foot{display:none}
+.gif-top{display:flex;align-items:center;gap:10px;padding:12px 14px 6px}
+.gif-back{color:#c7c9cf;font-size:16px}
+.gif-search{flex:1;height:36px;display:flex;align-items:center;padding:0 14px;border-radius:18px;background:#2a2f3a;color:#9a9ea8}
+.gif-chips{display:flex;gap:6px;padding:8px 14px 10px;overflow:hidden}
+.gif-chips span{height:28px;display:inline-flex;align-items:center;padding:0 12px;border-radius:14px;background:#2a2f3a;color:#c7c9cf;font-weight:500;white-space:nowrap}
+.gif-chips span.on{background:#cfe0ff;color:#0c2a5a}
+.gif-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 10px;min-height:120px}
+.gif-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:#2a2f3a}
+.gif-grid .gif-fallback{grid-column:1/-1;aspect-ratio:auto;border-radius:0}
+.gif-foot{display:flex;align-items:center;gap:8px;padding:12px 14px 14px}
+.gif-foot span{height:30px;display:inline-flex;align-items:center;padding:0 12px;border-radius:15px;color:#c7c9cf;font-weight:500}
+.gif-foot span.on{background:#2a2f3a;color:#fff}
+.gif-credit{margin-left:auto;font-size:10px;color:#8a8e98;padding:0!important}
 
 /* ---------- advantages (dark) ---------- */
 .dark{background:var(--page);padding:14px}
@@ -322,16 +377,30 @@ footer{background:var(--page);padding:80px 14px 0;overflow:hidden}
     <div class="hero-art">
       <div class="glow"></div>
       <div class="hero-frame rv">
-        <div class="chat">
-          <div class="bubble in">Kal ka plan kya hai?</div>
-          <div class="bubble out"><span class="was">You typed: Let's meet at 6, don't be late</span>Chalo 6 baje milte hain, late mat hona</div>
+        <div class="demo" id="demo" aria-label="Animated demo: an English message is typed, translated and sent as Roman Urdu">
+          <div class="chat" id="chat">
+            <div class="bubble in" id="in-bubble">Kal ka plan kya hai?</div>
+          </div>
+          <div class="composer">
+            <div class="field"><span id="typed"></span><span class="caret" id="caret"></span><span class="ph" id="ph">Message</span></div>
+            <div class="send" id="send"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.5 21 3l-8.5 18-2-7.5z"/></svg></div>
+          </div>
+          <div class="kb" id="kb">
+            <div class="toolbar">
+              <span class="tk ic"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></span>
+              <span class="tk ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0M9 10h.01M15 10h.01"/></svg></span>
+              <span class="grow"></span>
+              <span class="tk ic tr" id="trkey"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h8M8 3v2M11 5c-.6 3.2-2.6 5.6-5.5 7M6.5 8.5c.8 1.6 2.2 3 3.8 3.5M13 20l4.5-11L22 20M14.6 16.3h5.8"/></svg></span>
+              <span class="tk tc" id="tone-chip">Casual</span>
+              <span class="tk tc">Auto</span>
+              <span class="tk ic mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>
+            </div>
+            <div class="row"><b data-k="q">q</b><b data-k="w">w</b><b data-k="e">e</b><b data-k="r">r</b><b data-k="t">t</b><b data-k="y">y</b><b data-k="u">u</b><b data-k="i">i</b><b data-k="o">o</b><b data-k="p">p</b></div>
+            <div class="row r2"><b data-k="a">a</b><b data-k="s">s</b><b data-k="d">d</b><b data-k="f">f</b><b data-k="g">g</b><b data-k="h">h</b><b data-k="j">j</b><b data-k="k">k</b><b data-k="l">l</b></div>
+            <div class="row"><b class="fn" data-k="shift"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 4 4 13h5v7h6v-7h5z"/></svg></b><b data-k="z">z</b><b data-k="x">x</b><b data-k="c">c</b><b data-k="v">v</b><b data-k="b">b</b><b data-k="n">n</b><b data-k="m">m</b><b class="fn" data-k="bs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M21 6H8l-5 6 5 6h13z"/><path d="m12 9 6 6M18 9l-6 6"/></svg></b></div>
+            <div class="row bot"><b class="fn w2" data-k="sym">?123</b><b class="fn" data-k=",">,</b><b class="fn" data-k="emoji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0M9 10h.01M15 10h.01"/></svg></b><b class="space" data-k=" "></b><b class="fn" data-k=".">.</b><b class="fn w2 enter" data-k="enter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5v6a3 3 0 0 1-3 3H5M9 10l-4 4 4 4"/></svg></b></div>
+          </div>
         </div>
-        <div class="hero-kb"><img src="site/hero-kb.png" alt="The keyboard, with the Translate key, tone and direction in its toolbar" width="1080" height="837"></div>
-      </div>
-      <div class="pill" aria-hidden="true">
-        <div class="seg"><span class="k">TONE</span><span class="v">Casual</span></div>
-        <div class="seg"><span class="k">MODEL</span><span class="v">On phone</span></div>
-        <div class="seg"><span class="dot"></span><span class="v">Offline</span></div>
       </div>
     </div>
   </div>
@@ -411,7 +480,12 @@ footer{background:var(--page);padding:80px 14px 0;overflow:hidden}
       </div>
 
       <div class="card flip rv">
-        <div class="art"><img src="site/kb-gif.png" alt="GIF search in the keyboard" loading="lazy"></div>
+        <div class="art gifpanel" id="gifpanel" data-key="">
+          <div class="gif-top"><span class="gif-back">←</span><span class="gif-search">Search GIFs</span></div>
+          <div class="gif-chips"><span class="on">Trending</span><span>Happy</span><span>Love</span><span>Haha</span><span>Sad</span><span>Wow</span></div>
+          <div class="gif-grid" id="gifgrid"><img src="site/kb-gif.png" alt="GIF search in the keyboard" loading="lazy" class="gif-fallback"></div>
+          <div class="gif-foot"><span>ABC</span><span class="on">GIF</span><span>Stickers</span><span class="gif-credit">Powered by GIPHY</span></div>
+        </div>
         <h3>Emoji, GIFs, stickers, clipboard</h3>
         <p class="sub">An emoji screen with search and skin tones, text emoticons in groups, GIFs and stickers from GIPHY, and a clipboard history like Gboard's. Tap to paste, long-press to pin.</p>
       </div>
@@ -574,6 +648,61 @@ footer{background:var(--page);padding:80px 14px 0;overflow:hidden}
     words.forEach(function(w,i){w.classList.toggle('lit',i<n)});
   }
   addEventListener('scroll',lightWords,{passive:true});lightWords();
+
+  // hero demo: type, translate, send, loop
+  (function(){
+    var demo=document.getElementById('demo'),chat=document.getElementById('chat'),inB=document.getElementById('in-bubble'),typed=document.getElementById('typed'),caret=document.getElementById('caret'),field=typed.parentNode,send=document.getElementById('send'),tr=document.getElementById('trkey'),chip=document.getElementById('tone-chip');
+    var scenes=[
+      {in:'Kal ka plan kya hai?',en:"Let's meet at 6, don't be late",ru:'Chalo 6 baje milte hain, late mat hona',tone:'Casual'},
+      {in:'Khana kha liya?',en:"Not yet, I'm still at work",ru:'Abhi nahi, main abhi bhi office mein hoon',tone:'Casual'},
+      {in:'Sir, meeting kab hai?',en:'The meeting is at ten tomorrow, please be on time',ru:'Meeting kal dus baje hai, barah-e-karam waqt par tashreef laayein',tone:'Formal'}
+    ];
+    var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches,visible=true,si=0;
+    var keys={};demo.querySelectorAll('.kb b').forEach(function(b){keys[b.dataset.k]=b});
+    function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+    function hit(k){var b=keys[k.toLowerCase()]||keys[k];if(!b)return;b.classList.add('hit');setTimeout(function(){b.classList.remove('hit')},130)}
+    function setEmpty(){field.classList.add('empty')}
+    async function run(){
+      if(reduce){var s=scenes[0];typed.textContent=s.ru;caret.style.display='none';field.classList.remove('empty');send.classList.add('hot');tr.classList.add('on');return}
+      while(true){
+        var s=scenes[si%scenes.length];si++;
+        // reset
+        chat.querySelectorAll('.bubble.out').forEach(function(b){b.remove()});
+        inB.classList.add('enter');await sleep(400);
+        inB.textContent=s.in;chip.textContent=s.tone;tr.classList.remove('on');send.classList.remove('hot');
+        typed.textContent='';setEmpty();
+        if(!visible){await sleep(600);continue}
+        inB.classList.remove('enter');await sleep(1100);
+        // type
+        field.classList.remove('empty');
+        for(var i=0;i<s.en.length;i++){var ch=s.en[i];typed.textContent+=ch;hit(ch);await sleep(ch===' '?110:55+Math.random()*45)}
+        send.classList.add('hot');await sleep(650);
+        // translate
+        tr.classList.add('on','spin');hit('tr');await sleep(1200);
+        typed.style.opacity=0;await sleep(250);typed.textContent=s.ru;typed.style.opacity=1;tr.classList.remove('spin');await sleep(1400);
+        // send
+        send.classList.add('go');await sleep(140);send.classList.remove('go');
+        var out=document.createElement('div');out.className='bubble out enter';out.innerHTML='<span class="was">You typed: '+s.en.replace(/</g,'&lt;')+'</span>'+s.ru;chat.appendChild(out);
+        typed.textContent='';setEmpty();send.classList.remove('hot');tr.classList.remove('on');
+        requestAnimationFrame(function(){requestAnimationFrame(function(){out.classList.remove('enter')})});
+        await sleep(2600);
+      }
+    }
+    new IntersectionObserver(function(es){visible=es[0].isIntersecting},{threshold:.05}).observe(demo);
+    setEmpty();run();
+  })();
+
+  // GIF panel: real trending GIFs from GIPHY when a key is set on #gifpanel
+  (function(){
+    var gp=document.getElementById('gifpanel'),key=gp.getAttribute('data-key');
+    if(!key)return;
+    fetch('https://api.giphy.com/v1/gifs/trending?api_key='+encodeURIComponent(key)+'&limit=6&rating=g').then(function(r){return r.json()}).then(function(j){
+      if(!j||!j.data||!j.data.length)return;
+      var g=document.getElementById('gifgrid');
+      j.data.slice(0,6).forEach(function(d){var im=document.createElement('img');im.src=d.images.fixed_width_small.url;im.alt=d.title||'GIF';im.loading='lazy';g.appendChild(im)});
+      gp.classList.add('live');
+    }).catch(function(){});
+  })();
 
   // tone demo
   var ru={casual:'Aaj main bohat thak gaya hoon',formal:'Aaj main kaafi thaka hua hoon',poetic:'Aaj thakan ne mujhe gher liya hai',funny:'Aaj to battery bilkul khatam hai meri',respectful:'Ji, aaj main kaafi thak gaya hoon'};
