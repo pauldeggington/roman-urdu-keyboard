@@ -2,7 +2,9 @@
 """Builds the README images in docs/ from the emulator screenshots the preview job pushes to the ci-shots branch.
 
     git fetch origin ci-shots && mkdir -p /tmp/cis && git archive origin/ci-shots | tar -x -C /tmp/cis
-    python3 scripts/make_readme_images.py /tmp/cis docs
+    python3 scripts/make_readme_images.py /tmp/cis docs /tmp/ui
+
+/tmp/ui holds the app screens the unit-test job draws (the ci-ui-shots branch), which show the current icon and colours.
 """
 import glob
 import os
@@ -12,11 +14,20 @@ from PIL import Image, ImageDraw, ImageFilter
 
 SRC = sys.argv[1] if len(sys.argv) > 1 else "/tmp/cis"
 OUT = sys.argv[2] if len(sys.argv) > 2 else "docs"
+UI = sys.argv[3] if len(sys.argv) > 3 else "/tmp/ui"
 os.makedirs(OUT, exist_ok=True)
 
 
 def load(name):
     return Image.open(os.path.join(SRC, name + ".png")).convert("RGB")
+
+
+def ui(name):
+    """An app screen drawn by the unit tests (current icon and colours)."""
+    im = Image.open(os.path.join(UI, name + ".png")).convert("RGB")
+    if name.startswith("gallery"):
+        im = im.crop((0, 0, im.size[0], round(im.size[1] * 0.6)))   # the cards only, not the empty screen under them
+    return im
 
 
 def labelled(label):
@@ -39,7 +50,7 @@ def phone(im, width, bezel=10, dark=True):
     scr = rounded(im.resize((width, h), Image.LANCZOS), 34)
     body = Image.new("RGBA", (width + 2 * bezel, h + 2 * bezel), (0, 0, 0, 0))
     d = ImageDraw.Draw(body)
-    d.rounded_rectangle([0, 0, body.size[0] - 1, body.size[1] - 1], 34 + bezel, fill=(32, 33, 36) if dark else (60, 64, 67))
+    d.rounded_rectangle([0, 0, body.size[0] - 1, body.size[1] - 1], 34 + bezel, fill=(20, 28, 25) if dark else (60, 64, 67))
     body.alpha_composite(scr, (bezel, bezel))
     return body
 
@@ -82,11 +93,11 @@ def row(items, bg, gap=36, pad=48, anchor="top"):
 
 
 def bg_dark(w, h):
-    return gradient((w, h), (22, 24, 38), (46, 40, 74))
+    return gradient((w, h), (7, 15, 12), (19, 52, 39))
 
 
 def bg_light(w, h):
-    return gradient((w, h), (236, 240, 252), (222, 214, 244))
+    return gradient((w, h), (245, 245, 246), (226, 232, 226))
 
 
 def keyboard_crop(name, top=1020):
@@ -97,10 +108,10 @@ def keyboard_crop(name, top=1020):
 # --- hero: setup, typing, emoji
 hero = row(
     [
-        phone(load("app_setup_WELCOME"), 330),
+        phone(ui("setup-welcome-light"), 330),
         phone(labelled("typed"), 330),
         phone(labelled("emoji"), 330),
-        phone(load("app_setup_PERSONAL"), 330),
+        phone(ui("gallery-dark"), 330),
     ],
     bg_dark,
     gap=30,
@@ -169,7 +180,7 @@ emo.save(os.path.join(OUT, "emoji-screens.png"), optimize=True)
 
 # --- setup guide and app
 setup = row(
-    [phone(load(n), 300) for n in ("app_setup_WELCOME", "app_setup_MODEL", "app_setup_ENABLE", "app_setup_PERSONAL", "app_setup_PRACTICE", "app_setup_DONE")],
+    [phone(ui(n), 300) for n in ("setup-welcome-light", "gallery-light", "gallery-dark", "gallery-lemon-light", "gallery-urdu-rtl", "setup-welcome-urdu-rtl")],
     bg_dark,
     gap=22,
     pad=44,
@@ -178,7 +189,7 @@ setup = row(
 setup.save(os.path.join(OUT, "setup.png"), optimize=True)
 
 app = row(
-    [phone(load(n), 300) for n in ("app_main_1", "app_main_2", "app_main_3", "app_setup_WELCOME_light")],
+    [phone(ui(n), 300) for n in ("gallery-light", "gallery-dark", "gallery-lemon-light", "gallery-urdu-rtl")],
     bg_dark,
     gap=24,
     pad=44,
@@ -283,29 +294,29 @@ def pill(cv, box, radius, fill, outline=None, width=2):
 def banner():
     W, H = 2400, 900
     cv = bg_dark(W, H).convert("RGBA")
-    glow(cv, 1750, 250, 420, (124, 107, 255), 120)
-    glow(cv, 2200, 800, 360, (61, 220, 200), 50)
-    glow(cv, 200, 880, 300, (124, 107, 255), 60)
+    glow(cv, 1750, 250, 460, (233, 183, 58), 120)
+    glow(cv, 2200, 800, 380, (220, 104, 3), 70)
+    glow(cv, 200, 880, 340, (31, 138, 92), 90)
     d = ImageDraw.Draw(cv)
     logo = Image.open(os.path.join(os.path.dirname(OUT.rstrip("/")) or ".", "docs", "logo.png")) if False else Image.open(os.path.join(OUT, "logo.png")).convert("RGBA")
     logo = rounded(logo.resize((170, 170), Image.LANCZOS), 40)
     cv.alpha_composite(logo, (150, 130))
     d.text((150, 330), "Roman Urdu", font=font(FONTS + "Poppins-Bold.ttf", 132), fill=(255, 255, 255))
     d.text((150, 480), "Keyboard", font=font(FONTS + "Poppins-Bold.ttf", 132), fill=(255, 255, 255))
-    d.text((156, 665), "Type English. Send Roman Urdu.", font=font(INTER + "Inter-SemiBold.otf", 52), fill=(190, 178, 255))
+    d.text((156, 665), "Type English. Send Roman Urdu.", font=font(INTER + "Inter-SemiBold.otf", 52), fill=(255, 233, 168))
     x = 156
-    for e, label in (("🔒", "On-device AI"), ("✈️", "Works offline"), ("💜", "Free and open source")):
+    for label in ("On-device AI", "Works offline", "Free and open source"):
         f = font(INTER + "Inter-Medium.otf", 32)
-        w = int(d.textlength(label, font=f)) + 130
+        w = int(d.textlength(label, font=f)) + 96
         pill(cv, [x, 780, x + w, 856], 38, (255, 255, 255, 28), (255, 255, 255, 70))
-        cv.alpha_composite(emoji_img(e, 40), (x + 26, 797))
         d = ImageDraw.Draw(cv)
-        d.text((x + 82, 797), label, font=f, fill=(235, 235, 250))
+        d.ellipse([x + 28, 806, x + 48, 826], fill=(255, 215, 106))
+        d.text((x + 64, 797), label, font=f, fill=(240, 244, 238))
         x += w + 22
     phones = [
         (phone(labelled("typed"), 380), 1330, 170),
         (phone(labelled("emoji"), 380), 1740, 70),
-        (phone(load("app_setup_PERSONAL"), 380), 2130, 200),
+        (phone(ui("gallery-dark"), 380), 2130, 200),
     ]
     for im, px, py in phones:
         sh = shadow(im, blur=30, offset=(0, 20), alpha=150)
@@ -318,28 +329,28 @@ banner().save(os.path.join(OUT, "banner.png"), optimize=True)
 
 def feature_grid():
     tiles = [
-        ("🔒", "Private", "The AI runs on your phone. Nothing you type is sent anywhere, and it works in airplane mode."),
-        ("🗣️", "Sounds like you", "Male or female, casual (tum) or formal (aap), and your own spellings."),
-        ("⌨️", "Feels like Gboard", "Same layout and key font, light and dark, Material You colours."),
-        ("✍️", "Types for you", "Glide typing, suggestions, automatic correction and next word."),
-        ("🎙️", "Voice in the keyboard", "Speak and watch the words appear. The keys stay on screen."),
-        ("😀", "Emoji, GIFs, clipboard", "Emoji search, GIPHY GIFs and stickers, Gboard-style clipboard history."),
+        ("Stays on your phone", "The AI runs on the phone. Nothing you type is sent anywhere, and it works in airplane mode."),
+        ("Sounds like you", "Male or female wording, casual or formal, and your own spellings."),
+        ("Feels like Gboard", "The same layout and key font, light and dark, Material You colours."),
+        ("Types for you", "Glide typing, suggestions, automatic correction and next word."),
+        ("Voice, both ways", "Share an Urdu voice note to read it in English, or speak English and send Urdu audio."),
+        ("Emoji, GIFs, clipboard", "Emoji search, GIPHY GIFs and stickers, and a Gboard-style clipboard."),
     ]
     TW, TH, G, P = 720, 300, 28, 48
     W = P * 2 + TW * 3 + G * 2
     H = P * 2 + TH * 2 + G
     cv = bg_dark(W, H).convert("RGBA")
     d = ImageDraw.Draw(cv)
-    for i, (e, title, text) in enumerate(tiles):
+    for i, (title, text) in enumerate(tiles):
         x = P + (i % 3) * (TW + G)
         y = P + (i // 3) * (TH + G)
         pill(cv, [x, y, x + TW, y + TH], 36, (255, 255, 255, 22), (255, 255, 255, 55))
-        cv.alpha_composite(emoji_img(e, 70), (x + 36, y + 34))
         d = ImageDraw.Draw(cv)
-        d.text((x + 36, y + 122), title, font=font(FONTS + "Poppins-SemiBold.ttf" if os.path.exists(FONTS + "Poppins-SemiBold.ttf") else FONTS + "Poppins-Medium.ttf", 42), fill=(255, 255, 255))
+        d.rounded_rectangle([x + 36, y + 44, x + 36 + 64, y + 52], 4, fill=(233, 183, 58))
+        d.text((x + 36, y + 96), title, font=font(FONTS + "Poppins-SemiBold.ttf" if os.path.exists(FONTS + "Poppins-SemiBold.ttf") else FONTS + "Poppins-Medium.ttf", 42), fill=(255, 255, 255))
         f = font(INTER + "Inter-Regular.otf", 29)
         for j, ln in enumerate(wrap(d, text, f, TW - 72)[:3]):
-            d.text((x + 36, y + 184 + j * 38), ln, font=f, fill=(205, 205, 225))
+            d.text((x + 36, y + 170 + j * 38), ln, font=f, fill=(196, 208, 200))
     return cv.convert("RGB")
 
 

@@ -25,11 +25,11 @@ html,body{margin:0;background:#000;overflow:hidden}
 #kb{position:absolute;left:0;bottom:0;width:400px;display:block}
 #compose{position:absolute;left:14px;right:14px;height:62px;border-radius:31px;background:#1b1e29;overflow:hidden;box-shadow:0 0 0 1.5px rgba(255,255,255,.06) inset}
 #compose .t{position:absolute;left:24px;top:0;line-height:62px;font-size:27px;font-weight:500;white-space:nowrap}
-#compose .send{position:absolute;right:9px;top:9px;width:44px;height:44px;border-radius:22px;background:#7C6BFF}
-#caret{position:absolute;top:16px;width:2.5px;height:30px;background:#9d90ff;border-radius:2px}
-#ripple{position:absolute;border-radius:50%;background:rgba(190,178,255,.55);pointer-events:none}
+#compose .send{position:absolute;right:9px;top:9px;width:44px;height:44px;border-radius:22px;background:#e9b73a}
+#caret{position:absolute;top:16px;width:2.5px;height:30px;background:#ffd76a;border-radius:2px}
+#ripple{position:absolute;border-radius:50%;background:rgba(255,215,106,.55);pointer-events:none}
 .kbpatch{position:absolute;background:#191b23;color:#e6e3ee;font-size:15px;font-weight:500;text-align:center;line-height:20px;height:20px}
-.pill{position:absolute;height:30px;line-height:30px;padding:0 14px;border-radius:15px;background:#2a2447;color:#cfc7ff;font-size:14px;font-weight:600}
+.pill{position:absolute;height:30px;line-height:30px;padding:0 14px;border-radius:15px;background:#1f3a2e;color:#ffe9a8;font-size:14px;font-weight:600}
 #sheen{position:absolute;inset:0;border-radius:58px;background:linear-gradient(115deg,rgba(255,255,255,.07),rgba(255,255,255,0) 38%);pointer-events:none}
 #hello{position:absolute;inset:0;opacity:0}
 .tile{display:inline-block;width:178px;height:178px;border-radius:44px;margin-right:26px;position:relative;text-align:center;box-shadow:0 0 0 2px rgba(255,255,255,.14) inset}
@@ -54,16 +54,16 @@ html,body{margin:0;background:#000;overflow:hidden}
   <!-- title -->
   <div class="cap" id="c1" style="left:0;width:1920px;top:318px;text-align:center;font-size:132px">
     <img id="logo1" src="assets/logo.png" style="width:150px;height:150px;border-radius:36px;display:block;margin:0 auto 52px;box-shadow:0 30px 70px rgba(0,0,0,.4)">
-    <span class="ln">Type English.</span><span class="ln" style="color:#c9c0ff">Send Roman Urdu.</span>
+    <span class="ln">Type English.</span><span class="ln" style="color:#ffe9a8">Send Roman Urdu.</span>
   </div>
 
   <!-- phone scenes -->
-  <div class="cap" id="c2" style="left:130px;top:360px;width:960px;font-size:120px"><span class="ln">Translate</span><span class="ln">as you <span style="color:#8fd3ff">type.</span></span><small class="ln">Tap Translate and the text turns into Roman Urdu.</small></div>
-  <div class="cap" id="c3" style="left:1110px;top:400px;width:800px;font-size:120px"><span class="ln">Male or</span><span class="ln"><span style="color:#ffb3ec">female.</span></span></div>
-  <div class="cap" id="c3b" style="left:1110px;top:400px;width:800px;font-size:120px"><span class="ln">Casual or</span><span class="ln"><span style="color:#ffb3ec">formal.</span></span><small class="ln">Tum or aap, your choice.</small></div>
+  <div class="cap" id="c2" style="left:130px;top:360px;width:960px;font-size:120px"><span class="ln">Translate</span><span class="ln">as you <span style="color:#ffd76a">type.</span></span><small class="ln">Tap Translate and the text turns into Roman Urdu.</small></div>
+  <div class="cap" id="c3" style="left:1110px;top:400px;width:800px;font-size:120px"><span class="ln">Male or</span><span class="ln"><span style="color:#ffb86b">female.</span></span></div>
+  <div class="cap" id="c3b" style="left:1110px;top:400px;width:800px;font-size:120px"><span class="ln">Casual or</span><span class="ln"><span style="color:#ffb86b">formal.</span></span><small class="ln">Tum or aap, your choice.</small></div>
   <div class="cap" id="c4a" style="left:50px;top:440px;width:520px;font-size:112px;text-align:right"><span class="ln">And back</span></div>
-  <div class="cap" id="c4b" style="left:1350px;top:440px;width:520px;font-size:112px"><span class="ln" style="color:#8ff3e0">again.</span></div>
-  <div class="cap" id="c5" style="left:130px;top:250px;width:960px;font-size:116px"><span class="ln">Runs on</span><span class="ln">your <span style="color:#9db0ff">phone.</span></span><small class="ln">Nothing you type leaves it. It works in airplane mode.</small></div>
+  <div class="cap" id="c4b" style="left:1350px;top:440px;width:520px;font-size:112px"><span class="ln" style="color:#9be7c4">again.</span></div>
+  <div class="cap" id="c5" style="left:130px;top:250px;width:960px;font-size:116px"><span class="ln">Runs on</span><span class="ln">your <span style="color:#ffd76a">phone.</span></span><small class="ln">Nothing you type leaves it. It works in airplane mode.</small></div>
 
   <!-- airplane-mode proof tiles -->
   <div id="tiles" style="position:absolute;left:130px;top:700px;opacity:0">
@@ -87,9 +87,9 @@ html,body{margin:0;background:#000;overflow:hidden}
         <div class="bar" style="left:68px;top:38px;width:64px;opacity:.6"></div>
         <div class="pill" id="gpill" style="right:18px;top:20px">I am Male</div>
         <div class="bub" style="left:20px;top:84px;width:230px;height:70px"><div class="bar" style="left:18px;top:20px;width:150px"></div><div class="bar" style="left:18px;top:40px;width:96px"></div></div>
-        <div class="bub" style="right:20px;top:176px;width:190px;height:50px;background:#4a3fa8"><div class="bar" style="left:18px;top:21px;width:120px;background:rgba(255,255,255,.35)"></div></div>
+        <div class="bub" style="right:20px;top:176px;width:190px;height:50px;background:#8a6a12"><div class="bar" style="left:18px;top:21px;width:120px;background:rgba(255,255,255,.35)"></div></div>
         <div class="bub" style="left:20px;top:248px;width:270px;height:70px"><div class="bar" style="left:18px;top:20px;width:200px"></div><div class="bar" style="left:18px;top:40px;width:130px"></div></div>
-        <div class="bub" style="right:20px;top:340px;width:150px;height:50px;background:#4a3fa8"><div class="bar" style="left:18px;top:21px;width:80px;background:rgba(255,255,255,.35)"></div></div>
+        <div class="bub" style="right:20px;top:340px;width:150px;height:50px;background:#8a6a12"><div class="bar" style="left:18px;top:21px;width:80px;background:rgba(255,255,255,.35)"></div></div>
       </div>
       <div id="compose" style="top:421px"><div class="t" id="tTyped"></div><div class="t" id="tResult"></div><div id="caret"></div><div class="send"></div></div>
       <img id="kb" src="assets/kb.png" alt="">
@@ -104,7 +104,7 @@ html,body{margin:0;background:#000;overflow:hidden}
     <img src="assets/logo.png" style="width:190px;height:190px;border-radius:46px;position:absolute;left:865px;top:250px;box-shadow:0 40px 90px rgba(0,0,0,.55)">
     <div style="position:absolute;left:0;right:0;top:488px;font-size:104px;font-weight:700;letter-spacing:-0.035em">Roman Urdu Keyboard</div>
     <div style="position:absolute;left:0;right:0;top:622px;font-size:42px;font-weight:500;color:rgba(255,255,255,.7)">Free and open source. Android 12 or newer.</div>
-    <div style="position:absolute;left:410px;width:1100px;top:726px;height:84px;border-radius:42px;background:rgba(255,255,255,.1);box-shadow:0 0 0 2px rgba(255,255,255,.16) inset;white-space:nowrap;font-size:36px;font-weight:600;line-height:84px;color:#d8d2ff">github.com/pauldeggington/roman-urdu-keyboard</div>
+    <div style="position:absolute;left:410px;width:1100px;top:726px;height:84px;border-radius:42px;background:rgba(255,255,255,.1);box-shadow:0 0 0 2px rgba(255,255,255,.16) inset;white-space:nowrap;font-size:36px;font-weight:600;line-height:84px;color:#ffe9a8">github.com/pauldeggington/roman-urdu-keyboard</div>
   </div>
 </div>
 
@@ -118,12 +118,12 @@ const step = (x, resp = 0.7) => { if (x <= 0) return 0; const w = 2 * Math.PI / 
 
 // ---------------------------------------------------------------- wallpapers
 const WALLS = [
-  { id: 'w1', t0: -5, t1: 8.6, c3: '#14102e', c4: '#2d1c73', a: '#7C6BFF', b: '#b79bff' },
-  { id: 'w2', t0: 8.0, t1: 17.4, c3: '#07122b', c4: '#0f2f7a', a: '#2f7bff', b: '#5ad1ff' },
-  { id: 'w3', t0: 16.6, t1: 29.4, c3: '#1f0a2a', c4: '#5a1a6e', a: '#ff5bd1', b: '#8a5bff' },
-  { id: 'w4', t0: 28.6, t1: 35.0, c3: '#04201f', c4: '#0a4f4a', a: '#18c3b0', b: '#4ee3a6' },
-  { id: 'w5', t0: 34.2, t1: 42.8, c3: '#05060d', c4: '#121a40', a: '#3b4bff', b: '#19b6a6' },
-  { id: 'w6', t0: 42.2, t1: 99, c3: '#000', c4: '#0a0714', a: '#7C6BFF', b: '#2a1a6b' },
+  { id: 'w1', t0: -5, t1: 8.6, c3: '#07140f', c4: '#14664c', a: '#e9b73a', b: '#1f8a5c' },
+  { id: 'w2', t0: 8.0, t1: 17.4, c3: '#0a1a14', c4: '#0f4a36', a: '#1f8a5c', b: '#7fd1a8' },
+  { id: 'w3', t0: 16.6, t1: 29.4, c3: '#2a1405', c4: '#7a3b06', a: '#dc6803', b: '#ffd76a' },
+  { id: 'w4', t0: 28.6, t1: 35.0, c3: '#04201a', c4: '#0a4f3a', a: '#14a36f', b: '#ffd76a' },
+  { id: 'w5', t0: 34.2, t1: 42.8, c3: '#05100c', c4: '#12302a', a: '#e9b73a', b: '#14664c' },
+  { id: 'w6', t0: 42.2, t1: 99, c3: '#000', c4: '#07140f', a: '#e9b73a', b: '#14664c' },
 ];
 function wall(w, t) {
   const el = $(w.id);
@@ -222,14 +222,14 @@ function phoneContent(t) {
   resEl.style.opacity = clamp(m * 1.4);
   resEl.style.filter = `blur(${(1 - m) * 8}px)`;
   resEl.style.transform = `translateY(${(1 - m) * 14}px)`;
-  resEl.style.color = '#cfc7ff';
+  resEl.style.color = '#ffe9a8';
   // caret after the typed text, blinking, until the result shows
   const w = typedMeasure(typed);
   caret.style.left = (24 + w + 3) + 'px';
   caret.style.opacity = (t < swapStart && n > 0 && Math.sin(t * 9) > -0.2) ? 1 : 0;
   // pulse while translating
   const busy = clamp((t - seg.press) / seg.sw) * (t < swapStart ? 1 : 0);
-  comp.style.boxShadow = `0 0 0 ${1.5 + busy * 2.5}px rgba(${124 + 40 * busy},${107 + 20 * busy},255,${0.06 + busy * 0.5}) inset`;
+  comp.style.boxShadow = `0 0 0 ${1.5 + busy * 2.5}px rgba(${233 + 22 * busy},${183 + 32 * busy},${58 + 48 * busy},${0.06 + busy * 0.5}) inset`;
   // press ripple on the Translate icon: the button reacts the moment it is touched
   const rp = clamp((t - seg.press) / 0.7);
   if (t >= seg.press && rp < 1) {
