@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roman Urdu Keyboard — Type English, send Roman Urdu</title>
+<meta name="description" content="An Android keyboard that translates English into Roman Urdu as you type. The AI translator runs on your phone: no internet after setup, no account, nothing sent anywhere.">
+<meta name="theme-color" content="#070f0c">
+<link rel="icon" type="image/png" href="site/icon-128.png">
+<meta property="og:title" content="Roman Urdu Keyboard">
+<meta property="og:description" content="Type in English. Send Roman Urdu. Works offline on your phone.">
+<meta property="og:image" content="https://pauldeggington.github.io/roman-urdu-keyboard/play/feature-graphic-1024x500.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#070f0c;        /* page behind the dark cards */
+  --dark:#0d1f18;        /* dark section cards */
+  --dark-2:#122b21;      /* raised surfaces on dark */
+  --line-dark:rgba(255,255,255,.08);
+  --ink:#0c111d;         /* headings on light */
+  --body:#61646c;        /* body text on light */
+  --muted:#94969c;       /* subheads, nav links */
+  --light:#f5f5f6;       /* light cards */
+  --white:#fff;
+  --gold:#e9b73a;
+  --gold-2:#ffd76a;
+  --green:#1f8a5c;
+  --green-2:#14664c;
+  --ember:#dc6803;
+  --r-card:12px;
+  --r-big:24px;
+  --r-pill:50px;
+  --max:1248px;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+img,video{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+.urdu{font-family:"Noto Nastaliq Urdu",serif;direction:rtl}
+
+/* ---------- type ---------- */
+h1,h2{margin:0;font-weight:500;letter-spacing:-.04em;line-height:1.08}
+h1{font-size:clamp(40px,6.2vw,64px);color:var(--white)}
+h2{font-size:clamp(36px,5.4vw,64px);color:var(--ink)}
+.dark h2,.hero h2{color:var(--white)}
+h3{margin:0;font-size:20px;font-weight:500;letter-spacing:-.02em;color:var(--ink)}
+.dark h3{color:var(--white)}
+.lead{font-size:20px;line-height:1.5;font-weight:500;letter-spacing:-.016em;color:var(--muted);margin:0}
+.sub{font-size:15px;line-height:1.55;color:var(--body);margin:0}
+.dark .sub{color:var(--muted)}
+.label{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 12px 0 10px;border-radius:var(--r-pill);background:var(--white);border:1px solid #e6e7ea;font-size:12px;font-weight:500;color:var(--body);letter-spacing:-.01em}
+.dark .label{background:var(--dark-2);border-color:var(--line-dark);color:var(--muted)}
+.label svg{width:13px;height:13px}
+.center{text-align:center}
+.section-head{max-width:750px;margin:0 auto 56px}
+.section-head .label{margin-bottom:22px}
+.section-head .lead{margin-top:18px}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;gap:14px;height:52px;padding:4px 4px 4px 24px;border-radius:var(--r-pill);background:var(--white);color:#161b26;font-size:17px;font-weight:600;letter-spacing:-.01em;transition:transform .25s var(--ease),box-shadow .25s var(--ease);box-shadow:0 0 0 1px rgba(255,255,255,.06),0 8px 30px rgba(0,0,0,.25)}
+.btn .ic{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:#161b26;color:#fff;flex:none}
+.btn .ic svg{width:18px;height:18px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 0 0 1px rgba(255,255,255,.08),0 14px 40px rgba(0,0,0,.35)}
+.btn.ghost{background:transparent;color:var(--white);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.btn.ghost .ic{background:rgba(255,255,255,.08)}
+.btn.soon{cursor:default;opacity:.72}
+.btn.soon:hover{transform:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.btn.soon small{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.02em;text-transform:uppercase;margin-left:-6px}
+.btn-sm{display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:var(--r-pill);background:#161b26;border:1px solid #333741;color:#fff;font-size:14px;font-weight:500;letter-spacing:-.01em;transition:background .2s}
+.btn-sm:hover{background:#1f242f}
+.textlink{color:var(--muted);font-size:14px;font-weight:500;letter-spacing:-.01em;border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:1px;transition:color .2s,border-color .2s}
+.textlink:hover{color:var(--white);border-color:var(--white)}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;top:14px;left:0;right:0;z-index:50;display:flex;justify-content:center;padding:0 14px;pointer-events:none}
+.nav-inner{pointer-events:auto;display:flex;align-items:center;gap:8px;height:64px;padding:0 10px 0 22px;border-radius:var(--r-pill);background:rgba(13,31,24,.78);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);border:1px solid var(--line-dark);box-shadow:0 10px 40px rgba(0,0,0,.35);width:100%;max-width:var(--max);transition:max-width .5s var(--ease),background .3s}
+.nav.compact .nav-inner{max-width:880px;background:rgba(10,22,17,.9)}
+.brand{display:flex;align-items:center;gap:10px;color:var(--white);font-weight:600;font-size:15px;letter-spacing:-.01em;margin-right:8px}
+.brand img{width:30px;height:30px;border-radius:9px}
+.brand span{transition:opacity .3s,width .3s}
+.nav.compact .brand span{opacity:0;width:0;overflow:hidden}
+.nav-sep{width:1px;height:20px;background:var(--line-dark);margin:0 6px}
+.links{display:flex;gap:2px;margin:0 auto}
+.links a{padding:5px 10px;font-size:14px;font-weight:500;letter-spacing:-.01em;color:var(--muted);border-radius:8px;transition:color .2s}
+.links a:hover,.links a.on{color:var(--white)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.iconbtn{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.06);color:#fff;transition:background .2s}
+.iconbtn:hover{background:rgba(255,255,255,.12)}
+.iconbtn svg{width:18px;height:18px}
+.menu{display:none}
+@media (max-width:520px){.brand span{display:none}}
+@media (max-width:900px){
+  .links,.nav-sep{display:none}
+  .nav-inner{height:58px;padding:0 8px 0 16px}
+  .nav.compact .brand span{opacity:1;width:auto}
+  .menu{display:grid}
+  .links.open{display:flex;flex-direction:column;position:absolute;top:72px;left:14px;right:14px;background:#0d1f18;border:1px solid var(--line-dark);border-radius:20px;padding:10px}
+  .links.open a{padding:12px 14px;font-size:16px}
+}
+
+/* ---------- hero ---------- */
+.hero{padding:14px}
+.hero-card{position:relative;overflow:hidden;border-radius:var(--r-big);background:var(--dark);border:1px solid var(--line-dark);min-height:92vh;display:flex;flex-direction:column;align-items:center;text-align:center;padding:160px 24px 0}
+.hero-card .lead{max-width:640px;margin:22px auto 0}
+.hero h1{max-width:820px}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:36px}
+.hero-meta{margin:22px 0 0;color:var(--muted);font-size:14px;letter-spacing:-.01em}
+.hero-meta a{color:var(--white);border-bottom:1px solid rgba(255,255,255,.25)}
+.hero-meta a:hover{border-color:#fff}
+.hero-art{position:relative;width:100%;max-width:1180px;margin:56px auto 0;flex:1;min-height:560px}
+.glow{position:absolute;inset:-5% -30% -10% -30%;background:
+  radial-gradient(40% 55% at 20% 60%,rgba(233,183,58,1),transparent 70%),
+  radial-gradient(38% 52% at 80% 52%,rgba(220,104,3,1),transparent 70%),
+  radial-gradient(75% 60% at 50% 100%,rgba(31,138,92,1),transparent 70%),
+  radial-gradient(30% 40% at 50% 40%,rgba(255,215,106,.9),transparent 70%),
+  radial-gradient(60% 40% at 50% 30%,rgba(13,31,24,1),transparent 70%);
+  filter:blur(10px);opacity:1}
+.glow::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.35'/></svg>");mix-blend-mode:soft-light;opacity:.5}
+.hero-frame{position:relative;z-index:2;margin:0 auto;width:min(880px,100%);border-radius:28px 28px 0 0;background:rgba(10,22,17,.42);backdrop-filter:blur(34px) saturate(1.2);-webkit-backdrop-filter:blur(34px) saturate(1.2);border:1px solid rgba(255,255,255,.16);border-bottom:0;padding:26px 26px 0;box-shadow:0 -20px 80px rgba(0,0,0,.35)}
+.chat{display:flex;flex-direction:column;gap:10px;align-items:flex-start;text-align:left;margin-bottom:22px}
+.bubble{max-width:72%;padding:12px 16px;border-radius:18px;font-size:16px;line-height:1.4;letter-spacing:-.01em}
+.bubble.in{background:rgba(255,255,255,.1);color:#fff;border-bottom-left-radius:6px}
+.bubble.out{align-self:flex-end;background:var(--gold-2);color:#1b1a14;border-bottom-right-radius:6px;font-weight:500}
+.bubble.out .was{display:block;font-size:12px;color:rgba(27,26,20,.6);font-weight:500;margin-bottom:2px;letter-spacing:0}
+.hero-kb{display:block;width:100%;border-radius:14px 14px 0 0;overflow:hidden}
+.hero-kb img{width:100%}
+.pill{position:absolute;z-index:3;left:50%;transform:translateX(-50%);bottom:40px;display:flex;align-items:center;gap:0;height:66px;padding:0 10px;border-radius:var(--r-pill);background:rgba(16,14,12,.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.14);box-shadow:0 20px 60px rgba(0,0,0,.45);color:#fff;white-space:nowrap}
+.pill .seg{display:flex;align-items:center;gap:12px;padding:0 20px;height:50px;border-radius:var(--r-pill)}
+.pill .seg+.seg{border-left:1px solid rgba(255,255,255,.1)}
+.pill .k{font-size:13px;font-weight:600;letter-spacing:.16em;color:var(--muted)}
+.pill .v{font-size:26px;font-weight:500;letter-spacing:-.02em}
+.pill .v small{font-size:14px;color:var(--muted);margin-left:4px;letter-spacing:0}
+.pill .dot{width:10px;height:10px;border-radius:50%;background:var(--green)}
+@media (max-width:760px){
+  .hero-card{padding-top:120px;min-height:auto}
+  .pill{display:none}
+  .hero-frame{padding:16px 16px 0}
+  .bubble{font-size:14px;max-width:84%}
+}
+
+/* ---------- steps ---------- */
+.steps{background:var(--white);padding:120px 0 40px}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.step{background:var(--light);border-radius:var(--r-card);padding:26px 26px 0;overflow:hidden;display:flex;flex-direction:column}
+.step .n{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--white);border:1px solid #e6e7ea;color:var(--ink);font-weight:600;font-size:14px;margin-bottom:18px}
+.step h3{margin-bottom:8px}
+.step .sub{margin-bottom:24px}
+.step .shot{margin-top:auto;border-radius:12px 12px 0 0;overflow:hidden;box-shadow:0 -1px 0 rgba(0,0,0,.06),0 20px 40px -20px rgba(0,0,0,.25)}
+.step .shot img{width:100%}
+.step .mock{margin-top:auto;background:var(--white);border:1px solid #e6e7ea;border-bottom:0;border-radius:12px 12px 0 0;padding:16px;font-size:15px;color:var(--ink)}
+.mock .row{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:var(--r-pill);background:var(--light);font-size:13px;font-weight:500;color:var(--body)}
+.chip.on{background:var(--ink);color:#fff}
+.mock .line{height:10px;border-radius:5px;background:#e6e7ea;margin:8px 0}
+.mock .line.s{width:60%}
+@media (max-width:900px){.steps-grid{grid-template-columns:1fr}}
+
+/* ---------- mission ---------- */
+.mission{background:var(--white);padding:40px 14px 120px}
+.mission-card{background:var(--light);border-radius:var(--r-big);padding:clamp(60px,9vw,140px) clamp(24px,8vw,120px)}
+.mission p{margin:0 0 .5em;font-size:clamp(26px,3.6vw,44px);line-height:1.25;font-weight:500;letter-spacing:-.03em;color:var(--ink)}
+.mission .w{opacity:.14;transition:opacity .25s linear}
+.mission .w.lit{opacity:1}
+.mission .g{color:var(--green)}
+.mission .o{color:var(--ember)}
+.mission .y{color:#b8860b}
+
+/* ---------- features ---------- */
+.features{background:var(--white);padding:0 0 140px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.card{background:var(--light);border-radius:var(--r-card);padding:28px;overflow:hidden;position:relative}
+.card h3{margin-top:22px}
+.card .sub{margin-top:8px;max-width:420px}
+.card .art{border-radius:12px;overflow:hidden}
+.card.flip{display:flex;flex-direction:column}
+.card.flip .art{order:-1}
+.card.dark{background:#161b26;color:#fff}
+.card.dark h3{color:#fff}
+.card.dark .sub{color:var(--muted)}
+.wide{grid-column:1/-1;display:grid;grid-template-columns:1fr 1.3fr;gap:28px;align-items:center}
+.wide .art{border-radius:12px}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:40px;border-top:1px solid #ececee}
+.trio>div{padding:36px 28px 0;border-left:1px solid #ececee}
+.trio>div:first-child{border-left:0;padding-left:0}
+.trio h3{display:flex;align-items:center;gap:10px;font-size:18px}
+.trio h3 svg{width:20px;height:20px;color:var(--body)}
+.trio .sub{margin-top:8px;font-size:14px}
+@media (max-width:900px){.grid2,.wide{grid-template-columns:1fr}.trio{grid-template-columns:1fr}.trio>div{border-left:0;padding-left:0}}
+
+/* tone demo inside a card */
+.tones{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.tone{height:32px;padding:0 14px;border-radius:var(--r-pill);background:var(--white);border:1px solid #e6e7ea;font-size:13px;font-weight:500;color:var(--body);transition:all .2s}
+.tone.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tone-out{background:var(--white);border:1px solid #e6e7ea;border-radius:12px;padding:16px 18px;min-height:96px}
+.tone-out .en{font-size:13px;color:var(--muted);margin-bottom:6px}
+.tone-out .ru{font-size:19px;font-weight:500;letter-spacing:-.01em;color:var(--ink)}
+.spell{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;background:var(--white);border:1px solid #e6e7ea;border-radius:12px;padding:14px 18px;margin-bottom:10px}
+.spell .bad{color:var(--muted);text-decoration:line-through;font-size:17px}
+.spell .arr{color:var(--muted)}
+.spell .good{font-size:17px;font-weight:500;color:var(--ink)}
+.spell .good .urdu{font-size:15px;color:var(--green);margin-left:8px;display:inline-block}
+.voice-flow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.vbox{flex:1;min-width:170px;background:#1f242f;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px}
+.vbox .k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.vbox .v{margin-top:8px;font-size:17px;line-height:1.35;letter-spacing:-.01em}
+.wave{display:flex;gap:3px;align-items:center;height:28px;margin-top:10px}
+.wave i{display:block;width:3px;border-radius:2px;background:var(--gold-2);animation:w 1.3s ease-in-out infinite}
+@keyframes w{0%,100%{height:6px}50%{height:24px}}
+.varr{color:var(--muted);flex:none}
+
+/* ---------- advantages (dark) ---------- */
+.dark{background:var(--page);padding:14px}
+.dark-card{background:var(--dark);border:1px solid var(--line-dark);border-radius:var(--r-big);padding:clamp(60px,8vw,110px) clamp(20px,6vw,96px);position:relative;overflow:hidden}
+.dark-card::before{content:"";position:absolute;right:-20%;top:-30%;width:70%;height:120%;background:radial-gradient(closest-side,rgba(233,183,58,.12),transparent 70%);pointer-events:none}
+.adv{display:grid;grid-template-columns:1fr 1.1fr;gap:60px;align-items:center;margin-top:60px}
+.adv-list{display:flex;flex-direction:column}
+.adv-item{text-align:left;padding:16px 0 16px 22px;border-left:1px solid var(--line-dark);position:relative;transition:border-color .3s}
+.adv-item::before{content:"";position:absolute;left:-1px;top:0;bottom:0;width:1px;background:var(--gold-2);transform:scaleY(0);transform-origin:top;transition:transform .5s var(--ease)}
+.adv-item.on::before{transform:scaleY(1)}
+.adv-item h3{font-size:22px;color:var(--muted);transition:color .3s}
+.adv-item.on h3{color:#fff}
+.adv-item .sub{max-height:0;overflow:hidden;opacity:0;transition:max-height .5s var(--ease),opacity .4s,margin .4s;margin-top:0}
+.adv-item.on .sub{max-height:120px;opacity:1;margin-top:8px}
+.adv-stage{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:4/3.1;background:linear-gradient(135deg,#1c5b43,#e9b73a 55%,#dc6803);box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.adv-stage::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 80% at 70% 20%,rgba(255,255,255,.22),transparent 60%);pointer-events:none}
+.adv-stage img{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(76%,420px);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.45);opacity:0;transition:opacity .5s var(--ease),transform .6s var(--ease)}
+.adv-stage img.on{opacity:1}
+.adv-stage img.tall{width:auto;height:86%;border-radius:22px;border:6px solid #0e1116}
+@media (max-width:900px){.adv{grid-template-columns:1fr;gap:36px}.adv-stage{aspect-ratio:1/1}}
+
+/* ---------- faq ---------- */
+.faq{background:var(--white);padding:140px 0}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+.faq h2{margin-top:22px}
+.acc{display:flex;flex-direction:column;gap:12px}
+.q{background:var(--white);border:1px solid #ececee;border-radius:var(--r-card);overflow:hidden;transition:border-color .2s}
+.q:hover{border-color:#d6d7db}
+.q button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 24px;text-align:left;font-size:17px;font-weight:500;letter-spacing:-.01em;color:var(--ink)}
+.q .plus{flex:none;width:18px;height:18px;position:relative;color:var(--muted)}
+.q .plus::before,.q .plus::after{content:"";position:absolute;left:50%;top:50%;width:14px;height:1.5px;background:currentColor;transform:translate(-50%,-50%);transition:transform .35s var(--ease)}
+.q .plus::after{transform:translate(-50%,-50%) rotate(90deg)}
+.q.open .plus::after{transform:translate(-50%,-50%) rotate(0)}
+.q .a{max-height:0;overflow:hidden;transition:max-height .45s var(--ease)}
+.q .a p{margin:0;padding:0 24px 22px;color:var(--body);font-size:15px;line-height:1.6}
+@media (max-width:900px){.faq-grid{grid-template-columns:1fr;gap:36px}}
+
+/* ---------- closing CTA ---------- */
+.close{background:var(--page);padding:14px}
+.close-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.close-card{background:var(--dark);border:1px solid var(--line-dark);border-radius:var(--r-big);padding:clamp(48px,7vw,96px);display:flex;flex-direction:column;justify-content:center}
+.close-card .lead{margin:24px 0 36px;max-width:420px}
+.close-card .cta-row{justify-content:flex-start;margin-top:0}
+.shots{display:grid;grid-template-rows:1fr 1fr;gap:14px}
+.shot-frame{position:relative;overflow:hidden;border-radius:var(--r-big);background:linear-gradient(135deg,#14664c,#1f8a5c 45%,#e9b73a);min-height:220px}
+.shot-frame.b{background:linear-gradient(135deg,#dc6803,#e9b73a 50%,#14664c)}
+.shot-frame img{position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);width:min(78%,440px);border-radius:14px 14px 0 0;box-shadow:0 -10px 50px rgba(0,0,0,.35)}
+@media (max-width:900px){.close-grid{grid-template-columns:1fr}}
+
+/* ---------- footer ---------- */
+footer{background:var(--page);padding:80px 14px 0;overflow:hidden}
+.foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;color:var(--muted);font-size:14px}
+.foot .brand span{color:var(--muted);font-weight:500}
+.foot .f-links{display:flex;gap:18px}
+.foot .f-links a{border-bottom:1px solid rgba(255,255,255,.18)}
+.foot .f-links a:hover{color:#fff;border-color:#fff}
+.watermark{margin-top:60px;display:flex;align-items:flex-end;justify-content:center;gap:.08em;font-size:clamp(56px,14vw,205px);font-weight:600;letter-spacing:-.05em;line-height:.78;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.07);white-space:nowrap;transform:translateY(18%);user-select:none}
+
+/* ---------- reveal ---------- */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.16s}.rv.d3{transition-delay:.24s}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.wave i{animation:none;height:12px}}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top"><img src="site/icon-128.png" alt="" width="30" height="30"><span>Roman Urdu Keyboard</span></a>
+    <div class="nav-sep"></div>
+    <nav class="links" id="links">
+      <a href="#about">About</a>
+      <a href="#features">Features</a>
+      <a href="#advantages">Advantages</a>
+      <a href="#faqs">FAQs</a>
+      <a href="https://github.com/pauldeggington/roman-urdu-keyboard/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
+    </nav>
+    <div class="nav-right">
+      <a class="iconbtn" href="https://github.com/pauldeggington/roman-urdu-keyboard" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg>
+      </a>
+      <a class="btn-sm" href="https://play.google.com/store/apps/details?id=com.lanternkeys.urdukb" target="_blank" rel="noopener">Get the app</a>
+      <button class="iconbtn menu" id="menu" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="top">
+  <div class="hero-card">
+    <h1 class="rv">Type in English.<br>Send Roman Urdu.</h1>
+    <p class="lead rv d1">An Android keyboard with an AI translator that runs on your phone. No internet after setup, no account, nothing sent anywhere.</p>
+    <div class="cta-row rv d2">
+      <a class="btn" href="https://play.google.com/store/apps/details?id=com.lanternkeys.urdukb" target="_blank" rel="noopener">
+        Get it on Google Play
+        <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 3.5v17a1 1 0 0 0 1.5.9L19 12.9a1 1 0 0 0 0-1.8L5.5 2.6A1 1 0 0 0 4 3.5z"/></svg></span>
+      </a>
+      <span class="btn ghost soon" aria-disabled="true">
+        App Store <small>Coming soon</small>
+        <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.2-2.8.8-3.5.8-.7 0-1.9-.8-3.1-.8-1.6 0-3.1.9-3.9 2.4-1.7 2.9-.4 7.2 1.2 9.6.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8s1.9.8 3.1.8c1.3 0 2.1-1.2 2.9-2.3.9-1.3 1.3-2.6 1.3-2.7-.1 0-2.7-1-2.7-4.1zM14.1 5.7c.6-.8 1.1-1.9.9-3-.9 0-2 .6-2.7 1.4-.6.7-1.1 1.8-1 2.9 1.1.1 2.1-.5 2.8-1.3z"/></svg></span>
+      </span>
+    </div>
+    <p class="hero-meta rv d3">Version <span id="ver">2.5</span> · Android 12 or newer · or <a href="https://github.com/pauldeggington/roman-urdu-keyboard/releases/latest" target="_blank" rel="noopener">download the APK from GitHub</a></p>
+
+    <div class="hero-art">
+      <div class="glow"></div>
+      <div class="hero-frame rv">
+        <div class="chat">
+          <div class="bubble in">Kal ka plan kya hai?</div>
+          <div class="bubble out"><span class="was">You typed: Let's meet at 6, don't be late</span>Chalo 6 baje milte hain, late mat hona</div>
+        </div>
+        <div class="hero-kb"><img src="site/hero-kb.png" alt="The keyboard, with the Translate key, tone and direction in its toolbar" width="1080" height="837"></div>
+      </div>
+      <div class="pill" aria-hidden="true">
+        <div class="seg"><span class="k">TONE</span><span class="v">Casual</span></div>
+        <div class="seg"><span class="k">MODEL</span><span class="v">On phone</span></div>
+        <div class="seg"><span class="dot"></span><span class="v">Offline</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STEPS ===== -->
+<section class="steps" id="about">
+  <div class="wrap">
+    <div class="steps-grid">
+      <div class="step rv">
+        <div class="n">1</div>
+        <h3>Type in English</h3>
+        <p class="sub">In WhatsApp, Messages, or any app. The keyboard looks and feels like Gboard, with glide typing, suggestions and autocorrect.</p>
+        <div class="shot"><img src="site/kb-light.png" alt="The light keyboard" loading="lazy"></div>
+      </div>
+      <div class="step rv d1">
+        <div class="n">2</div>
+        <h3>Tap Translate</h3>
+        <p class="sub">The key spins while the model works, then your text becomes natural Roman Urdu. Pick a tone first, or leave it on Auto. Tap again to undo.</p>
+        <div class="mock">
+          <div class="row"><span class="chip">Auto</span><span class="chip on">Casual</span><span class="chip">Formal</span><span class="chip">Poetic</span></div>
+          <div class="line"></div><div class="line s"></div>
+          <div class="row" style="margin:14px 0 0"><span class="chip on" style="background:var(--green)">⟳ Translating…</span></div>
+        </div>
+      </div>
+      <div class="step rv d2">
+        <div class="n">3</div>
+        <h3>Send</h3>
+        <p class="sub">Roman Urdu the way people actually text it. Spelling follows the Urdu letters, so <i>dh</i>, <i>rh</i> and <i>ph</i> come out the way an Urdu reader expects.</p>
+        <div class="mock" style="background:#161b26;border-color:#161b26;color:#fff">
+          <div class="bubble in" style="display:inline-block;margin-bottom:10px">Where are you?</div>
+          <div class="bubble out" style="display:inline-block;float:right;clear:both">Tum kahan ho?</div>
+          <div style="clear:both"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MISSION ===== -->
+<section class="mission">
+  <div class="mission-card" id="mission">
+    <p>Most Roman Urdu typing is a <span class="o">compromise</span>: you either write in English, or you spell Urdu out letter by letter and hope it reads right.</p>
+    <p>Roman Urdu Keyboard does the <span class="g">translating for you</span>, in the tone you choose, while everything stays <span class="y">on your phone</span>.</p>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="section-head center rv">
+      <span class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Features</span>
+      <h2>Built for Roman Urdu,<br>designed for your phone</h2>
+      <p class="lead">A full keyboard first, with a translator built into it. Here is what it does.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card rv">
+        <div class="tones" id="tones">
+          <button class="tone on" data-t="casual">Casual</button>
+          <button class="tone" data-t="formal">Formal</button>
+          <button class="tone" data-t="poetic">Poetic</button>
+          <button class="tone" data-t="funny">Funny</button>
+          <button class="tone" data-t="respectful">Respectful</button>
+        </div>
+        <div class="tone-out"><div class="en">I'm really tired today</div><div class="ru" id="tone-ru">Aaj main bohat thak gaya hoon</div></div>
+        <h3>Say it in the right tone</h3>
+        <p class="sub">Casual, formal, poetic, funny or respectful, picked from a word on the toolbar. Or leave it on Auto and the keyboard reads the situation. Male or female wording too: <i>thak gaya</i> or <i>thak gayi</i>.</p>
+      </div>
+
+      <div class="card rv d1">
+        <div class="spell"><span class="bad">badha</span><span class="arr">→</span><span class="good">barha <span class="urdu">بڑھا</span></span></div>
+        <div class="spell"><span class="bad">parna</span><span class="arr">→</span><span class="good">parhna <span class="urdu">پڑھنا</span></span></div>
+        <div class="spell"><span class="bad">pool</span><span class="arr">→</span><span class="good">phool <span class="urdu">پھول</span></span></div>
+        <h3>Spelling that follows the Urdu letters</h3>
+        <p class="sub">There is no standard Roman Urdu spelling, so the keyboard follows the Urdu script instead of Hindi habits. Add your own in the glossary (<i>bada → barha</i>) and it uses them every time.</p>
+      </div>
+
+      <div class="card flip rv">
+        <div class="art"><img src="site/kb-gif.png" alt="GIF search in the keyboard" loading="lazy"></div>
+        <h3>Emoji, GIFs, stickers, clipboard</h3>
+        <p class="sub">An emoji screen with search and skin tones, text emoticons in groups, GIFs and stickers from GIPHY, and a clipboard history like Gboard's. Tap to paste, long-press to pin.</p>
+      </div>
+
+      <div class="card flip rv d1">
+        <div class="art"><img src="site/kb-dark.png" alt="The dark keyboard" loading="lazy"></div>
+        <h3>Types like Gboard</h3>
+        <p class="sub">Same layout and height, glide typing in English, word suggestions, autocorrect you can undo with one Backspace, and next-word hints. Light, dark, or your wallpaper colours.</p>
+      </div>
+
+      <div class="card dark wide rv">
+        <div>
+          <h3 style="margin-top:0">Voice, both ways</h3>
+          <p class="sub">Share an Urdu voice note from WhatsApp to the app and read it in English. Or speak English and get an Urdu voice message to send. The listening runs on the phone, with the Gemma 4 model.</p>
+        </div>
+        <div class="voice-flow">
+          <div class="vbox"><div class="k">Urdu voice note</div><div class="wave"><i style="animation-delay:0s"></i><i style="animation-delay:.1s"></i><i style="animation-delay:.2s"></i><i style="animation-delay:.3s"></i><i style="animation-delay:.15s"></i><i style="animation-delay:.05s"></i><i style="animation-delay:.25s"></i><i style="animation-delay:.35s"></i><i style="animation-delay:.1s"></i><i style="animation-delay:.2s"></i></div></div>
+          <svg class="varr" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <div class="vbox"><div class="k">English text</div><div class="v">"Your parcel is at reception, I left it with the guard."</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="trio">
+      <div class="rv">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l22 22M16.7 11.2A10 10 0 0 0 5 5.1M8.5 8.6A6 6 0 0 0 4.9 12M12 20h.01M19.1 12a6 6 0 0 0-1.3-2.3M15.6 15.4a2.5 2.5 0 0 0-3.7-.2"/></svg>Works offline</h3>
+        <p class="sub">The translator is a Gemma model that downloads once (0.6 GB or 2.6 GB, your choice) and then runs with no connection at all.</p>
+      </div>
+      <div class="rv d1">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Private by design</h3>
+        <p class="sub">What you type never leaves the phone. No account, no analytics, no ads. Learned words stay on the device, and never in password fields.</p>
+      </div>
+      <div class="rv d2">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>Open source</h3>
+        <p class="sub">The whole keyboard is on GitHub. Read the code, check the signing fingerprint, or build it yourself.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ADVANTAGES ===== -->
+<section class="dark" id="advantages">
+  <div class="dark-card">
+    <div class="rv">
+      <span class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg>Advantages</span>
+      <h2 style="margin-top:22px;max-width:760px">Built for every kind<br>of Urdu speaker</h2>
+    </div>
+    <div class="adv">
+      <div class="adv-list" id="adv">
+        <button class="adv-item on" data-img="a1"><h3>Pick the look you want</h3><p class="sub">Light, dark or follow the phone. Wallpaper colours with Material You, or one of 19 swatches.</p></button>
+        <button class="adv-item" data-img="a2"><h3>An Urdu interface, if you prefer it</h3><p class="sub">The app's own screens are translated into Urdu and lay out right-to-left.</p></button>
+        <button class="adv-item" data-img="a3"><h3>Set up in two minutes</h3><p class="sub">A guide walks you through each step, with buttons that jump straight to the right Android setting.</p></button>
+        <button class="adv-item" data-img="a4"><h3>Read Roman Urdu back to English</h3><p class="sub">Select a Roman Urdu message in any app and tap Translate to English in the menu. Or type Roman Urdu and tap the key.</p></button>
+        <button class="adv-item" data-img="a5"><h3>Learns your words, forgets on request</h3><p class="sub">Names and spellings you use are learned on the phone. One button in the app forgets everything.</p></button>
+      </div>
+      <div class="adv-stage rv">
+        <img id="a1" class="tall on" src="site/gallery.png" alt="Choosing the keyboard look" loading="lazy">
+        <img id="a2" class="tall" src="site/urdu.png" alt="The app in Urdu" loading="lazy">
+        <img id="a3" class="tall" src="site/setup.png" alt="The setup guide" loading="lazy">
+        <img id="a4" src="site/kb-symbols.png" alt="The symbols layer of the keyboard" loading="lazy">
+        <img id="a5" src="site/kb-search.png" alt="Emoji search" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="faq" id="faqs">
+  <div class="wrap faq-grid">
+    <div class="rv">
+      <span class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>FAQ's</span>
+      <h2>Got questions?<br>We got answers</h2>
+    </div>
+    <div class="acc rv d1" id="acc">
+      <div class="q"><button>Is anything I type sent to a server?<span class="plus"></span></button><div class="a"><p>No. Translation, suggestions, autocorrect and learning all run on the phone. The only things that use the internet are the one-time model download, GIF and sticker search (your search words go to GIPHY), and the keyboard's mic button, which uses Android's own speech recognition. Everything is in the <a href="privacy.html" style="text-decoration:underline">privacy policy</a>.</p></div></div>
+      <div class="q"><button>How big is the download?<span class="plus"></span></button><div class="a"><p>The app itself is small. The translator downloads once during setup: Gemma 4 E2B is about 2.6 GB and gives the best translations, Gemma 3 1B is about 0.6 GB, faster but less accurate. Use Wi-Fi. After that, nothing else downloads.</p></div></div>
+      <div class="q"><button>Which phones does it work on?<span class="plus"></span></button><div class="a"><p>Android 12 or newer on a 64-bit phone, with a few gigabytes free for the model. It was built and tested on a Pixel 8a. Newer phones with more memory translate faster.</p></div></div>
+      <div class="q"><button>The first translation is slow.<span class="plus"></span></button><div class="a"><p>The model has to load into memory after a restart or after the keyboard has been idle, then it stays warm while you type. If it still feels slow, turn on <i>Use the GPU</i> in the app or switch to the smaller model.</p></div></div>
+      <div class="q"><button>Why does the Roman Urdu spelling differ from mine?<span class="plus"></span></button><div class="a"><p>There is no standard. The keyboard follows the Urdu letters, so words with <i>ڑھ</i> become <i>rh</i> and words with <i>پھ</i> become <i>ph</i>. Add your own spellings in the app's glossary and they are used every time.</p></div></div>
+      <div class="q"><button>Do the voice features work with both models?<span class="plus"></span></button><div class="a"><p>No. Only Gemma 4 can listen to audio. With Gemma 3 the keyboard and translation work, but the Voice card is off until you switch to Gemma 4. The mic button on the keyboard is separate and works with either.</p></div></div>
+      <div class="q"><button>Found a bug or have an idea?<span class="plus"></span></button><div class="a"><p>Open an issue on <a href="https://github.com/pauldeggington/roman-urdu-keyboard/issues" target="_blank" rel="noopener" style="text-decoration:underline">GitHub</a>, or email <a href="mailto:lanternkeys@gmail.com" style="text-decoration:underline">lanternkeys@gmail.com</a>. A screenshot and the phone model help a lot.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CLOSING CTA ===== -->
+<section class="close">
+  <div class="close-grid">
+    <div class="close-card rv">
+      <h2 style="color:#fff">Start texting<br>in Roman Urdu</h2>
+      <p class="lead">Free, open source, and private. Set up once and it works anywhere you type.</p>
+      <div class="cta-row">
+        <a class="btn" href="https://play.google.com/store/apps/details?id=com.lanternkeys.urdukb" target="_blank" rel="noopener">
+          Get it on Google Play
+          <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 3.5v17a1 1 0 0 0 1.5.9L19 12.9a1 1 0 0 0 0-1.8L5.5 2.6A1 1 0 0 0 4 3.5z"/></svg></span>
+        </a>
+        <a class="btn ghost" href="https://github.com/pauldeggington/roman-urdu-keyboard/releases/latest" target="_blank" rel="noopener">
+          APK on GitHub
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></span>
+        </a>
+      </div>
+    </div>
+    <div class="shots">
+      <div class="shot-frame rv d1"><img src="site/kb-light.png" alt="" loading="lazy"></div>
+      <div class="shot-frame b rv d2"><img src="site/kb-emoji.png" alt="" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a class="brand" href="#top"><img src="site/icon-128.png" alt="" width="30" height="30"><span>© 2026 Lantern Keys</span></a>
+      <div style="display:flex;gap:8px">
+        <a class="iconbtn" href="https://github.com/pauldeggington/roman-urdu-keyboard" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg></a>
+        <a class="iconbtn" href="mailto:lanternkeys@gmail.com" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></a>
+      </div>
+      <div class="f-links">
+        <a href="privacy.html">Privacy</a>
+        <a href="https://github.com/pauldeggington/roman-urdu-keyboard/releases" target="_blank" rel="noopener">Releases</a>
+        <a href="https://github.com/pauldeggington/roman-urdu-keyboard/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
+      </div>
+      <div>Built with ❤️ by Lantern Keys</div>
+    </div>
+  </div>
+  <div class="watermark" aria-hidden="true"><span class="urdu" style="-webkit-text-stroke:0;color:rgba(233,183,58,.12);font-size:.55em;line-height:1.1">بات</span>Lantern Keys</div>
+</footer>
+
+<script>
+(function(){
+  // reveal on scroll
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px',threshold:.05});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
+
+  // compact nav + active link
+  var nav=document.getElementById('nav'),links=document.querySelectorAll('#links a[href^="#"]');
+  var secs=[].map.call(links,function(a){return document.querySelector(a.getAttribute('href'))});
+  function onScroll(){
+    nav.classList.toggle('compact',scrollY>80);
+    var y=scrollY+140,cur=-1;
+    secs.forEach(function(s,i){if(s&&s.offsetTop<=y)cur=i});
+    links.forEach(function(a,i){a.classList.toggle('on',i===cur)});
+  }
+  addEventListener('scroll',onScroll,{passive:true});onScroll();
+  var menu=document.getElementById('menu'),lk=document.getElementById('links');
+  menu.addEventListener('click',function(){lk.classList.toggle('open')});
+  lk.addEventListener('click',function(){lk.classList.remove('open')});
+
+  // mission: light words up as you scroll past
+  var m=document.getElementById('mission');
+  m.querySelectorAll('p').forEach(function(p){
+    p.innerHTML=p.innerHTML.replace(/(<span class="[goy]">)|(<\/span>)|([^\s<>]+)/g,function(x,o,c,w){return w?'<span class="w">'+w+'</span>':x});
+  });
+  var words=m.querySelectorAll('.w');
+  function lightWords(){
+    var r=m.getBoundingClientRect(),h=innerHeight;
+    var p=Math.min(1,Math.max(0,(h*0.85-r.top)/(r.height*0.9)));
+    var n=Math.round(p*words.length);
+    words.forEach(function(w,i){w.classList.toggle('lit',i<n)});
+  }
+  addEventListener('scroll',lightWords,{passive:true});lightWords();
+
+  // tone demo
+  var ru={casual:'Aaj main bohat thak gaya hoon',formal:'Aaj main kaafi thaka hua hoon',poetic:'Aaj thakan ne mujhe gher liya hai',funny:'Aaj to battery bilkul khatam hai meri',respectful:'Ji, aaj main kaafi thak gaya hoon'};
+  var tb=document.querySelectorAll('#tones .tone'),out=document.getElementById('tone-ru');
+  tb.forEach(function(b){b.addEventListener('click',function(){tb.forEach(function(x){x.classList.remove('on')});b.classList.add('on');out.style.opacity=0;setTimeout(function(){out.textContent=ru[b.dataset.t];out.style.opacity=1},150)})});
+  out.style.transition='opacity .15s';
+
+  // advantages
+  var items=document.querySelectorAll('#adv .adv-item'),imgs=document.querySelectorAll('.adv-stage img'),ai=0,timer;
+  function showAdv(i){ai=i;items.forEach(function(x,j){x.classList.toggle('on',j===i)});imgs.forEach(function(x){x.classList.toggle('on',x.id===items[i].dataset.img)})}
+  items.forEach(function(x,i){x.addEventListener('click',function(){showAdv(i);clearInterval(timer);timer=setInterval(function(){showAdv((ai+1)%items.length)},6000)})});
+  timer=setInterval(function(){showAdv((ai+1)%items.length)},6000);
+
+  // faq
+  document.querySelectorAll('#acc .q').forEach(function(q){
+    var b=q.querySelector('button'),a=q.querySelector('.a');
+    b.addEventListener('click',function(){
+      var open=q.classList.contains('open');
+      document.querySelectorAll('#acc .q.open').forEach(function(o){o.classList.remove('open');o.querySelector('.a').style.maxHeight=0});
+      if(!open){q.classList.add('open');a.style.maxHeight=a.scrollHeight+'px'}
+    });
+  });
+
+  // version from the latest GitHub release (falls back to the static text)
+  fetch('https://api.github.com/repos/pauldeggington/roman-urdu-keyboard/releases/latest').then(function(r){return r.json()}).then(function(j){
+    if(j&&j.tag_name){document.getElementById('ver').textContent=j.tag_name.replace(/^v/,'')}
+  }).catch(function(){});
+})();
+</script>
+</body>
+</html>
