@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roman Urdu Keyboard changelog</title>
+<meta name="description" content="What changed in each version of Roman Urdu Keyboard.">
+<meta name="theme-color" content="#070f0c">
+<link rel="icon" type="image/png" href="site/icon-128.png">
+<meta property="og:title" content="Roman Urdu Keyboard">
+<meta property="og:description" content="Type in English. Send Roman Urdu. Works offline on your phone.">
+<meta property="og:image" content="https://pauldeggington.github.io/roman-urdu-keyboard/play/feature-graphic-1024x500.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site/site.css">
+<style>
+.cl-hero{padding:14px}
+.cl-card{border-radius:var(--r-big);background:var(--dark);border:1px solid var(--line-dark);padding:170px 24px 80px;text-align:center}
+.cl-card .lead{max-width:640px;margin:22px auto 0}
+.cl-card .label{margin-bottom:22px}
+.builds{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:34px;min-height:40px}
+.build{display:inline-flex;align-items:center;gap:10px;height:40px;padding:0 6px 0 14px;border-radius:var(--r-pill);background:var(--dark-2);border:1px solid var(--line-dark);color:#fff;font-size:14px;font-weight:500}
+.build time{color:var(--muted);font-weight:400}
+.build .dl{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.08)}
+.build .dl svg{width:14px;height:14px}
+.build:hover .dl{background:var(--gold-2);color:#1b1a14}
+.cl-body{background:var(--white);padding:80px 0 120px}
+.cl-grid{display:grid;grid-template-columns:220px 1fr;gap:60px;align-items:start}
+.toc{position:sticky;top:100px;display:flex;flex-direction:column;gap:4px}
+.toc a{padding:8px 12px;border-radius:8px;font-size:14px;font-weight:500;color:var(--body)}
+.toc a:hover,.toc a.on{background:var(--light);color:var(--ink)}
+.intro{color:var(--body);font-size:15px;line-height:1.65;max-width:700px;margin-bottom:40px}
+.rel{border-top:1px solid #ececee;padding:40px 0 12px;scroll-margin-top:100px}
+.rel-head{display:flex;align-items:baseline;gap:16px;margin-bottom:18px}
+.ver{font-size:40px;font-weight:500;letter-spacing:-.04em;color:var(--ink);line-height:1}
+.tag{font-size:13px;color:var(--muted);font-weight:500}
+.rel ul{margin:0 0 20px;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.rel li{background:var(--light);border-radius:var(--r-card);padding:16px 20px;font-size:15px;line-height:1.6;color:var(--body)}
+.rel li strong{color:var(--ink);font-weight:500}
+.rel p{color:var(--body);font-size:15px;line-height:1.6}
+.rel code,.intro code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;background:#eceef1;padding:1px 6px;border-radius:6px;color:var(--ink)}
+.rel a,.intro a{text-decoration:underline;text-underline-offset:2px}
+@media (max-width:900px){.cl-grid{grid-template-columns:1fr;gap:30px}.toc{position:static;flex-direction:row;flex-wrap:wrap}.cl-card{padding-top:120px}}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html" aria-label="Roman Urdu Keyboard"><img src="site/icon-128.png" alt="" width="30" height="30"></a>
+    <div class="nav-sep"></div>
+    <nav class="links" id="links">
+      <a href="index.html#about">About</a>
+      <a href="index.html#features">Features</a>
+      <a href="index.html#advantages">Advantages</a>
+      <a href="index.html#faqs">FAQs</a>
+      <a href="changelog.html" class="on">Changelog</a>
+    </nav>
+    <div class="nav-right">
+      <a class="iconbtn" href="https://github.com/pauldeggington/roman-urdu-keyboard" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg>
+      </a>
+      <a class="btn-sm" href="https://play.google.com/store/apps/details?id=com.lanternkeys.urdukb" target="_blank" rel="noopener">Get the app</a>
+      <button class="iconbtn menu" id="menu" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<section class="cl-hero" id="top">
+  <div class="cl-card">
+    <span class="label rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>Changelog</span>
+    <h1 class="rv d1">What changed<br>in each version</h1>
+    <p class="lead rv d2">Every release, newest first.</p>
+    <div class="builds rv d3" id="builds"></div>
+  </div>
+</section>
+
+<section class="cl-body">
+  <div class="wrap cl-grid">
+    <nav class="toc rv" id="toc"></nav>
+    <div class="rv d1">
+      <div class="intro" id="intro"><p>Every release on <code>main</code> has a version: <strong>major.minor.build</strong>. The major and minor numbers (<code>VERSION</code> in the repo) go up when a set of changes is merged to <code>main</code>; the build number is the CI build, so a newer build always installs over an older one. The app shows it as, for example, "Version 2.1 (build 121)". Work-in-progress builds are not published as releases; they are only kept as a download on the CI run.</p>
+</div>
+      <div id="log"><section class="rel" id="v2.5"><div class="rel-head"><span class="ver">2.5</span><span class="tag">Version 2.5</span></div>
+
+<ul>
+<li><strong>Google Play bundle:</strong> every release also carries a <code>.aab</code> file, the format Google Play takes. The Play version has no in-app updater, because Play updates the app itself and does not allow an app to update itself another way.</li>
+</ul>
+<ul>
+<li><strong>New app ID: <code>com.lanternkeys.urdukb</code>.</strong> The app's ID on the phone changes (the name you see, Roman Urdu Keyboard, stays). This is needed to publish on Google Play, and it means 2.5 installs <strong>beside</strong> the old app, not over it. After installing it, go through the short setup again (the translator is downloaded again, about 2.6 GB), switch to the new keyboard, then uninstall the old one. The old app keeps working but will not receive updates.</li>
+</ul>
+<section class="rel" id="v2.4"><div class="rel-head"><span class="ver">2.4</span><span class="tag">Version 2.4</span></div>
+</section>
+
+<ul>
+<li><strong>Meaning, not word order:</strong> Urdu puts the verb last and English does not, so the model is told in both directions to translate what is meant and not the word order, with examples.</li>
+<li><strong>Roman Urdu all the way:</strong> Urdu voice notes are now written down as Roman Urdu and translated by the keyboard's own Roman Urdu to English translation (its examples and spelling handling, plus rules for text that was heard, not typed). The English is double-checked by turning it back into Roman Urdu.</li>
+<li><strong>Careful listening (switch in the Voice card):</strong> each Urdu voice note is heard four ways: normal speed, slowed by a quarter, faster by a sixth, and written as Roman Urdu. If two of the first three agree, that wins; if not, the model compares all four and picks the most likely words. Then the English is turned back into Urdu and compared with what was heard; if it does not match, it is translated once more, closer to the Urdu, and if it still does not match the screen says the English may be off. More accurate, several times slower.</li>
+<li><strong>Cleaner audio:</strong> before listening, low rumble is removed, silence at the start and end is trimmed, and a quiet recording is raised (never more than 8 times).</li>
+<li><strong>Also heard as:</strong> when the listening passes disagree, the other readings are listed, and tapping Use this translates that reading instead.</li>
+<li><strong>Mixed Urdu and English:</strong> the translation step keeps English words, names and places as they are and translates the Urdu around them, with worked examples.</li>
+</ul>
+<ul>
+<li><strong>Better Urdu voice notes:</strong> the model now writes down what it hears first, then a separate step translates that transcript, which gave far better English than doing both at once. English names and places in the note are kept in Latin letters.</li>
+</ul>
+<ul>
+<li><strong>Voice, Urdu to English:</strong> share an Urdu voice note from WhatsApp (Share, then Roman Urdu Keyboard) and the on-device model listens and shows Urdu text and English, both copyable. Long notes are cut into pieces at quiet moments (the model hears 30 seconds at a time).</li>
+<li><strong>Voice, English to Urdu:</strong> speak English in the app (Voice card, Speak) and get the Urdu in script and Roman Urdu, read aloud by the phone's own Urdu voice, saved as an audio message you can send. Needs the Urdu voice installed in the phone's Text-to-speech settings.</li>
+<li>Everything runs on the phone; nothing is uploaded.</li>
+</ul>
+<section class="rel" id="v2.3"><div class="rel-head"><span class="ver">2.3</span><span class="tag">Version 2.3</span></div>
+</section>
+
+<ul>
+<li><strong>Tone matrix:</strong> Roman Urdu translation now has five tones: Casual, Formal, and new Poetic, Funny and Respectful (for elders). <strong>Auto</strong> (the default) picks the tone from the sentence, for example "Please give my salaam to Mother" is Respectful and "Good morning, my love" is Poetic (which also covers warm words to a partner or family). Tap the tone key on the toolbar to pick one by hand. Each tone has its own rules and example bank, grouped by situation.</li>
+<li><strong>Spelling follows the Urdu letters:</strong> parhna, barha, larka, phir, fikar, zindagi, waqt (not padhna, badha, ladka, fir, phikar, jindagi, vaqt). The model is told the rule and every answer is checked against about 190 built-in fixes; your own glossary still wins.</li>
+<li><strong>Smart tone:</strong> in Auto, when the words alone do not show the tone, the on-device model reads the sentence first and works out the tone, who it is to (an elder always gets Respectful) and what it is about, which picks the closest examples. Clear cases stay instant. There is a switch for it in settings.</li>
+<li><strong>Words stay words:</strong> a single word or short phrase ("friend") now comes back as that word, not as a question.</li>
+<li><strong>Instructions hidden:</strong> the model's instructions are built in and no longer shown or editable in the app, so improvements reach everyone. The example bank and the glossary stay editable.</li>
+</ul>
+<section class="rel" id="v2.2"><div class="rel-head"><span class="ver">2.2</span><span class="tag">Version 2.2</span></div>
+</section>
+
+<ul>
+<li><strong>Easier to change:</strong> the app screens (settings, setup guide, Translate sheet) are rewritten in Jetpack Compose, each split into a screen and a model. The plain-Kotlin logic (suggestions, glide, detection, translation prompts) moved into its own <code>core</code> module with fast tests, and the dependency versions are in one catalog. Everything looks and works as before.</li>
+<li><strong>Text in one place:</strong> the screens' and keyboard's messages are in <code>strings.xml</code>, ready for translation.</li>
+<li><strong>Smaller download:</strong> the main APK is now shrunk with R8 (about a third of the size). The unshrunk build is attached to each release as <code>-standard.apk</code>, in case anything misbehaves.</li>
+<li><strong>Urdu app screens:</strong> the app and setup screens, and the keyboard's messages, are available in Urdu script when the phone's language is Urdu.</li>
+<li><strong>Easier to read and use:</strong> every tap target is at least 48dp, switches and colour choices are labelled for TalkBack, Urdu text is drawn larger (it reads small at the same size), the back arrow mirrors in right-to-left, and line heights have room for large text. The Android-free <code>core</code> tests check the contrast of every colour swatch, in light and dark.</li>
+<li><strong>State survives:</strong> turning the screen or changing the colour no longer resets the settings and setup screens mid-download.</li>
+<li><strong>Cleaner code:</strong> all settings in one typed <code>KbSettings</code> class; the keyboard service is split into <code>TypingAssist</code>, <code>MediaSender</code>, <code>VoiceController</code> and <code>PreviewHooks</code>.</li>
+</ul>
+<section class="rel" id="v2.1"><div class="rel-head"><span class="ver">2.1</span><span class="tag">Version 2.1</span></div>
+</section>
+
+<ul>
+<li><strong>Typing help:</strong> word suggestions, automatic correction (with Backspace to undo), next-word suggestions, glide typing improvements.</li>
+<li><strong>Voice typing in the keyboard:</strong> the mic listens inside the keyboard and shows words as you speak.</li>
+<li><strong>Emoji:</strong> search understands Roman Urdu words (<em>khushi, pyaar, shukriya</em>) and forgives typos; skin tones are remembered; the screen opens faster.</li>
+<li><strong>GIFs and stickers:</strong> a Recent chip, endless scrolling, quicker search, more categories.</li>
+<li><strong>Clipboard:</strong> a Paste chip above the keys for what you just copied, ages on each clip, and a setting to keep clips for an hour, a day or a week.</li>
+<li><strong>Speed and fixes:</strong> idle model unload and warm-up, caches, encrypted GIPHY key, the transparent keyboard background bug.</li>
+<li><strong>README:</strong> new banner and layout, setup and showcase videos, FAQ, permissions table and the signing fingerprint.</li>
+</ul>
+<section class="rel" id="v2.0"><div class="rel-head"><span class="ver">2.0</span><span class="tag">Version 2.0</span></div>
+</section>
+
+<ul>
+<li>The rewritten keyboard: on-device Gemma translation, Gboard-style layout, emoji, GIFs, clipboard history, setup guide.</li>
+</ul></section>
+</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a class="brand" href="index.html"><img src="site/icon-128.png" alt="" width="30" height="30"><span>© 2026 Lantern Keys</span></a>
+      <div style="display:flex;gap:8px">
+        <a class="iconbtn" href="https://github.com/pauldeggington/roman-urdu-keyboard" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg></a>
+        <a class="iconbtn" href="mailto:lanternkeys@gmail.com" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></a>
+      </div>
+      <div class="f-links">
+        <a href="privacy.html">Privacy</a>
+        <a href="https://github.com/pauldeggington/roman-urdu-keyboard/releases" target="_blank" rel="noopener">Releases</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
+      <div>Made by Lantern Keys</div>
+    </div>
+  </div>
+  <div class="watermark" aria-hidden="true"><span class="urdu" style="-webkit-text-stroke:0;color:rgba(233,183,58,.12);font-size:.55em;line-height:1.1">بات</span>Lantern Keys</div>
+</footer>
+
+<script>
+(function(){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px',threshold:.05});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
+  var nav=document.getElementById('nav');addEventListener('scroll',function(){nav.classList.toggle('compact',scrollY>80)},{passive:true});
+  var menu=document.getElementById('menu'),lk=document.getElementById('links');menu.addEventListener('click',function(){lk.classList.toggle('open')});
+
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  function inline(s){s=esc(s);s=s.replace(/`([^`]+)`/g,'<code>$1</code>');s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');s=s.replace(/(^|[^\w*])\*(?!\s)(.+?)(?!\s)\*(?!\w)/g,'$1<em>$2</em>');s=s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');return s}
+  function render(md){
+    var intro=[],secs=[],cur=null,ul=false,para=[];
+    function target(){return cur?cur.html:intro}
+    function flush(){if(para.length){target().push('<p>'+inline(para.join(' '))+'</p>');para=[]}}
+    function closeUl(){if(ul){target().push('</ul>');ul=false}}
+    md.split('\n').forEach(function(line){
+      var m;
+      if(/^# /.test(line))return;
+      if((m=line.match(/^## (.*)/))){flush();closeUl();cur={v:m[1].trim(),html:[]};secs.push(cur);return}
+      if((m=line.match(/^\s*[-*] (.*)/))){flush();if(!ul){target().push('<ul>');ul=true}target().push('<li>'+inline(m[1])+'</li>');return}
+      if(!line.trim()){flush();closeUl();return}
+      para.push(line.trim());
+    });
+    flush();closeUl();
+    return {intro:intro.join('\n'),secs:secs};
+  }
+  function toc(){
+    var t=document.getElementById('toc');t.innerHTML='';
+    document.querySelectorAll('#log .rel').forEach(function(s){var a=document.createElement('a');a.href='#'+s.id;a.textContent='Version '+s.querySelector('.ver').textContent;t.appendChild(a)});
+  }
+  toc();
+  fetch('https://raw.githubusercontent.com/pauldeggington/roman-urdu-keyboard/main/CHANGELOG.md').then(function(r){return r.ok?r.text():null}).then(function(md){
+    if(!md)return;var r=render(md);
+    document.getElementById('intro').innerHTML=r.intro;
+    document.getElementById('log').innerHTML=r.secs.map(function(s){return '<section class="rel" id="v'+s.v+'"><div class="rel-head"><span class="ver">'+esc(s.v)+'</span><span class="tag">Version '+esc(s.v)+'</span></div>'+s.html.join('\n')+'</section>'}).join('\n');
+    toc();
+  }).catch(function(){});
+  fetch('https://api.github.com/repos/pauldeggington/roman-urdu-keyboard/releases?per_page=8').then(function(r){return r.json()}).then(function(list){
+    if(!Array.isArray(list))return;var b=document.getElementById('builds');
+    list.filter(function(r){return !r.draft&&/^v\d/.test(r.tag_name)}).slice(0,6).forEach(function(r){
+      var apk=(r.assets||[]).find(function(a){return /^RomanUrduKeyboard-[\d.]+\.apk$/.test(a.name)});
+      var a=document.createElement('a');a.className='build';a.href=apk?apk.browser_download_url:r.html_url;a.target='_blank';a.rel='noopener';
+      var d=new Date(r.published_at);
+      a.innerHTML=esc(r.tag_name.replace(/^v/,''))+' <time>'+d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})+'</time><span class="dl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></span>';
+      b.appendChild(a);
+    });
+  }).catch(function(){});
+})();
+</script>
+</body>
+</html>

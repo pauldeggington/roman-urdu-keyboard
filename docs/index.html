@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roman Urdu Keyboard: type English, send Roman Urdu</title>
+<meta name="description" content="An Android keyboard that translates English into Roman Urdu as you type. The AI translator runs on your phone, so it works offline and nothing you type is sent anywhere.">
+<meta name="theme-color" content="#070f0c">
+<link rel="icon" type="image/png" href="site/icon-128.png">
+<meta property="og:title" content="Roman Urdu Keyboard">
+<meta property="og:description" content="Type in English. Send Roman Urdu. Works offline on your phone.">
+<meta property="og:image" content="https://pauldeggington.github.io/roman-urdu-keyboard/play/feature-graphic-1024x500.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site/site.css">
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top" aria-label="Roman Urdu Keyboard"><img src="site/icon-128.png" alt="" width="30" height="30"></a>
+    <div class="nav-sep"></div>
+    <nav class="links" id="links">
+      <a href="#about">About</a>
+      <a href="#features">Features</a>
+      <a href="#advantages">Advantages</a>
+      <a href="#faqs">FAQs</a>
+      <a href="changelog.html">Changelog</a>
+    </nav>
+    <div class="nav-right">
+      <a class="iconbtn" href="https://github.com/pauldeggington/roman-urdu-keyboard" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg>
+      </a>
+      <a class="btn-sm" href="https://play.google.com/store/apps/details?id=com.lanternkeys.urdukb" target="_blank" rel="noopener">Get the app</a>
+      <button class="iconbtn menu" id="menu" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="top">
+  <div class="hero-card">
+    <h1 class="rv">Type in English.<br>Send Roman Urdu.</h1>
+    <p class="lead rv d1">An Android keyboard with an AI translator that runs on your phone. It works offline, needs no account, and sends nothing anywhere.</p>
+    <div class="cta-row rv d2">
+      <a class="btn" href="https://play.google.com/store/apps/details?id=com.lanternkeys.urdukb" target="_blank" rel="noopener">
+        Get it on Google Play
+        <span class="ic logo"><svg viewBox="0 0 24 24"><path fill="#00d7fe" d="M3.6 2.4 13.8 12 3.6 21.6c-.4-.3-.6-.8-.6-1.4V3.8c0-.6.2-1.1.6-1.4z"/><path fill="#00f076" d="M3.6 2.4c.4-.3 1-.3 1.6 0l12 6.8-3.4 3.3z"/><path fill="#ff3a44" d="M3.6 21.6c.4.3 1 .3 1.6 0l12-6.8-3.4-3.3z"/><path fill="#ffd500" d="M17.2 9.2 20.6 11c1 .6 1 1.4 0 2l-3.4 1.8L13.8 12z"/></svg></span>
+      </a>
+      <span class="btn ghost soon" aria-disabled="true">
+        App Store <small>Coming soon</small>
+        <span class="ic logo"><svg viewBox="0 0 24 24" fill="#fff"><path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.2-2.8.8-3.5.8-.7 0-1.9-.8-3.1-.8-1.6 0-3.1.9-3.9 2.4-1.7 2.9-.4 7.2 1.2 9.6.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8s1.9.8 3.1.8c1.3 0 2.1-1.2 2.9-2.3.9-1.3 1.3-2.6 1.3-2.7-.1 0-2.7-1-2.7-4.1zM14.1 5.7c.6-.8 1.1-1.9.9-3-.9 0-2 .6-2.7 1.4-.6.7-1.1 1.8-1 2.9 1.1.1 2.1-.5 2.8-1.3z"/></svg></span>
+      </span>
+    </div>
+    <p class="hero-meta rv d3">Version <span id="ver">2.5</span> · Android 12 or newer · or <a href="https://github.com/pauldeggington/roman-urdu-keyboard/releases/latest" target="_blank" rel="noopener">download the APK from GitHub</a></p>
+
+    <div class="hero-art">
+      <div class="glow"></div>
+      <div class="hero-frame rv">
+        <div class="demo" id="demo" aria-label="Animated demo: an English message is typed, translated and sent as Roman Urdu">
+          <div class="chat" id="chat">
+            <div class="bubble in" id="in-bubble">Kal ka plan kya hai?</div>
+          </div>
+          <div class="composer">
+            <div class="field"><span id="typed"></span><span class="caret" id="caret"></span><span class="ph" id="ph">Message</span></div>
+            <div class="send" id="send"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 11.5 21 3l-8.5 18-2-7.5z"/></svg></div>
+          </div>
+          <div class="kb" id="kb">
+            <div class="toolbar">
+              <span class="tk ic"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></span>
+              <span class="tk ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0M9 10h.01M15 10h.01"/></svg></span>
+              <span class="grow"></span>
+              <span class="tk ic tr" id="trkey"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h8M8 3v2M11 5c-.6 3.2-2.6 5.6-5.5 7M6.5 8.5c.8 1.6 2.2 3 3.8 3.5M13 20l4.5-11L22 20M14.6 16.3h5.8"/></svg></span>
+              <span class="tk tc" id="tone-chip">Casual</span>
+              <span class="tk tc">Auto</span>
+              <span class="tk ic mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>
+            </div>
+            <div class="row"><b data-k="q">q</b><b data-k="w">w</b><b data-k="e">e</b><b data-k="r">r</b><b data-k="t">t</b><b data-k="y">y</b><b data-k="u">u</b><b data-k="i">i</b><b data-k="o">o</b><b data-k="p">p</b></div>
+            <div class="row r2"><b data-k="a">a</b><b data-k="s">s</b><b data-k="d">d</b><b data-k="f">f</b><b data-k="g">g</b><b data-k="h">h</b><b data-k="j">j</b><b data-k="k">k</b><b data-k="l">l</b></div>
+            <div class="row"><b class="fn" data-k="shift"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 4 4 13h5v7h6v-7h5z"/></svg></b><b data-k="z">z</b><b data-k="x">x</b><b data-k="c">c</b><b data-k="v">v</b><b data-k="b">b</b><b data-k="n">n</b><b data-k="m">m</b><b class="fn" data-k="bs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M21 6H8l-5 6 5 6h13z"/><path d="m12 9 6 6M18 9l-6 6"/></svg></b></div>
+            <div class="row bot"><b class="fn w2" data-k="sym">?123</b><b class="fn" data-k=",">,</b><b class="fn" data-k="emoji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0M9 10h.01M15 10h.01"/></svg></b><b class="space" data-k=" "></b><b class="fn" data-k=".">.</b><b class="fn w2 enter" data-k="enter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5v6a3 3 0 0 1-3 3H5M9 10l-4 4 4 4"/></svg></b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STEPS ===== -->
+<section class="steps" id="about">
+  <div class="wrap">
+    <div class="steps-grid">
+      <div class="step rv">
+        <div class="n">1</div>
+        <h3>Type in English</h3>
+        <p class="sub">In WhatsApp, Messages, or any app. The keyboard looks and feels like Gboard, with glide typing, suggestions and autocorrect.</p>
+        <div class="shot"><img src="site/kb-light.png" alt="The light keyboard" loading="lazy"></div>
+      </div>
+      <div class="step rv d1">
+        <div class="n">2</div>
+        <h3>Tap Translate</h3>
+        <p class="sub">The key spins while the model works, then your text becomes natural Roman Urdu. Pick a tone first, or leave it on Auto. Tap again to undo.</p>
+        <div class="mock">
+          <div class="row"><span class="chip">Auto</span><span class="chip on">Casual</span><span class="chip">Formal</span><span class="chip">Poetic</span></div>
+          <div class="line"></div><div class="line s"></div>
+          <div class="row" style="margin:14px 0 0"><span class="chip on" style="background:var(--green)">⟳ Translating…</span></div>
+        </div>
+      </div>
+      <div class="step rv d2">
+        <div class="n">3</div>
+        <h3>Send</h3>
+        <p class="sub">Roman Urdu the way people actually text it. Spelling follows the Urdu letters, so <i>dh</i>, <i>rh</i> and <i>ph</i> come out the way an Urdu reader expects.</p>
+        <div class="mock" style="background:#161b26;border-color:#161b26;color:#fff">
+          <div class="bubble in" style="display:inline-block;margin-bottom:10px">Where are you?</div>
+          <div class="bubble out" style="display:inline-block;float:right;clear:both">Tum kahan ho?</div>
+          <div style="clear:both"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MISSION ===== -->
+<section class="mission">
+  <div class="mission-card" id="mission">
+    <p>Texting in Roman Urdu usually means <span class="o">spelling every word out</span> by hand and hoping it reads right, or giving up and writing English.</p>
+    <p>Roman Urdu Keyboard does the <span class="g">translating for you</span>, in the tone you pick, and everything stays <span class="y">on your phone</span>.</p>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="section-head center rv">
+      <span class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Features</span>
+      <h2>A real keyboard,<br>with the translator inside</h2>
+      <p class="lead">You never switch apps to translate. Type, tap one key, and send.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card rv">
+        <div class="tones" id="tones">
+          <button class="tone on" data-t="casual">Casual</button>
+          <button class="tone" data-t="formal">Formal</button>
+          <button class="tone" data-t="poetic">Poetic</button>
+          <button class="tone" data-t="funny">Funny</button>
+          <button class="tone" data-t="respectful">Respectful</button>
+        </div>
+        <div class="tone-out"><div class="en">I'm really tired today</div><div class="ru" id="tone-ru">Aaj main bohat thak gaya hoon</div></div>
+        <h3>Say it in the right tone</h3>
+        <p class="sub">Pick casual, formal, poetic, funny or respectful from the toolbar, or leave it on Auto and the keyboard chooses from what you wrote. It also handles male and female wording: <i>thak gaya</i> or <i>thak gayi</i>.</p>
+      </div>
+
+      <div class="card rv d1">
+        <div class="spell"><span class="bad">badha</span><span class="arr">→</span><span class="good">barha <span class="urdu">بڑھا</span></span></div>
+        <div class="spell"><span class="bad">parna</span><span class="arr">→</span><span class="good">parhna <span class="urdu">پڑھنا</span></span></div>
+        <div class="spell"><span class="bad">pool</span><span class="arr">→</span><span class="good">phool <span class="urdu">پھول</span></span></div>
+        <h3>Spelling that follows the Urdu letters</h3>
+        <p class="sub">Roman Urdu has no standard spelling, so the keyboard follows the Urdu letters instead of Hindi habits. Add your own spellings in the glossary (<i>bada → barha</i>) and it uses them every time.</p>
+      </div>
+
+      <div class="card flip rv">
+        <div class="art gifpanel" id="gifpanel" data-key="">
+          <div class="gif-top"><span class="gif-back">←</span><span class="gif-search">Search GIFs</span></div>
+          <div class="gif-chips"><span class="on">Trending</span><span>Happy</span><span>Love</span><span>Haha</span><span>Sad</span><span>Wow</span></div>
+          <div class="gif-grid" id="gifgrid">
+            <img src="site/gifs/haha.webp" alt="" loading="lazy"><img src="site/gifs/wave.webp" alt="" loading="lazy"><img src="site/gifs/love.webp" alt="" loading="lazy">
+            <img src="site/gifs/thumbs.webp" alt="" loading="lazy"><img src="site/gifs/party.webp" alt="" loading="lazy"><img src="site/gifs/cry.webp" alt="" loading="lazy">
+          </div>
+          <div class="gif-foot"><span>ABC</span><span class="on">GIF</span><span>Stickers</span><span class="gif-credit" id="gifcredit" hidden>Powered by GIPHY</span></div>
+        </div>
+        <h3>Emoji, GIFs, stickers, clipboard</h3>
+        <p class="sub">Emoji with search and skin tones, text emoticons in groups, GIFs and stickers from GIPHY, and a clipboard history like Gboard's. Tap to paste, long-press to pin.</p>
+      </div>
+
+      <div class="card flip rv d1">
+        <div class="art"><img src="site/kb-dark.png" alt="The dark keyboard" loading="lazy"></div>
+        <h3>Types like Gboard</h3>
+        <p class="sub">The same layout and height, glide typing in English, word suggestions, next-word hints, and autocorrect you can undo with one Backspace. Light, dark, or your wallpaper colours.</p>
+      </div>
+
+      <div class="card dark wide rv">
+        <div>
+          <h3 style="margin-top:0">Voice, both ways</h3>
+          <p class="sub">Share an Urdu voice note from WhatsApp to the app and read it in English. Or speak English and get an Urdu voice message to send. It runs on the phone and needs the Gemma 4 model.</p>
+        </div>
+        <div class="voice-flow">
+          <div class="vbox"><div class="k">Urdu voice note</div><div class="wave"><i style="animation-delay:0s"></i><i style="animation-delay:.1s"></i><i style="animation-delay:.2s"></i><i style="animation-delay:.3s"></i><i style="animation-delay:.15s"></i><i style="animation-delay:.05s"></i><i style="animation-delay:.25s"></i><i style="animation-delay:.35s"></i><i style="animation-delay:.1s"></i><i style="animation-delay:.2s"></i></div></div>
+          <svg class="varr" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <div class="vbox"><div class="k">English text</div><div class="v">"Your parcel is at reception, I left it with the guard."</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="trio">
+      <div class="rv">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l22 22M16.7 11.2A10 10 0 0 0 5 5.1M8.5 8.6A6 6 0 0 0 4.9 12M12 20h.01M19.1 12a6 6 0 0 0-1.3-2.3M15.6 15.4a2.5 2.5 0 0 0-3.7-.2"/></svg>Works offline</h3>
+        <p class="sub">The small Gemma 3 translator is inside the app, so it works the first time you open it. For better translations and voice, download Gemma 4 once (2.6 GB). Neither needs a connection afterwards.</p>
+      </div>
+      <div class="rv d1">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Stays on your phone</h3>
+        <p class="sub">What you type never leaves the phone. There is no account, no analytics and no ads. Words it learns stay on the device, and it never learns from password fields.</p>
+      </div>
+      <div class="rv d2">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>No ads, no account</h3>
+        <p class="sub">There is nothing to sign up for and nothing is tracked. Get it from Google Play, or download the APK from GitHub and install it yourself.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ADVANTAGES ===== -->
+<section class="dark" id="advantages">
+  <div class="dark-card">
+    <div class="rv">
+      <span class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg>Advantages</span>
+      <h2 style="margin-top:22px;max-width:760px">Made to fit<br>how you type</h2>
+    </div>
+    <div class="adv">
+      <div class="adv-list" id="adv">
+        <button class="adv-item on" data-img="a1"><h3>Pick the look you want</h3><p class="sub">Light, dark or follow the phone. Wallpaper colours with Material You, or one of 19 swatches.</p></button>
+        <button class="adv-item" data-img="a2"><h3>An Urdu interface, if you prefer it</h3><p class="sub">The app's own screens are translated into Urdu and lay out right-to-left.</p></button>
+        <button class="adv-item" data-img="a3"><h3>Set up in two minutes</h3><p class="sub">A guide takes you through each step, with buttons that open the right Android setting.</p></button>
+        <button class="adv-item" data-img="a4"><h3>Read Roman Urdu back to English</h3><p class="sub">Select a Roman Urdu message in any app and tap Translate to English. Or type Roman Urdu and tap the Translate key.</p></button>
+        <button class="adv-item" data-img="a5"><h3>Learns your words, forgets on request</h3><p class="sub">It learns the names and spellings you use, on the phone only. One button in the app forgets all of it.</p></button>
+      </div>
+      <div class="adv-stage rv">
+        <div class="bg g1 on" data-for="a1"></div><div class="bg g2" data-for="a2"></div><div class="bg g3" data-for="a3"></div><div class="bg g4" data-for="a4"></div><div class="bg g5" data-for="a5"></div>
+        <img id="a1" class="tall on" src="site/gallery.png" alt="Choosing the keyboard look" loading="lazy">
+        <img id="a2" class="tall" src="site/urdu.png" alt="The app in Urdu" loading="lazy">
+        <img id="a3" class="tall" src="site/setup.png" alt="The setup guide" loading="lazy">
+        <img id="a4" src="site/kb-symbols.png" alt="The symbols layer of the keyboard" loading="lazy">
+        <img id="a5" src="site/kb-search.png" alt="Emoji search" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="faq" id="faqs">
+  <div class="wrap faq-grid">
+    <div class="rv">
+      <span class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>FAQ's</span>
+      <h2>Questions<br>people ask</h2>
+    </div>
+    <div class="acc rv d1" id="acc">
+      <div class="q"><button>Is anything I type sent to a server?<span class="plus"></span></button><div class="a"><p>No. Translation, suggestions, autocorrect and learning all run on the phone. Only three things use the internet: the optional Gemma 4 download, GIF and sticker search (your search words go to GIPHY), and the keyboard's mic button, which uses Android's own speech recognition. The details are in the <a href="privacy.html" style="text-decoration:underline">privacy policy</a>.</p></div></div>
+      <div class="q"><button>How big is the download?<span class="plus"></span></button><div class="a"><p>The app is about 0.6 GB because the small Gemma 3 translator is inside it, so there is nothing to download to start. Gemma 4 is an optional 2.6 GB download that translates better and is the only model that handles voice. Use Wi-Fi for it. Once Gemma 4 is installed, the app removes Gemma 3 to save space.</p></div></div>
+      <div class="q"><button>Which phones does it work on?<span class="plus"></span></button><div class="a"><p>Android 12 or newer on a 64-bit phone, with a few gigabytes free. I built and tested it on a Pixel 8a, and phones with more memory translate faster.</p></div></div>
+      <div class="q"><button>The first translation is slow.<span class="plus"></span></button><div class="a"><p>The model has to load into memory after a restart or a long idle spell, then it stays ready while you type. If it still feels slow, turn on <i>Use the GPU</i> in the app.</p></div></div>
+      <div class="q"><button>Why does the Roman Urdu spelling differ from mine?<span class="plus"></span></button><div class="a"><p>There is no standard, so the keyboard follows the Urdu letters: words with <i>ڑھ</i> become <i>rh</i> and words with <i>پھ</i> become <i>ph</i>. Add your own spellings in the app's glossary and it uses them every time.</p></div></div>
+      <div class="q"><button>Do the voice features work with both models?<span class="plus"></span></button><div class="a"><p>No. Only Gemma 4 can listen to audio. With Gemma 3 the keyboard and translation work, but the Voice card stays off until you install Gemma 4. The keyboard's mic button is separate and works with either.</p></div></div>
+      <div class="q"><button>Found a bug or have an idea?<span class="plus"></span></button><div class="a"><p>Open an issue on <a href="https://github.com/pauldeggington/roman-urdu-keyboard/issues" target="_blank" rel="noopener" style="text-decoration:underline">GitHub</a> or email <a href="mailto:lanternkeys@gmail.com" style="text-decoration:underline">lanternkeys@gmail.com</a>. A screenshot and your phone model help.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CLOSING CTA ===== -->
+<section class="close">
+  <div class="close-grid">
+    <div class="close-card rv">
+      <h2 style="color:#fff">Start texting<br>in Roman Urdu</h2>
+      <p class="lead">Free to download, no ads. Set it up once and it works wherever you type.</p>
+      <div class="cta-row">
+        <a class="btn" href="https://play.google.com/store/apps/details?id=com.lanternkeys.urdukb" target="_blank" rel="noopener">
+          Get it on Google Play
+          <span class="ic logo"><svg viewBox="0 0 24 24"><path fill="#00d7fe" d="M3.6 2.4 13.8 12 3.6 21.6c-.4-.3-.6-.8-.6-1.4V3.8c0-.6.2-1.1.6-1.4z"/><path fill="#00f076" d="M3.6 2.4c.4-.3 1-.3 1.6 0l12 6.8-3.4 3.3z"/><path fill="#ff3a44" d="M3.6 21.6c.4.3 1 .3 1.6 0l12-6.8-3.4-3.3z"/><path fill="#ffd500" d="M17.2 9.2 20.6 11c1 .6 1 1.4 0 2l-3.4 1.8L13.8 12z"/></svg></span>
+        </a>
+        <a class="btn ghost" href="https://github.com/pauldeggington/roman-urdu-keyboard/releases/latest" target="_blank" rel="noopener">
+          APK on GitHub
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></span>
+        </a>
+      </div>
+    </div>
+    <div class="shots">
+      <div class="shot-frame rv d1"><img src="site/kb-light.png" alt="" loading="lazy"></div>
+      <div class="shot-frame b rv d2"><img src="site/kb-emoji.png" alt="" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a class="brand" href="#top"><img src="site/icon-128.png" alt="" width="30" height="30"><span>© 2026 Lantern Keys</span></a>
+      <div style="display:flex;gap:8px">
+        <a class="iconbtn" href="https://github.com/pauldeggington/roman-urdu-keyboard" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg></a>
+        <a class="iconbtn" href="mailto:lanternkeys@gmail.com" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></a>
+      </div>
+      <div class="f-links">
+        <a href="privacy.html">Privacy</a>
+        <a href="https://github.com/pauldeggington/roman-urdu-keyboard/releases" target="_blank" rel="noopener">Releases</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
+      <div>Made by Lantern Keys</div>
+    </div>
+  </div>
+  <div class="watermark" aria-hidden="true"><span class="urdu" style="-webkit-text-stroke:0;color:rgba(233,183,58,.12);font-size:.55em;line-height:1.1">بات</span>Lantern Keys</div>
+</footer>
+
+<script>
+(function(){
+  // reveal on scroll
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px',threshold:.05});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
+
+  // compact nav + active link
+  var nav=document.getElementById('nav'),links=document.querySelectorAll('#links a[href^="#"]');
+  var secs=[].map.call(links,function(a){return document.querySelector(a.getAttribute('href'))});
+  function onScroll(){
+    nav.classList.toggle('compact',scrollY>80);
+    var y=scrollY+140,cur=-1;
+    secs.forEach(function(s,i){if(s&&s.offsetTop<=y)cur=i});
+    links.forEach(function(a,i){a.classList.toggle('on',i===cur)});
+  }
+  addEventListener('scroll',onScroll,{passive:true});onScroll();
+  var menu=document.getElementById('menu'),lk=document.getElementById('links');
+  menu.addEventListener('click',function(){lk.classList.toggle('open')});
+  lk.addEventListener('click',function(){lk.classList.remove('open')});
+
+  // mission: light words up as you scroll past
+  var m=document.getElementById('mission');
+  m.querySelectorAll('p').forEach(function(p){
+    p.innerHTML=p.innerHTML.replace(/(<span class="[goy]">)|(<\/span>)|([^\s<>]+)/g,function(x,o,c,w){return w?'<span class="w">'+w+'</span>':x});
+  });
+  var words=m.querySelectorAll('.w');
+  function lightWords(){
+    var r=m.getBoundingClientRect(),h=innerHeight;
+    var p=Math.min(1,Math.max(0,(h*0.85-r.top)/(r.height*0.9)));
+    var n=Math.round(p*words.length);
+    words.forEach(function(w,i){w.classList.toggle('lit',i<n)});
+  }
+  addEventListener('scroll',lightWords,{passive:true});lightWords();
+
+  // hero demo: type, translate, send, loop
+  (function(){
+    var demo=document.getElementById('demo'),chat=document.getElementById('chat'),inB=document.getElementById('in-bubble'),typed=document.getElementById('typed'),caret=document.getElementById('caret'),field=typed.parentNode,send=document.getElementById('send'),tr=document.getElementById('trkey'),chip=document.getElementById('tone-chip');
+    var scenes=[
+      {in:'Kal ka plan kya hai?',en:"Let's meet at 6, don't be late",ru:'Chalo 6 baje milte hain, late mat hona',tone:'Casual'},
+      {in:'Khana kha liya?',en:"Not yet, I'm still at work",ru:'Abhi nahi, main abhi bhi office mein hoon',tone:'Casual'},
+      {in:'Sir, meeting kab hai?',en:'The meeting is at ten tomorrow, please be on time',ru:'Meeting kal dus baje hai, barah-e-karam waqt par tashreef laayein',tone:'Formal'}
+    ];
+    var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches,visible=true,si=0;
+    var keys={};demo.querySelectorAll('.kb b').forEach(function(b){keys[b.dataset.k]=b});
+    function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+    function hit(k){var b=keys[k.toLowerCase()]||keys[k];if(!b)return;b.classList.add('hit');setTimeout(function(){b.classList.remove('hit')},130)}
+    function setEmpty(){field.classList.add('empty')}
+    async function run(){
+      if(reduce){var s=scenes[0];typed.textContent=s.ru;caret.style.display='none';field.classList.remove('empty');send.classList.add('hot');tr.classList.add('on');return}
+      while(true){
+        var s=scenes[si%scenes.length];si++;
+        // reset
+        chat.querySelectorAll('.bubble.out').forEach(function(b){b.remove()});
+        inB.classList.add('enter');await sleep(400);
+        inB.textContent=s.in;chip.textContent=s.tone;tr.classList.remove('on');send.classList.remove('hot');
+        typed.textContent='';setEmpty();
+        if(!visible){await sleep(600);continue}
+        inB.classList.remove('enter');await sleep(1100);
+        // type
+        field.classList.remove('empty');
+        for(var i=0;i<s.en.length;i++){var ch=s.en[i];typed.textContent+=ch;hit(ch);await sleep(ch===' '?110:55+Math.random()*45)}
+        send.classList.add('hot');await sleep(650);
+        // translate
+        tr.classList.add('on','spin');hit('tr');await sleep(1200);
+        typed.style.opacity=0;await sleep(250);typed.textContent=s.ru;typed.style.opacity=1;tr.classList.remove('spin');await sleep(1400);
+        // send
+        send.classList.add('go');await sleep(140);send.classList.remove('go');
+        var out=document.createElement('div');out.className='bubble out enter';out.innerHTML='<span class="was">You typed: '+s.en.replace(/</g,'&lt;')+'</span>'+s.ru;chat.appendChild(out);
+        typed.textContent='';setEmpty();send.classList.remove('hot');tr.classList.remove('on');
+        requestAnimationFrame(function(){requestAnimationFrame(function(){out.classList.remove('enter')})});
+        await sleep(2600);
+      }
+    }
+    new IntersectionObserver(function(es){visible=es[0].isIntersecting},{threshold:.05}).observe(demo);
+    setEmpty();run();
+  })();
+
+  // GIF panel: real trending GIFs from GIPHY when a key is set on #gifpanel
+  (function(){
+    var gp=document.getElementById('gifpanel'),key=gp.getAttribute('data-key');
+    if(!key)return;
+    fetch('https://api.giphy.com/v1/gifs/trending?api_key='+encodeURIComponent(key)+'&limit=6&rating=g').then(function(r){return r.json()}).then(function(j){
+      if(!j||!j.data||!j.data.length)return;
+      var g=document.getElementById('gifgrid');g.innerHTML='';
+      j.data.slice(0,6).forEach(function(d){var im=document.createElement('img');im.src=d.images.fixed_width_small.url;im.alt=d.title||'GIF';im.loading='lazy';g.appendChild(im)});
+      document.getElementById('gifcredit').hidden=false;
+    }).catch(function(){});
+  })();
+
+  // tone demo
+  var ru={casual:'Aaj main bohat thak gaya hoon',formal:'Aaj main kaafi thaka hua hoon',poetic:'Aaj thakan ne mujhe gher liya hai',funny:'Aaj to battery bilkul khatam hai meri',respectful:'Ji, aaj main kaafi thak gaya hoon'};
+  var tb=document.querySelectorAll('#tones .tone'),out=document.getElementById('tone-ru');
+  tb.forEach(function(b){b.addEventListener('click',function(){tb.forEach(function(x){x.classList.remove('on')});b.classList.add('on');out.style.opacity=0;setTimeout(function(){out.textContent=ru[b.dataset.t];out.style.opacity=1},150)})});
+  out.style.transition='opacity .15s';
+
+  // advantages
+  var items=document.querySelectorAll('#adv .adv-item'),imgs=document.querySelectorAll('.adv-stage img'),bgs=document.querySelectorAll('.adv-stage .bg'),ai=0,timer,advVisible=true;
+  function showAdv(i){
+    ai=i;var id=items[i].dataset.img;
+    items.forEach(function(x,j){x.classList.toggle('on',j===i);x.classList.toggle('paused',!advVisible)});
+    imgs.forEach(function(x){x.classList.remove('on')});
+    setTimeout(function(){imgs.forEach(function(x){x.classList.toggle('on',x.id===id)});bgs.forEach(function(b){b.classList.toggle('on',b.dataset.for===id)})},420);
+  }
+  function restart(){clearInterval(timer);timer=setInterval(function(){if(advVisible)showAdv((ai+1)%items.length)},5200)}
+  items.forEach(function(x,i){x.addEventListener('click',function(){showAdv(i);restart()})});
+  new IntersectionObserver(function(es){advVisible=es[0].isIntersecting;items.forEach(function(x){x.classList.toggle('paused',!advVisible)})},{threshold:.2}).observe(document.getElementById('adv'));
+  restart();
+
+  // faq
+  document.querySelectorAll('#acc .q').forEach(function(q){
+    var b=q.querySelector('button'),a=q.querySelector('.a');
+    b.addEventListener('click',function(){
+      var open=q.classList.contains('open');
+      document.querySelectorAll('#acc .q.open').forEach(function(o){o.classList.remove('open');o.querySelector('.a').style.maxHeight=0});
+      if(!open){q.classList.add('open');a.style.maxHeight=a.scrollHeight+'px'}
+    });
+  });
+
+  // version from the latest GitHub release (falls back to the static text)
+  fetch('https://api.github.com/repos/pauldeggington/roman-urdu-keyboard/releases/latest').then(function(r){return r.json()}).then(function(j){
+    if(j&&j.tag_name){document.getElementById('ver').textContent=j.tag_name.replace(/^v/,'')}
+  }).catch(function(){});
+})();
+</script>
+</body>
+</html>
