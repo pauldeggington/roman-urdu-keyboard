@@ -19,6 +19,7 @@ object LlmEngine {
     private var engineIsGpu = false
     /** True when the loaded engine can also listen (audio backend); it is only started that way when voice is used. */
     private var engineHasAudio = false
+    private var engineHasVision = false
 
     /**
      * Where the model lives. Older installs kept it in internal storage; new downloads go to the app's
@@ -124,7 +125,7 @@ object LlmEngine {
         engine = null
     }
 
-    private fun build(ctx: Context, audio: Boolean = false): Pair<Engine, Boolean> {
+    private fun build(ctx: Context, audio: Boolean = false, vision: Boolean = false): Pair<Engine, Boolean> {
         val path = modelFile(ctx).absolutePath
         val errors = mutableListOf<String>()
         val backends = if (Prefs.gpu(ctx)) listOf(true, false) else listOf(false)
@@ -136,13 +137,16 @@ object LlmEngine {
                     val backend = if (gpu) Backend.GPU() else Backend.CPU()
                     // the audio encoder runs on the CPU; it is only loaded when the voice features ask for it
                     val audioBackend = if (audio) Backend.CPU() else null
+                    // the picture reader (vision) is only loaded when a picture is being read
+                    val visionBackend = if (vision) Backend.CPU() else null
                     val config = when (variant) {
-                        0 -> EngineConfig(modelPath = path, backend = backend, audioBackend = audioBackend, cacheDir = Prefs.store(ctx).cacheDir.path)
-                        1 -> EngineConfig(modelPath = path, backend = backend, audioBackend = audioBackend)
+                        0 -> EngineConfig(modelPath = path, backend = backend, audioBackend = audioBackend, visionBackend = visionBackend, cacheDir = Prefs.store(ctx).cacheDir.path)
+                        1 -> EngineConfig(modelPath = path, backend = backend, audioBackend = audioBackend, visionBackend = visionBackend)
                         else -> EngineConfig(
                             modelPath = path,
                             backend = backend,
                             audioBackend = audioBackend,
+                            visionBackend = visionBackend,
                             maxNumTokens = 4096,
                             cacheDir = Prefs.store(ctx).cacheDir.path,
                         )
@@ -163,17 +167,19 @@ object LlmEngine {
     }
 
     @Synchronized
-    private fun getEngine(ctx: Context, audio: Boolean = false): Engine {
+    private fun getEngine(ctx: Context, audio: Boolean = false, vision: Boolean = false): Engine {
         val wantGpu = Prefs.gpu(ctx)
         engine?.let {
             // a listening engine also translates text, so it is kept; a text-only one is replaced when audio is needed
-            if ((engineIsGpu == wantGpu || !wantGpu) && (engineHasAudio || !audio)) return it
+            if ((engineIsGpu == wantGpu || !wantGpu) && (engineHasAudio || !audio) && (engineHasVision || !vision)) return it
             reset()
         }
-        val (created, usedGpu) = build(ctx, audio)
+        val keepAudio = audio || engineHasAudio
+        val (created, usedGpu) = build(ctx, keepAudio, vision)
         engine = created
         engineIsGpu = usedGpu
-        engineHasAudio = audio
+        engineHasAudio = keepAudio
+        engineHasVision = vision
         return created
     }
 
@@ -204,6 +210,18 @@ object LlmEngine {
         } catch (t: Throwable) {
             lastAudioFormat = "raw"
             send(com.paul.urdukb.voice.Pcm.raw(pcm))
+        }
+        touch()
+        return reply.replace("<end_of_turn>", "").trim()
+    }
+
+    /** Reads a picture (JPEG bytes) and answers [prompt] about it. Needs Gemma 4. Blocking. */
+    @Synchronized
+    fun readImage(ctx: Context, jpeg: ByteArray, prompt: String): String {
+        val eng = getEngine(ctx, vision = true)
+        val config = ConversationConfig(samplerConfig = SamplerConfig(topK = 1, topP = 0.9, temperature = 0.05))
+        val reply = eng.createConversation(config).use { conversation ->
+            runBlocking { conversation.sendMessage(Contents.of(Content.ImageBytes(jpeg), Content.Text(prompt))) }.toString()
         }
         touch()
         return reply.replace("<end_of_turn>", "").trim()

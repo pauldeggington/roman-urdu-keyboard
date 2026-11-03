@@ -73,6 +73,20 @@
             </intent-filter>
         </activity>
 
+        <!-- A picture with Urdu text shared from the gallery or WhatsApp is read and translated to English (prototype) -->
+        <activity android:name=".ImageActivity"
+            android:label="Roman Urdu Keyboard"
+            android:theme="@style/RomanUrduSheetTheme"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".TranslateTextActivity"
             android:label="Translate to English"
             android:theme="@style/RomanUrduSheetTheme"
