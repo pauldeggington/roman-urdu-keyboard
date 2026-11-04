@@ -220,7 +220,7 @@ jobs:
         run: |
           [ -n "$PUBLIC_TOKEN" ] || { echo "No PUBLIC_REPO_TOKEN; skipping site refresh."; exit 0; }
           git clone --depth 1 "https://x-access-token:${PUBLIC_TOKEN}@github.com/pauldeggington/roman-urdu-keyboard.git" /tmp/public
-          scripts/export_public.sh /tmp/public
+          bash "$GITHUB_WORKSPACE/scripts/export_public.sh" /tmp/public
           cd /tmp/public
           git config user.name "Paul Eggington"; git config user.email "54344603+pauldeggington@users.noreply.github.com"
           git add -A
