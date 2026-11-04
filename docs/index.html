@@ -157,14 +157,14 @@
         <div class="art gifpanel" id="gifpanel" data-key="">
           <div class="gif-top"><span class="gif-back">←</span><span class="gif-search">Search GIFs</span></div>
           <div class="gif-chips"><span class="on">Trending</span><span>Happy</span><span>Love</span><span>Haha</span><span>Sad</span><span>Wow</span></div>
-          <div class="gif-win"><div class="gif-grid" id="gifgrid"><img src="site/gifs/time.webp" alt="" loading="lazy"><img src="site/gifs/haha.webp" alt="" loading="lazy"><img src="site/gifs/dance.webp" alt="" loading="lazy"><img src="site/gifs/wave.webp" alt="" loading="lazy"><img src="site/gifs/ghost.webp" alt="" loading="lazy"><img src="site/gifs/love.webp" alt="" loading="lazy"><img src="site/gifs/sad.webp" alt="" loading="lazy"><img src="site/gifs/thumbs.webp" alt="" loading="lazy"><img src="site/gifs/freddy.webp" alt="" loading="lazy"><img src="site/gifs/party.webp" alt="" loading="lazy"><img src="site/gifs/excited.webp" alt="" loading="lazy"><img src="site/gifs/cry.webp" alt="" loading="lazy"><img src="site/gifs/kid.webp" alt="" loading="lazy"><img src="site/gifs/cookie.webp" alt="" loading="lazy"></div></div>
+          <div class="gif-win"><div class="gif-grid" id="gifgrid"><div class="gif-col"><img src="site/gifs/time.webp" alt="" loading="lazy"><img src="site/gifs/dance.webp" alt="" loading="lazy"><img src="site/gifs/excited.webp" alt="" loading="lazy"><img src="site/gifs/kid.webp" alt="" loading="lazy"></div><div class="gif-col"><img src="site/gifs/ghost.webp" alt="" loading="lazy"><img src="site/gifs/sad.webp" alt="" loading="lazy"><img src="site/gifs/freddy.webp" alt="" loading="lazy"><img src="site/gifs/cookie.webp" alt="" loading="lazy"></div></div></div>
           <div class="gif-foot"><span>ABC</span><span class="on">GIF</span><span>Stickers</span><span class="gif-credit" id="gifcredit" hidden>Powered by GIPHY</span></div>
         </div>
         <h3>Emoji, GIFs, stickers, clipboard</h3>
         <p class="sub">Emoji with search and skin tones, text emoticons in groups, GIFs and stickers from GIPHY, and a clipboard history like Gboard's. Tap to paste, long-press to pin.</p>
       </div>
 
-      <div class="card flip rv d1">
+      <div class="card flip rv d1" style="align-self:start">
         <div class="art"><img src="site/clips/glide.webp" alt="Glide typing the word hello on the dark keyboard" loading="lazy"></div>
         <h3>Types like Gboard</h3>
         <p class="sub">The same layout and height, glide typing in English, word suggestions, next-word hints, and autocorrect you can undo with one Backspace. Light, dark, or your wallpaper colours.</p>
@@ -217,8 +217,8 @@
       </div>
       <div class="adv-stage rv">
         <div class="bg g1 on" data-for="a1"></div><div class="bg g2" data-for="a2"></div><div class="bg g3" data-for="a3"></div><div class="bg g4" data-for="a4"></div><div class="bg g5" data-for="a5"></div>
-        <img id="a1" class="on" src="site/clips/look.webp" alt="Switching the keyboard between light and dark" loading="lazy">
-        <img id="a2" src="site/clips/urdu.webp" alt="The Translate screen switching from English to Urdu, laid out right to left" loading="lazy">
+        <img id="a1" class="tall on" src="site/clips/look.webp" alt="Switching the keyboard between light and dark" loading="lazy">
+        <img id="a2" class="tall" src="site/clips/urdu.webp" alt="The Translate screen switching from English to Urdu, laid out right to left" loading="lazy">
         <img id="a3" class="tall" src="site/clips/setup.webp" alt="Stepping through the setup guide" loading="lazy">
         <img id="a4" src="site/clips/symbols.webp" alt="Opening the symbols layer and typing an exclamation mark" loading="lazy">
         <img id="a5" src="site/clips/emoji.webp" alt="Searching for an emoji and adding it to a message" loading="lazy">
@@ -281,7 +281,6 @@
       </div>
       <div class="f-links">
         <a href="privacy.html">Privacy</a>
-        <a href="https://github.com/pauldeggington/roman-urdu-keyboard/releases" target="_blank" rel="noopener">Releases</a>
         <a href="changelog.html">Changelog</a>
       </div>
       <div>Made by Lantern Keys</div>
@@ -367,15 +366,15 @@
     setEmpty();run();
   })();
 
-  // GIF panel: the grid scrolls slowly, as if browsing; tiles are duplicated once so it loops seamlessly
-  (function(){var g=document.getElementById('gifgrid');if(g.getAttribute('data-dup'))return;g.setAttribute('data-dup','1');[].slice.call(g.children).forEach(function(n){var c=n.cloneNode(true);c.setAttribute('aria-hidden','true');g.appendChild(c)})})();
+  // GIF panel: the two columns scroll slowly at different speeds, as if browsing; each is duplicated once so it loops without a jump
+  (function(){var g=document.getElementById('gifgrid');[].slice.call(g.querySelectorAll('.gif-col')).forEach(function(col){[].slice.call(col.children).forEach(function(n){var c=n.cloneNode(true);c.setAttribute('aria-hidden','true');col.appendChild(c)})})})();
   // GIF panel: real trending GIFs from GIPHY when a key is set on #gifpanel
   (function(){
     var gp=document.getElementById('gifpanel'),key=gp.getAttribute('data-key');
     if(!key)return;
     fetch('https://api.giphy.com/v1/gifs/trending?api_key='+encodeURIComponent(key)+'&limit=6&rating=g').then(function(r){return r.json()}).then(function(j){
       if(!j||!j.data||!j.data.length)return;
-      var g=document.getElementById('gifgrid');g.innerHTML='';g.style.animation='none';
+      var g=document.getElementById('gifgrid');g.innerHTML='';g.classList.add('plain');
       j.data.slice(0,6).forEach(function(d){var im=document.createElement('img');im.src=d.images.fixed_width_small.url;im.alt=d.title||'GIF';im.loading='lazy';g.appendChild(im)});
       document.getElementById('gifcredit').hidden=false;
     }).catch(function(){});

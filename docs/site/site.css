@@ -243,11 +243,15 @@ h3{margin:0;font-size:20px;font-weight:500;letter-spacing:-.02em;color:var(--ink
 .gif-chips{display:flex;gap:6px;padding:8px 14px 10px;overflow:hidden}
 .gif-chips span{height:28px;display:inline-flex;align-items:center;padding:0 12px;border-radius:14px;background:#2a2f3a;color:#c7c9cf;font-weight:500;white-space:nowrap}
 .gif-chips span.on{background:#cfe0ff;color:#0c2a5a}
-.gif-win{height:340px;overflow:hidden;padding:0 10px}
-.gif-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;animation:gifscroll 34s linear infinite}
+.gif-win{height:560px;overflow:hidden;padding:0 10px}
+.gif-grid{display:flex;gap:6px;align-items:flex-start}
+.gif-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;animation:gifscroll 46s linear infinite}
+.gif-col+.gif-col{animation-duration:62s;animation-direction:reverse}
+.gif-grid img{display:block;width:100%;height:auto;border-radius:10px;background:#2a2f3a}
 @keyframes gifscroll{to{transform:translateY(calc(-50% - 3px))}}
-@media (prefers-reduced-motion:reduce){.gif-grid{animation:none}.gif-win{overflow:auto}}
-.gif-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:#2a2f3a}
+.gif-grid.plain{display:grid;grid-template-columns:repeat(2,1fr)}
+.gif-grid.plain img{aspect-ratio:1;object-fit:cover}
+@media (prefers-reduced-motion:reduce){.gif-col{animation:none}.gif-win{overflow:auto}}
 .gif-foot{display:flex;align-items:center;gap:8px;padding:12px 14px 14px}
 .gif-foot span{height:30px;display:inline-flex;align-items:center;padding:0 12px;border-radius:15px;color:#c7c9cf;font-weight:500}
 .gif-foot span.on{background:#2a2f3a;color:#fff}
